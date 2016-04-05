@@ -11,5 +11,6 @@ repositories {
 
 dependencies {
     compile 'edu.stanford.nlp:stanford-corenlp:3.6.0'
+    compile 'edu.stanford.nlp:stanford-corenlp:3.6.0:models'
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
