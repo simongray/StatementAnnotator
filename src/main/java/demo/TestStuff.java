@@ -17,7 +17,7 @@ import java.util.Properties;
 
     http://stackoverflow.com/questions/19884515/adding-a-new-annotator-in-stanford-corenlp
 
-
+    http://www.informit.com/articles/article.aspx?p=2265404    (for NER)
  */
 
 
@@ -37,9 +37,20 @@ public class TestStuff {
 
         // handle each sentence
         for(CoreMap sentence: sentences) {
-            Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
-            System.out.println("the overall sentiment rating is " + sentence.get(SentimentCoreAnnotations.SentimentClass.class));
-            parse(tree, 0);
+            // what kind of annotations are available
+            System.out.println(sentence.keySet());
+
+            // TokensAnnotation are available for example
+            List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
+            for (CoreLabel token : tokens) {
+                System.out.println(token + ", " + token.ner());  // actually includes NER in this case!! (days = DURATION)
+            }
+
+            // seems like it's only necessary to parse tree if there is a conflict of entities (i.e. two or more entities in a sentence)
+
+//            Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
+//            System.out.println("the overall sentiment rating is " + sentence.get(SentimentCoreAnnotations.SentimentClass.class));
+//            parse(tree, 0);
         }
 
     }
@@ -80,12 +91,7 @@ public class TestStuff {
 
         for (CoreLabel label : tree.taggedLabeledYield()) {
             System.out.println("-----");
-            System.out.println("toString= " + label.toString());
-            System.out.println("word= " + label.word());
-            System.out.println("value= " + label.value());
-            System.out.println("lemma= " + label.lemma());
-            System.out.println("tag= " + label.tag());
-            System.out.println("ner= " + label.ner());
+            System.out.print("toString= " + label);
             System.out.println();
         }
 
