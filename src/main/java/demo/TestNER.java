@@ -51,6 +51,9 @@ public class TestNER {
                 System.out.println(new String(entityChars) + " (" + entity.first() + ")");
             }
 
+            // ner can be used from pipeline and specific models loaded using this syntax (from StandardCoreNLPDemo.java)
+            //   props.put("ner.model", "edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz");
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

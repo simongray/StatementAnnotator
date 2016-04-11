@@ -28,7 +28,7 @@ import java.util.Properties;
 
 
     TODO:
-    * learn about NER api
+    * (DONE) learn about NER api
     * learn about custom/other corenlp annotations
     * check out different sentences
     * check out stanford parsers
