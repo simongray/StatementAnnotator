@@ -38,7 +38,7 @@ import java.util.Properties;
  */
 
 
-public class TestStuff {
+public class TestSentimentAnalysis {
     public static void main(String[] args) {
         // initiate pipeline with properties (i.e. what stages)
         Properties props = new Properties();
