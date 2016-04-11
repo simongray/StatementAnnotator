@@ -18,6 +18,23 @@ import java.util.Properties;
     http://stackoverflow.com/questions/19884515/adding-a-new-annotator-in-stanford-corenlp
 
     http://www.informit.com/articles/article.aspx?p=2265404    (for NER)
+    http://stanfordnlp.github.io/CoreNLP/ner.html
+    http://stackoverflow.com/questions/13765349/multi-term-named-entities-in-stanford-named-entity-recognizer
+
+    http://nlp.stanford.edu/software/regexner.html (REGEX)
+
+    http://nlp.stanford.edu/software/sutime.shtml (time expression to dates, not really useful for me)
+
+
+
+    TODO:
+    * learn about NER api
+    * learn about custom/other corenlp annotations
+    * check out different sentences
+    * check out stanford parsers
+    * find different examples
+    * check out tree/binary search stuff
+
  */
 
 
