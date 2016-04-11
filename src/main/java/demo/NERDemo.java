@@ -51,7 +51,7 @@ public class NERDemo {
             serializedClassifier = args[0];
         }
 
-        AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifier(serializedClassifier);  // CHANGED TO DEFAULT instead of loading from file!!
+        AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifier(serializedClassifier);
 
     /* For either a file to annotate or for the hardcoded text example, this
        demo file shows several ways to process the input, for teaching purposes.
