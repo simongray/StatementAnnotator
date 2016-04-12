@@ -31,6 +31,12 @@ import java.util.Properties;
     http://nlp.stanford.edu/software/sutime.shtml (sutetime - time expression to dates, not really useful for me)
     http://blog.thedigitalgroup.com/sagarg/2015/08/28/stanford-temporal-tagger-sutime-for-java/
 
+    http://stanfordnlp.github.io/CoreNLP/coref.html (official coref resource)
+    http://stackoverflow.com/questions/8768760/anaphora-resolution-using-stanford-coref
+    http://stackoverflow.com/questions/29205498/stanford-corenlp-demo-and-coreference-resolution
+    http://stackoverflow.com/questions/10688739/resolve-coreference-using-stanford-corenlp-unable-to-load-parser-model
+    http://sujitpal.blogspot.sg/2014/09/coreference-resolution-with-stanford.html
+    http://blog.pengyifan.com/resolve-coreference-using-stanford-corenlp/
     https://www.javacodegeeks.com/2015/02/resolve-coreference-using-stanford-corenlp.html (Coreference/anaphora resolution)
     http://stackoverflow.com/questions/30954649/coreference-resolution-using-stanford-corenlp
     http://ixcode.net/questions/how-to-get-Coreference-Resolution-annotation-in-stanford-core-nlp-toolkit-
