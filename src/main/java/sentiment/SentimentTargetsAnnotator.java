@@ -13,22 +13,97 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/*
+    (excerpt from "Entity-Specific Sentiment Classification of Yahoo News Comments")
+
+    The context of an entity contains the words,
+    phrases or sen- tences that refer to the entity.
+    We use several heuristics to extract the contexts.
+    Following are the three main modules of our
+    context extraction algorithm:
+
+    1. Preprocessing, where the number of entities in
+    a com- ment is checked. For single entity
+    comments, the entire com- ment is taken as the
+    context for the entity. If a comment con- tains
+    multiple entities, it is segmented into sentences
+    and is given as input to the anaphora resolution
+    module.
+
+    2. Anaphora Resolution: We use a rule based
+    approach to anaphora resolution. We check the type
+    of entity: PER- SON (P) vs. NON-PERSON (NP) and
+    assign sentences to the context of the entity if
+    they have explicit mentions of that entity or
+    compatible anaphoric references. For exam- ple,
+    pronouns such as he, she, her, him can only be
+    used to refer to a P entity, whereas they, their,
+    them can be used to refer to both P and NP
+    entities and it can only be used for NP entities.
+    If a sentence does not have references to any
+    entity, then it is added to the context of all the
+    entities. Also, if a sentence has explicit
+    mentions of multiple entities, then it is given as
+    input to the local context extraction module.
+
+    3. Local Context Extraction: If entities occur in
+    clauses that are connected with “but” (in the
+    sentence), then the re- spective clauses are
+    returned as local contexts for the enti- ties. If
+    the sentence contains a comparison between
+    entities, then it is split at the comparative term
+    (adjective or adverb), with the comparative term
+    added to the left part, and the two parts are
+    returned as local contexts for the respective
+    enti- ties. If none of the two conditions is
+    satisfied, then a window of ±3 tokens around
+    entities is taken as their local context.
+    Identifying the Sentiment of Contexts
+
+    After obtaining the contexts of entities, we
+    classify their sen- timent into positive, negative
+    or neutral sentiment classes. We model the task of
+    identifying sentiment as two step clas-
+    sification. In the first step, we classify the
+    context of an en- tity into polar versus neutral
+    sentiment classes. Next, we classify the polar
+    entities into positive or negative sentiment
+    classes. Next, we describe the features used in
+    our classifi- cation models and our reasoning
+    behind using them. Neutral vs. Polar
+    Classification As already discussed, comments
+    posted on news sites contain entities that are
+    irrel- evant with respect to sentiment analysis
+    (see Example 1 in Section ). These entities have
+    no sentiment associated with
+
+    them and are filtered out before conducting
+    sentiment clas- sification of comments. We address
+    this problem by classi- fying entities as polar
+    vs. neutral. Irrelevant entities are clas- sified
+    as neutral.
+ */
+
 public class SentimentTargetsAnnotator implements Annotator {
     public final static String SENTIMENT_TARGETS = "sentimenttargets";
     public final static Class SENTIMENT_TARGET_ANNOTATION_CLASS = SentimentTargetsAnnotation.class;
 
     @Override
     public void annotate(Annotation annotation) {
-        // locate candidate entities
+        // locate candidate entities in text (e.g. a comment)
+        // (requires NER with anaphora resolution)
 
         // determine interestingness of entities and purge uninteresting ones
+        // (perhaps simply reducing to PERSON and ORGANIZATION classes?)
 
         // determine entities position in sentiment tree
+        // (only relevant in case there are multiple entities in the text)
 
         // find conflicts between entities by moving up tree to see where each entity meets
-
         // use heuristic(s) to select dominant entity
         // will need to look at different trees to determine best splitting heuristic
+        // (or implement something like the method in "Entity-Specific Sentiment Classification of Yahoo News Comments")
+
         annotation.set(SENTIMENT_TARGET_ANNOTATION_CLASS, Arrays.asList(new SentimentTarget(2), new SentimentTarget(0)));
 
         // using sentence annotation, perhaps another annotation type is better suited (there are A LOT)
