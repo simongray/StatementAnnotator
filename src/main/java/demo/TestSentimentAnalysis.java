@@ -14,6 +14,11 @@ import java.util.Properties;
 
 /*
     http://nlp.stanford.edu/nlp/javadoc/javanlp/
+    http://stanfordnlp.github.io/CoreNLP/api.html (small example for common stuff)
+
+    http://blog.intelligencecomputing.io/nlp/10159/project-stanford-corenlp (useful overview, including of annotator->annotations)
+
+    http://eirew.blogspot.sg/2014/11/analyzing-text-using-stanford-corenlp.html
 
     http://stackoverflow.com/questions/19884515/adding-a-new-annotator-in-stanford-corenlp
 
@@ -23,8 +28,13 @@ import java.util.Properties;
 
     http://nlp.stanford.edu/software/regexner.html (REGEX)
 
-    http://nlp.stanford.edu/software/sutime.shtml (time expression to dates, not really useful for me)
+    http://nlp.stanford.edu/software/sutime.shtml (sutetime - time expression to dates, not really useful for me)
+    http://blog.thedigitalgroup.com/sagarg/2015/08/28/stanford-temporal-tagger-sutime-for-java/
 
+    https://www.javacodegeeks.com/2015/02/resolve-coreference-using-stanford-corenlp.html (Coreference/anaphora resolution)
+    http://stackoverflow.com/questions/30954649/coreference-resolution-using-stanford-corenlp
+    http://ixcode.net/questions/how-to-get-Coreference-Resolution-annotation-in-stanford-core-nlp-toolkit-
+    http://nishutayaltech.blogspot.sg/2015/09/co-reference-resolution-in-stanford.html
 
 
     TODO:
