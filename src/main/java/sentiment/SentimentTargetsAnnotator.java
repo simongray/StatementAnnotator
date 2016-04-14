@@ -8,10 +8,7 @@ import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /*
     (excerpt from "Entity-Specific Sentiment Classification of Yahoo News Comments")
@@ -87,11 +84,20 @@ import java.util.Set;
 public class SentimentTargetsAnnotator implements Annotator {
     public final static String SENTIMENT_TARGETS = "sentimenttargets";
     public final static Class SENTIMENT_TARGET_ANNOTATION_CLASS = SentimentTargetsAnnotation.class;
+    private List<CoreMap> sentences;
 
     @Override
     public void annotate(Annotation annotation) {
-        // locate candidate entities in text (e.g. a comment)
+        sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+
+        // locate candidate named entities in text (e.g. a comment)
+        Map<String, Set<Integer>> rawEntities = getRawEntities();
+
+        System.out.println(rawEntities);
+
+
         // (requires NER with anaphora resolution)
+
 
         // determine interestingness of entities and purge uninteresting ones
         // (perhaps simply reducing to PERSON and ORGANIZATION classes?)
@@ -142,6 +148,56 @@ public class SentimentTargetsAnnotator implements Annotator {
 //        requirements.add(new Requirement(Annotator.STANFORD_NER));
 //        requirements.add(new Requirement(Annotator.STANFORD_SENTIMENT));
         return requirements;
+    }
+
+    /**
+     * The CoreNLP NER tagger finds relevant entities.
+     * @return a map of entities and mention indexes
+     */
+    private Map<String, Set<Integer>> getRawEntities() {
+        Map<String, Set<Integer>> entities = new HashMap<>();
+
+        for (int i = 0; i < sentences.size(); i++) {
+            List<CoreLabel> tokens = sentences.get(i).get(CoreAnnotations.TokensAnnotation.class);
+            String previousNerTag = "";  // keep track of previous tag for multi-word entities
+            String fullEntityName = "";
+
+            // retrieve all entities in sentence
+            for (CoreLabel token : tokens) {
+                String nerTag = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
+                String entityName = token.get(CoreAnnotations.TextAnnotation.class);
+
+                // keeping track of multi-word entities as well
+                // only allow specific tags (e.g. not DURATION or MISC)
+                if (nerTag.length() > 1 && nerTag.equals("PERSON") || nerTag.equals("ORGANIZATION") || nerTag.equals("LOCATION")) {
+                    if (nerTag.equals(previousNerTag)) {
+                        fullEntityName += " " + entityName;
+                    } else {
+                        fullEntityName = entityName;
+                    }
+                    previousNerTag = nerTag;
+                } else {
+                    // update mentions when new entity has been found
+                    if (fullEntityName.length() > 0) {
+                        Set<Integer> mentions = entities.get(fullEntityName);
+
+                        // create set if not already created
+                        if (mentions == null) {
+                            mentions = new HashSet<>();
+                        }
+
+                        mentions.add(i);
+                        entities.put(fullEntityName, mentions);
+                    }
+
+                    // make sure to reset for next token
+                    previousNerTag = "";
+                    fullEntityName = "";
+                }
+            }
+        }
+
+        return entities;
     }
 
     // recursively display scores in tree

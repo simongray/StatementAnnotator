@@ -59,6 +59,6 @@ public class SentimentTarget {
     public enum Type {
         PERSON,
         ORGANIZATION,
-        MISC  // TODO: figure out whether to include MISC at all
+        LOCATION
     }
 }
