@@ -13,8 +13,13 @@ import java.util.Properties;
 // when using "coref": throws Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
 // http://stanfordnlp.github.io/CoreNLP/coref.html: "Run deterministic coref (note this version requires significantly less RAM)"
 // seems like I should use the deterministic one, at least on this development machine with 4 GB of RAM
-// TODO: when using "dcoref": Exception in thread "main" java.lang.OutOfMemoryError: GC overhead limit exceeded
+// when using "dcoref": Exception in thread "main" java.lang.OutOfMemoryError: GC overhead limit exceeded
 // possible solution here at bottom: http://stackoverflow.com/questions/11304599/memory-error-in-stanford-corenlp-eclipse
+// suggested solution from stanford: http://nlp.stanford.edu/software/corenlp-faq.shtml#memory
+// (they want 2GB or more memory for corenlp)
+// SOLUTION: use -Xmx2g as VM argument when running to increase to a suitable amount of memory
+// Do note that 2GB is still not enough to run neural network-based coref, must use dcoref instead
+// (this example seems to use about 1.3GB memory)
 public class CorefExample {
     public static void main(String[] args) throws Exception {
 
