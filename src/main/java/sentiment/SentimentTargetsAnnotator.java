@@ -104,7 +104,7 @@ public class SentimentTargetsAnnotator implements Annotator {
         // will need to look at different trees to determine best splitting heuristic
         // (or implement something like the method in "Entity-Specific Sentiment Classification of Yahoo News Comments")
 
-        annotation.set(SENTIMENT_TARGET_ANNOTATION_CLASS, Arrays.asList(new SentimentTarget(2), new SentimentTarget(0)));
+//        annotation.set(SENTIMENT_TARGET_ANNOTATION_CLASS, Arrays.asList(new SentimentTarget(2), new SentimentTarget(0)));
 
         // using sentence annotation, perhaps another annotation type is better suited (there are A LOT)
 //        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
