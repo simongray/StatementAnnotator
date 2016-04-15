@@ -4,7 +4,6 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
-import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 
@@ -91,10 +90,7 @@ public class SentimentTargetsAnnotator implements Annotator {
         sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
 
         // locate candidate named entities in text (e.g. a comment)
-        Map<String, Set<Integer>> rawEntities = getRawEntities();
-
-        System.out.println(rawEntities);
-
+        Set<SentimentTarget> rawTargets = getRawTargets();
 
         // (requires NER with anaphora resolution)
 
@@ -110,7 +106,7 @@ public class SentimentTargetsAnnotator implements Annotator {
         // will need to look at different trees to determine best splitting heuristic
         // (or implement something like the method in "Entity-Specific Sentiment Classification of Yahoo News Comments")
 
-//        annotation.set(SENTIMENT_TARGET_ANNOTATION_CLASS, Arrays.asList(new SentimentTarget(2), new SentimentTarget(0)));
+        annotation.set(SENTIMENT_TARGET_ANNOTATION_CLASS, rawTargets);  // TODO: set to final targets var
 
         // using sentence annotation, perhaps another annotation type is better suited (there are A LOT)
 //        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
@@ -154,8 +150,8 @@ public class SentimentTargetsAnnotator implements Annotator {
      * The CoreNLP NER tagger finds relevant entities.
      * @return a map of entities and mention indexes
      */
-    private Map<String, Set<Integer>> getRawEntities() {
-        Map<String, Set<Integer>> entities = new HashMap<>();
+    private Set<SentimentTarget> getRawTargets() {
+        Set<SentimentTarget> targets = new HashSet<>();
 
         for (int i = 0; i < sentences.size(); i++) {
             List<CoreLabel> tokens = sentences.get(i).get(CoreAnnotations.TokensAnnotation.class);
@@ -177,17 +173,25 @@ public class SentimentTargetsAnnotator implements Annotator {
                     }
                     previousNerTag = nerTag;
                 } else {
-                    // update mentions when new entity has been found
+                    // update mentions in target when new entity has been found
                     if (fullEntityName.length() > 0) {
-                        Set<Integer> mentions = entities.get(fullEntityName);
+                        SentimentTarget target = null;
 
-                        // create set if not already created
-                        if (mentions == null) {
-                            mentions = new HashSet<>();
+                        for (SentimentTarget existingTarget : targets) {
+                            if (existingTarget.getName().equals(fullEntityName)) {
+                                target = existingTarget;
+                                break;
+                            }
                         }
 
-                        mentions.add(i);
-                        entities.put(fullEntityName, mentions);
+                        // create new target if no existing target was found
+                        if (target == null) {
+                            target = new SentimentTarget(fullEntityName, previousNerTag);
+                            targets.add(target);
+                        }
+
+                        // TODO: figure out whether it makes sense to also have token index in mention
+                        target.addMention(new SentimentTargetMention(fullEntityName, i));
                     }
 
                     // make sure to reset for next token
@@ -197,8 +201,99 @@ public class SentimentTargetsAnnotator implements Annotator {
             }
         }
 
-        return entities;
+        return targets;
     }
+
+    /**
+     * Algorithm to merge entities if the names are found to be shorter versions of the full name.
+     * @param targets
+     * @return
+     */
+    Set<SentimentTarget> mergePersons(Set<SentimentTarget> targets) {
+        Map<String, String> prefixes = new HashMap<>();
+        Map<String, String> postfixes = new HashMap<>();
+
+        // find short names
+        for (SentimentTarget target : targets) {
+            if (target.getType() == "PERSON") {
+                String candidateShortName = target.getName();
+                for (SentimentTarget otherTarget : targets) {
+                    if (otherTarget.getName() == "PERSON" && !otherTarget.equals(candidateShortName)) {
+                        String candidateFullName = otherTarget.getName();
+
+                        if (candidateFullName.startsWith(candidateShortName)) {
+                            if (prefixes.containsKey(candidateShortName)) {
+                                prefixes.put(candidateShortName, null); // signals conflict
+                            } else {
+                                prefixes.put(candidateShortName, candidateFullName);
+                            }
+                        } else if (candidateFullName.endsWith(candidateShortName)) {
+                            if (postfixes.containsKey(candidateShortName)) {
+                                postfixes.put(candidateShortName, null);  // signals conflict
+                            } else {
+                                postfixes.put(candidateShortName, candidateFullName);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // cannot be both pre- and postfix
+        for (String prefix : prefixes.keySet()) {
+            if (postfixes.containsKey(prefix)) {
+                prefixes.remove(prefix);
+                postfixes.remove(prefix);
+            }
+        }
+
+        // reverse the mappings to get (full name, short names) pairs
+        Map<String, Set<String>> mergeMap = new HashMap<>();
+
+        for (String prefix : prefixes.keySet()) {
+            String fullName = prefixes.get(prefix);
+
+            if (mergeMap.containsKey(fullName)) {
+                mergeMap.get(fullName).add(prefix);
+            } else {
+                Set<String> shortNames = new HashSet<>();
+                shortNames.add(prefix);
+                mergeMap.put(fullName, shortNames);
+            }
+        }
+
+        for (String postfix : prefixes.keySet()) {
+            String fullName = prefixes.get(postfix);
+
+            if (mergeMap.containsKey(fullName)) {
+                mergeMap.get(fullName).add(postfix);
+            } else {
+                Set<String> shortNames = new HashSet<>();
+                shortNames.add(postfix);
+                mergeMap.put(fullName, shortNames);
+            }
+        }
+
+        Set<SentimentTarget> newTargets = new HashSet<>();
+
+        for (SentimentTarget target : targets) {
+            if ()
+        }
+
+
+        return null;
+    }
+
+//    /**
+//     * Utility function using some heuristics to reduce the number of targets (short names combined with long names).
+//     * @param rawTargets the raw targets produced by getRawTargets(...)
+//     * @return reduced targets
+//     */
+//    private Map<String, SentimentTarget> getReducedTargets(Map<String, SentimentTarget> rawTargets) {
+//        List<SentimentTarget> names = rawTargets.
+//
+//
+//    }
 
     // recursively display scores in tree
     public static void parse(Tree tree, int n) {

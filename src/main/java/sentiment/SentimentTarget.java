@@ -9,10 +9,10 @@ import java.util.Set;
  */
 public class SentimentTarget {
     private String name;
-    private Type type;
-    private Set<SentimentContext> contexts;
+    private String type;
+    private Set<SentimentTargetMention> contexts;
 
-    public SentimentTarget(String name, Type type) {
+    public SentimentTarget(String name, String type) {
         this.name = name;
         this.type = type;
         contexts = new HashSet<>();
@@ -23,11 +23,11 @@ public class SentimentTarget {
      * @return sentiment
      */
     public int getSentiment() {
-        double sum = 0;
-
-        for (SentimentContext context : contexts) {
-            sum += (double) context.getSentiment();
-        }
+        double sum = 2;
+//
+//        for (SentimentTargetMention context : contexts) {
+//            sum += (double) context.getSentiment();
+//        }
 
         return (int) Math.round(sum/contexts.size());
     }
@@ -41,24 +41,23 @@ public class SentimentTarget {
     }
 
     /**
-     * Add another context to this sentiment target.
-     * @param context
+     *
+     * @return type (NER tag) of sentiment target
      */
-    public void addContext(SentimentContext context) {
-        contexts.add(context);
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Add another mention to this sentiment target.
+     * @param mention
+     */
+    public void addMention(SentimentTargetMention mention) {
+        contexts.add(mention);
     }
 
     @Override
     public String toString() {
-        return name + ": " + getSentiment();
-    }
-
-    /**
-     * Corresponding to entity types created by CoreNLP NER annotator.
-     */
-    public enum Type {
-        PERSON,
-        ORGANIZATION,
-        LOCATION
+        return name + ":" + getSentiment() + ":" + contexts;
     }
 }
