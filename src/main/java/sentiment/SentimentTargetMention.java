@@ -6,31 +6,41 @@ package sentiment;
  */
 public class SentimentTargetMention {
     private String name;
-    private int index;  // sentence index in list of sentences
+    private String tag;
+    private int sentenceIndex;  // index in list of sentences
 
-    public SentimentTargetMention(String name, int index) {
+    public SentimentTargetMention(String name, String tag, int index) {
         this.name = name;
-        this.index = index;
+        this.tag = tag;
+        this.sentenceIndex = index;
     }
 
     /**
-     *
-     * @return the name, e.g. pronoun, of the entity
+     * Get the name of the mention.
+     * @return name
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Get the index of the sentence in the list of sentences.
-     * @return sentence index
+     * Get the NER tag of the mention.
+     * @return tag
      */
-    public int getIndex() {
-        return index;
+    public String getTag() {
+        return tag;
+    }
+
+    /**
+     * Get the sentence index of the mention in the list of sentences.
+     * @return sentenceIndex
+     */
+    public int getSentenceIndex() {
+        return sentenceIndex;
     }
 
     @Override
     public String toString() {
-        return name + ":" + index;
+        return name + ":" + tag + ":" + sentenceIndex;
     }
 }
