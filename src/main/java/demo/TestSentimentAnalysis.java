@@ -58,6 +58,8 @@ public class TestSentimentAnalysis {
         // initiate pipeline with properties (i.e. what stages)
         Properties props = new Properties();
         props.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, sentiment"); // required for use fo "ner" and "sentiment"
+        props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");
+
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
         // annotate a piece of text
@@ -69,20 +71,20 @@ public class TestSentimentAnalysis {
 
         // handle each sentence
         for(CoreMap sentence: sentences) {
-            // what kind of annotations are available
-            System.out.println(sentence.keySet());
-
-            // TokensAnnotation are available for example
-            List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
-            for (CoreLabel token : tokens) {
-                System.out.println(token + ", " + token.ner());  // actually includes NER in this case!! (days = DURATION)
-            }
+//            // what kind of annotations are available
+//            System.out.println(sentence.keySet());
+//
+//            // TokensAnnotation are available for example
+//            List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
+//            for (CoreLabel token : tokens) {
+//                System.out.println(token + ", " + token.ner());  // actually includes NER in this case!! (days = DURATION)
+//            }
 
             // seems like it's only necessary to parse tree if there is a conflict of entities (i.e. two or more entities in a sentence)
 
-//            Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
-//            System.out.println("the overall sentiment rating is " + sentence.get(SentimentCoreAnnotations.SentimentClass.class));
-//            parse(tree, 0);
+            Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
+            System.out.println("the overall sentiment rating is " + sentence.get(SentimentCoreAnnotations.SentimentClass.class));
+            parse(tree, 0);
         }
 
     }
