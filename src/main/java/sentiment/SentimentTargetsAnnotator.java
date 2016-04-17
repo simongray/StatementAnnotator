@@ -4,7 +4,6 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
-import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 
 import java.util.*;
@@ -88,46 +87,6 @@ public class SentimentTargetsAnnotator implements Annotator {
     @Override
     public void annotate(Annotation annotation) {
         sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-
-        // locate candidate named entities in text (e.g. a comment)
-        Set<SentimentTarget> rawTargets = getRawTargets();
-
-        // (requires NER with anaphora resolution)
-
-
-        // determine interestingness of entities and purge uninteresting ones
-        // (perhaps simply reducing to PERSON and ORGANIZATION classes?)
-
-        // determine entities position in sentiment tree
-        // (only relevant in case there are multiple entities in the text)
-
-        // find conflicts between entities by moving up tree to see where each entity meets
-        // use heuristic(s) to select dominant entity
-        // will need to look at different trees to determine best splitting heuristic
-        // (or implement something like the method in "Entity-Specific Sentiment Classification of Yahoo News Comments")
-
-        annotation.set(SENTIMENT_TARGET_ANNOTATION_CLASS, rawTargets);  // TODO: set to final targets var
-
-        // using sentence annotation, perhaps another annotation type is better suited (there are A LOT)
-//        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-//
-//        // handle each sentence
-//        for(CoreMap sentence: sentences) {
-//            // what kind of annotations are available
-//            System.out.println(sentence.keySet());
-//
-//            // TokensAnnotation are available for example
-//            List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
-//            for (CoreLabel token : tokens) {
-//                System.out.println(token + ", " + token.ner());  // actually includes NER in this case!! (days = DURATION)
-//            }
-//
-//            // seems like it's only necessary to parse tree if there is a conflict of entities (i.e. two or more entities in a sentence)
-//
-//            Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
-//            System.out.println("the overall sentiment rating is " + sentence.get(SentimentCoreAnnotations.SentimentClass.class));
-//            parse(tree, 0);
-//        }
     }
 
     @Override
@@ -150,173 +109,92 @@ public class SentimentTargetsAnnotator implements Annotator {
      * The CoreNLP NER tagger finds relevant entities.
      * @return a map of entities and mention indexes
      */
-    private Set<SentimentTarget> getRawTargets() {
-        Set<SentimentTarget> targets = new HashSet<>();
+    private List<SentimentTargetMention> getInitalMentions() {
+        List<SentimentTargetMention> mentions = new ArrayList<>();
 
         for (int i = 0; i < sentences.size(); i++) {
             List<CoreLabel> tokens = sentences.get(i).get(CoreAnnotations.TokensAnnotation.class);
-            String previousNerTag = "";  // keep track of previous tag for multi-word entities
-            String fullEntityName = "";
+            String previousTag = "";  // keep track of previous tag for multi-word entities
+            String fullName = "";
 
-            // retrieve all entities in sentence
+            // retrieve all entities in sentence, keeping track of multi-word entities
             for (CoreLabel token : tokens) {
-                String nerTag = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
-                String entityName = token.get(CoreAnnotations.TextAnnotation.class);
+                String tag = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
+                String name = token.get(CoreAnnotations.TextAnnotation.class);
 
-                // keeping track of multi-word entities as well
                 // only allow specific tags (e.g. not DURATION or MISC)
-                if (nerTag.length() > 1 && nerTag.equals("PERSON") || nerTag.equals("ORGANIZATION") || nerTag.equals("LOCATION")) {
-                    if (nerTag.equals(previousNerTag)) {
-                        fullEntityName += " " + entityName;
+                if (tag.length() > 1 && tag.equals("PERSON") || tag.equals("ORGANIZATION") || tag.equals("LOCATION")) {
+                    if (tag.equals(previousTag)) {
+                        fullName += " " + name;
                     } else {
-                        fullEntityName = entityName;
+                        fullName = name;
                     }
-                    previousNerTag = nerTag;
+                    previousTag = tag;
                 } else {
-                    // update mentions in target when new entity has been found
-                    if (fullEntityName.length() > 0) {
-                        SentimentTarget target = null;
-
-                        for (SentimentTarget existingTarget : targets) {
-                            if (existingTarget.getName().equals(fullEntityName)) {
-                                target = existingTarget;
-                                break;
-                            }
-                        }
-
-                        // create new target if no existing target was found
-                        if (target == null) {
-                            target = new SentimentTarget(fullEntityName, previousNerTag);
-                            targets.add(target);
-                        }
-
+                    if (fullName.length() > 0) {
                         // TODO: figure out whether it makes sense to also have token index in mention
-                        target.addMention(new SentimentTargetMention(fullEntityName, i));
+                        mentions.add(new SentimentTargetMention(fullName, tag, i));
                     }
 
                     // make sure to reset for next token
-                    previousNerTag = "";
-                    fullEntityName = "";
+                    previousTag = "";
+                    fullName = "";
                 }
             }
         }
 
-        return targets;
+        return mentions;
     }
 
     /**
      * Algorithm to merge entities if the names are found to be shorter versions of the full name.
-     * @param targets
+     * @param mentions
      * @return
      */
-    Set<SentimentTarget> mergePersons(Set<SentimentTarget> targets) {
-        Map<String, String> prefixes = new HashMap<>();
-        Map<String, String> postfixes = new HashMap<>();
+    List<SentimentTarget> mergeEntities(List<SentimentTargetMention> mentions) {
+        Map<String, List<String>> nameMappings = new HashMap<>();
 
-        // find short names
-        for (SentimentTarget target : targets) {
-            if (target.getType() == "PERSON") {
-                String candidateShortName = target.getName();
-                for (SentimentTarget otherTarget : targets) {
-                    if (otherTarget.getName() == "PERSON" && !otherTarget.equals(candidateShortName)) {
-                        String candidateFullName = otherTarget.getName();
+        // create map of short names to long names
+        for (SentimentTargetMention mention : mentions) {
+            for (SentimentTargetMention otherMention : mentions) {
+                if (!mention.equals(otherMention)) {
+                    String name = mention.getName();  // candidate short name
+                    String otherName = otherMention.getName();  // candidate long name
 
-                        if (candidateFullName.startsWith(candidateShortName)) {
-                            if (prefixes.containsKey(candidateShortName)) {
-                                prefixes.put(candidateShortName, null); // signals conflict
-                            } else {
-                                prefixes.put(candidateShortName, candidateFullName);
-                            }
-                        } else if (candidateFullName.endsWith(candidateShortName)) {
-                            if (postfixes.containsKey(candidateShortName)) {
-                                postfixes.put(candidateShortName, null);  // signals conflict
-                            } else {
-                                postfixes.put(candidateShortName, candidateFullName);
-                            }
-                        }
+                    if (otherName.startsWith(name) || otherName.endsWith(name)) {
+                        List<String> names = nameMappings.getOrDefault(name, new ArrayList<>());
+                        names.add(otherName);
+                        nameMappings.put(name, names);
                     }
                 }
             }
         }
 
-        // cannot be both pre- and postfix
-        for (String prefix : prefixes.keySet()) {
-            if (postfixes.containsKey(prefix)) {
-                prefixes.remove(prefix);
-                postfixes.remove(prefix);
+        // purge double references and remove conflicts
+        for (String shortName : nameMappings.keySet()) {
+            List<String> longNames = nameMappings.get(shortName);
+
+            if (longNames.size() > 1) {
+                String survivingName = "";
+
+                for (String longName : longNames) {
+                    if (nameMappings.containsKey(longName)) {
+                        nameMappings.put(longName, new ArrayList<>());  // purge double reference
+                    } else if (survivingName.isEmpty()) {
+                        survivingName = longName;
+                    } else {
+                        nameMappings.put(shortName, new ArrayList<>());  // remove conflict
+                        break;
+                    }
+                }
             }
         }
 
-        // reverse the mappings to get (full name, short names) pairs
-        Map<String, Set<String>> mergeMap = new HashMap<>();
-
-        for (String prefix : prefixes.keySet()) {
-            String fullName = prefixes.get(prefix);
-
-            if (mergeMap.containsKey(fullName)) {
-                mergeMap.get(fullName).add(prefix);
-            } else {
-                Set<String> shortNames = new HashSet<>();
-                shortNames.add(prefix);
-                mergeMap.put(fullName, shortNames);
-            }
+        // populate list of sentiment targets
+        for (SentimentTargetMention mention : mentions) {
+//            if (nameMappings.get()) // TODO: finish this
         }
-
-        for (String postfix : prefixes.keySet()) {
-            String fullName = prefixes.get(postfix);
-
-            if (mergeMap.containsKey(fullName)) {
-                mergeMap.get(fullName).add(postfix);
-            } else {
-                Set<String> shortNames = new HashSet<>();
-                shortNames.add(postfix);
-                mergeMap.put(fullName, shortNames);
-            }
-        }
-
-        Set<SentimentTarget> newTargets = new HashSet<>();
-
-        for (SentimentTarget target : targets) {
-            if ()
-        }
-
 
         return null;
-    }
-
-//    /**
-//     * Utility function using some heuristics to reduce the number of targets (short names combined with long names).
-//     * @param rawTargets the raw targets produced by getRawTargets(...)
-//     * @return reduced targets
-//     */
-//    private Map<String, SentimentTarget> getReducedTargets(Map<String, SentimentTarget> rawTargets) {
-//        List<SentimentTarget> names = rawTargets.
-//
-//
-//    }
-
-    // recursively display scores in tree
-    public static void parse(Tree tree, int n) {
-        // RNNCoreAnnotations.getPredictedClass(tree) returns the sentiment analysis score from 0 to 4 (with -1 for n/a)
-        System.out.println(new String(new char[n]).replace("\0", " ")
-                + tree.value()
-        );
-
-        for (CoreLabel label : tree.taggedLabeledYield()) {
-            System.out.println("-----");
-            System.out.print("toString= " + label);
-            System.out.println();
-        }
-
-        // scores (not confirmed, but 99% sure)
-        // very negative: 0
-        // negative: 1
-        // neutral: 2
-        // positive: 3
-        // very positive: 4
-
-        for (Tree child : tree.children()) {
-            parse(child, n+1);
-        }
     }
 }
