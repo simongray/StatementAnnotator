@@ -37,6 +37,10 @@ public class CorefExample {
 //        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,mention,coref");
         props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,mention,dcoref");  // using dcoref instead of coref
 
+        // use SR parser since it's much fast (although it doesn't work with mentions, throws exception)
+        props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");
+
+
         // limit coref distance for better runtime performance
         props.setProperty("dcoref.maxdist", "2");
 
