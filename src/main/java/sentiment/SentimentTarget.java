@@ -1,63 +1,46 @@
 package sentiment;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
- * A SentimentTarget is a reference to a named entity, as well as the contexts (i.e. sentences) in which it appears in.
- * The overall sentiment of a SentimentTarget is based on the sentiment of each context.
+ * A SentimentTarget is a reference to a context (i.e. a sentence) which contains a mention to a named entity.
+ * The mention can be both direct and using pronouns (he, she, it, they, etc).
  */
 public class SentimentTarget {
     private String name;
-    private String type;
-    private Set<SentimentTargetMention> contexts;
+    private String tag;
+    private int sentenceIndex;  // index in list of sentences
 
-    public SentimentTarget(String name, String type) {
+    public SentimentTarget(String name, String tag, int index) {
         this.name = name;
-        this.type = type;
-        contexts = new HashSet<>();
+        this.tag = tag;
+        this.sentenceIndex = index;
     }
 
     /**
-     * Get the sentiment across all contexts for this sentiment target.
-     * @return sentiment
-     */
-    public int getSentiment() {
-        double sum = 2;
-//
-//        for (SentimentTargetMention context : contexts) {
-//            sum += (double) context.getSentiment();
-//        }
-
-        return (int) Math.round(sum/contexts.size());
-    }
-
-    /**
-     *
-     * @return name of sentiment target
+     * Get the name of the mention.
+     * @return name
      */
     public String getName() {
         return name;
     }
 
     /**
-     *
-     * @return type (NER tag) of sentiment target
+     * Get the NER tag of the mention.
+     * @return tag
      */
-    public String getType() {
-        return type;
+    public String getTag() {
+        return tag;
     }
 
     /**
-     * Add another mention to this sentiment target.
-     * @param mention
+     * Get the sentence index of the mention in the list of sentences.
+     * @return sentenceIndex
      */
-    public void addMention(SentimentTargetMention mention) {
-        contexts.add(mention);
+    public int getSentenceIndex() {
+        return sentenceIndex;
     }
 
     @Override
     public String toString() {
-        return name + ":" + getSentiment() + ":" + contexts;
+        return name + ":" + tag + ":" + sentenceIndex;
     }
 }

@@ -82,11 +82,21 @@ import java.util.*;
 public class SentimentTargetsAnnotator implements Annotator {
     public final static String SENTIMENT_TARGETS = "sentimenttargets";
     public final static Class SENTIMENT_TARGET_ANNOTATION_CLASS = SentimentTargetsAnnotation.class;
-    private List<CoreMap> sentences;
 
     @Override
     public void annotate(Annotation annotation) {
-        sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+        List<SentimentTarget> mentions = getInitialEntities(annotation);
+
+        for (SentimentTarget mention : mentions) {
+            System.out.println(mention);
+        }
+
+        Map<String, List<SentimentTarget>> targets = mergeEntities(mentions);
+
+        System.out.println("final mapping:");
+        for (String key : targets.keySet()) {
+            System.out.println(key + " -----> " + targets.get(key));
+        }
     }
 
     @Override
@@ -106,11 +116,12 @@ public class SentimentTargetsAnnotator implements Annotator {
     }
 
     /**
-     * The CoreNLP NER tagger finds relevant entities.
-     * @return a map of entities and mention indexes
+     * Uses the CoreNLP NER tagger to find relevant entities.
+     * @return a list of entities
      */
-    private List<SentimentTargetMention> getInitalMentions() {
-        List<SentimentTargetMention> mentions = new ArrayList<>();
+    private List<SentimentTarget> getInitialEntities(Annotation annotation) {
+        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+        List<SentimentTarget> mentions = new ArrayList<>();
 
         for (int i = 0; i < sentences.size(); i++) {
             List<CoreLabel> tokens = sentences.get(i).get(CoreAnnotations.TokensAnnotation.class);
@@ -121,9 +132,10 @@ public class SentimentTargetsAnnotator implements Annotator {
             for (CoreLabel token : tokens) {
                 String tag = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
                 String name = token.get(CoreAnnotations.TextAnnotation.class);
+                System.out.println(tag + " " + name);
 
-                // only allow specific tags (e.g. not DURATION or MISC)
-                if (tag.length() > 1 && tag.equals("PERSON") || tag.equals("ORGANIZATION") || tag.equals("LOCATION")) {
+                // only allow specific tags (e.g. not DATE, DURATION, NUMBER)
+                if (tag.length() > 1 && tag.equals("PERSON") || tag.equals("ORGANIZATION") || tag.equals("LOCATION") || tag.equals("MISC")) {
                     if (tag.equals(previousTag)) {
                         fullName += " " + name;
                     } else {
@@ -133,7 +145,7 @@ public class SentimentTargetsAnnotator implements Annotator {
                 } else {
                     if (fullName.length() > 0) {
                         // TODO: figure out whether it makes sense to also have token index in mention
-                        mentions.add(new SentimentTargetMention(fullName, tag, i));
+                        mentions.add(new SentimentTarget(fullName, previousTag, i));
                     }
 
                     // make sure to reset for next token
@@ -146,55 +158,123 @@ public class SentimentTargetsAnnotator implements Annotator {
         return mentions;
     }
 
+
+
+    // TODO: revisit and revise this horribly inefficient and unreadable method
     /**
      * Algorithm to merge entities if the names are found to be shorter versions of the full name.
+     *
+     *  Pseudo-code:
+     *      Goal: full(est) names should contain references to short(er) names, shorter names eliminated
+     *      Result: List of SentimentTargets with name=fullname containing list of SentimentTargetMentions
+     *          * determine which names are full names and shorter versions of the full names
+     *              * a full name is a name that is NOT a short name
+     *              * a short name is a prefix or a suffix of EXACTLY one other name which is not ALSO a short name
+
      * @param mentions
      * @return
      */
-    List<SentimentTarget> mergeEntities(List<SentimentTargetMention> mentions) {
-        Map<String, List<String>> nameMappings = new HashMap<>();
+    Map<String, List<SentimentTarget>> mergeEntities(List<SentimentTarget> mentions) {
+        Map<String, Set<String>> shortToLong = new HashMap<>();
+
+        // reduce to unique set of names
+        Set<String> names = new HashSet<>();
+        for (SentimentTarget mention : mentions) {
+            names.add(mention.getName());
+        }
 
         // create map of short names to long names
-        for (SentimentTargetMention mention : mentions) {
-            for (SentimentTargetMention otherMention : mentions) {
-                if (!mention.equals(otherMention)) {
-                    String name = mention.getName();  // candidate short name
-                    String otherName = otherMention.getName();  // candidate long name
-
-                    if (otherName.startsWith(name) || otherName.endsWith(name)) {
-                        List<String> names = nameMappings.getOrDefault(name, new ArrayList<>());
-                        names.add(otherName);
-                        nameMappings.put(name, names);
-                    }
+        for (String name : names) {
+            for (String otherName : names) {
+                if (!name.equals(otherName) && (otherName.startsWith(name) || otherName.endsWith(name))) {
+                    Set<String> longNames = shortToLong.getOrDefault(name, new HashSet<>());
+                    longNames.add(otherName);
+                    shortToLong.put(name, longNames);
                 }
             }
         }
 
-        // purge double references and remove conflicts
-        for (String shortName : nameMappings.keySet()) {
-            List<String> longNames = nameMappings.get(shortName);
+        System.out.println();
+        System.out.println("after creating short to long mapping");
+
+        for (String name : shortToLong.keySet()) {
+            System.out.println(name + " -> " + shortToLong.get(name));
+        }
+
+        // if a long name also exists as a short name it should be purged
+        for (String shortName : shortToLong.keySet()) {
+            Set<String> longNames = shortToLong.get(shortName);
+            Set<String> purgedNames = new HashSet<>();
 
             if (longNames.size() > 1) {
-                String survivingName = "";
-
                 for (String longName : longNames) {
-                    if (nameMappings.containsKey(longName)) {
-                        nameMappings.put(longName, new ArrayList<>());  // purge double reference
-                    } else if (survivingName.isEmpty()) {
-                        survivingName = longName;
-                    } else {
-                        nameMappings.put(shortName, new ArrayList<>());  // remove conflict
-                        break;
+                    if (shortToLong.containsKey(longName)) {
+                        purgedNames.add(longName);
+                    }
+                }
+            }
+
+            longNames.removeAll(purgedNames);
+            shortToLong.put(shortName, longNames);
+        }
+
+        System.out.println();
+        System.out.println("after purging middle-form names");
+
+        for (String name : shortToLong.keySet()) {
+            System.out.println(name + " -> " + shortToLong.get(name));
+        }
+
+        // of the remaining short names, the ones with only a single long form are preserved
+        // the ones with multiple are conflicting, the ones with a null reference are middle-form
+        // if a name is a short name, then it needs to be a mention in its long-form sentiment target
+        Map<String, Set<String>> fullToShort = new HashMap<>();
+        for (String shortName : shortToLong.keySet()) {
+            Set<String> longNames = shortToLong.get(shortName);
+            if (longNames.size() == 1) {
+                // weird syntax since Set does not have a get(0)-method or similar
+                String longName = longNames.iterator().next();
+                Set<String> shortNames = fullToShort.getOrDefault(longName, new HashSet<>());
+                shortNames.add(shortName);
+                fullToShort.put(longName, shortNames);
+            }
+        }
+
+        System.out.println();
+        System.out.println("reverse mapping with full names to short names");
+        for (String name : fullToShort.keySet()) {
+            System.out.println(name + " -> " + fullToShort.get(name));
+        }
+
+        System.out.println();
+        System.out.println("as map of SentimentTargets");
+        Map<String, List<SentimentTarget>> mergedEntities = new HashMap<>();
+        for (String name : fullToShort.keySet()) {
+            mergedEntities.put(name, new ArrayList<>());
+        }
+
+        // creating the final mapping of String --> list of sentiment targets
+        for (SentimentTarget mention : mentions) {
+            String entityName = mention.getName();
+
+            if (mergedEntities.containsKey(entityName)) {
+                List<SentimentTarget> contexts = mergedEntities.get(entityName);
+                contexts.add(mention);
+                mergedEntities.put(entityName, contexts);
+            } else {
+                for (String fullName : fullToShort.keySet()) {
+                    Set<String> shortNames = fullToShort.get(fullName);
+                    if (shortNames.contains(entityName)) {
+                        List<SentimentTarget> contexts = mergedEntities.get(fullName);
+                        contexts.add(mention);
+                        mergedEntities.put(entityName, contexts);
                     }
                 }
             }
         }
 
-        // populate list of sentiment targets
-        for (SentimentTargetMention mention : mentions) {
-//            if (nameMappings.get()) // TODO: finish this
-        }
+        // todo: replace print with log
 
-        return null;
+        return mergedEntities;
     }
 }
