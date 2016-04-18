@@ -249,28 +249,33 @@ public class SentimentTargetsAnnotator implements Annotator {
         System.out.println();
         System.out.println("as map of SentimentTargets");
         Map<String, List<SentimentTarget>> mergedEntities = new HashMap<>();
-        for (String name : fullToShort.keySet()) {
-            mergedEntities.put(name, new ArrayList<>());
-        }
 
         // creating the final mapping of String --> list of sentiment targets
         for (SentimentTarget mention : mentions) {
             String entityName = mention.getName();
+            String targetName = "";
 
+            // if mention is either a full name or a short name
             if (mergedEntities.containsKey(entityName)) {
-                List<SentimentTarget> contexts = mergedEntities.get(entityName);
-                contexts.add(mention);
-                mergedEntities.put(entityName, contexts);
+                targetName = entityName;
             } else {
                 for (String fullName : fullToShort.keySet()) {
                     Set<String> shortNames = fullToShort.get(fullName);
                     if (shortNames.contains(entityName)) {
-                        List<SentimentTarget> contexts = mergedEntities.get(fullName);
-                        contexts.add(mention);
-                        mergedEntities.put(entityName, contexts);
+                       targetName = fullName;
+                        break;
                     }
                 }
             }
+
+            // mention is neither a full name or a short name (most targets will be like this)
+            if (targetName.isEmpty()) {
+                targetName = entityName;
+            }
+
+            List<SentimentTarget> contexts = mergedEntities.getOrDefault(targetName, new ArrayList<>());
+            contexts.add(mention);
+            mergedEntities.put(targetName, contexts);
         }
 
         // todo: replace print with log
