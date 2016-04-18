@@ -15,22 +15,13 @@ import java.util.Set;
 
 public class TestSentimentTargets {
     public static void main(String[] args) {
-        // initiate pipeline with properties (i.e. what stages)
+        // setting up the pipeline
         Properties props = new Properties();
-
-        // using the custom SentimentTargetsAnnotator
-        props.put("customAnnotatorClass.sentimenttargets", "sentiment.SentimentTargetsAnnotator");
-
-        // final pipeline
-//        props.put("annotators", "tokenize, ssplit, pos, lemma, ner, depparse, parse, sentiment, sentimenttargets");
-        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,sentiment");  // using dcoref instead of coref
-//        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse");  // using dcoref instead of coref
-
+        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, sentiment, sentimenttargets");
+        props.setProperty("customAnnotatorClass.sentimenttargets", "sentiment.SentimentTargetsAnnotator");
+        props.put("ner.model", "edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz");
         props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");
 //        props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
-
-        // limit coref distance for better runtime performance
-        props.setProperty("dcoref.maxdist", "0");
 
         DemoTimer.start("pipeline launch");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
