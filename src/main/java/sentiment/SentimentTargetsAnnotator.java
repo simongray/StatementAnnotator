@@ -54,11 +54,33 @@ public class SentimentTargetsAnnotator implements Annotator {
         List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
         List<SentimentTarget> mentions = new ArrayList<>();
 
+        // for anaphora resolution
+        Map<String, List<SentimentTarget>> anaphoras = new HashMap<>();  // TODO: figure out if this should be called anaphoras
+        Set<String> foundKeywords = new HashSet<>();
+        Set<String> trackedKeywords = new HashSet<>();
+        trackedKeywords.add("he");
+        trackedKeywords.add("him");
+        trackedKeywords.add("his");
+        trackedKeywords.add("she");
+        trackedKeywords.add("her");
+        trackedKeywords.add("hers");
+        trackedKeywords.add("they");
+        trackedKeywords.add("them");
+        trackedKeywords.add("their");
+        trackedKeywords.add("theirs");
+        String lastMale = "";
+        String lastFemale = "";
+        String lastPerson = "";
+        String lastOrganization = "";
+        String lastLocation = "";
+        boolean foundEntity;
+
         for (int i = 0; i < sentences.size(); i++) {
             List<CoreLabel> tokens = sentences.get(i).get(CoreAnnotations.TokensAnnotation.class);
             String previousTag = "";  // keep track of previous tag for multi-word entities
             String fullName = "";
             String gender = "";
+            foundEntity = false;
 
             // retrieve all entities in sentence
             for (CoreLabel token : tokens) {
@@ -84,15 +106,43 @@ public class SentimentTargetsAnnotator implements Annotator {
                     previousTag = nerTag;
                 } else {
                     if (!fullName.isEmpty()) {
-                        // TODO: figure out whether it makes sense to also have token index in mention
                         mentions.add(new SentimentTarget(fullName, previousTag, gender, i));
+                        foundEntity = true;
                         System.out.println(fullName + ": " + gender);
+                        // TODO: figure out whether it makes sense to also have token index in mention
+
+                        if (previousTag.equals("PERSON")) {
+                            if (gender != null && gender.equals("MALE")) {
+                                lastMale = fullName;
+                            } else if (gender != null && gender.equals("FEMALE")) {
+                                lastFemale = fullName;
+                            } else {
+                                lastPerson = fullName;
+                            }
+                        } else if (previousTag.equals("ORGANIZATION")) {
+                            lastOrganization = fullName;
+                        } else if (previousTag.equals("LOCATION")) {
+                            lastLocation = fullName;
+                        }
+                    }
+
+                    // track keywords for anaphora resolution
+                    if (!foundEntity) {
+                        if (trackedKeywords.contains(name.toLowerCase())) {
+                            foundKeywords.add(name);  // TODO: apparently not working, figure out why
+                        }
                     }
 
                     // make sure to reset for next token
                     previousTag = "";
                     fullName = "";
                 }
+            }
+
+            if (!foundEntity) {
+                System.out.println("!!!!NO ENTITY FOUND!!!! Assigning to previous entity...");
+                System.out.println(lastMale + ", " + lastFemale + ", " + lastPerson + ", " + lastOrganization + ", " + lastLocation);
+                // TODO: perform anaphora resolution
             }
         }
 

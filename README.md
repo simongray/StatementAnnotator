@@ -63,9 +63,9 @@ neighbouring sentence.
 
 These are the words used to match:
 
-* PERSON/MALE: he, him, (they, their)
-* PERSON/FEMALE: she, her, (they, their)
-* ORGANIZATION, LOCATION: they, their, them
+* PERSON/MALE: he, him, his, (they, their)
+* PERSON/FEMALE: she, her, hers (they, their)
+* ORGANIZATION, LOCATION: they, their, theirs, them
 * MISC: no matching
 
 The basic algorithm keeps track of the last mentioned of each type
