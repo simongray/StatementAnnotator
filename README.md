@@ -68,6 +68,11 @@ These are the words used to match:
 * ORGANIZATION, LOCATION: they, their, them
 * MISC: no matching
 
+The basic algorithm keeps track of the last mentioned of each type
+of entity and assigns them to a map of
+entity name -> list of references.
+These references are then later merged into the final target map.
+
 ```
     3. Local Context Extraction: If entities occur in
     clauses that are connected with “but” (in the
