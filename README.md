@@ -52,8 +52,8 @@ It is possible that coref would be fast enough,
 but I don't enough RAM on my machine to run that annotator,
 so I prefer just implementing the algorithm from the paper.
 
-My implementation differs in a significant way by also merging
-entities with shorter versions of themselves,
+My implementation differs in slightly by also merging entities
+with shorter versions of themselves,
 e.g. Clinton is merged with Bill Clinton,
 in cases where there is little doubt
 (i.e. no conflicting references to other entities).
@@ -108,4 +108,24 @@ MISC: no matching
     as neutral.
 ```
 
-TODO
+This is where my implementation differs in a major way.
+The approach taken here is rule-based, using a few grammatical
+heuristics to split shared contexts.
+They use a lexical sentiment analysis system (SentiStrength)
+to produce a sentiment of either positive, neutral, or negative.
+
+In contrast, I use the CoreNLP sentiment analysis,
+based on the Socher et al (2013) paper,
+which produces 5-grade sentiment scores on each section
+in the grammatical parse tree.
+What this essentially means, is that each grammatical sub-context
+already has a sentiment score and rather than using heuristics,
+the implicit grammatical rules of the parse tree
+allows for spits at the precise point of contention
+between two different entities.
+
+For single-entity sentences the point of contention doesn't exist,
+which means that the score from the top of the tree is used,
+i.e. the score of the entire sentence.
+For multi-entity sentences, the score at the highest point
+that is not shared by another entity is used.
