@@ -49,7 +49,7 @@ data in CoreNLP.
 At first I wanted to use the Anaphore/coreference resolution
 that is included with CoreNLP, but it is simply too slow (dcoref).
 It is possible that coref would be fast enough,
-but I don't enough RAM on my machine to run that annotator,
+but I don't have enough RAM on my machine to run that annotator,
 so I prefer to just implement the algorithm from the paper.
 
 My implementation differs  slightly by also merging entities
