@@ -16,7 +16,7 @@ public class TestSentimentTargets {
     public static void main(String[] args) {
         // setting up the pipeline
         Properties props = new Properties();
-        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, gender, sentiment, sentimenttargets");
+        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, gender, ner, parse, sentiment, sentimenttargets");
         props.setProperty("customAnnotatorClass.sentimenttargets", "sentiment.SentimentTargetsAnnotator");
         props.put("ner.model", "edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz");
         props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");

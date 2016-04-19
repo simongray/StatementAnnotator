@@ -1,17 +1,19 @@
 package sentiment;
 
 /**
- * A SentimentTarget is a reference to a context (i.e. a sentence) which contains a mention to a named entity.
+ * A SentimentTarget is a mention of an entity in a context (i.e. a sentence) taken from a larger piece of text.
  * The mention can be both direct and using pronouns (he, she, it, they, etc).
  */
 public class SentimentTarget {
     private String name;
     private String tag;
-    private int sentenceIndex;  // index in list of sentences
+    private String gender;  // obviously only applicable to persons
+    private int sentenceIndex;  // ... in the list of sentences for the comment
 
-    public SentimentTarget(String name, String tag, int index) {
+    public SentimentTarget(String name, String tag, String gender, int index) {
         this.name = name;
         this.tag = tag;
+        this.gender = gender;
         this.sentenceIndex = index;
     }
 
@@ -32,6 +34,14 @@ public class SentimentTarget {
     }
 
     /**
+     * Get the gender of the mention.
+     * @return tag
+     */
+    public String getGender() {
+        return gender;
+    }
+
+    /**
      * Get the sentence index of the mention in the list of sentences.
      * @return sentenceIndex
      */
@@ -41,6 +51,6 @@ public class SentimentTarget {
 
     @Override
     public String toString() {
-        return name + ":" + tag + ":" + sentenceIndex;
+        return name + ":" + tag + ":" + gender + ":" + sentenceIndex;
     }
 }
