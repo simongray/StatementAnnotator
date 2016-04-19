@@ -69,8 +69,11 @@ These are the words used to match:
 * MISC: no matching
 
 The basic algorithm keeps track of the last mentioned of each type
-of entity and assigns them to a map of
-entity name -> list of references.
+of entity.
+It also builds a list of the tracked keywords for each sentence.
+At the end of processing a sentence, if no entity was found,
+it will assign the tracked keywords to the last relevant entity.
+This produces a map of entity name -> list of references.
 These references are then later merged into the final target map.
 
 ```
