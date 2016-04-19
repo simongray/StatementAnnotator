@@ -50,24 +50,23 @@ At first I wanted to use the Anaphore/coreference resolution
 that is included with CoreNLP, but it is simply too slow (dcoref).
 It is possible that coref would be fast enough,
 but I don't enough RAM on my machine to run that annotator,
-so I prefer just implementing the algorithm from the paper.
+so I prefer to just implement the algorithm from the paper.
 
-My implementation differs in slightly by also merging entities
+My implementation differs  slightly by also merging entities
 with shorter versions of themselves,
 e.g. Clinton is merged with Bill Clinton,
 in cases where there is little doubt
 (i.e. no conflicting references to other entities).
-
-I also use the gender annotator from CoreNLP to limit the mentions,
+I also use the gender annotator from CoreNLP for more precision,
 so that Bill Clinton will never match up with "she" in the
 neighbouring sentence.
 
 These are the words used to match:
 
-PERSON/MALE: he, him, (they, their)
-PERSON/FEMALE: she, her, (they, their)
-ORGANIZATION, LOCATION: they, their, them
-MISC: no matching
+* PERSON/MALE: he, him, (they, their)
+* PERSON/FEMALE: she, her, (they, their)
+* ORGANIZATION, LOCATION: they, their, them
+* MISC: no matching
 
 ```
     3. Local Context Extraction: If entities occur in
@@ -119,9 +118,10 @@ based on the Socher et al (2013) paper,
 which produces 5-grade sentiment scores on each section
 in the grammatical parse tree.
 What this essentially means, is that each grammatical sub-context
-already has a sentiment score and rather than using heuristics,
+already has a sentiment score.
+Rather than using rule-based heuristics,
 the implicit grammatical rules of the parse tree
-allows for spits at the precise point of contention
+allows for splits at the precise point of contention
 between two different entities.
 
 For single-entity sentences the point of contention doesn't exist,
