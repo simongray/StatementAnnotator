@@ -14,6 +14,34 @@ public class SentimentTargetsAnnotator implements Annotator {
     public final static String SENTIMENT_TARGETS = "sentimenttargets";
     public final static Class SENTIMENT_TARGET_ANNOTATION_CLASS = SentimentTargetsAnnotation.class;
 
+    // anaphora resolution
+    public Set<String> trackedKeywords = new HashSet<>();
+    public Set<String> trackedMaleKeywords = new HashSet<>();
+    public Set<String> trackedFemaleKeywords = new HashSet<>();
+    public Set<String> trackedPluralKeywords = new HashSet<>();
+    {
+        trackedMaleKeywords.add("he");
+        trackedMaleKeywords.add("him");
+        trackedMaleKeywords.add("his");
+        trackedFemaleKeywords.add("she");
+        trackedFemaleKeywords.add("her");
+        trackedFemaleKeywords.add("hers");
+        trackedPluralKeywords.add("they");
+        trackedPluralKeywords.add("them");
+        trackedPluralKeywords.add("their");
+        trackedPluralKeywords.add("theirs");
+        trackedKeywords.addAll(trackedMaleKeywords);
+        trackedKeywords.addAll(trackedFemaleKeywords);
+        trackedKeywords.addAll(trackedPluralKeywords);
+    }
+
+    private enum AnaphoraTypes {
+        MALE,
+        FEMALE,
+        PLURAL
+    }
+
+
     @Override
     public void annotate(Annotation annotation) {
         List<SentimentTarget> mentions = getInitialEntities(annotation);
@@ -48,34 +76,19 @@ public class SentimentTargetsAnnotator implements Annotator {
      */
     private List<SentimentTarget> getInitialEntities(Annotation annotation) {
         List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-        List<SentimentTarget> mentions = new ArrayList<>();
+        List<SentimentTarget> allMentions = new ArrayList<>();
+        List<SentimentTarget> previousSentenceMentions = new ArrayList<>();
 
         // for anaphora resolution
         Map<String, List<SentimentTarget>> anaphoras = new HashMap<>();  // TODO: figure out if this should be called anaphoras
         Set<String> foundKeywords = new HashSet<>();
-        Set<String> trackedKeywords = new HashSet<>();
-        trackedKeywords.add("he");
-        trackedKeywords.add("him");
-        trackedKeywords.add("his");
-        trackedKeywords.add("she");
-        trackedKeywords.add("her");
-        trackedKeywords.add("hers");
-        trackedKeywords.add("they");
-        trackedKeywords.add("them");
-        trackedKeywords.add("their");
-        trackedKeywords.add("theirs");
-        String lastMale = "";
-        String lastFemale = "";
-        String lastPerson = "";
-        String lastOrganization = "";
-        String lastLocation = "";
 
         for (int i = 0; i < sentences.size(); i++) {
             List<CoreLabel> tokens = sentences.get(i).get(CoreAnnotations.TokensAnnotation.class);
             String previousTag = "";  // keep track of previous tag for multi-word entities
             String fullName = "";
             String gender = "";
-            boolean foundNamedEntity = false;
+            List<SentimentTarget> sentenceMentions = new ArrayList<>();
 
             // retrieve all entities in sentence
             for (CoreLabel token : tokens) {
@@ -100,32 +113,17 @@ public class SentimentTargetsAnnotator implements Annotator {
                     previousTag = nerTag;
                 } else {
                     if (!fullName.isEmpty()) {
-                        mentions.add(new SentimentTarget(fullName, previousTag, gender, i));
-                        foundNamedEntity = true;
+                        SentimentTarget mention = new SentimentTarget(fullName, previousTag, gender, i);
+                        allMentions.add(mention);
+                        sentenceMentions.add(mention);
                         System.out.println("ENTITY: " + fullName + ", " + gender + ", " + i);
                         // TODO: figure out whether it makes sense to also have token index in mention
-
-                        if (previousTag.equals("PERSON")) {
-                            if (gender != null && gender.equals("MALE")) {
-                                lastMale = fullName;
-                            } else if (gender != null && gender.equals("FEMALE")) {
-                                lastFemale = fullName;
-                            } else {
-                                lastPerson = fullName;
-                            }
-                        } else if (previousTag.equals("ORGANIZATION")) {
-                            lastOrganization = fullName;
-                        } else if (previousTag.equals("LOCATION")) {
-                            lastLocation = fullName;
-                        }
                     }
 
                     // track keywords for anaphora resolution
-                    if (!foundNamedEntity) {
-                        if (trackedKeywords.contains(name.toLowerCase())) {
-                            foundKeywords.add(name);  // TODO: apparently not working, figure out why
-                            System.out.println("KEYWORD: " + name + "," + i + ", ");
-                        }
+                    if (sentenceMentions.isEmpty() && trackedKeywords.contains(name.toLowerCase())) {
+                        foundKeywords.add(name.toLowerCase());
+                        System.out.println("KEYWORD: " + name + ", " + i);
                     }
 
                     // make sure to reset for next token
@@ -134,14 +132,184 @@ public class SentimentTargetsAnnotator implements Annotator {
                 }
             }
 
-            if (!foundNamedEntity) {
-                System.out.println("!!!!NO ENTITY FOUND IN SENTENCE!!!! Assigning to previous entity...");
-                System.out.println(lastMale + ", " + lastFemale + ", " + lastPerson + ", " + lastOrganization + ", " + lastLocation);
-                // TODO: perform anaphora resolution
+            // TODO: perform anaphora resolution
+            if (sentenceMentions.isEmpty() && !foundKeywords.isEmpty()) {
+                System.out.println("!!!!NO ENTITY FOUND IN SENTENCE!!!! Assigning to previous entity: " + previousSentenceMentions);
+                System.out.println("found anaphor: " + anaphoraResolution(foundKeywords, previousSentenceMentions));
+            }
+
+            previousSentenceMentions = sentenceMentions;
+        }
+
+        return allMentions;
+    }
+
+    /**
+     * Perform basic anaphora resolution for a sentence.
+     * @param keywords
+     * @param mentions
+     * @return
+     */
+    private SentimentTarget anaphoraResolution(Set<String> keywords, List<SentimentTarget> mentions) {
+        Set<AnaphoraTypes> possibleMatches = getPossibleMatches(keywords);
+
+        // determine whether to perform single or multiple resolution
+        if (mentions.size() == 1) {
+            return singleMentionAnaphoraResolution(possibleMatches, mentions.get(0));
+        } else if (possibleMatches.size() == 1) {
+            AnaphoraTypes type = possibleMatches.iterator().next();  // shitty Java syntax
+            return singleTypeAnaphoraResolution(type, mentions);
+        } else {
+            System.out.println("multiple resolution not implemented yet...");
+            return null;  // TODO: implement this
+        }
+    }
+
+    /**
+     * Perform anaphora resolution with a single known entity.
+     * @param types
+     * @param mention
+     * @return
+     */
+    private SentimentTarget singleMentionAnaphoraResolution(Set<AnaphoraTypes> types, SentimentTarget mention) {
+        if (mention.isPerson()) {
+            if (mention.hasGender()) {
+                if (mention.isMale() && types.contains(AnaphoraTypes.MALE)) {
+                    return mention;
+                } else if (mention.isFemale() && types.contains(AnaphoraTypes.FEMALE)) {
+                    return mention;
+                }
+            } else if (types.contains(AnaphoraTypes.MALE) || types.contains(AnaphoraTypes.FEMALE)) {
+                return mention;
             }
         }
 
-        return mentions;
+        if (mention.isOrganization() && types.contains(AnaphoraTypes.PLURAL)) {
+            return mention;
+        }
+
+        if (mention.isLocation() && types.contains(AnaphoraTypes.PLURAL)) {
+            return mention;
+        }
+
+        return null;
+    }
+
+    /**
+     * Perform anaphora resolution for a single known type (MALE, FEMALE, or PLURAL).
+     * @param type
+     * @param mentions
+     * @return
+     */
+    private SentimentTarget singleTypeAnaphoraResolution(AnaphoraTypes type, List<SentimentTarget> mentions) {
+        if (type == AnaphoraTypes.MALE) {
+            return getMaleAnaphor(mentions);
+        } else if (type == AnaphoraTypes.FEMALE) {
+            return getFemaleAnaphor(mentions);
+        } else {
+            return getPluralAnaphor(mentions);
+        }
+    }
+
+    /**
+     * Perform anaphora resolution for a male.
+     * @param mentions
+     * @return
+     */
+    private SentimentTarget getMaleAnaphor(List<SentimentTarget> mentions) {
+        SentimentTarget candidateMale = null;
+        List<SentimentTarget> candidatePersons = new ArrayList<>();
+
+        // will return any PERSON if the mentions only include a single PERSON
+        // if a single candidate male is found among a list of PERSONs, will return that instead
+        for (SentimentTarget mention : mentions) {
+            if (mention.getTag().equals("PERSON")) {
+                candidatePersons.add(mention);
+
+                if (mention.getGender().equals("MALE") && candidateMale == null) {
+                    candidateMale = mention;
+                } else {
+                    return null; // in case of multiple males
+                }
+            }
+        }
+
+        if (candidateMale != null) {
+            return candidateMale;
+        } else {
+            return candidatePersons.size() == 1? candidatePersons.get(0) : null;
+        }
+    }
+
+    /**
+     * Perform anaphora resolution for a female.
+     * @param mentions
+     * @return
+     */
+    private SentimentTarget getFemaleAnaphor(List<SentimentTarget> mentions) {
+        SentimentTarget candidateFemale = null;
+        List<SentimentTarget> candidatePersons = new ArrayList<>();
+
+        // will return any PERSON if the mentions only include a single PERSON
+        // if a single candidate female is found among a list of PERSONs, will return that instead
+        for (SentimentTarget mention : mentions) {
+            if (mention.getTag().equals("PERSON")) {
+                candidatePersons.add(mention);
+
+                if (mention.getGender().equals("FEMALE") && candidateFemale == null) {
+                    candidateFemale = mention;
+                } else {
+                    return null; // in case of multiple males
+                }
+            }
+        }
+
+        if (candidateFemale != null) {
+            return candidateFemale;
+        } else {
+            return candidatePersons.size() == 1? candidatePersons.get(0) : null;
+        }
+    }
+
+    /**
+     * Perform anaphora resolution for a male.
+     * @param mentions
+     * @return
+     */
+    private SentimentTarget getPluralAnaphor(List<SentimentTarget> mentions) {
+        SentimentTarget candidateEntity = null;
+
+        // will return a non-PERSON mention if it is the only one
+        for (SentimentTarget mention : mentions) {
+            if (mention.getTag() != "PERSON" && candidateEntity == null) {
+               candidateEntity = mention;
+            } else {
+                return null;
+            }
+        }
+
+       return candidateEntity;
+    }
+
+    /**
+     * Used to determine which types of anaphora were found in a sentence.
+     * @param keywords
+     * @return
+     */
+    private Set<AnaphoraTypes> getPossibleMatches(Set<String> keywords) {
+        Set<AnaphoraTypes> possibleMatches = new HashSet<>();
+
+        for (String keyword : keywords) {
+            if (trackedMaleKeywords.contains(keyword)) {
+                possibleMatches.add(AnaphoraTypes.MALE);
+            } else if (trackedFemaleKeywords.contains(keyword)) {
+                possibleMatches.add(AnaphoraTypes.FEMALE);
+            } else if (trackedPluralKeywords.contains(keyword)) {
+                possibleMatches.add(AnaphoraTypes.PLURAL);
+            }
+        }
+
+        return possibleMatches;
     }
 
     // TODO: revisit and revise this horribly inefficient and unreadable method

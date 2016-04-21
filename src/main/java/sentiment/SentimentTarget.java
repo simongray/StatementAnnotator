@@ -41,6 +41,42 @@ public class SentimentTarget {
         return gender;
     }
 
+    public boolean hasGender() {
+        return gender != null;
+    }
+
+    public boolean isMale() {
+        if (hasGender()) {
+            return gender.equals("MALE");
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isFemale() {
+        if (hasGender()) {
+            return gender.equals("FEMALE");
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isPerson() {
+        return tag.equals("PERSON");
+    }
+
+    public boolean isOrganization() {
+        return tag.equals("ORGANIZATION");
+    }
+
+    public boolean isLocation() {
+        return tag.equals("LOCATION");
+    }
+
+    public boolean isMisc() {
+        return tag.equals("MISC");
+    }
+
     /**
      * Get the sentence index of the mention in the list of sentences.
      * @return sentenceIndex
