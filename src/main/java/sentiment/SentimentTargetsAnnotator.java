@@ -132,10 +132,13 @@ public class SentimentTargetsAnnotator implements Annotator {
                 }
             }
 
-            // TODO: perform anaphora resolution
             if (sentenceMentions.isEmpty() && !foundKeywords.isEmpty()) {
-                System.out.println("!!!!NO ENTITY FOUND IN SENTENCE!!!! Assigning to previous entity: " + previousSentenceMentions);
-                System.out.println("found anaphor: " + anaphoraResolution(foundKeywords, previousSentenceMentions));
+                SentimentTarget antecedent = getAntecedent(foundKeywords, previousSentenceMentions);
+
+                if (antecedent != null) {
+                    System.out.println("ANTECENDENT: " + antecedent + " based on anaphora: " + foundKeywords);
+                    allMentions.add(antecedent.getAnaphor(foundKeywords, i));
+                }
             }
 
             previousSentenceMentions = sentenceMentions;
@@ -150,15 +153,15 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @param mentions
      * @return
      */
-    private SentimentTarget anaphoraResolution(Set<String> keywords, List<SentimentTarget> mentions) {
+    private SentimentTarget getAntecedent(Set<String> keywords, List<SentimentTarget> mentions) {
         Set<AnaphoraTypes> possibleMatches = getPossibleMatches(keywords);
 
         // determine whether to perform single or multiple resolution
         if (mentions.size() == 1) {
-            return singleMentionAnaphoraResolution(possibleMatches, mentions.get(0));
+            return getSingleMentionAntecedent(possibleMatches, mentions.get(0));
         } else if (possibleMatches.size() == 1) {
             AnaphoraTypes type = possibleMatches.iterator().next();  // shitty Java syntax
-            return singleTypeAnaphoraResolution(type, mentions);
+            return getSingleTypeAntecedent(type, mentions);
         } else {
             System.out.println("multiple resolution not implemented yet...");
             return null;  // TODO: implement this
@@ -171,7 +174,7 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @param mention
      * @return
      */
-    private SentimentTarget singleMentionAnaphoraResolution(Set<AnaphoraTypes> types, SentimentTarget mention) {
+    private SentimentTarget getSingleMentionAntecedent(Set<AnaphoraTypes> types, SentimentTarget mention) {
         if (mention.isPerson()) {
             if (mention.hasGender()) {
                 if (mention.isMale() && types.contains(AnaphoraTypes.MALE)) {
@@ -201,7 +204,7 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @param mentions
      * @return
      */
-    private SentimentTarget singleTypeAnaphoraResolution(AnaphoraTypes type, List<SentimentTarget> mentions) {
+    private SentimentTarget getSingleTypeAntecedent(AnaphoraTypes type, List<SentimentTarget> mentions) {
         if (type == AnaphoraTypes.MALE) {
             return getMaleAnaphor(mentions);
         } else if (type == AnaphoraTypes.FEMALE) {
@@ -217,28 +220,33 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @return
      */
     private SentimentTarget getMaleAnaphor(List<SentimentTarget> mentions) {
-        SentimentTarget candidateMale = null;
-        List<SentimentTarget> candidatePersons = new ArrayList<>();
+        SentimentTarget candidate = null;
+        List<SentimentTarget> candidatesWithoutGender = new ArrayList<>();
 
-        // will return any PERSON if the mentions only include a single PERSON
-        // if a single candidate male is found among a list of PERSONs, will return that instead
+        // will return any PERSON if the mentions only include a single, non-gendered PERSON
+        // if exactly one MALE candidate is found, will return that instead
         for (SentimentTarget mention : mentions) {
-            if (mention.getTag().equals("PERSON")) {
-                candidatePersons.add(mention);
-
-                if (mention.getGender().equals("MALE") && candidateMale == null) {
-                    candidateMale = mention;
+            if (mention.isPerson()) {
+                if (mention.hasGender()) {
+                    if (mention.isMale()) {  // do not consider females at all!
+                        if (candidate == null) {
+                            candidate = mention;
+                        } else {
+                            return null;
+                        }
+                    }
                 } else {
-                    return null; // in case of multiple males
+                    candidatesWithoutGender.add(mention);
                 }
             }
         }
 
-        if (candidateMale != null) {
-            return candidateMale;
-        } else {
-            return candidatePersons.size() == 1? candidatePersons.get(0) : null;
+        // if no MALE candidate is found, use the candidate without gender
+        if (candidatesWithoutGender.size() == 1) {
+            candidate = candidatesWithoutGender.get(0);
         }
+
+        return candidate;
     }
 
     /**
@@ -247,28 +255,33 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @return
      */
     private SentimentTarget getFemaleAnaphor(List<SentimentTarget> mentions) {
-        SentimentTarget candidateFemale = null;
-        List<SentimentTarget> candidatePersons = new ArrayList<>();
+        SentimentTarget candidate = null;
+        List<SentimentTarget> candidatesWithoutGender = new ArrayList<>();
 
-        // will return any PERSON if the mentions only include a single PERSON
-        // if a single candidate female is found among a list of PERSONs, will return that instead
+        // will return any PERSON if the mentions only include a single, non-gendered PERSON
+        // if exactly one FEMALE candidate is found, will return that instead
         for (SentimentTarget mention : mentions) {
-            if (mention.getTag().equals("PERSON")) {
-                candidatePersons.add(mention);
-
-                if (mention.getGender().equals("FEMALE") && candidateFemale == null) {
-                    candidateFemale = mention;
+            if (mention.isPerson()) {
+                if (mention.hasGender()) {
+                    if (mention.isFemale()) {  // do not consider males at all!
+                        if (candidate == null) {
+                            candidate = mention;
+                        } else {
+                            return null;
+                        }
+                    }
                 } else {
-                    return null; // in case of multiple males
+                    candidatesWithoutGender.add(mention);
                 }
             }
         }
 
-        if (candidateFemale != null) {
-            return candidateFemale;
-        } else {
-            return candidatePersons.size() == 1? candidatePersons.get(0) : null;
+        // if no MALE candidate is found, use the candidate without gender
+        if (candidatesWithoutGender.size() == 1) {
+            candidate = candidatesWithoutGender.get(0);
         }
+
+        return candidate;
     }
 
     /**
@@ -277,18 +290,19 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @return
      */
     private SentimentTarget getPluralAnaphor(List<SentimentTarget> mentions) {
-        SentimentTarget candidateEntity = null;
+        SentimentTarget candidate = null;
 
-        // will return a non-PERSON mention if it is the only one
         for (SentimentTarget mention : mentions) {
-            if (mention.getTag() != "PERSON" && candidateEntity == null) {
-               candidateEntity = mention;
-            } else {
-                return null;
+            if (mention.isOrganization() || mention.isLocation()) {
+                if (candidate == null) {
+                    candidate = mention;
+                } else {
+                    return null;
+                }
             }
         }
 
-       return candidateEntity;
+       return candidate;
     }
 
     /**

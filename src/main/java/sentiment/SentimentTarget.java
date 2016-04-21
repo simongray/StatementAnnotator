@@ -1,11 +1,14 @@
 package sentiment;
 
+import java.util.Set;
+
 /**
  * A SentimentTarget is a mention of an entity in a context (i.e. a sentence) taken from a larger piece of text.
  * The mention can be both direct and using pronouns (he, she, it, they, etc).
  */
 public class SentimentTarget {
     private String name;
+    private Set<String> anaphora;
     private String tag;
     private String gender;  // obviously only applicable to persons
     private int sentenceIndex;  // ... in the list of sentences for the comment
@@ -15,6 +18,12 @@ public class SentimentTarget {
         this.tag = tag;
         this.gender = gender;
         this.sentenceIndex = index;
+    }
+
+    public SentimentTarget getAnaphor(Set<String> anaphora, int index) {
+        SentimentTarget anaphor = new SentimentTarget(name, tag, gender, index); // note: using argument for index
+        anaphor.setAnaphora(anaphora);
+        return anaphor;
     }
 
     /**
@@ -39,6 +48,10 @@ public class SentimentTarget {
      */
     public String getGender() {
         return gender;
+    }
+
+    public Set<String> getAnaphora() {  // TODO: included mainly for future bugtesting, figure out if this is necessary
+        return anaphora;
     }
 
     public boolean hasGender() {
@@ -75,6 +88,14 @@ public class SentimentTarget {
 
     public boolean isMisc() {
         return tag.equals("MISC");
+    }
+
+    public boolean isAnaphor() {
+        return this.anaphora != null && !this.anaphora.isEmpty();
+    }
+
+    private void setAnaphora(Set<String> anaphora) {
+        this.anaphora = anaphora;
     }
 
     /**
