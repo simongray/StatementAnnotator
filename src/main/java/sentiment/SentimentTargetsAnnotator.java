@@ -18,13 +18,9 @@ public class SentimentTargetsAnnotator implements Annotator {
     public void annotate(Annotation annotation) {
         List<SentimentTarget> mentions = getInitialEntities(annotation);
 
-        for (SentimentTarget mention : mentions) {
-            System.out.println(mention);
-        }
-
         Map<String, List<SentimentTarget>> targets = mergeEntities(mentions);
 
-        System.out.println("final mapping:");
+        System.out.println("\nfinal mapping:");
         for (String key : targets.keySet()) {
             System.out.println(key + " -----> " + targets.get(key));
         }
@@ -73,14 +69,13 @@ public class SentimentTargetsAnnotator implements Annotator {
         String lastPerson = "";
         String lastOrganization = "";
         String lastLocation = "";
-        boolean foundEntity;
 
         for (int i = 0; i < sentences.size(); i++) {
             List<CoreLabel> tokens = sentences.get(i).get(CoreAnnotations.TokensAnnotation.class);
             String previousTag = "";  // keep track of previous tag for multi-word entities
             String fullName = "";
             String gender = "";
-            foundEntity = false;
+            boolean foundNamedEntity = false;
 
             // retrieve all entities in sentence
             for (CoreLabel token : tokens) {
@@ -89,7 +84,6 @@ public class SentimentTargetsAnnotator implements Annotator {
 
                 // only allow specific tags (e.g. not DATE, DURATION, NUMBER)
                 if (nerTag.length() > 1 && nerTag.equals("PERSON") || nerTag.equals("ORGANIZATION") || nerTag.equals("LOCATION") || nerTag.equals("MISC")) {
-                    System.out.println(nerTag + " " + name);
 
                     // keeping track of multi-word entities
                     if (nerTag.equals(previousTag)) {
@@ -107,8 +101,8 @@ public class SentimentTargetsAnnotator implements Annotator {
                 } else {
                     if (!fullName.isEmpty()) {
                         mentions.add(new SentimentTarget(fullName, previousTag, gender, i));
-                        foundEntity = true;
-                        System.out.println(fullName + ": " + gender);
+                        foundNamedEntity = true;
+                        System.out.println("ENTITY: " + fullName + ", " + gender + ", " + i);
                         // TODO: figure out whether it makes sense to also have token index in mention
 
                         if (previousTag.equals("PERSON")) {
@@ -127,9 +121,10 @@ public class SentimentTargetsAnnotator implements Annotator {
                     }
 
                     // track keywords for anaphora resolution
-                    if (!foundEntity) {
+                    if (!foundNamedEntity) {
                         if (trackedKeywords.contains(name.toLowerCase())) {
                             foundKeywords.add(name);  // TODO: apparently not working, figure out why
+                            System.out.println("KEYWORD: " + name + "," + i + ", ");
                         }
                     }
 
@@ -139,8 +134,8 @@ public class SentimentTargetsAnnotator implements Annotator {
                 }
             }
 
-            if (!foundEntity) {
-                System.out.println("!!!!NO ENTITY FOUND!!!! Assigning to previous entity...");
+            if (!foundNamedEntity) {
+                System.out.println("!!!!NO ENTITY FOUND IN SENTENCE!!!! Assigning to previous entity...");
                 System.out.println(lastMale + ", " + lastFemale + ", " + lastPerson + ", " + lastOrganization + ", " + lastLocation);
                 // TODO: perform anaphora resolution
             }

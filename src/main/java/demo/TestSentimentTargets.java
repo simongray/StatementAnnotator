@@ -40,11 +40,13 @@ public class TestSentimentTargets {
         Annotation annotation = new Annotation(
                 "George Bush was quite sentimental in his old days. " +
                 "George often thought highly of Clinton. " +
-                "He also really liked Hillary. Hillary Rodham, that is? " +
+                "He also really liked Hillary. Hillary Rodham, that is. " +
+                "She had a stranglehold on his mind and he couldn't stop thinking of her. " +
                 "In fact, Bush hated her, that piece of shit \"I hate Hillary Rodham Clinton so much\", he said to himself. " +
-                "He did like Bill Clinton, though." +
-                "He was such as nice guy."
+                "He did like Bill Clinton, though. " +
+                "He was such as nice guy. "
         );
+        // NOTE TO SELF: common source of errors -> forgetting to put a space after every sentence
 
         DemoTimer.stop();
 
