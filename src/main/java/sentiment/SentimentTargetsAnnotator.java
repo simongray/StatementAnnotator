@@ -346,7 +346,9 @@ public class SentimentTargetsAnnotator implements Annotator {
         // reduce to unique set of names
         Set<String> names = new HashSet<>();
         for (SentimentTarget mention : mentions) {
-            names.add(mention.getName());
+            if (mention.isPerson()) {  // TODO: consider whether it should also merge locations or organisations
+                names.add(mention.getName());
+            }
         }
 
         // create map of short names to long names
