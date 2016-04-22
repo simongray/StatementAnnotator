@@ -12,6 +12,7 @@ public class SentimentTarget {
     private String tag;
     private String gender;  // obviously only applicable to persons
     private int sentenceIndex;  // ... in the list of sentences for the comment
+    private int sentiment = -1;  // for the sentiment score, -1 means "unset"
 
     public SentimentTarget(String name, String tag, String gender, int index) {
         this.name = name;
@@ -52,6 +53,14 @@ public class SentimentTarget {
 
     public Set<String> getAnaphora() {  // TODO: included mainly for future bugtesting, figure out if this is necessary
         return anaphora;
+    }
+
+    public int getSentiment() {
+        return sentiment;
+    }
+
+    public boolean hasSentiment() {
+        return sentiment != -1;
     }
 
     public boolean hasGender() {
@@ -96,6 +105,14 @@ public class SentimentTarget {
 
     private void setAnaphora(Set<String> anaphora) {
         this.anaphora = anaphora;
+    }
+
+    public void setSentiment(int sentiment) throws Exception {
+        if (sentiment >= 0 && sentiment < 5) {
+            this.sentiment = sentiment;
+        } else {
+            throw new Exception("sentiment must integer from 0 to 4");
+        }
     }
 
     /**
