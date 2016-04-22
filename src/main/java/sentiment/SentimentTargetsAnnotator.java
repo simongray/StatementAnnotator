@@ -3,8 +3,11 @@ package sentiment;
 import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
+import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
+import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 
 import java.util.*;
@@ -44,14 +47,22 @@ public class SentimentTargetsAnnotator implements Annotator {
 
     @Override
     public void annotate(Annotation annotation) {
-        List<SentimentTarget> mentions = getInitialEntities(annotation);
-
+        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+        List<SentimentTarget> mentions = getInitialEntities(sentences);
         Map<String, List<SentimentTarget>> targets = mergeEntities(mentions);
+        Map<String, List<Integer>> scores = new HashMap<>();
+
 
         System.out.println("\nfinal mapping:");
         for (String key : targets.keySet()) {
             System.out.println(key + " -----> " + targets.get(key));
         }
+
+        for (String name : targets.keySet()) {
+            List<SentimentTarget> targetMentions = targets.get(name);
+            attachSentiment(targetMentions, sentences);
+        }
+
     }
 
     @Override
@@ -71,11 +82,53 @@ public class SentimentTargetsAnnotator implements Annotator {
     }
 
     /**
+     * Attaches sentiment to the targets of a sentence.
+     *
+     * @param targets
+     * @param sentences
+     */
+
+    private void attachSentiment(List<SentimentTarget> targets, List<CoreMap> sentences) {
+
+        // TODO: this method should be simpler and simply take 1 sentence and all of the entities for that sentence as its input
+        if (targets.size() == 1) {
+            SentimentTarget target = targets.get(0);
+            CoreMap sentence = sentences.get(target.getSentenceIndex());
+            Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
+            int sentimentScore = RNNCoreAnnotations.getPredictedClass(tree);
+            Sentiment sentiment = getSentiment(sentimentScore);
+
+            System.out.println("" + target.getName() + " scored " + sentiment + " in sentence: " + sentence.get(CoreAnnotations.TextAnnotation.class));
+        } else {
+            System.out.println("multiple entities in sentence, not implemented yet"); // TODO
+        }
+    }
+
+    /**
+     * Converts a RNN sentiment score into human readable form.
+     * @param sentimentScore
+     * @return
+     */
+    private Sentiment getSentiment(int sentimentScore) {
+        switch (sentimentScore) {
+            case 0:
+                return Sentiment.VERY_NEGATIVE;
+            case 1:
+                return Sentiment.NEGATIVE;
+            case 3:
+                return Sentiment.POSITIVE;
+            case 4:
+                return Sentiment.VERY_POSITIVE;
+            default:
+                return Sentiment.NEUTRAL;  // i.e. for score = 2
+        }
+    }
+
+    /**
      * Uses the CoreNLP NER tagger to find relevant entities.
      * @return a list of entities
      */
-    private List<SentimentTarget> getInitialEntities(Annotation annotation) {
-        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+    private List<SentimentTarget> getInitialEntities(List<CoreMap> sentences) {
         List<SentimentTarget> allMentions = new ArrayList<>();
         List<SentimentTarget> previousSentenceMentions = new ArrayList<>();
 
@@ -449,5 +502,13 @@ public class SentimentTargetsAnnotator implements Annotator {
         // todo: replace print with log
 
         return mergedEntities;
+    }
+
+    public enum Sentiment {
+        VERY_NEGATIVE,
+        NEGATIVE,
+        NEUTRAL,
+        POSITIVE,
+        VERY_POSITIVE
     }
 }
