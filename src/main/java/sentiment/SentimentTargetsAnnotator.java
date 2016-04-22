@@ -38,13 +38,6 @@ public class SentimentTargetsAnnotator implements Annotator {
         trackedKeywords.addAll(trackedPluralKeywords);
     }
 
-    private enum AnaphoraTypes {
-        MALE,
-        FEMALE,
-        PLURAL
-    }
-
-
     @Override
     public void annotate(Annotation annotation) {
         List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
@@ -209,13 +202,13 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @return
      */
     private SentimentTarget getAntecedent(Set<String> keywords, List<SentimentTarget> mentions) {
-        Set<AnaphoraTypes> possibleMatches = getPossibleMatches(keywords);
+        Set<AnaphoraType> possibleMatches = getPossibleMatches(keywords);
 
         // determine whether to perform single or multiple resolution
         if (mentions.size() == 1) {
             return getSingleMentionAntecedent(possibleMatches, mentions.get(0));
         } else if (possibleMatches.size() == 1) {
-            AnaphoraTypes type = possibleMatches.iterator().next();  // shitty Java syntax
+            AnaphoraType type = possibleMatches.iterator().next();  // shitty Java syntax
             return getSingleTypeAntecedent(type, mentions);
         } else {
             System.out.println("multiple resolution not implemented yet...");
@@ -229,24 +222,24 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @param mention
      * @return
      */
-    private SentimentTarget getSingleMentionAntecedent(Set<AnaphoraTypes> types, SentimentTarget mention) {
+    private SentimentTarget getSingleMentionAntecedent(Set<AnaphoraType> types, SentimentTarget mention) {
         if (mention.isPerson()) {
             if (mention.hasGender()) {
-                if (mention.isMale() && types.contains(AnaphoraTypes.MALE)) {
+                if (mention.isMale() && types.contains(AnaphoraType.MALE)) {
                     return mention;
-                } else if (mention.isFemale() && types.contains(AnaphoraTypes.FEMALE)) {
+                } else if (mention.isFemale() && types.contains(AnaphoraType.FEMALE)) {
                     return mention;
                 }
-            } else if (types.contains(AnaphoraTypes.MALE) || types.contains(AnaphoraTypes.FEMALE)) {
+            } else if (types.contains(AnaphoraType.MALE) || types.contains(AnaphoraType.FEMALE)) {
                 return mention;
             }
         }
 
-        if (mention.isOrganization() && types.contains(AnaphoraTypes.PLURAL)) {
+        if (mention.isOrganization() && types.contains(AnaphoraType.PLURAL)) {
             return mention;
         }
 
-        if (mention.isLocation() && types.contains(AnaphoraTypes.PLURAL)) {
+        if (mention.isLocation() && types.contains(AnaphoraType.PLURAL)) {
             return mention;
         }
 
@@ -259,10 +252,10 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @param mentions
      * @return
      */
-    private SentimentTarget getSingleTypeAntecedent(AnaphoraTypes type, List<SentimentTarget> mentions) {
-        if (type == AnaphoraTypes.MALE) {
+    private SentimentTarget getSingleTypeAntecedent(AnaphoraType type, List<SentimentTarget> mentions) {
+        if (type == AnaphoraType.MALE) {
             return getMaleAnaphor(mentions);
-        } else if (type == AnaphoraTypes.FEMALE) {
+        } else if (type == AnaphoraType.FEMALE) {
             return getFemaleAnaphor(mentions);
         } else {
             return getPluralAnaphor(mentions);
@@ -365,16 +358,16 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @param keywords
      * @return
      */
-    private Set<AnaphoraTypes> getPossibleMatches(Set<String> keywords) {
-        Set<AnaphoraTypes> possibleMatches = new HashSet<>();
+    private Set<AnaphoraType> getPossibleMatches(Set<String> keywords) {
+        Set<AnaphoraType> possibleMatches = new HashSet<>();
 
         for (String keyword : keywords) {
             if (trackedMaleKeywords.contains(keyword)) {
-                possibleMatches.add(AnaphoraTypes.MALE);
+                possibleMatches.add(AnaphoraType.MALE);
             } else if (trackedFemaleKeywords.contains(keyword)) {
-                possibleMatches.add(AnaphoraTypes.FEMALE);
+                possibleMatches.add(AnaphoraType.FEMALE);
             } else if (trackedPluralKeywords.contains(keyword)) {
-                possibleMatches.add(AnaphoraTypes.PLURAL);
+                possibleMatches.add(AnaphoraType.PLURAL);
             }
         }
 
@@ -512,5 +505,12 @@ public class SentimentTargetsAnnotator implements Annotator {
         NEUTRAL,
         POSITIVE,
         VERY_POSITIVE
+    }
+
+
+    private enum AnaphoraType {
+        MALE,
+        FEMALE,
+        PLURAL
     }
 }
