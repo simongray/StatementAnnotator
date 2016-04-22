@@ -63,7 +63,8 @@ public class TestSentimentAnalysis {
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
         // annotate a piece of text
-        Annotation annotation = new Annotation("He was quite sentimental in his old days and often thought highly of her. I fucking dislike her guts! I hate her, that piece of shit, I hate her so much.");
+//        Annotation annotation = new Annotation("He was  sentimental in his old days and often thought highly of her. I fucking dislike her guts! I hate her, that piece of shit, I hate her so much.");
+        Annotation annotation = new Annotation("She is smart and he is dumb");
         pipeline.annotate(annotation);
 
         // using sentence annotation, perhaps another annotation type is better suited (there are A LOT)
@@ -119,15 +120,15 @@ public class TestSentimentAnalysis {
     // recursively display scores in tree
     public static void parse(Tree tree, int n) {
         // RNNCoreAnnotations.getPredictedClass(tree) returns the sentiment analysis score from 0 to 4 (with -1 for n/a)
-        System.out.println(new String(new char[n]).replace("\0", " ")
-                + tree.value()
+        System.out.println(new String(new char[n]).replace("\0", "- ")
+                + tree.value() + ": " + RNNCoreAnnotations.getPredictedClass(tree)
         );
 
-        for (CoreLabel label : tree.taggedLabeledYield()) {
-            System.out.println("-----");
-            System.out.print("toString= " + label);
-            System.out.println();
-        }
+//        for (CoreLabel label : tree.taggedLabeledYield()) {
+//            System.out.println("-----");
+//            System.out.print("toString= " + label);
+//            System.out.println();
+//        }
 
         // scores (not confirmed, but 99% sure)
             // very negative: 0
