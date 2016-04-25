@@ -72,20 +72,11 @@ public class SentimentTargetsAnnotator implements Annotator {
             scorePerEntity.put(entity, getComposedSentiment(entityMentions));
         }
 
-        System.out.println("sentence -----> mentions:");  // TODO: remove or log instead
-        for (int key : mentionsPerSentence.keySet()) {
-            System.out.println(key + " -----> " + mentionsPerSentence.get(key));
-        }
-        System.out.println("\nentity -----> mentions:");
-        for (String key : mentionsPerEntity.keySet()) {
-            System.out.println(key + " -----> " + mentionsPerEntity.get(key));
-        }
-        System.out.println("\nentity -----> score:");
-        for (String key : scorePerEntity.keySet()) {
-            System.out.println(key + " -----> " + scorePerEntity.get(key));
-        }
-
-        // TODO: the final annotation object should include each map produced as well as each list of mentions
+        // the final annotation object now includes each map produced as well as the list of mentions
+        annotation.set(SentimentTargetsAnnotation.class, mentions);
+        annotation.set(SentenceSentimentTargetsAnnotation.class, mentionsPerSentence);
+        annotation.set(MergedSentimentTargetsAnnotation.class, mentionsPerEntity);
+        annotation.set(MergedSentimentTargetsScoreAnnotation.class, scorePerEntity);
     }
 
     @Override

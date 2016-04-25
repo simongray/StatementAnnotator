@@ -4,12 +4,11 @@ import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotatorImplementations;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import sentiment.SentimentTargetsAnnotation;
-import sentiment.SentimentTargetsAnnotator;
+import sentiment.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 
 public class TestSentimentTargets {
@@ -57,5 +56,21 @@ public class TestSentimentTargets {
         DemoTimer.start("annotating");
         pipeline.annotate(annotation);
         DemoTimer.stop();
+
+        System.out.println("sentence -----> mentions:");
+        Map<Integer, List<SentimentTarget>> mentionsPerSentence = annotation.get(SentenceSentimentTargetsAnnotation.class);
+        for (int key : mentionsPerSentence.keySet()) {
+            System.out.println(key + " -----> " + mentionsPerSentence.get(key));
+        }
+        System.out.println("\nentity -----> mentions:");
+        Map<String, List<SentimentTarget>> mentionsPerEntity = annotation.get(MergedSentimentTargetsAnnotation.class);
+        for (String key : mentionsPerEntity.keySet()) {
+            System.out.println(key + " -----> " + mentionsPerEntity.get(key));
+        }
+        System.out.println("\nentity -----> score:");
+        Map<String, Integer> scorePerEntity = annotation.get(MergedSentimentTargetsScoreAnnotation.class);
+        for (String key : scorePerEntity.keySet()) {
+            System.out.println(key + " -----> " + scorePerEntity.get(key));
+        }
     }
 }
