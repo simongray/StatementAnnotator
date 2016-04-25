@@ -126,36 +126,13 @@ public class SentimentTargetsAnnotator implements Annotator {
      */
 
     private void attachSentiment(List<SentimentTarget> targets, CoreMap sentence) throws SentimentOutOfBoundsException {
-        // TODO: this method should be simpler and simply take 1 sentence and all of the entities for that sentence as its input
         if (targets.size() == 1) {
             SentimentTarget target = targets.get(0);
             Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
             int sentimentScore = RNNCoreAnnotations.getPredictedClass(tree);
             target.setSentiment(sentimentScore);
-
-            System.out.println("" + target.getName() + " scored " + getSentiment(sentimentScore) + " in sentence: " + sentence.get(CoreAnnotations.TextAnnotation.class));
         } else {
-            System.out.println("multiple entities in sentence (" + targets + "), not implemented yet"); // TODO
-        }
-    }
-
-    /**
-     * Converts a RNN sentiment score into human readable form.
-     * @param sentimentScore
-     * @return
-     */
-    private Sentiment getSentiment(int sentimentScore) {  // TODO: figure out if this makes sense to keep
-        switch (sentimentScore) {
-            case 0:
-                return Sentiment.VERY_NEGATIVE;
-            case 1:
-                return Sentiment.NEGATIVE;
-            case 3:
-                return Sentiment.POSITIVE;
-            case 4:
-                return Sentiment.VERY_POSITIVE;
-            default:
-                return Sentiment.NEUTRAL;  // i.e. for score = 2
+            System.out.println("multiple entities in sentence (" + targets + "), not implemented yet"); // TODO!!
         }
     }
 
@@ -534,14 +511,6 @@ public class SentimentTargetsAnnotator implements Annotator {
         // todo: replace print with log
 
         return mergedEntities;
-    }
-
-    public enum Sentiment {
-        VERY_NEGATIVE,
-        NEGATIVE,
-        NEUTRAL,
-        POSITIVE,
-        VERY_POSITIVE
     }
 
 
