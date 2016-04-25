@@ -41,28 +41,33 @@ public class SentimentTargetsAnnotator implements Annotator {
     @Override
     public void annotate(Annotation annotation) {
         List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+
+        // get all mentions mapped to the indexes of the sentences they appear in
         Map<Integer, List<SentimentTarget>> mentionsPerSentence = getMentions(sentences);
 
-
+        // compile a list of mentions from the map
         List<SentimentTarget> mentions = new ArrayList<>();
         for (List<SentimentTarget> sentenceMentions : mentionsPerSentence.values()) {
             mentions.addAll(sentenceMentions);
         }
 
+        // merge the mentions referring to the same entity, producing map of full entity name to mentions
         Map<String, List<SentimentTarget>> mentionsPerEntity = getMergedEntities(mentions);
-        Map<String, List<Integer>> scores = new HashMap<>();
 
         System.out.println("\nfinal mapping:");
         for (String key : mentionsPerEntity.keySet()) {
             System.out.println(key + " -----> " + mentionsPerEntity.get(key));
         }
 
-        // get a list containing all the sentiment target mentions
+        // attach sentiment to each mention
         for (Integer i : mentionsPerSentence.keySet()) {
             List<SentimentTarget> sentenceMentions = mentionsPerSentence.get(i);
             CoreMap sentence = sentences.get(i);
             attachSentiment(sentenceMentions, sentence);
         }
+
+        // produce a map of full entity name to sentiment by composing the sentiment sores attached in the previous step
+        // TODO
 
     }
 
