@@ -54,21 +54,38 @@ public class SentimentTargetsAnnotator implements Annotator {
         // merge the mentions referring to the same entity, producing map of full entity name to mentions
         Map<String, List<SentimentTarget>> mentionsPerEntity = getMergedEntities(mentions);
 
-        System.out.println("\nfinal mapping:");
-        for (String key : mentionsPerEntity.keySet()) {
-            System.out.println(key + " -----> " + mentionsPerEntity.get(key));
-        }
-
         // attach sentiment to each mention
         for (Integer i : mentionsPerSentence.keySet()) {
             List<SentimentTarget> sentenceMentions = mentionsPerSentence.get(i);
             CoreMap sentence = sentences.get(i);
-            attachSentiment(sentenceMentions, sentence);
+            try {
+                attachSentiment(sentenceMentions, sentence);
+            } catch (SentimentOutOfBoundsException e) {
+                System.out.println("could not attach sentiment to mentions " + sentenceMentions + " in sentence: " + sentence);
+            }
         }
 
         // produce a map of full entity name to sentiment by composing the sentiment sores attached in the previous step
-        // TODO
+        Map<String, Integer> scorePerEntity = new HashMap<>();
+        for (String entity : mentionsPerEntity.keySet()) {
+            List<SentimentTarget> entityMentions = mentionsPerEntity.get(entity);
+            scorePerEntity.put(entity, getComposedSentiment(entityMentions));
+        }
 
+        System.out.println("sentence -----> mentions:");  // TODO: remove or log instead
+        for (int key : mentionsPerSentence.keySet()) {
+            System.out.println(key + " -----> " + mentionsPerSentence.get(key));
+        }
+        System.out.println("\nentity -----> mentions:");
+        for (String key : mentionsPerEntity.keySet()) {
+            System.out.println(key + " -----> " + mentionsPerEntity.get(key));
+        }
+        System.out.println("\nentity -----> score:");
+        for (String key : scorePerEntity.keySet()) {
+            System.out.println(key + " -----> " + scorePerEntity.get(key));
+        }
+
+        // TODO: the final annotation object should include each map produced as well as each list of mentions
     }
 
     @Override
@@ -88,21 +105,44 @@ public class SentimentTargetsAnnotator implements Annotator {
     }
 
     /**
+     * Get the composed sentiment a list of (assumed identical) targets.
+     * @param targets
+     */
+    private int getComposedSentiment(List<SentimentTarget> targets) {
+        double sum = 0.0;
+        int n = 0;
+
+        for (SentimentTarget target : targets) {
+            if (target.hasSentiment()) {
+                sum += target.getSentiment();
+                n++;
+            } // TODO: should probably log targets without sentiment here
+        }
+
+        // return neutral (= 2) in case the list contained no sentiment
+        if (n == 0) {
+            return 2;
+        }
+
+        return (int) Math.round(sum / n);
+    }
+
+    /**
      * Attaches sentiment to the targets of a sentence.
      *
      * @param targets
      * @param sentence
      */
 
-    private void attachSentiment(List<SentimentTarget> targets, CoreMap sentence) {
+    private void attachSentiment(List<SentimentTarget> targets, CoreMap sentence) throws SentimentOutOfBoundsException {
         // TODO: this method should be simpler and simply take 1 sentence and all of the entities for that sentence as its input
         if (targets.size() == 1) {
             SentimentTarget target = targets.get(0);
             Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
             int sentimentScore = RNNCoreAnnotations.getPredictedClass(tree);
-            Sentiment sentiment = getSentiment(sentimentScore);
+            target.setSentiment(sentimentScore);
 
-            System.out.println("" + target.getName() + " scored " + sentiment + " in sentence: " + sentence.get(CoreAnnotations.TextAnnotation.class));
+            System.out.println("" + target.getName() + " scored " + getSentiment(sentimentScore) + " in sentence: " + sentence.get(CoreAnnotations.TextAnnotation.class));
         } else {
             System.out.println("multiple entities in sentence (" + targets + "), not implemented yet"); // TODO
         }
@@ -113,7 +153,7 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @param sentimentScore
      * @return
      */
-    private Sentiment getSentiment(int sentimentScore) {
+    private Sentiment getSentiment(int sentimentScore) {  // TODO: figure out if this makes sense to keep
         switch (sentimentScore) {
             case 0:
                 return Sentiment.VERY_NEGATIVE;
