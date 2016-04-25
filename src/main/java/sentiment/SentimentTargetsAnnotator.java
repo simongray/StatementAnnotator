@@ -242,6 +242,7 @@ public class SentimentTargetsAnnotator implements Annotator {
 
     /**
      * Perform basic anaphora resolution for a sentence.
+     * The antecedent entity is determined among a list of previous entity mentions and anaphoras found in a sentence.
      * @param keywords
      * @param mentions
      * @return
