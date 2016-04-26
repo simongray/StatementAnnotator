@@ -9,12 +9,15 @@ import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 
 public class SentimentTargetsAnnotator implements Annotator {
     public final static String SENTIMENT_TARGETS = "sentimenttargets";
+    Logger logger = LoggerFactory.getLogger(SentimentTargetsAnnotator.class);
 
     // anaphora resolution
     public Set<String> trackedKeywords = new HashSet<>();
@@ -41,38 +44,38 @@ public class SentimentTargetsAnnotator implements Annotator {
     public void annotate(Annotation annotation) {
         List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
 
-        // get all mentions mapped to the indexes of the sentences they appear in
-        Map<Integer, List<SentimentTarget>> mentionsPerSentence = getMentions(sentences);
+        // get all targets mapped to the indexes of the sentences they appear in
+        Map<Integer, List<SentimentTarget>> targetsPerSentence = getTargets(sentences);
 
-        // compile a list of mentions from the map
-        List<SentimentTarget> mentions = new ArrayList<>();
-        mentionsPerSentence.values().forEach(mentions::addAll);
+        // compile a list of targets from the map
+        List<SentimentTarget> targets = new ArrayList<>();
+        targetsPerSentence.values().forEach(targets::addAll);
 
-        // merge the mentions referring to the same entity, producing map of full entity name to mentions
-        Map<String, List<SentimentTarget>> mentionsPerEntity = getMergedEntities(mentions);
+        // merge the targets referring to the same entity, producing map of full entity name to targets
+        Map<String, List<SentimentTarget>> targetsPerEntity = getMergedEntities(targets);
 
         // attach sentiment to each mention
-        for (Integer i : mentionsPerSentence.keySet()) {
-            List<SentimentTarget> sentenceMentions = mentionsPerSentence.get(i);
+        for (Integer i : targetsPerSentence.keySet()) {
+            List<SentimentTarget> sentenceTargets = targetsPerSentence.get(i);
             CoreMap sentence = sentences.get(i);
             try {
-                attachSentiment(sentenceMentions, sentence);
+                attachSentiment(sentenceTargets, sentence);
             } catch (SentimentOutOfBoundsException e) {
-                System.out.println("could not attach sentiment to mentions " + sentenceMentions + " in sentence: " + sentence);
+                System.out.println("could not attach sentiment to targets " + sentenceTargets + " in sentence: " + sentence);
             }
         }
 
         // produce a map of full entity name to sentiment by composing the sentiment sores attached in the previous step
         Map<String, Integer> scorePerEntity = new HashMap<>();
-        for (String entity : mentionsPerEntity.keySet()) {
-            List<SentimentTarget> entityMentions = mentionsPerEntity.get(entity);
-            scorePerEntity.put(entity, getComposedSentiment(entityMentions));
+        for (String entity : targetsPerEntity.keySet()) {
+            List<SentimentTarget> entityTargets = targetsPerEntity.get(entity);
+            scorePerEntity.put(entity, getComposedSentiment(entityTargets));
         }
 
-        // the final annotation object now includes each map produced as well as the list of mentions
-        annotation.set(SentimentTargetsAnnotation.class, mentions);
-        annotation.set(SentenceSentimentTargetsAnnotation.class, mentionsPerSentence);
-        annotation.set(MergedSentimentTargetsAnnotation.class, mentionsPerEntity);
+        // the final annotation object now includes each map produced as well as the list of targets
+        annotation.set(SentimentTargetsAnnotation.class, targets);
+        annotation.set(SentenceSentimentTargetsAnnotation.class, targetsPerSentence);
+        annotation.set(MergedSentimentTargetsAnnotation.class, targetsPerEntity);
         annotation.set(MergedSentimentTargetsScoreAnnotation.class, scorePerEntity);
     }
 
@@ -93,7 +96,7 @@ public class SentimentTargetsAnnotator implements Annotator {
     }
 
     /**
-     * Get the composed sentiment a list of mentions of the (assumed) same target.
+     * Get the composed sentiment a list of mentions of the same entity.
      * @param targets
      */
     private int getComposedSentiment(List<SentimentTarget> targets) {
@@ -137,8 +140,8 @@ public class SentimentTargetsAnnotator implements Annotator {
      * Uses the CoreNLP NER tagger to find relevant entities.
      * @return a list of entities
      */
-    private Map<Integer, List<SentimentTarget>> getMentions(List<CoreMap> sentences) {
-        Map<Integer, List<SentimentTarget>> mentions = new HashMap<>();
+    private Map<Integer, List<SentimentTarget>> getTargets(List<CoreMap> sentences) {
+        Map<Integer, List<SentimentTarget>> targetsPerSentence = new HashMap<>();
         Set<String> foundKeywords = new HashSet<>();
 
         for (int i = 0; i < sentences.size(); i++) {
@@ -146,7 +149,7 @@ public class SentimentTargetsAnnotator implements Annotator {
             String previousTag = "";  // keep track of previous tag for multi-word entities
             String fullName = "";
             String gender = "";
-            mentions.put(i, new ArrayList<>());
+            targetsPerSentence.put(i, new ArrayList<>());
 
             // retrieve all entities in sentence
             for (CoreLabel token : tokens) {
@@ -171,14 +174,14 @@ public class SentimentTargetsAnnotator implements Annotator {
                     previousTag = nerTag;
                 } else {
                     if (!fullName.isEmpty()) {
-                        SentimentTarget mention = new SentimentTarget(fullName, previousTag, gender, i);
-                        mentions.get(i).add(mention);
+                        SentimentTarget target = new SentimentTarget(fullName, previousTag, gender, i);
+                        targetsPerSentence.get(i).add(target);
                         System.out.println("ENTITY: " + fullName + ", " + gender + ", " + i);
-                        // TODO: figure out whether it makes sense to also have token index in mention
+                        // TODO: figure out whether it makes sense to also have token index in target
                     }
 
                     // track keywords for anaphora resolution
-                    if (mentions.get(i).isEmpty() && trackedKeywords.contains(name.toLowerCase())) {
+                    if (targetsPerSentence.get(i).isEmpty() && trackedKeywords.contains(name.toLowerCase())) {
                         foundKeywords.add(name.toLowerCase());
                         System.out.println("KEYWORD: " + name + ", " + i);
                     }
@@ -189,35 +192,35 @@ public class SentimentTargetsAnnotator implements Annotator {
                 }
             }
 
-            if (mentions.get(i).isEmpty() && !foundKeywords.isEmpty()) {
-                SentimentTarget antecedent = getAntecedent(foundKeywords, mentions.getOrDefault(i-1, new ArrayList<>()));
+            if (targetsPerSentence.get(i).isEmpty() && !foundKeywords.isEmpty()) {
+                SentimentTarget antecedent = getAntecedent(foundKeywords, targetsPerSentence.getOrDefault(i-1, new ArrayList<>()));
 
                 if (antecedent != null) {
                     System.out.println("ANTECENDENT: " + antecedent + " based on anaphora: " + foundKeywords);
-                    mentions.get(i).add(antecedent.getAnaphor(foundKeywords, i));
+                    targetsPerSentence.get(i).add(antecedent.getAnaphor(foundKeywords, i));
                 }
             }
         }
 
-        return mentions;
+        return targetsPerSentence;
     }
 
     /**
-     * Perform basic anaphora resolution for a sentence.
-     * The antecedent entity is determined among a list of previous entity mentions and anaphoras found in a sentence.
-     * @param keywords
-     * @param mentions
+     * Perform basic anaphora resolution to establish an antecedent for the anaphora of a sentence.
+     * The antecedent entity is found among a list of previous entity targets.
+     * @param anaphora
+     * @param targets
      * @return
      */
-    private SentimentTarget getAntecedent(Set<String> keywords, List<SentimentTarget> mentions) {
-        Set<AnaphoraType> possibleMatches = getPossibleMatches(keywords);
+    private SentimentTarget getAntecedent(Set<String> anaphora, List<SentimentTarget> targets) {
+        Set<AnaphoraType> anaphoraTypes = getAnaphoraTypes(anaphora);
 
         // determine whether to perform single or multiple resolution
-        if (mentions.size() == 1) {
-            return getSingleMentionAntecedent(possibleMatches, mentions.get(0));
-        } else if (possibleMatches.size() == 1) {
-            AnaphoraType type = possibleMatches.iterator().next();  // shitty Java syntax
-            return getSingleTypeAntecedent(type, mentions);
+        if (targets.size() == 1) {
+            return getSingleMentionAntecedent(anaphoraTypes, targets.get(0));
+        } else if (anaphoraTypes.size() == 1) {
+            AnaphoraType anaphoraType = anaphoraTypes.iterator().next();  // shitty Java syntax
+            return getSingleTypeAntecedent(anaphoraType, targets);
         } else {
             System.out.println("multiple resolution not implemented yet...");
             return null;  // TODO: implement this
@@ -225,30 +228,30 @@ public class SentimentTargetsAnnotator implements Annotator {
     }
 
     /**
-     * Perform anaphora resolution with a single known entity.
+     * Perform anaphora resolution for a single known entity.
      * @param types
-     * @param mention
+     * @param target
      * @return
      */
-    private SentimentTarget getSingleMentionAntecedent(Set<AnaphoraType> types, SentimentTarget mention) {
-        if (mention.isPerson()) {
-            if (mention.hasGender()) {
-                if (mention.isMale() && types.contains(AnaphoraType.MALE)) {
-                    return mention;
-                } else if (mention.isFemale() && types.contains(AnaphoraType.FEMALE)) {
-                    return mention;
+    private SentimentTarget getSingleMentionAntecedent(Set<AnaphoraType> types, SentimentTarget target) {
+        if (target.isPerson()) {
+            if (target.hasGender()) {
+                if (target.isMale() && types.contains(AnaphoraType.MALE)) {
+                    return target;
+                } else if (target.isFemale() && types.contains(AnaphoraType.FEMALE)) {
+                    return target;
                 }
             } else if (types.contains(AnaphoraType.MALE) || types.contains(AnaphoraType.FEMALE)) {
-                return mention;
+                return target;
             }
         }
 
-        if (mention.isOrganization() && types.contains(AnaphoraType.PLURAL)) {
-            return mention;
+        if (target.isOrganization() && types.contains(AnaphoraType.PLURAL)) {
+            return target;
         }
 
-        if (mention.isLocation() && types.contains(AnaphoraType.PLURAL)) {
-            return mention;
+        if (target.isLocation() && types.contains(AnaphoraType.PLURAL)) {
+            return target;
         }
 
         return null;
@@ -257,31 +260,31 @@ public class SentimentTargetsAnnotator implements Annotator {
     /**
      * Perform anaphora resolution for a single known type (MALE, FEMALE, or PLURAL).
      * @param type
-     * @param mentions
+     * @param targets
      * @return
      */
-    private SentimentTarget getSingleTypeAntecedent(AnaphoraType type, List<SentimentTarget> mentions) {
+    private SentimentTarget getSingleTypeAntecedent(AnaphoraType type, List<SentimentTarget> targets) {
         if (type == AnaphoraType.MALE) {
-            return getMaleAnaphor(mentions);
+            return getMaleAntecedent(targets);
         } else if (type == AnaphoraType.FEMALE) {
-            return getFemaleAnaphor(mentions);
+            return getFemaleAntecedent(targets);
         } else {
-            return getPluralAnaphor(mentions);
+            return getPluralAntecedent(targets);
         }
     }
 
     /**
      * Perform anaphora resolution for a male.
-     * @param mentions
+     * @param targets
      * @return
      */
-    private SentimentTarget getMaleAnaphor(List<SentimentTarget> mentions) {
+    private SentimentTarget getMaleAntecedent(List<SentimentTarget> targets) {
         SentimentTarget candidate = null;
         List<SentimentTarget> candidatesWithoutGender = new ArrayList<>();
 
-        // will return any PERSON if the mentions only include a single, non-gendered PERSON
+        // will return any PERSON if the targets only include a single, non-gendered PERSON
         // if exactly one MALE candidate is found, will return that instead
-        for (SentimentTarget mention : mentions) {
+        for (SentimentTarget mention : targets) {
             if (mention.isPerson()) {
                 if (mention.hasGender()) {
                     if (mention.isMale()) {  // do not consider females at all!
@@ -307,16 +310,16 @@ public class SentimentTargetsAnnotator implements Annotator {
 
     /**
      * Perform anaphora resolution for a female.
-     * @param mentions
+     * @param targets
      * @return
      */
-    private SentimentTarget getFemaleAnaphor(List<SentimentTarget> mentions) {
+    private SentimentTarget getFemaleAntecedent(List<SentimentTarget> targets) {
         SentimentTarget candidate = null;
         List<SentimentTarget> candidatesWithoutGender = new ArrayList<>();
 
-        // will return any PERSON if the mentions only include a single, non-gendered PERSON
+        // will return any PERSON if the targets only include a single, non-gendered PERSON
         // if exactly one FEMALE candidate is found, will return that instead
-        for (SentimentTarget mention : mentions) {
+        for (SentimentTarget mention : targets) {
             if (mention.isPerson()) {
                 if (mention.hasGender()) {
                     if (mention.isFemale()) {  // do not consider males at all!
@@ -332,7 +335,7 @@ public class SentimentTargetsAnnotator implements Annotator {
             }
         }
 
-        // if no MALE candidate is found, use the candidate without gender
+        // if no FEMALE candidate is found, use the candidate without gender
         if (candidatesWithoutGender.size() == 1) {
             candidate = candidatesWithoutGender.get(0);
         }
@@ -341,17 +344,17 @@ public class SentimentTargetsAnnotator implements Annotator {
     }
 
     /**
-     * Perform anaphora resolution for a male.
-     * @param mentions
+     * Perform anaphora resolution for a non-PERSON.
+     * @param targets
      * @return
      */
-    private SentimentTarget getPluralAnaphor(List<SentimentTarget> mentions) {
+    private SentimentTarget getPluralAntecedent(List<SentimentTarget> targets) {
         SentimentTarget candidate = null;
 
-        for (SentimentTarget mention : mentions) {
-            if (mention.isOrganization() || mention.isLocation()) {
+        for (SentimentTarget target : targets) {
+            if (target.isOrganization() || target.isLocation()) {
                 if (candidate == null) {
-                    candidate = mention;
+                    candidate = target;
                 } else {
                     return null;
                 }
@@ -363,23 +366,23 @@ public class SentimentTargetsAnnotator implements Annotator {
 
     /**
      * Used to determine which types of anaphora were found in a sentence.
-     * @param keywords
+     * @param anaphora
      * @return
      */
-    private Set<AnaphoraType> getPossibleMatches(Set<String> keywords) {
-        Set<AnaphoraType> possibleMatches = new HashSet<>();
+    private Set<AnaphoraType> getAnaphoraTypes(Set<String> anaphora) {
+        Set<AnaphoraType> anaphoraTypes = new HashSet<>();
 
-        for (String keyword : keywords) {
+        for (String keyword : anaphora) {
             if (trackedMaleKeywords.contains(keyword)) {
-                possibleMatches.add(AnaphoraType.MALE);
+                anaphoraTypes.add(AnaphoraType.MALE);
             } else if (trackedFemaleKeywords.contains(keyword)) {
-                possibleMatches.add(AnaphoraType.FEMALE);
+                anaphoraTypes.add(AnaphoraType.FEMALE);
             } else if (trackedPluralKeywords.contains(keyword)) {
-                possibleMatches.add(AnaphoraType.PLURAL);
+                anaphoraTypes.add(AnaphoraType.PLURAL);
             }
         }
 
-        return possibleMatches;
+        return anaphoraTypes;
     }
 
     // TODO: revisit and revise this horribly inefficient and unreadable method
@@ -393,17 +396,17 @@ public class SentimentTargetsAnnotator implements Annotator {
      *              * a full name is a name that is NOT a short name
      *              * a short name is a prefix or a suffix of EXACTLY one other name which is not ALSO a short name
 
-     * @param mentions
+     * @param targets
      * @return
      */
-    Map<String, List<SentimentTarget>> getMergedEntities(List<SentimentTarget> mentions) {
+    Map<String, List<SentimentTarget>> getMergedEntities(List<SentimentTarget> targets) {
         Map<String, Set<String>> shortToLong = new HashMap<>();
 
         // reduce to unique set of names
         Set<String> names = new HashSet<>();
-        for (SentimentTarget mention : mentions) {
-            if (mention.isPerson()) {  // TODO: consider whether it should also merge locations or organisations
-                names.add(mention.getName());
+        for (SentimentTarget target : targets) {
+            if (target.isPerson()) {  // TODO: consider whether it should also merge locations or organisations
+                names.add(target.getName());
             }
         }
 
@@ -475,11 +478,11 @@ public class SentimentTargetsAnnotator implements Annotator {
         Map<String, List<SentimentTarget>> mergedEntities = new HashMap<>();
 
         // creating the final mapping of String --> list of sentiment targets
-        for (SentimentTarget mention : mentions) {
-            String entityName = mention.getName();
+        for (SentimentTarget target : targets) {
+            String entityName = target.getName();
             String targetName = "";
 
-            // if mention is either a full name or a short name
+            // if target is either a full name or a short name
             if (mergedEntities.containsKey(entityName)) {
                 targetName = entityName;
             } else {
@@ -492,13 +495,13 @@ public class SentimentTargetsAnnotator implements Annotator {
                 }
             }
 
-            // mention is neither a full name or a short name (most targets will be like this)
+            // target is neither a full name or a short name (most targets will be like this)
             if (targetName.isEmpty()) {
                 targetName = entityName;
             }
 
             List<SentimentTarget> contexts = mergedEntities.getOrDefault(targetName, new ArrayList<>());
-            contexts.add(mention);
+            contexts.add(target);
             mergedEntities.put(targetName, contexts);
         }
 
