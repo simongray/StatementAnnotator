@@ -107,7 +107,9 @@ public class SentimentTargetsAnnotator implements Annotator {
             if (target.hasSentiment()) {
                 sum += target.getSentiment();
                 n++;
-            } // TODO: should probably log targets without sentiment here
+            } else {
+                logger.error("target has no sentiment: " + target);
+            }
         }
 
         // return neutral (= 2) in case the list contained no sentiment
