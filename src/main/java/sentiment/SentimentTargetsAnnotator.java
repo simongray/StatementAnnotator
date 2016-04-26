@@ -17,7 +17,7 @@ import java.util.*;
 
 public class SentimentTargetsAnnotator implements Annotator {
     public final static String SENTIMENT_TARGETS = "sentimenttargets";
-    Logger logger = LoggerFactory.getLogger(SentimentTargetsAnnotator.class);
+    final Logger logger = LoggerFactory.getLogger(SentimentTargetsAnnotator.class);
 
     // anaphora resolution
     public Set<String> trackedKeywords = new HashSet<>();
@@ -61,7 +61,7 @@ public class SentimentTargetsAnnotator implements Annotator {
             try {
                 attachSentiment(sentenceTargets, sentence);
             } catch (SentimentOutOfBoundsException e) {
-                System.out.println("could not attach sentiment to targets " + sentenceTargets + " in sentence: " + sentence);
+                logger.error("could not attach sentiment to targets " + sentenceTargets + " in sentence: " + sentence);
             }
         }
 
@@ -132,7 +132,7 @@ public class SentimentTargetsAnnotator implements Annotator {
             int sentimentScore = RNNCoreAnnotations.getPredictedClass(tree);
             target.setSentiment(sentimentScore);
         } else {
-            System.out.println("multiple entities in sentence (" + targets + "), not implemented yet"); // TODO!!
+            logger.info("multiple entities in sentence (" + targets + "), cannot attach sentiment, not implemented yet"); // TODO!!
         }
     }
 
@@ -142,14 +142,15 @@ public class SentimentTargetsAnnotator implements Annotator {
      */
     private Map<Integer, List<SentimentTarget>> getTargets(List<CoreMap> sentences) {
         Map<Integer, List<SentimentTarget>> targetsPerSentence = new HashMap<>();
-        Set<String> foundKeywords = new HashSet<>();
 
         for (int i = 0; i < sentences.size(); i++) {
             List<CoreLabel> tokens = sentences.get(i).get(CoreAnnotations.TokensAnnotation.class);
             String previousTag = "";  // keep track of previous tag for multi-word entities
             String fullName = "";
             String gender = "";
+            Set<String> foundKeywords = new HashSet<>();
             targetsPerSentence.put(i, new ArrayList<>());
+            logger.info("finding targets in sentence " + i + ": " + tokens);
 
             // retrieve all entities in sentence
             for (CoreLabel token : tokens) {
@@ -176,14 +177,13 @@ public class SentimentTargetsAnnotator implements Annotator {
                     if (!fullName.isEmpty()) {
                         SentimentTarget target = new SentimentTarget(fullName, previousTag, gender, i);
                         targetsPerSentence.get(i).add(target);
-                        System.out.println("ENTITY: " + fullName + ", " + gender + ", " + i);
+                        logger.info("added target: " + target);
                         // TODO: figure out whether it makes sense to also have token index in target
                     }
 
                     // track keywords for anaphora resolution
                     if (targetsPerSentence.get(i).isEmpty() && trackedKeywords.contains(name.toLowerCase())) {
                         foundKeywords.add(name.toLowerCase());
-                        System.out.println("KEYWORD: " + name + ", " + i);
                     }
 
                     // make sure to reset for next token
@@ -193,11 +193,15 @@ public class SentimentTargetsAnnotator implements Annotator {
             }
 
             if (targetsPerSentence.get(i).isEmpty() && !foundKeywords.isEmpty()) {
-                SentimentTarget antecedent = getAntecedent(foundKeywords, targetsPerSentence.getOrDefault(i-1, new ArrayList<>()));
+                List<SentimentTarget> sentenceTargets = targetsPerSentence.getOrDefault(i - 1, new ArrayList<>());
+                logger.info("finding antecedents in sentence " + i + " with anaphora " + foundKeywords + " using targets " + sentenceTargets);
+                SentimentTarget antecedent = getAntecedent(foundKeywords, sentenceTargets);
+                logger.info("antecedent found: " + antecedent);
 
                 if (antecedent != null) {
-                    System.out.println("ANTECENDENT: " + antecedent + " based on anaphora: " + foundKeywords);
+                    SentimentTarget anaphor = antecedent.getAnaphor(foundKeywords, i);
                     targetsPerSentence.get(i).add(antecedent.getAnaphor(foundKeywords, i));
+                    logger.info("added anaphor: " + anaphor);
                 }
             }
         }
@@ -222,7 +226,7 @@ public class SentimentTargetsAnnotator implements Annotator {
             AnaphoraType anaphoraType = anaphoraTypes.iterator().next();  // shitty Java syntax
             return getSingleTypeAntecedent(anaphoraType, targets);
         } else {
-            System.out.println("multiple resolution not implemented yet...");
+            logger.error("multiple resolution not implemented yet... " + targets + ", " + anaphora);
             return null;  // TODO: implement this
         }
     }
@@ -234,6 +238,8 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @return
      */
     private SentimentTarget getSingleMentionAntecedent(Set<AnaphoraType> types, SentimentTarget target) {
+        logger.info("looking for anaphora matching sentiment target: " + target);
+
         if (target.isPerson()) {
             if (target.hasGender()) {
                 if (target.isMale() && types.contains(AnaphoraType.MALE)) {
@@ -254,6 +260,7 @@ public class SentimentTargetsAnnotator implements Annotator {
             return target;
         }
 
+        logger.info("found no anaphora matching sentiment target");
         return null;
     }
 
@@ -281,21 +288,25 @@ public class SentimentTargetsAnnotator implements Annotator {
     private SentimentTarget getMaleAntecedent(List<SentimentTarget> targets) {
         SentimentTarget candidate = null;
         List<SentimentTarget> candidatesWithoutGender = new ArrayList<>();
+        logger.info("looking for male antecedent");
 
         // will return any PERSON if the targets only include a single, non-gendered PERSON
         // if exactly one MALE candidate is found, will return that instead
-        for (SentimentTarget mention : targets) {
-            if (mention.isPerson()) {
-                if (mention.hasGender()) {
-                    if (mention.isMale()) {  // do not consider females at all!
+        for (SentimentTarget target : targets) {
+            if (target.isPerson()) {
+                if (target.hasGender()) {
+                    if (target.isMale()) {  // do not consider females at all!
                         if (candidate == null) {
-                            candidate = mention;
+                            logger.info("found candidate male antecedent: " + target.getName());
+                            candidate = target;
                         } else {
+                            logger.info("found multiple candidate male antecedents!");
                             return null;
                         }
                     }
                 } else {
-                    candidatesWithoutGender.add(mention);
+                    logger.info("found candidate unknown gender antecedent: " + target.getName());
+                    candidatesWithoutGender.add(target);
                 }
             }
         }
@@ -316,21 +327,25 @@ public class SentimentTargetsAnnotator implements Annotator {
     private SentimentTarget getFemaleAntecedent(List<SentimentTarget> targets) {
         SentimentTarget candidate = null;
         List<SentimentTarget> candidatesWithoutGender = new ArrayList<>();
+        logger.info("looking for female antecedent");
 
         // will return any PERSON if the targets only include a single, non-gendered PERSON
         // if exactly one FEMALE candidate is found, will return that instead
-        for (SentimentTarget mention : targets) {
-            if (mention.isPerson()) {
-                if (mention.hasGender()) {
-                    if (mention.isFemale()) {  // do not consider males at all!
+        for (SentimentTarget target : targets) {
+            if (target.isPerson()) {
+                if (target.hasGender()) {
+                    if (target.isFemale()) {  // do not consider males at all!
                         if (candidate == null) {
-                            candidate = mention;
+                            logger.info("found candidate female antecedent: " + target.getName());
+                            candidate = target;
                         } else {
+                            logger.info("found multiple candidate female antecedents!");
                             return null;
                         }
                     }
                 } else {
-                    candidatesWithoutGender.add(mention);
+                    logger.info("found candidate unknown gender antecedent: " + target.getName());
+                    candidatesWithoutGender.add(target);
                 }
             }
         }
@@ -350,12 +365,15 @@ public class SentimentTargetsAnnotator implements Annotator {
      */
     private SentimentTarget getPluralAntecedent(List<SentimentTarget> targets) {
         SentimentTarget candidate = null;
+        logger.info("looking for plural antecedent");
 
         for (SentimentTarget target : targets) {
             if (target.isOrganization() || target.isLocation()) {
                 if (candidate == null) {
+                    logger.info("found candidate plural antecedent: " + target.getName());
                     candidate = target;
                 } else {
+                    logger.info("found multiple candidate plural antecedents!");
                     return null;
                 }
             }

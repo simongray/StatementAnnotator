@@ -39,7 +39,7 @@ public class TestSentimentTargets {
 //                "Before you go, familiarise yourself with the air quality in your own area so you have a means of comparison. If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too. I sure was (I come from Copenhagen, Denmark). Of course, Western cities usually don't have those crazy smog days." +
 //                "Don't worry too much. Sometimes there's no smog for a whole week, sometime's it lasts for a whole week and you'll just stay mostly indoors and use masks when outside. You'll get used to it.";
 
-        Annotation annotation = new Annotation(example);
+//        Annotation annotation = new Annotation(example);
 //        Annotation annotation = new Annotation(
 //                "George Bush was quite sentimental in his old days. " +
 //                "George often thought highly of Clinton. " +
@@ -50,6 +50,16 @@ public class TestSentimentTargets {
 //                "He was such as nice guy. "
 //        );
         // NOTE TO SELF: common source of errors -> forgetting to put a space after every sentence
+
+        String singleTypeAntencedentsExample =
+//                "Bill Clinton is an idiot. He is so stupid, I can't believe it and neither can she - or they, for that matter. " +
+//                "Unfortunately, Hillary Clinton loves him. She loves him like no one else does. " +
+//                "George Bush doesn't love Hillary or Bill Clinton. He just loves himself. " +
+                "George and Hillary had a fling once. She is not over it yet. " +  // female antecedent
+                "Google is an organization, unlike Hillary Clinton or George Bush. They don't particularly like anyone. " +  // plural antecedent
+                "Bill Clinton and Google haven't had much interaction. He just goes over there sometimes. ";  // male antecedent
+        Annotation annotation = new Annotation(singleTypeAntencedentsExample);
+
 
         DemoTimer.stop();
 

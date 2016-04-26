@@ -21,6 +21,12 @@ public class SentimentTarget {
         this.sentenceIndex = index;
     }
 
+    /**
+     * Create anaphor target associated with antecedent.
+     * @param anaphora
+     * @param index
+     * @return
+     */
     public SentimentTarget getAnaphor(Set<String> anaphora, int index) {
         SentimentTarget anaphor = new SentimentTarget(name, tag, gender, index); // note: using argument for index
         anaphor.setAnaphora(anaphora);
