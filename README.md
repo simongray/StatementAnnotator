@@ -1,5 +1,17 @@
+Dependencies
+------------
+The sources come in the form of an IntelliJ project
+that uses Gradle for managing dependencies.
+
+The Stanford srparser is a dependency for this project.
+It is not available in any maven repository
+and must be downloaded separately.
+Download it [here](http://nlp.stanford.edu/software/stanford-srparser-2014-10-23-models.jar)
+and put the JAR file in the project directory.
+
+
 Annotator algorithm
-----------------------------------------------
+-------------------
 
 I'm documenting where I deviate from the approach taken in this
 paper. The excerpt is from "Entity-Specific Sentiment
