@@ -15,7 +15,6 @@ import java.util.*;
 
 public class SentimentTargetsAnnotator implements Annotator {
     public final static String SENTIMENT_TARGETS = "sentimenttargets";
-    public final static Class SENTIMENT_TARGET_ANNOTATION_CLASS = SentimentTargetsAnnotation.class;
 
     // anaphora resolution
     public Set<String> trackedKeywords = new HashSet<>();
@@ -47,9 +46,7 @@ public class SentimentTargetsAnnotator implements Annotator {
 
         // compile a list of mentions from the map
         List<SentimentTarget> mentions = new ArrayList<>();
-        for (List<SentimentTarget> sentenceMentions : mentionsPerSentence.values()) {
-            mentions.addAll(sentenceMentions);
-        }
+        mentionsPerSentence.values().forEach(mentions::addAll);
 
         // merge the mentions referring to the same entity, producing map of full entity name to mentions
         Map<String, List<SentimentTarget>> mentionsPerEntity = getMergedEntities(mentions);
@@ -96,7 +93,7 @@ public class SentimentTargetsAnnotator implements Annotator {
     }
 
     /**
-     * Get the composed sentiment a list of (assumed identical) targets.
+     * Get the composed sentiment a list of mentions of the (assumed) same target.
      * @param targets
      */
     private int getComposedSentiment(List<SentimentTarget> targets) {
@@ -142,9 +139,6 @@ public class SentimentTargetsAnnotator implements Annotator {
      */
     private Map<Integer, List<SentimentTarget>> getMentions(List<CoreMap> sentences) {
         Map<Integer, List<SentimentTarget>> mentions = new HashMap<>();
-
-        // for anaphora resolution
-        Map<String, List<SentimentTarget>> anaphoras = new HashMap<>();  // TODO: figure out if this should be called anaphoras
         Set<String> foundKeywords = new HashSet<>();
 
         for (int i = 0; i < sentences.size(); i++) {
@@ -512,7 +506,6 @@ public class SentimentTargetsAnnotator implements Annotator {
 
         return mergedEntities;
     }
-
 
     private enum AnaphoraType {
         MALE,
