@@ -60,7 +60,7 @@ public class SentimentTargetsAnnotator implements Annotator {
             CoreMap sentence = sentences.get(i);
             try {
                 attachSentiment(sentenceTargets, sentence);
-            } catch (SentimentOutOfBoundsException e) {
+            } catch (InvalidSentimentException e) {
                 logger.error("could not attach sentiment to targets " + sentenceTargets + " in sentence: " + sentence);
             }
         }
@@ -125,7 +125,7 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @param sentence
      */
 
-    private void attachSentiment(List<SentimentTarget> targets, CoreMap sentence) throws SentimentOutOfBoundsException {
+    private void attachSentiment(List<SentimentTarget> targets, CoreMap sentence) throws InvalidSentimentException {
         if (targets.size() == 1) {
             SentimentTarget target = targets.get(0);
             Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);

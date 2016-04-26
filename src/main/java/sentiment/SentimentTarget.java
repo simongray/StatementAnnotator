@@ -113,11 +113,11 @@ public class SentimentTarget {
         this.anaphora = anaphora;
     }
 
-    public void setSentiment(int sentiment) throws SentimentOutOfBoundsException {
+    public void setSentiment(int sentiment) throws InvalidSentimentException {
         if (sentiment >= 0 && sentiment < 5) {
             this.sentiment = sentiment;
         } else {
-            throw new SentimentOutOfBoundsException("sentiment must integer from 0 to 4");
+            throw new InvalidSentimentException("sentiment must integer from 0 to 4");
         }
     }
 
