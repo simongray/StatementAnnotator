@@ -13,9 +13,13 @@ and put the JAR file in the project directory.
 Annotator algorithm
 -------------------
 
+The approach to annotating sentiment targets is an evolution
+of the approach taken in the paper
+"Entity-Specific Sentiment Classification of Yahoo News Comments"
+by Biyana et al (2015).
+
 I'm documenting where I deviate from the approach taken in this
-paper. The excerpt is from "Entity-Specific Sentiment
-Classification of Yahoo News Comments".
+paper.
 
 ```
     The context of an entity contains the words,
