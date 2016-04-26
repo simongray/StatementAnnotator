@@ -20,7 +20,6 @@ public class SentimentTargetsAnnotator implements Annotator {
     final Logger logger = LoggerFactory.getLogger(SentimentTargetsAnnotator.class);
 
     // anaphora resolution
-    public Set<String> trackedKeywords = new HashSet<>();
     public Set<String> trackedMaleKeywords = new HashSet<>();
     public Set<String> trackedFemaleKeywords = new HashSet<>();
     public Set<String> trackedPluralKeywords = new HashSet<>();
@@ -35,9 +34,6 @@ public class SentimentTargetsAnnotator implements Annotator {
         trackedPluralKeywords.add("them");
         trackedPluralKeywords.add("their");
         trackedPluralKeywords.add("theirs");
-        trackedKeywords.addAll(trackedMaleKeywords);
-        trackedKeywords.addAll(trackedFemaleKeywords);
-        trackedKeywords.addAll(trackedPluralKeywords);
     }
 
     @Override
@@ -147,7 +143,7 @@ public class SentimentTargetsAnnotator implements Annotator {
 
         for (int i = 0; i < sentences.size(); i++) {
             List<CoreLabel> tokens = sentences.get(i).get(CoreAnnotations.TokensAnnotation.class);
-            String previousTag = "";  // keep track of previous tag for multi-word entities
+            String previousNerTag = "";  // keep track of previous tag for multi-word entities
             String fullName = "";
             String gender = "";
             Set<String> foundKeywords = new HashSet<>();
@@ -158,12 +154,13 @@ public class SentimentTargetsAnnotator implements Annotator {
             for (CoreLabel token : tokens) {
                 String name = token.get(CoreAnnotations.TextAnnotation.class);
                 String nerTag = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
+                String posTag = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 
                 // only allow specific tags (e.g. not DATE, DURATION, NUMBER)
                 if (nerTag.length() > 1 && nerTag.equals("PERSON") || nerTag.equals("ORGANIZATION") || nerTag.equals("LOCATION") || nerTag.equals("MISC")) {
 
                     // keeping track of multi-word entities
-                    if (nerTag.equals(previousTag)) {
+                    if (nerTag.equals(previousNerTag)) {
                         fullName += " " + name;
                     } else {
                         fullName = name;
@@ -174,22 +171,23 @@ public class SentimentTargetsAnnotator implements Annotator {
                         }
                     }
 
-                    previousTag = nerTag;
+                    previousNerTag = nerTag;
                 } else {
                     if (!fullName.isEmpty()) {
-                        SentimentTarget target = new SentimentTarget(fullName, previousTag, gender, i);
+                        SentimentTarget target = new SentimentTarget(fullName, previousNerTag, gender, i);
                         targetsPerSentence.get(i).add(target);
                         logger.info("added target: " + target);
                         // TODO: figure out whether it makes sense to also have token index in target
                     }
 
                     // track keywords for anaphora resolution
-                    if (targetsPerSentence.get(i).isEmpty() && trackedKeywords.contains(name.toLowerCase())) {
+                    if (targetsPerSentence.get(i).isEmpty() && posTag.equals("PRP")) {  // PRP = proper nouns
+                        logger.info("found candidate anaphora: " + name);
                         foundKeywords.add(name.toLowerCase());
                     }
 
                     // make sure to reset for next token
-                    previousTag = "";
+                    previousNerTag = "";
                     fullName = "";
                 }
             }
@@ -228,7 +226,7 @@ public class SentimentTargetsAnnotator implements Annotator {
             AnaphoraType anaphoraType = anaphoraTypes.iterator().next();  // shitty Java syntax
             return getSingleTypeAntecedent(anaphoraType, targets);
         } else {
-            logger.error("multiple resolution not implemented yet... " + targets + ", " + anaphora);
+            logger.error("multiple resolution not implemented yet: " + targets + ", " + anaphora);
             return null;  // TODO: implement this
         }
     }
@@ -267,7 +265,7 @@ public class SentimentTargetsAnnotator implements Annotator {
     }
 
     /**
-     * Perform anaphora resolution for a single known type (MALE, FEMALE, or PLURAL).
+     * Perform anaphora resolution for a single anaphora type (MALE, FEMALE, or PLURAL).
      * @param type
      * @param targets
      * @return

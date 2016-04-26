@@ -54,10 +54,11 @@ public class TestSentimentTargets {
         String singleTypeAntencedentsExample =
 //                "Bill Clinton is an idiot. He is so stupid, I can't believe it and neither can she - or they, for that matter. " +
 //                "Unfortunately, Hillary Clinton loves him. She loves him like no one else does. " +
-//                "George Bush doesn't love Hillary or Bill Clinton. He just loves himself. " +
+//                "George Bush doesn't love Hillary or Bill Clinton. He just loves himself. And perhaps her too. "
                 "George and Hillary had a fling once. She is not over it yet. " +  // female antecedent
                 "Google is an organization, unlike Hillary Clinton or George Bush. They don't particularly like anyone. " +  // plural antecedent
-                "Bill Clinton and Google haven't had much interaction. He just goes over there sometimes. ";  // male antecedent
+                "Bill Clinton and Google haven't had much interaction. He just goes over there sometimes. "  // male antecedent
+        ;
         Annotation annotation = new Annotation(singleTypeAntencedentsExample);
 
 
