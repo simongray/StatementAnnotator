@@ -29,6 +29,14 @@
     <orderEntry type="library" name="Gradle: edu.stanford.nlp:stanford-corenlp:3.6.0:models" level="project" />
     <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.21" level="project" />
     <orderEntry type="library" name="Gradle: org.slf4j:slf4j-simple:1.7.21" level="project" />
-    <orderEntry type="library" name="stanford-srparser-2014-10-23-models" level="project" />
+    <orderEntry type="module-library">
+      <library name="Gradle: stanford-srparser-2014-10-23-models">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/stanford-srparser-2014-10-23-models.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

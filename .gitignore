@@ -85,8 +85,6 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 
-# Wikipedia titles
-titles-sorted.txt
-
 # local dependencies
-lib/*
+titles-sorted.txt
+stanford-srparser-2014-10-23-models.jar
