@@ -12,5 +12,7 @@ repositories {
 dependencies {
     compile 'edu.stanford.nlp:stanford-corenlp:3.6.0'
     compile 'edu.stanford.nlp:stanford-corenlp:3.6.0:models'
+    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'org.slf4j:slf4j-simple:1.7.21'
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }

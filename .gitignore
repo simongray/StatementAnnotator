@@ -87,3 +87,6 @@ gradle-app.setting
 
 # Wikipedia titles
 titles-sorted.txt
+
+# local dependencies
+lib/*
