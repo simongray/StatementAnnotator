@@ -438,13 +438,7 @@ public class SentimentTargetsAnnotator implements Annotator {
                 }
             }
         }
-
-        System.out.println();
-        System.out.println("after creating short to long mapping");
-
-        for (String name : shortToLong.keySet()) {
-            System.out.println(name + " -> " + shortToLong.get(name));
-        }
+        logger.info("short to long mapping: " + shortToLong.entrySet());
 
         // if a long name also exists as a short name it should be purged
         for (String shortName : shortToLong.keySet()) {
@@ -462,13 +456,7 @@ public class SentimentTargetsAnnotator implements Annotator {
             longNames.removeAll(purgedNames);
             shortToLong.put(shortName, longNames);
         }
-
-        System.out.println();
-        System.out.println("after purging middle-form names");
-
-        for (String name : shortToLong.keySet()) {
-            System.out.println(name + " -> " + shortToLong.get(name));
-        }
+        logger.info("purged mapping: " + shortToLong.entrySet());
 
         // of the remaining short names, the ones with only a single long form are preserved
         // the ones with multiple are conflicting, the ones with a null reference are middle-form
@@ -484,18 +472,11 @@ public class SentimentTargetsAnnotator implements Annotator {
                 fullToShort.put(longName, shortNames);
             }
         }
-
-        System.out.println();
-        System.out.println("reverse mapping with full names to short names");
-        for (String name : fullToShort.keySet()) {
-            System.out.println(name + " -> " + fullToShort.get(name));
-        }
-
-        System.out.println();
-        System.out.println("as map of SentimentTargets");
-        Map<String, List<SentimentTarget>> mergedEntities = new HashMap<>();
+        logger.info("reversed mapping: " + fullToShort.entrySet());
 
         // creating the final mapping of String --> list of sentiment targets
+        Map<String, List<SentimentTarget>> mergedEntities = new HashMap<>();
+
         for (SentimentTarget target : targets) {
             String entityName = target.getName();
             String targetName = "";
@@ -522,8 +503,7 @@ public class SentimentTargetsAnnotator implements Annotator {
             contexts.add(target);
             mergedEntities.put(targetName, contexts);
         }
-
-        // todo: replace print with log
+        logger.info("merged entities: " + mergedEntities.entrySet());
 
         return mergedEntities;
     }
