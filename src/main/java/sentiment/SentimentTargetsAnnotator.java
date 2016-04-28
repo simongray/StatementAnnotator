@@ -253,7 +253,6 @@ public class SentimentTargetsAnnotator implements Annotator {
         for (CoreLabel token : tokens) {
             String name = token.get(CoreAnnotations.TextAnnotation.class);
             String nerTag = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
-            String posTag = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 
             // only allow specific tags (e.g. not DATE, DURATION, NUMBER)
             if (nerTag.length() > 1 && trackedNerTags.contains(nerTag)) {
@@ -273,10 +272,9 @@ public class SentimentTargetsAnnotator implements Annotator {
                 previousNerTag = nerTag;
             } else {
                 if (!fullName.isEmpty()) {
-                    SentimentTarget target = new SentimentTarget(fullName, previousNerTag, gender, i); // TODO: refactor to use list of tokens
+                    SentimentTarget target = new SentimentTarget(fullName, previousNerTag, gender, i); // TODO: refactor to use list of tokens instead
                     sentenceTargets.add(target);
                     logger.info("added target: " + target);
-                    // TODO: figure out whether it makes sense to also have token index in target
                 }
 
                 // make sure to reset for next token
