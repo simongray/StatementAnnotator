@@ -65,6 +65,7 @@ public class SentimentTargetsAnnotator implements Annotator {
         Map<String, Integer> scorePerEntity = new HashMap<>();
         for (String entity : targetsPerEntity.keySet()) {
             List<SentimentTarget> entityTargets = targetsPerEntity.get(entity);
+            logger.info("finding composed sentiment for entity: " + entity);
             scorePerEntity.put(entity, getComposedSentiment(entityTargets));
         }
 
@@ -124,13 +125,37 @@ public class SentimentTargetsAnnotator implements Annotator {
      */
 
     private void attachSentiment(List<SentimentTarget> targets, CoreMap sentence) throws InvalidSentimentException {
+        Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
+
         if (targets.size() == 1) {
             SentimentTarget target = targets.get(0);
-            Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
             int sentimentScore = RNNCoreAnnotations.getPredictedClass(tree);
             target.setSentiment(sentimentScore);
         } else {
-            logger.info("multiple entities in sentence (" + targets + "), cannot attach sentiment, not implemented yet"); // TODO!!
+            // TODO: implement tree traversal for splitting entity contexts
+            logger.info("multiple entities in sentence (" + targets + "), cannot attach sentiment, not implemented yet");
+
+            List<List<Tree>> paths = new ArrayList<>();
+            attachPaths(tree, new ArrayList<>(), paths);
+
+        }
+    }
+
+    /**
+     * Recursively attaches all possible paths in the parse tree to a list of paths.
+     * @param tree
+     * @param path
+     * @param paths
+     */
+    private void attachPaths(Tree tree, List<Tree> path, List<List<Tree>> paths) {
+        path.add(tree);
+
+        if (tree.isLeaf()) {
+            paths.add(path);
+        } else {
+            for (Tree child : tree.children()) {
+                attachPaths(child, new ArrayList<>(path), paths);
+            }
         }
     }
 
@@ -212,6 +237,7 @@ public class SentimentTargetsAnnotator implements Annotator {
     /**
      * Perform basic anaphora resolution to establish an antecedent for the anaphora of a sentence.
      * The antecedent entity is found among a list of previous entity targets.
+     * To simplify things, only a single antecedent can be found in a sentence.
      * @param anaphora
      * @param targets
      * @return
