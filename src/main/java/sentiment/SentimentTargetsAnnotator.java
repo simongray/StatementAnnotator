@@ -36,6 +36,15 @@ public class SentimentTargetsAnnotator implements Annotator {
         trackedPluralKeywords.add("theirs");
     }
 
+    // tracked NER tags
+    public Set<String> trackedNerTags = new HashSet<>();
+    {
+        trackedNerTags.add("PERSON");
+        trackedNerTags.add("ORGANIZATION");
+        trackedNerTags.add("LOCATION");
+        trackedNerTags.add("MISC");
+    }
+
     @Override
     public void annotate(Annotation annotation) {
         List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
@@ -182,7 +191,7 @@ public class SentimentTargetsAnnotator implements Annotator {
                 String posTag = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 
                 // only allow specific tags (e.g. not DATE, DURATION, NUMBER)
-                if (nerTag.length() > 1 && nerTag.equals("PERSON") || nerTag.equals("ORGANIZATION") || nerTag.equals("LOCATION") || nerTag.equals("MISC")) {
+                if (nerTag.length() > 1 && trackedNerTags.contains(nerTag)) {
 
                     // keeping track of multi-word entities
                     if (nerTag.equals(previousNerTag)) {
