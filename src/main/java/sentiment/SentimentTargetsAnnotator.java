@@ -176,71 +176,100 @@ public class SentimentTargetsAnnotator implements Annotator {
         Map<Integer, List<SentimentTarget>> targetsPerSentence = new HashMap<>();
 
         for (int i = 0; i < sentences.size(); i++) {
-            List<CoreLabel> tokens = sentences.get(i).get(CoreAnnotations.TokensAnnotation.class);
-            String previousNerTag = "";  // keep track of previous tag for multi-word entities
-            String fullName = "";
-            String gender = "";
-            Set<String> foundKeywords = new HashSet<>();
-            targetsPerSentence.put(i, new ArrayList<>());
-            logger.info("finding targets in sentence " + i + ": " + tokens);
+            CoreMap sentence = sentences.get(i);
+            List<SentimentTarget> sentenceTargets = getEntities(sentence, i);
 
-            // retrieve all entities in sentence
-            for (CoreLabel token : tokens) {
-                String name = token.get(CoreAnnotations.TextAnnotation.class);
-                String nerTag = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
-                String posTag = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
-
-                // only allow specific tags (e.g. not DATE, DURATION, NUMBER)
-                if (nerTag.length() > 1 && trackedNerTags.contains(nerTag)) {
-
-                    // keeping track of multi-word entities
-                    if (nerTag.equals(previousNerTag)) {
-                        fullName += " " + name;
-                    } else {
-                        fullName = name;
-
-                        // use only first names for gender
-                        if (nerTag.equals("PERSON")) {
-                            gender = token.get(MachineReadingAnnotations.GenderAnnotation.class);
-                        }
-                    }
-
-                    previousNerTag = nerTag;
-                } else {
-                    if (!fullName.isEmpty()) {
-                        SentimentTarget target = new SentimentTarget(fullName, previousNerTag, gender, i);
-                        targetsPerSentence.get(i).add(target);
-                        logger.info("added target: " + target);
-                        // TODO: figure out whether it makes sense to also have token index in target
-                    }
-
-                    // track keywords for anaphora resolution
-                    if (targetsPerSentence.get(i).isEmpty() && posTag.equals("PRP")) {  // PRP = proper nouns
-                        logger.info("found candidate anaphora: " + name);
-                        foundKeywords.add(name.toLowerCase());
-                    }
-
-                    // make sure to reset for next token
-                    previousNerTag = "";
-                    fullName = "";
-                }
+            if (sentenceTargets.isEmpty()) {
+                List<SentimentTarget> previousSentenceTargets = targetsPerSentence.getOrDefault(i - 1, new ArrayList<>());
+                SentimentTarget anaphor = getAnaphor(previousSentenceTargets, sentence, i);
+                sentenceTargets.add(anaphor);
             }
 
-            if (targetsPerSentence.get(i).isEmpty() && !foundKeywords.isEmpty()) {
-                List<SentimentTarget> sentenceTargets = targetsPerSentence.getOrDefault(i - 1, new ArrayList<>());
-                logger.info("finding antecedents in sentence " + i + " with anaphora " + foundKeywords + " using targets " + sentenceTargets);
-                SentimentTarget antecedent = getAntecedent(foundKeywords, sentenceTargets);
-                logger.info("antecedent found: " + antecedent);
-
-                if (antecedent != null) {
-                    SentimentTarget anaphor = antecedent.getAnaphor(foundKeywords, i);
-                    targetsPerSentence.get(i).add(antecedent.getAnaphor(foundKeywords, i));
-                    logger.info("added anaphor: " + anaphor);
-                }
-            }
+            targetsPerSentence.put(i, sentenceTargets);
         }
 
         return targetsPerSentence;
+    }
+
+    private SentimentTarget getAnaphor(List<SentimentTarget> previousSentenceTargets, CoreMap sentence, int i) {
+        Set<String> foundKeywords = getTrackedKeywords(sentence);
+
+        logger.info("finding antecedents for anaphora " + foundKeywords + " using targets " + previousSentenceTargets);
+        SentimentTarget antecedent = getAntecedent(foundKeywords, previousSentenceTargets);
+        logger.info("antecedent found: " + antecedent);
+
+        if (antecedent != null) {
+            SentimentTarget anaphor = antecedent.getAnaphor(foundKeywords, i);
+            logger.info("added anaphor: " + anaphor);
+            return anaphor;
+        }
+
+        return null;
+    }
+
+    private Set<String> getTrackedKeywords(CoreMap sentence) {
+        // track keywords for anaphora resolution
+        List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
+        Set<String> foundKeywords = new HashSet<>();
+
+        for (CoreLabel token : tokens) {
+            String posTag = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
+            String name = token.get(CoreAnnotations.TextAnnotation.class);
+
+            if (posTag.equals("PRP")) {  // PRP = proper nouns
+                logger.info("found candidate anaphora: " + name);
+                foundKeywords.add(name.toLowerCase());
+            }
+        }
+
+        return foundKeywords;
+    }
+
+    private List<SentimentTarget> getEntities(CoreMap sentence, int i) {
+        List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
+        String previousNerTag = "";  // keep track of previous tag for multi-word entities
+        String fullName = "";
+        String gender = "";
+        List<SentimentTarget> sentenceTargets = new ArrayList<>();
+        logger.info("finding targets in sentence: " + tokens);
+
+        // retrieve all entities in sentence
+        for (CoreLabel token : tokens) {
+            String name = token.get(CoreAnnotations.TextAnnotation.class);
+            String nerTag = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
+            String posTag = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
+
+            // only allow specific tags (e.g. not DATE, DURATION, NUMBER)
+            if (nerTag.length() > 1 && trackedNerTags.contains(nerTag)) {
+
+                // keeping track of multi-word entities
+                if (nerTag.equals(previousNerTag)) {
+                    fullName += " " + name;
+                } else {
+                    fullName = name;
+
+                    // use only first names for gender
+                    if (nerTag.equals("PERSON")) {
+                        gender = token.get(MachineReadingAnnotations.GenderAnnotation.class);
+                    }
+                }
+
+                previousNerTag = nerTag;
+            } else {
+                if (!fullName.isEmpty()) {
+                    SentimentTarget target = new SentimentTarget(fullName, previousNerTag, gender, i); // TODO: refactor to use list of tokens
+                    sentenceTargets.add(target);
+                    logger.info("added target: " + target);
+                    // TODO: figure out whether it makes sense to also have token index in target
+                }
+
+                // make sure to reset for next token
+                previousNerTag = "";
+                fullName = "";
+            }
+        }
+
+        return sentenceTargets;
     }
 
     /**
