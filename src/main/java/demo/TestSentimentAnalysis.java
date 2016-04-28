@@ -9,6 +9,8 @@ import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -58,7 +60,7 @@ public class TestSentimentAnalysis {
         // initiate pipeline with properties (i.e. what stages)
         Properties props = new Properties();
         props.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, sentiment"); // required for use fo "ner" and "sentiment"
-        props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");
+//        props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");
 
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
@@ -76,16 +78,30 @@ public class TestSentimentAnalysis {
 //            System.out.println(sentence.keySet());
 //
 //            // TokensAnnotation are available for example
-//            List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
-//            for (CoreLabel token : tokens) {
-//                System.out.println(token + ", " + token.ner());  // actually includes NER in this case!! (days = DURATION)
-//            }
+            List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
+            for (CoreLabel token : tokens) {
+                System.out.println(token + ", " + token.ner());  // actually includes NER in this case!! (days = DURATION)
+                System.out.println("1:"+token.beginPosition());
+                System.out.println("2:"+token.endPosition());
+                System.out.println("3:"+token.docID());
+                System.out.println("4:"+token.before());
+                System.out.println("5:"+token.after());
+                System.out.println("6:"+token.sentIndex());
+            }
 
             // seems like it's only necessary to parse tree if there is a conflict of entities (i.e. two or more entities in a sentence)
 
             Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
             System.out.println("the overall sentiment rating is " + sentence.get(SentimentCoreAnnotations.SentimentClass.class));
+
             parse(tree, 0);
+
+            List<List<Tree>> paths = new ArrayList<>();
+            attachPaths(tree, new ArrayList<>(), paths);
+
+            for (List<Tree> path : paths) {
+                System.out.println("path - length=" + path.size() + ", final=" + path.get(path.size()-1).value());
+            }
         }
 
     }
@@ -123,22 +139,33 @@ public class TestSentimentAnalysis {
         System.out.println(new String(new char[n]).replace("\0", "- ")
                 + tree.value() + ": " + RNNCoreAnnotations.getPredictedClass(tree)
         );
+        Collection<CoreLabel> labels = tree.taggedLabeledYield();
 
-//        for (CoreLabel label : tree.taggedLabeledYield()) {
-//            System.out.println("-----");
-//            System.out.print("toString= " + label);
-//            System.out.println();
-//        }
-
-        // scores (not confirmed, but 99% sure)
-            // very negative: 0
-            // negative: 1
-            // neutral: 2
-            // positive: 3
-            // very positive: 4
+        for (CoreLabel label : labels) {
+            System.out.println(new String(new char[n]).replace("\0", "- ")+"0:"+label.value());
+            System.out.println(new String(new char[n]).replace("\0", "- ")+"1:"+label.beginPosition());
+            System.out.println(new String(new char[n]).replace("\0", "- ")+"2:"+label.endPosition());
+            System.out.println(new String(new char[n]).replace("\0", "- ")+"3:"+label.docID());
+            System.out.println(new String(new char[n]).replace("\0", "- ")+"4:"+label.before());
+            System.out.println(new String(new char[n]).replace("\0", "- ")+"5:"+label.after());
+            System.out.println(new String(new char[n]).replace("\0", "- ")+"6:"+label.sentIndex());
+            System.out.println(new String(new char[n]).replace("\0", "- ")+"7:"+label.get(CoreAnnotations.SentenceIndexAnnotation.class));
+        }
 
         for (Tree child : tree.children()) {
             parse(child, n+1);
+        }
+    }
+
+    public static void attachPaths(Tree tree, List<Tree> path, List<List<Tree>> paths) {
+        path.add(tree);
+
+        if (tree.isLeaf()) {
+            paths.add(path);
+        } else {
+            for (Tree child : tree.children()) {
+                attachPaths(child, new ArrayList<>(path), paths);
+            }
         }
     }
 }
