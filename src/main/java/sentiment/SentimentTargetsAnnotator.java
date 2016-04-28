@@ -169,7 +169,7 @@ public class SentimentTargetsAnnotator implements Annotator {
     }
 
     /**
-     * Uses the CoreNLP NER tagger to find relevant entities.
+     * Returns entities and their anaphora in a list of sentences.
      * @return a list of entities
      */
     private Map<Integer, List<SentimentTarget>> getTargets(List<CoreMap> sentences) {
@@ -191,8 +191,15 @@ public class SentimentTargetsAnnotator implements Annotator {
         return targetsPerSentence;
     }
 
+    /**
+     * Returns the anaphor based on an antecedent found in a previous sentence.
+     * @param previousSentenceTargets
+     * @param sentence
+     * @param i
+     * @return
+     */
     private SentimentTarget getAnaphor(List<SentimentTarget> previousSentenceTargets, CoreMap sentence, int i) {
-        Set<String> foundKeywords = getTrackedKeywords(sentence);
+        Set<String> foundKeywords = getAnaphoraKeywords(sentence);
 
         logger.info("finding antecedents for anaphora " + foundKeywords + " using targets " + previousSentenceTargets);
         SentimentTarget antecedent = getAntecedent(foundKeywords, previousSentenceTargets);
@@ -207,7 +214,12 @@ public class SentimentTargetsAnnotator implements Annotator {
         return null;
     }
 
-    private Set<String> getTrackedKeywords(CoreMap sentence) {
+    /**
+     * Returns the anaphora keywords found in a sentence.
+     * @param sentence
+     * @return
+     */
+    private Set<String> getAnaphoraKeywords(CoreMap sentence) {
         // track keywords for anaphora resolution
         List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
         Set<String> foundKeywords = new HashSet<>();
@@ -225,6 +237,10 @@ public class SentimentTargetsAnnotator implements Annotator {
         return foundKeywords;
     }
 
+    /**
+     * Uses the CoreNLP NER tagger to find relevant entities.
+     * @return a list of entities
+     */
     private List<SentimentTarget> getEntities(CoreMap sentence, int i) {
         List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
         String previousNerTag = "";  // keep track of previous tag for multi-word entities
