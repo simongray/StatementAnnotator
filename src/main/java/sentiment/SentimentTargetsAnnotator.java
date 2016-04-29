@@ -318,7 +318,7 @@ public class SentimentTargetsAnnotator implements Annotator {
         List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
         List<CoreLabel> entityTokenBuffer = new ArrayList<>();
         List<SentimentTarget> entities = new ArrayList<>();
-        logger.info("finding entities in sentence: " + tokens);
+        logger.info("finding entities in sentence: " + sentence);
 
         for (CoreLabel token : tokens) {
             String nerTag = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
