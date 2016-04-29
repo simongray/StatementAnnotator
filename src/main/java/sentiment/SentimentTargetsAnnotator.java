@@ -139,12 +139,14 @@ public class SentimentTargetsAnnotator implements Annotator {
      */
 
     private void attachSentiment(List<SentimentTarget> targets, CoreMap sentence) throws InvalidSentimentException {
+        logger.info("attaching sentiment targets in sentence: " + sentence);
         Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
 
         if (targets.size() == 1) {
             SentimentTarget target = targets.get(0);
             int sentimentScore = RNNCoreAnnotations.getPredictedClass(tree);
             target.setSentiment(sentimentScore);
+            logger.info(target + " had its sentiment score set to " + sentimentScore);
         } else {
             // TODO: implement tree traversal for splitting entity contexts
             logger.info("multiple entities in sentence (" + targets + "), cannot attach sentiment, not implemented yet");
