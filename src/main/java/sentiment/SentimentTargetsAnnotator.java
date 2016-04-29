@@ -144,24 +144,56 @@ public class SentimentTargetsAnnotator implements Annotator {
 
         if (targets.size() == 1) {
             SentimentTarget target = targets.get(0);
-            int sentimentScore = RNNCoreAnnotations.getPredictedClass(tree);
-            target.setSentiment(sentimentScore);
-            logger.info(target + " had its sentiment score set to " + sentimentScore);
-        } else {
-            // TODO: implement tree traversal for splitting entity contexts
-            logger.info("multiple entities in sentence (" + targets + "), cannot attach sentiment, not implemented yet");
+            int sentiment = RNNCoreAnnotations.getPredictedClass(tree);
+            target.setSentiment(sentiment);
+            logger.info(target + " had its sentiment score set to " + sentiment);
+        } else if (targets.size() > 1) {
+            logger.info("multiple entities in sentence (" + targets + "), finding context for each");
 
-            // get all possible paths from root to leafs
+            // get all possible paths from ROOT to every leaf
             List<List<Tree>> paths = new ArrayList<>();
             attachPaths(tree, new ArrayList<>(), paths);
 
             // reduce to only relevant paths
-            paths = getRelevantPaths(targets, paths);
+            removeIrrelevantPaths(targets, paths);
 
-            for (List<Tree> path : paths) {
-                System.out.println("### "+path);
-                System.out.println("### "+path.get(0));
-                System.out.println("### "+path.get(path.size()-1));
+            // remove shared paths (= context) for each sentiment target
+            removeSharedSections(paths);
+
+            // set each targets sentiment score based on its own local context
+            for (SentimentTarget target : targets) {
+                List<Tree> relevantPath = paths.get(target.getTokenIndex() - 1);  // note: CoreNLP token indexes start at 1
+                Tree localTree = relevantPath.get(0);
+                int sentiment = RNNCoreAnnotations.getPredictedClass(localTree);
+                target.setSentiment(sentiment);
+                logger.info(target + " had its sentiment score set to " + sentiment);
+            }
+
+        }
+    }
+
+    /**
+     * Removes any shared sections from a list of paths.
+     * The paths should come from the same sentiment-annotated parse tree.
+     * @param paths
+     */
+    private void removeSharedSections(List<List<Tree>> paths) {
+        // make a deep copy of each relevant List inside paths
+        List<List<Tree>> otherPaths = new ArrayList<>();
+        for (List<Tree> path : paths) {
+            if (!path.isEmpty()) {
+                otherPaths.add(new ArrayList<>(path));  // note: this part is shallow
+            }
+        }
+
+        // use the copy to locate shared sections
+        for (List<Tree> path : paths) {
+            if (!path.isEmpty()) {
+                for (List<Tree> otherPath : otherPaths) {
+                    if (path.get(path.size() - 1) != otherPath.get(otherPath.size() - 1)) {  // should not be same path
+                        path.removeAll(otherPath);
+                    }
+                }
             }
         }
     }
@@ -172,14 +204,18 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @param paths
      * @return
      */
-    private List<List<Tree>> getRelevantPaths(List<SentimentTarget> targets, List<List<Tree>> paths) {
-        List<List<Tree>> relevantPaths = new ArrayList<>();
+    private void removeIrrelevantPaths(List<SentimentTarget> targets, List<List<Tree>> paths) {
+        Set<Integer> relevantPathIndexes = new HashSet<>();
 
         for (SentimentTarget target : targets) {
-            relevantPaths.add(paths.get(target.getTokenIndex() - 1));  // note: CoreNLP token indexes start at 1
+            relevantPathIndexes.add(target.getTokenIndex() - 1);  // note: CoreNLP token indexes start at 1
         }
 
-        return relevantPaths;
+        for (int i = 0; i < paths.size(); i++) {
+            if (!relevantPathIndexes.contains(i)) {
+                paths.set(i, new ArrayList<>());
+            }
+        }
     }
 
     /**
