@@ -14,8 +14,9 @@ import java.util.stream.Collectors;
 public class SentimentTarget {
     private String name;
     private String tag;
-    private String gender;  // obviously only applicable to persons
-    private int sentenceIndex;  // ... in the list of sentences for the comment
+    private String gender;
+    private int sentenceIndex;
+    private int tokenIndex;  // note: CoreNLP token indexes start at 1, not 0!
     private int sentiment = -1;  // for the sentiment score, -1 means "unset"
     private List<CoreLabel> tokens;
     private List<CoreLabel> anaphora;
@@ -27,6 +28,7 @@ public class SentimentTarget {
         this.tag = tokens.get(0).get(CoreAnnotations.NamedEntityTagAnnotation.class);
         this.gender = tokens.get(0).get(MachineReadingAnnotations.GenderAnnotation.class);
         this.sentenceIndex = tokens.get(0).get(CoreAnnotations.SentenceIndexAnnotation.class);
+        this.tokenIndex = tokens.get(0).get(CoreAnnotations.IndexAnnotation.class);
         this.tokens = tokens;
     }
 
@@ -134,6 +136,10 @@ public class SentimentTarget {
      */
     public int getSentenceIndex() {
         return sentenceIndex;
+    }
+
+    public int getTokenIndex() {
+        return tokenIndex;
     }
 
     @Override

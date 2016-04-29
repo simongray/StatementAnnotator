@@ -139,7 +139,7 @@ public class SentimentTargetsAnnotator implements Annotator {
      */
 
     private void attachSentiment(List<SentimentTarget> targets, CoreMap sentence) throws InvalidSentimentException {
-        logger.info("attaching sentiment targets in sentence: " + sentence);
+        logger.info("attaching sentiment to targets in sentence: " + sentence);
         Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
 
         if (targets.size() == 1) {
@@ -151,10 +151,35 @@ public class SentimentTargetsAnnotator implements Annotator {
             // TODO: implement tree traversal for splitting entity contexts
             logger.info("multiple entities in sentence (" + targets + "), cannot attach sentiment, not implemented yet");
 
+            // get all possible paths from root to leafs
             List<List<Tree>> paths = new ArrayList<>();
             attachPaths(tree, new ArrayList<>(), paths);
 
+            // reduce to only relevant paths
+            paths = getRelevantPaths(targets, paths);
+
+            for (List<Tree> path : paths) {
+                System.out.println("### "+path);
+                System.out.println("### "+path.get(0));
+                System.out.println("### "+path.get(path.size()-1));
+            }
         }
+    }
+
+    /**
+     * Returns the parse tree paths relevant to the stated sentiment targets.
+     * @param targets
+     * @param paths
+     * @return
+     */
+    private List<List<Tree>> getRelevantPaths(List<SentimentTarget> targets, List<List<Tree>> paths) {
+        List<List<Tree>> relevantPaths = new ArrayList<>();
+
+        for (SentimentTarget target : targets) {
+            relevantPaths.add(paths.get(target.getTokenIndex() - 1));  // note: CoreNLP token indexes start at 1
+        }
+
+        return relevantPaths;
     }
 
     /**
