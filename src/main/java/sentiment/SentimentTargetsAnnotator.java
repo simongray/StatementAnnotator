@@ -1,6 +1,5 @@
 package sentiment;
 
-import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
@@ -46,43 +45,49 @@ public class SentimentTargetsAnnotator implements Annotator {
     }
 
     @Override
-    public void annotate(Annotation annotation) {
+    public void annotate(Annotation annotation)  {
         List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
 
-        // get all targets mapped to the indexes of the sentences they appear in
-        Map<Integer, List<SentimentTarget>> targetsPerSentence = getTargets(sentences);
+        try {
+            // get all targets mapped to the indexes of the sentences they appear in
+            Map<Integer, List<SentimentTarget>> targetsPerSentence = null;
+            targetsPerSentence = getTargets(sentences);
 
-        // compile a list of targets from the map
-        List<SentimentTarget> targets = new ArrayList<>();
-        targetsPerSentence.values().forEach(targets::addAll);
+            // compile a list of targets from the map
+            List<SentimentTarget> targets = new ArrayList<>();
+            targetsPerSentence.values().forEach(targets::addAll);
 
-        // merge the targets referring to the same entity, producing map of full entity name to targets
-        Map<String, List<SentimentTarget>> targetsPerEntity = getMergedEntities(targets);
+            // merge the targets referring to the same entity, producing map of full entity name to targets
+            Map<String, List<SentimentTarget>> targetsPerEntity = getMergedEntities(targets);
 
-        // attach sentiment to each mention
-        for (Integer i : targetsPerSentence.keySet()) {
-            List<SentimentTarget> sentenceTargets = targetsPerSentence.get(i);
-            CoreMap sentence = sentences.get(i);
-            try {
-                attachSentiment(sentenceTargets, sentence);
-            } catch (InvalidSentimentException e) {
-                logger.error("could not attach sentiment to targets " + sentenceTargets + " in sentence: " + sentence);
+            // attach sentiment to each mention
+            for (Integer i : targetsPerSentence.keySet()) {
+                List<SentimentTarget> sentenceTargets = targetsPerSentence.get(i);
+                CoreMap sentence = sentences.get(i);
+                try {
+                    attachSentiment(sentenceTargets, sentence);
+                } catch (InvalidSentimentException e) {
+                    logger.error("could not attach sentiment to targets " + sentenceTargets + " in sentence: " + sentence);
+                }
             }
-        }
 
-        // produce a map of full entity name to sentiment by composing the sentiment sores attached in the previous step
-        Map<String, Integer> scorePerEntity = new HashMap<>();
-        for (String entity : targetsPerEntity.keySet()) {
-            List<SentimentTarget> entityTargets = targetsPerEntity.get(entity);
-            logger.info("finding composed sentiment for entity: " + entity);
-            scorePerEntity.put(entity, getComposedSentiment(entityTargets));
-        }
+            // produce a map of full entity name to sentiment by composing the sentiment sores attached in the previous step
+            Map<String, Integer> scorePerEntity = new HashMap<>();
+            for (String entity : targetsPerEntity.keySet()) {
+                List<SentimentTarget> entityTargets = targetsPerEntity.get(entity);
+                logger.info("finding composed sentiment for entity: " + entity);
+                scorePerEntity.put(entity, getComposedSentiment(entityTargets));
+            }
 
-        // the final annotation object now includes each map produced as well as the list of targets
-        annotation.set(SentimentTargetsAnnotation.class, targets);
-        annotation.set(SentenceSentimentTargetsAnnotation.class, targetsPerSentence);
-        annotation.set(MergedSentimentTargetsAnnotation.class, targetsPerEntity);
-        annotation.set(MergedSentimentTargetsScoreAnnotation.class, scorePerEntity);
+            // the final annotation object now includes each map produced as well as the list of targets
+            annotation.set(SentimentTargetsAnnotation.class, targets);
+            annotation.set(SentenceSentimentTargetsAnnotation.class, targetsPerSentence);
+            annotation.set(MergedSentimentTargetsAnnotation.class, targetsPerEntity);
+            annotation.set(MergedSentimentTargetsScoreAnnotation.class, scorePerEntity);
+        } catch (SentimentTargetTokensMissingException e) {
+            logger.error("sentiment target tokens were missing, aborting annotation");
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -172,17 +177,17 @@ public class SentimentTargetsAnnotator implements Annotator {
      * Returns entities and their anaphora in a list of sentences.
      * @return a list of entities
      */
-    private Map<Integer, List<SentimentTarget>> getTargets(List<CoreMap> sentences) {
+    private Map<Integer, List<SentimentTarget>> getTargets(List<CoreMap> sentences) throws SentimentTargetTokensMissingException {
         Map<Integer, List<SentimentTarget>> targetsPerSentence = new HashMap<>();
 
         for (int i = 0; i < sentences.size(); i++) {
             CoreMap sentence = sentences.get(i);
-            List<SentimentTarget> sentenceTargets = getEntities(sentence, i);
+            List<SentimentTarget> sentenceTargets = getEntities(sentence);
 
             if (sentenceTargets.isEmpty()) {
                 List<SentimentTarget> previousSentenceTargets = targetsPerSentence.getOrDefault(i - 1, new ArrayList<>());
-                SentimentTarget anaphor = getAnaphor(previousSentenceTargets, sentence, i);
-                sentenceTargets.add(anaphor);
+                SentimentTarget anaphor = getAnaphor(previousSentenceTargets, sentence);
+                if (anaphor != null) sentenceTargets.add(anaphor);
             }
 
             targetsPerSentence.put(i, sentenceTargets);
@@ -195,18 +200,17 @@ public class SentimentTargetsAnnotator implements Annotator {
      * Returns the anaphor based on an antecedent found in a previous sentence.
      * @param previousSentenceTargets
      * @param sentence
-     * @param i
      * @return
      */
-    private SentimentTarget getAnaphor(List<SentimentTarget> previousSentenceTargets, CoreMap sentence, int i) {
-        Set<String> foundKeywords = getAnaphoraKeywords(sentence);
+    private SentimentTarget getAnaphor(List<SentimentTarget> previousSentenceTargets, CoreMap sentence) throws SentimentTargetTokensMissingException {
+        List<CoreLabel> anaphoraTokens = getAnaphoraTokens(sentence);
 
-        logger.info("finding antecedents for anaphora " + foundKeywords + " using targets " + previousSentenceTargets);
-        SentimentTarget antecedent = getAntecedent(foundKeywords, previousSentenceTargets);
+        logger.info("finding antecedents for anaphora " + anaphoraTokens + " using targets " + previousSentenceTargets);
+        SentimentTarget antecedent = getAntecedent(anaphoraTokens, previousSentenceTargets);
         logger.info("antecedent found: " + antecedent);
 
         if (antecedent != null) {
-            SentimentTarget anaphor = antecedent.getAnaphor(foundKeywords, i);
+            SentimentTarget anaphor = antecedent.getAnaphor(anaphoraTokens);
             logger.info("added anaphor: " + anaphor);
             return anaphor;
         }
@@ -219,10 +223,10 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @param sentence
      * @return
      */
-    private Set<String> getAnaphoraKeywords(CoreMap sentence) {
+    private List<CoreLabel> getAnaphoraTokens(CoreMap sentence) {
         // track keywords for anaphora resolution
         List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
-        Set<String> foundKeywords = new HashSet<>();
+        List<CoreLabel> anaphoraTokens = new ArrayList<>();
 
         for (CoreLabel token : tokens) {
             String posTag = token.get(CoreAnnotations.PartOfSpeechAnnotation.class);
@@ -230,81 +234,83 @@ public class SentimentTargetsAnnotator implements Annotator {
 
             if (posTag.equals("PRP")) {  // PRP = proper nouns
                 logger.info("found candidate anaphora: " + name);
-                foundKeywords.add(name.toLowerCase());
+                anaphoraTokens.add(token);
             }
         }
 
-        return foundKeywords;
+        return anaphoraTokens;
     }
 
     /**
-     * Uses the CoreNLP NER tagger to find relevant entities.
+     * Uses the CoreNLP NER tagger to find relevant entities in a sentence.
      * @return a list of entities
      */
-    private List<SentimentTarget> getEntities(CoreMap sentence, int i) {
+    private List<SentimentTarget> getEntities(CoreMap sentence) throws SentimentTargetTokensMissingException {
         List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
-        String previousNerTag = "";  // keep track of previous tag for multi-word entities
-        String fullName = "";
-        String gender = "";
-        List<SentimentTarget> sentenceTargets = new ArrayList<>();
-        logger.info("finding targets in sentence: " + tokens);
+        List<CoreLabel> entityTokenBuffer = new ArrayList<>();
+        List<SentimentTarget> entities = new ArrayList<>();
+        logger.info("finding entities in sentence: " + tokens);
 
-        // retrieve all entities in sentence
         for (CoreLabel token : tokens) {
-            String name = token.get(CoreAnnotations.TextAnnotation.class);
             String nerTag = token.get(CoreAnnotations.NamedEntityTagAnnotation.class);
 
-            // only allow specific tags (e.g. not DATE, DURATION, NUMBER)
-            if (nerTag.length() > 1 && trackedNerTags.contains(nerTag)) {
-
-                // keeping track of multi-word entities
-                if (nerTag.equals(previousNerTag)) {
-                    fullName += " " + name;
+            if (trackedNerTags.contains(nerTag)) {
+                if (entityTokenBuffer.isEmpty()) {
+                    entityTokenBuffer.add(token);
                 } else {
-                    fullName = name;
+                    CoreLabel previousToken = entityTokenBuffer.get(entityTokenBuffer.size()-1);
+                    String previousNerTag = previousToken.get(CoreAnnotations.NamedEntityTagAnnotation.class);
 
-                    // use only first names for gender
-                    if (nerTag.equals("PERSON")) {
-                        gender = token.get(MachineReadingAnnotations.GenderAnnotation.class);
+                    // flush the buffer when encountering another entity
+                    if (!nerTag.equals(previousNerTag)) {
+                        SentimentTarget entity = new SentimentTarget(entityTokenBuffer);
+                        logger.info("found new entity: " + entity);
+                        entities.add(entity);
+                        entityTokenBuffer = new ArrayList<>();
                     }
-                }
 
-                previousNerTag = nerTag;
+                    entityTokenBuffer.add(token);
+                }
             } else {
-                if (!fullName.isEmpty()) {
-                    SentimentTarget target = new SentimentTarget(fullName, previousNerTag, gender, i); // TODO: refactor to use list of tokens instead
-                    sentenceTargets.add(target);
-                    logger.info("added target: " + target);
+                // flush buffer when encountering a non-entity
+                if (!entityTokenBuffer.isEmpty()) {
+                    SentimentTarget entity = new SentimentTarget(entityTokenBuffer);
+                    logger.info("found new entity: " + entity);
+                    entities.add(entity);
+                    entityTokenBuffer = new ArrayList<>();
                 }
-
-                // make sure to reset for next token
-                previousNerTag = "";
-                fullName = "";
             }
         }
 
-        return sentenceTargets;
+        // make sure to flush any remaining tokens in the buffer, too
+        if (!entityTokenBuffer.isEmpty()) {
+            SentimentTarget entity = new SentimentTarget(entityTokenBuffer);
+            logger.info("found new entity: " + entity);
+            entities.add(entity);
+        }
+
+        return entities;
     }
 
     /**
      * Perform basic anaphora resolution to establish an antecedent for the anaphora of a sentence.
      * The antecedent entity is found among a list of previous entity targets.
      * To simplify things, only a single antecedent can be found in a sentence.
-     * @param anaphora
-     * @param targets
+     * @param anaphoraTokens
+     * @param entities
      * @return
      */
-    private SentimentTarget getAntecedent(Set<String> anaphora, List<SentimentTarget> targets) {
-        Set<AnaphoraType> anaphoraTypes = getAnaphoraTypes(anaphora);
+    private SentimentTarget getAntecedent(List<CoreLabel> anaphoraTokens, List<SentimentTarget> entities) {
+        Set<AnaphoraType> anaphoraTypes = getAnaphoraTypes(anaphoraTokens);
 
         // determine whether to perform single or multiple resolution
-        if (targets.size() == 1) {
-            return getSingleMentionAntecedent(anaphoraTypes, targets.get(0));
+        if (entities.size() == 1) {
+            return getSingleMentionAntecedent(anaphoraTypes, entities.get(0));
         } else if (anaphoraTypes.size() == 1) {
             AnaphoraType anaphoraType = anaphoraTypes.iterator().next();  // shitty Java syntax
-            return getSingleTypeAntecedent(anaphoraType, targets);
+            return getSingleTypeAntecedent(anaphoraType, entities);
         } else {
-            logger.error("multiple resolution not implemented yet: " + targets + ", " + anaphora);
+            logger.error("multiple resolution not implemented yet: " + entities + ", " + anaphoraTokens);
             return null;  // TODO: implement this
         }
     }
@@ -462,13 +468,15 @@ public class SentimentTargetsAnnotator implements Annotator {
 
     /**
      * Used to determine which types of anaphora were found in a sentence.
-     * @param anaphora
+     * @param anaphoraTokens
      * @return
      */
-    private Set<AnaphoraType> getAnaphoraTypes(Set<String> anaphora) {
+    private Set<AnaphoraType> getAnaphoraTypes(List<CoreLabel> anaphoraTokens) {
         Set<AnaphoraType> anaphoraTypes = new HashSet<>();
 
-        for (String keyword : anaphora) {
+        for (CoreLabel token : anaphoraTokens) {
+            String keyword = token.word().toLowerCase();
+
             if (trackedMaleKeywords.contains(keyword)) {
                 anaphoraTypes.add(AnaphoraType.MALE);
             } else if (trackedFemaleKeywords.contains(keyword)) {

@@ -1,6 +1,11 @@
 package sentiment;
 
-import java.util.Set;
+import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations;
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreLabel;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A SentimentTarget is a mention of an entity in a context (i.e. a sentence) taken from a larger piece of text.
@@ -8,28 +13,29 @@ import java.util.Set;
  */
 public class SentimentTarget {
     private String name;
-    private Set<String> anaphora;
     private String tag;
     private String gender;  // obviously only applicable to persons
     private int sentenceIndex;  // ... in the list of sentences for the comment
     private int sentiment = -1;  // for the sentiment score, -1 means "unset"
+    private List<CoreLabel> tokens;
+    private List<CoreLabel> anaphora;
 
-    public SentimentTarget(String name, String tag, String gender, int index) {
-        this.name = name;
-        this.tag = tag;
-        this.gender = gender;
-        this.sentenceIndex = index;
+    public SentimentTarget(List<CoreLabel> tokens) throws SentimentTargetTokensMissingException {
+        if (tokens.isEmpty()) throw new SentimentTargetTokensMissingException();
+
+        this.name = tokens.stream().map(CoreLabel::word).collect(Collectors.joining(" "));
+        this.tag = tokens.get(0).get(CoreAnnotations.NamedEntityTagAnnotation.class);
+        this.gender = tokens.get(0).get(MachineReadingAnnotations.GenderAnnotation.class);
+        this.sentenceIndex = tokens.get(0).get(CoreAnnotations.SentenceIndexAnnotation.class);
+        this.tokens = tokens;
     }
 
     /**
      * Create anaphor target associated with antecedent.
-     * @param anaphora
-     * @param index
-     * @return
      */
-    public SentimentTarget getAnaphor(Set<String> anaphora, int index) {
-        SentimentTarget anaphor = new SentimentTarget(name, tag, gender, index); // note: using argument for index
-        anaphor.setAnaphora(anaphora);
+    public SentimentTarget getAnaphor(List<CoreLabel> tokens) throws SentimentTargetTokensMissingException {
+        SentimentTarget anaphor = new SentimentTarget(this.tokens);
+        anaphor.setAnaphora(tokens);
         return anaphor;
     }
 
@@ -57,7 +63,7 @@ public class SentimentTarget {
         return gender;
     }
 
-    public Set<String> getAnaphora() {  // TODO: included mainly for future bugtesting, figure out if this is necessary
+    public List<CoreLabel> getAnaphora() {  // TODO: included mainly for future bugtesting, figure out if this is necessary
         return anaphora;
     }
 
@@ -109,7 +115,8 @@ public class SentimentTarget {
         return this.anaphora != null && !this.anaphora.isEmpty();
     }
 
-    private void setAnaphora(Set<String> anaphora) {
+    private void setAnaphora(List<CoreLabel> anaphora) {
+        this.sentenceIndex = tokens.get(0).get(CoreAnnotations.SentenceIndexAnnotation.class);
         this.anaphora = anaphora;
     }
 
