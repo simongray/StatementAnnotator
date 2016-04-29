@@ -40,7 +40,7 @@ public class TestSentimentTargets {
 //                "Don't worry too much. Sometimes there's no smog for a whole week, sometime's it lasts for a whole week and you'll just stay mostly indoors and use masks when outside. You'll get used to it.";
 
 
-        String example = "Clinton is a cold person and a terrible human being, unlike Bernie Sanders who seems quite competent and like a true statesman. In fact, Sanders deserves to win, Clinton is just there to earn more money. She doesn't want to help the people, she is just doing it for herself.";
+        String example = "Clinton is a cold person and a terrible human being, unlike Bernie Sanders who seems quite competent and like a true statesman. In fact, Sanders deserves to win, Hillary Clinton is just there to earn more money. She doesn't want to help the people, she is just doing it for herself.";
 
         Annotation annotation = new Annotation(example);
 //        Annotation annotation = new Annotation(
