@@ -107,7 +107,7 @@ public class SentimentTargetsAnnotator implements Annotator {
     }
 
     /**
-     * Get the composed sentiment a list of mentions of the same entity.
+     * Get the composed sentiment of a list of mentions to the same entity.
      * @param targets
      */
     private int getComposedSentiment(List<SentimentTarget> targets) {
@@ -116,8 +116,14 @@ public class SentimentTargetsAnnotator implements Annotator {
 
         for (SentimentTarget target : targets) {
             if (target.hasSentiment()) {
-                sum += target.getSentiment();
-                n++;
+                int sentiment = target.getSentiment();
+
+                // TODO: figure out if including (and weighting) the neutral sentiment slightly might be more precise
+                // TODO: another option is to make more complicated sentiment assessments, e.g. pos+neg=mixed
+                if (sentiment != 2) {  // only use non-neutral sentiment to calculate composed sentiment
+                    sum += target.getSentiment();
+                    n++;
+                }
             } else {
                 logger.error("target has no sentiment: " + target);
             }
