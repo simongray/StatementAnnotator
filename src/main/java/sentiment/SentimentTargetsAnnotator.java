@@ -211,10 +211,34 @@ public class SentimentTargetsAnnotator implements Annotator {
         // use the copy to locate shared sections
         for (List<Tree> path : paths) {
             if (!path.isEmpty()) {
+                int n = -1;  // = nothing should be removed
+
                 for (List<Tree> otherPath : otherPaths) {
-                    if (path.get(path.size() - 1) != otherPath.get(otherPath.size() - 1)) {  // should not be same path
-                        path.removeAll(otherPath);
+                    if (!otherPath.isEmpty()) {
+                        if (path.get(path.size() - 1) != otherPath.get(otherPath.size() - 1)) {  // should not be same path
+                            for (int i = 0; i < path.size() && i < otherPath.size(); i++) {
+
+                                // find lowest common denominator
+                                if (path.get(i) == otherPath.get(i)) {
+                                    n = i;
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
                     }
+                }
+
+                // remove
+                if (n >= 0) {
+                    System.out.println("   ### full path: " + path.get(0).pennString());
+                    List<Tree> removedPath = path.subList(0, n + 1);
+                    path = path.subList(n + 1, path.size() - 1);
+                    System.out.println("path length = " + path.size());
+                    System.out.println("path = " + path.get(0).pennString());
+                    System.out.println("removed path length = " + removedPath.size());
+                } else {
+                    System.out.println("   ### nothing to remove in sentence: " + path);
                 }
             }
         }
