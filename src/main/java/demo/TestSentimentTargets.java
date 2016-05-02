@@ -18,8 +18,8 @@ public class TestSentimentTargets {
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma, gender, ner, parse, sentiment, sentimenttargets");
         props.setProperty("customAnnotatorClass.sentimenttargets", "sentiment.SentimentTargetsAnnotator");
         props.put("ner.model", "edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz");
-        props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");
-//        props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+//        props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");  // fast, more memory usage
+        props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");  // slow, less memory usage
         props.setProperty("sentimenttargets.composestyle", "yolo");  // TODO: change into actual style
 
         DemoTimer.start("pipeline launch");
