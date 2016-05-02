@@ -20,6 +20,7 @@ public class TestSentimentTargets {
         props.put("ner.model", "edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz");
         props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");
 //        props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+        props.setProperty("sentimenttargets.composestyle", "yolo");  // TODO: change into actual style
 
         DemoTimer.start("pipeline launch");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);

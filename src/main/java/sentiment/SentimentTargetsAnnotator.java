@@ -8,6 +8,7 @@ import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
+import edu.stanford.nlp.util.PropertiesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,7 @@ import java.util.*;
 
 public class SentimentTargetsAnnotator implements Annotator {
     public final static String SENTIMENT_TARGETS = "sentimenttargets";
+    public final static String DEFAULT_COMPOSE_STYLE = "polar_mean";  // the default way to compose sentiment
     final Logger logger = LoggerFactory.getLogger(SentimentTargetsAnnotator.class);
 
     // anaphora resolution
@@ -42,6 +44,20 @@ public class SentimentTargetsAnnotator implements Annotator {
         trackedNerTags.add("ORGANIZATION");
         trackedNerTags.add("LOCATION");
         trackedNerTags.add("MISC");
+    }
+
+    /**
+     * This constructor allows for the annotator to accept different properties to alter its behaviour.
+     *
+     * It doesn't seem to be documented anywhere, but a method in AnnotatorImplementations.java with signature
+     *      public Annotator custom(Properties properties, String property) { ... }
+     * allows for various constructor signatures to be implemented for a custom annotator.
+     * @param properties
+     */
+    public SentimentTargetsAnnotator(String name, Properties properties) {
+        String prefix = (name != null && !name.isEmpty())? name + ".":"";
+        String composeStyle = properties.getProperty(prefix + "composestyle", DEFAULT_COMPOSE_STYLE);
+        logger.info("sentiment compose style: " + composeStyle);
     }
 
     @Override
