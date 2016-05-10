@@ -8,7 +8,6 @@ import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
-import edu.stanford.nlp.util.PropertiesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,19 +86,10 @@ public class SentimentTargetsAnnotator implements Annotator {
                 }
             }
 
-            // produce a map of full entity name to sentiment by composing the sentiment sores attached in the previous step
-            Map<String, Integer> scorePerEntity = new HashMap<>();
-            for (String entity : targetsPerEntity.keySet()) {
-                List<SentimentTarget> entityTargets = targetsPerEntity.get(entity);
-                logger.info("finding composed sentiment for entity: " + entity);
-                scorePerEntity.put(entity, getComposedSentiment(entityTargets));
-            }
-
             // the final annotation object now includes each map produced as well as the list of targets
             annotation.set(SentimentTargetsAnnotation.class, targets);
             annotation.set(SentenceSentimentTargetsAnnotation.class, targetsPerSentence);
             annotation.set(MergedSentimentTargetsAnnotation.class, targetsPerEntity);
-            annotation.set(MergedSentimentTargetsScoreAnnotation.class, scorePerEntity);
         } catch (SentimentTargetTokensMissingException e) {
             logger.error("sentiment target tokens were missing, aborting annotation");
             e.printStackTrace();
@@ -120,37 +110,6 @@ public class SentimentTargetsAnnotator implements Annotator {
 //        requirements.add(new Requirement(Annotator.STANFORD_NER));
 //        requirements.add(new Requirement(Annotator.STANFORD_SENTIMENT));
         return requirements;
-    }
-
-    /**
-     * Get the composed sentiment of a list of mentions to the same entity.
-     * @param targets
-     */
-    private int getComposedSentiment(List<SentimentTarget> targets) {
-        double sum = 0.0;
-        int n = 0;
-
-        for (SentimentTarget target : targets) {
-            if (target.hasSentiment()) {
-                int sentiment = target.getSentiment();
-
-                // TODO: figure out if including (and weighting) the neutral sentiment slightly might be more precise
-                // TODO: another option is to make more complicated sentiment assessments, e.g. pos+neg=mixed
-                if (sentiment != 2) {  // only use non-neutral sentiment to calculate composed sentiment
-                    sum += target.getSentiment();
-                    n++;
-                }
-            } else {
-                logger.error("target has no sentiment: " + target);
-            }
-        }
-
-        // return neutral (= 2) in case the list contained no sentiment
-        if (n == 0) {
-            return 2;
-        }
-
-        return (int) Math.round(sum / n);
     }
 
     /**
@@ -227,18 +186,6 @@ public class SentimentTargetsAnnotator implements Annotator {
                             }
                         }
                     }
-                }
-
-                // remove
-                if (n >= 0) {
-                    System.out.println("   ### full path: " + path.get(0).pennString());
-                    List<Tree> removedPath = path.subList(0, n + 1);
-                    path = path.subList(n + 1, path.size() - 1);
-                    System.out.println("path length = " + path.size());
-                    System.out.println("path = " + path.get(0).pennString());
-                    System.out.println("removed path length = " + removedPath.size());
-                } else {
-                    System.out.println("   ### nothing to remove in sentence: " + path);
                 }
             }
         }
