@@ -19,6 +19,31 @@ public class ComplexSentiment {
     }
 
     /**
+     * Get the average sentiment rounded to nearest integer.
+     * @return average sentiment
+     */
+    public int getAverageSentiment() {
+        double sum = 0.0;
+        int n = 0;
+
+        for (SentimentTarget sentimentTarget : sentimentTargets) {
+            if (sentimentTarget.hasSentiment()) {
+                sum += sentimentTarget.getSentiment();
+                n++;
+            } else {
+                logger.error("target has no sentiment: " + sentimentTarget);
+            }
+        }
+
+        // return neutral (= 2) in case the list contained no sentiment
+        if (n == 0) {
+            return 2;
+        }
+
+        return (int) Math.round(sum / n);
+    }
+
+    /**
      * Get the composed sentiment of a list of sentimentTargets to the same entity.
      * @return integer from 0 through 4
      */
@@ -51,6 +76,6 @@ public class ComplexSentiment {
 
     @Override
     public String toString() {
-        return getComposedSentiment() + ":" + sentimentTargets.size();
+        return getAverageSentiment() + ":" + getComposedSentiment() + ":" + sentimentTargets.size();
     }
 }
