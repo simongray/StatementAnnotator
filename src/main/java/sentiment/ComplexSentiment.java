@@ -32,12 +32,8 @@ public class ComplexSentiment {
         int n = 0;
 
         for (SentimentTarget sentimentTarget : sentimentTargets) {
-            if (sentimentTarget.hasSentiment()) {
-                sum += sentimentTarget.getSentiment();
-                n++;
-            } else {
-                logger.error("target has no sentiment: " + sentimentTarget);
-            }
+            sum += sentimentTarget.getSentiment();
+            n++;
         }
 
         // return neutral (= 2) in case the list contained no sentiment
@@ -57,17 +53,13 @@ public class ComplexSentiment {
         int n = 0;
 
         for (SentimentTarget sentimentTarget : sentimentTargets) {
-            if (sentimentTarget.hasSentiment()) {
-                int sentiment = sentimentTarget.getSentiment();
+            int sentiment = sentimentTarget.getSentiment();
 
-                // TODO: figure out if including (and weighting) the neutral sentiment slightly might be more precise
-                // TODO: another option is to make more complicated sentiment assessments, e.g. pos+neg=mixed
-                if (sentiment != 2) {  // only use non-neutral sentiment to calculate composed sentiment
-                    sum += sentimentTarget.getSentiment();
-                    n++;
-                }
-            } else {
-                logger.error("target has no sentiment: " + sentimentTarget);
+            // TODO: figure out if including (and weighting) the neutral sentiment slightly might be more precise
+            // TODO: another option is to make more complicated sentiment assessments, e.g. pos+neg=mixed
+            if (sentiment != 2) {  // only use non-neutral sentiment to calculate composed sentiment
+                sum += sentimentTarget.getSentiment();
+                n++;
             }
         }
 

@@ -123,8 +123,13 @@ public class SentimentTargetsAnnotator implements Annotator {
 
         if (targets.size() == 1) {
             SentimentTarget target = targets.get(0);
-            target.setContext(sentenceTree);
-            logger.info(target + " had its sentiment score set to the sentence sentiment: " + target.getSentiment());
+
+            try {
+                target.setContext(sentenceTree);
+                logger.info(target + " had its sentiment score set to the sentence sentiment: " + target.getSentiment());
+            } catch (Exception e) {
+                logger.error("could not set context for target " + target + ": " + e.getClass());
+            }
         } else if (targets.size() > 1) {
             logger.info("multiple entities in sentence (" + targets + "), finding context for each");
 
@@ -142,8 +147,12 @@ public class SentimentTargetsAnnotator implements Annotator {
             for (SentimentTarget target : targets) {
                 List<Tree> relevantPath = paths.get(target.getTokenIndex() - 1);  // note: CoreNLP token indexes start at 1
                 Tree localTree = relevantPath.get(0);
-                target.setContext(localTree);
-                logger.info(target + " had its sentiment score set to: " + target.getSentiment());
+                try {
+                    target.setContext(sentenceTree);
+                    logger.info(target + " had its sentiment score set to: " + target.getSentiment());
+                } catch (Exception e) {
+                    logger.error("could not set context for target " + target + ": " + e.getClass());
+                }
             }
 
         }

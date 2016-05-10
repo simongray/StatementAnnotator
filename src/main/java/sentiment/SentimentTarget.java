@@ -22,6 +22,7 @@ public class SentimentTarget {
     private List<CoreLabel> tokens;
     private List<CoreLabel> anaphora;
     private Tree context;
+    private int sentiment = 2;  // default to neutral sentiment
 
     public SentimentTarget(List<CoreLabel> tokens) throws SentimentTargetTokensMissingException {
         if (tokens.isEmpty()) throw new SentimentTargetTokensMissingException();
@@ -55,12 +56,12 @@ public class SentimentTarget {
         return anaphora;
     }
 
+    /**
+     * Returns the sentiment score for the local context.
+     * @return
+     */
     public int getSentiment() {
-        return RNNCoreAnnotations.getPredictedClass(context);
-    }
-
-    public boolean hasSentiment() {
-        return context != null;
+        return sentiment;
     }
 
     public boolean isMale() {
@@ -108,8 +109,18 @@ public class SentimentTarget {
         this.anaphora = anaphora;
     }
 
-    public void setContext(Tree context) {
+    /**
+     * Set the context for this sentiment target.
+     * The context is a CoreNLP sentiment annotated tree.
+     * The sentiment is extracted from the tree when setting the context.
+     * @param context
+     */
+    public void setContext(Tree context) throws SentimentContextMissingException, SentimentMissingException {
         this.context = context;
+        if (context == null) throw new SentimentContextMissingException();
+        int sentiment = RNNCoreAnnotations.getPredictedClass(context);
+        if (sentiment == -1) throw new SentimentMissingException();
+        this.sentiment = sentiment;
     }
 
     /**
