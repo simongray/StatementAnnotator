@@ -400,12 +400,10 @@ public class SentimentTargetsAnnotator implements Annotator {
         logger.info("looking for anaphora matching sentiment target: " + target);
 
         if (target.isPerson()) {
-            if (target.hasGender()) {
-                if (target.isMale() && types.contains(AnaphoraType.MALE)) {
-                    return target;
-                } else if (target.isFemale() && types.contains(AnaphoraType.FEMALE)) {
-                    return target;
-                }
+            if (target.isMale() && types.contains(AnaphoraType.MALE)) {
+                return target;
+            } else if (target.isFemale() && types.contains(AnaphoraType.FEMALE)) {
+                return target;
             } else if (types.contains(AnaphoraType.MALE) || types.contains(AnaphoraType.FEMALE)) {
                 return target;
             }
@@ -453,15 +451,13 @@ public class SentimentTargetsAnnotator implements Annotator {
         // if exactly one MALE candidate is found, will return that instead
         for (SentimentTarget target : targets) {
             if (target.isPerson()) {
-                if (target.hasGender()) {
-                    if (target.isMale()) {  // do not consider females at all!
-                        if (candidate == null) {
-                            logger.info("found candidate male antecedent: " + target.getName());
-                            candidate = target;
-                        } else {
-                            logger.info("found multiple candidate male antecedents!");
-                            return null;
-                        }
+                if (target.isMale()) {  // do not consider females at all!
+                    if (candidate == null) {
+                        logger.info("found candidate male antecedent: " + target.getName());
+                        candidate = target;
+                    } else {
+                        logger.info("found multiple candidate male antecedents!");
+                        return null;
                     }
                 } else {
                     logger.info("found candidate unknown gender antecedent: " + target.getName());
@@ -492,15 +488,13 @@ public class SentimentTargetsAnnotator implements Annotator {
         // if exactly one FEMALE candidate is found, will return that instead
         for (SentimentTarget target : targets) {
             if (target.isPerson()) {
-                if (target.hasGender()) {
-                    if (target.isFemale()) {  // do not consider males at all!
-                        if (candidate == null) {
-                            logger.info("found candidate female antecedent: " + target.getName());
-                            candidate = target;
-                        } else {
-                            logger.info("found multiple candidate female antecedents!");
-                            return null;
-                        }
+                if (target.isFemale()) {  // do not consider males at all!
+                    if (candidate == null) {
+                        logger.info("found candidate female antecedent: " + target.getName());
+                        candidate = target;
+                    } else {
+                        logger.info("found multiple candidate female antecedents!");
+                        return null;
                     }
                 } else {
                     logger.info("found candidate unknown gender antecedent: " + target.getName());

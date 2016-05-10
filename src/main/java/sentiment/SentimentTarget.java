@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A SentimentTarget is a mention of an entity in a context (i.e. a sentence) taken from a larger piece of text.
- * The mention can be both direct and using pronouns (he, she, it, they, etc).
+ * A SentimentTarget is a mention of an entity in a context (i.e. a phrase) taken from a larger piece of text.
+ * The mention can be both direct or an anaphor (he, she, it, they, etc).
  */
 public class SentimentTarget {
     private String name;
@@ -49,22 +49,6 @@ public class SentimentTarget {
         return name;
     }
 
-    /**
-     * Get the NER tag of the mention.
-     * @return tag
-     */
-    public String getTag() {
-        return tag;
-    }
-
-    /**
-     * Get the gender of the mention.
-     * @return tag
-     */
-    public String getGender() {
-        return gender;
-    }
-
     public List<CoreLabel> getAnaphora() {  // TODO: included mainly for future bugtesting, figure out if this is necessary
         return anaphora;
     }
@@ -77,7 +61,7 @@ public class SentimentTarget {
         return sentiment != -1;
     }
 
-    public boolean hasGender() {
+    private boolean hasGender() {
         return gender != null;
     }
 
