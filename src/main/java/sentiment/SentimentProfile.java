@@ -12,8 +12,10 @@ public class SentimentProfile {
     private Map<String, ComplexSentiment> entityToSentiment = new HashMap<>();
 
     public SentimentProfile(List<Annotation> annotations) {
-        logger.info("created sentiment profile");
-        addAnnotations(annotations);
+        logger.info("created sentiment profile with " + annotations.size() + annotations);
+        for (Annotation annotation : annotations) {
+            add(annotation);
+        }
     }
 
     // TODO: perhaps add name merge code in this class too?
@@ -32,23 +34,19 @@ public class SentimentProfile {
     }
 
     /**
-     * Add new annotations to this SentimentProfile.
-     * Entity scores will be re-calculated based on new mentions.
-     * @param annotations
+     * Add new annotation to this SentimentProfile.
+     * @param annotation
      */
-    public void addAnnotations(List<Annotation> annotations) {
-        logger.info("adding " + annotations.size() + " annotations to profile");
-        this.annotations.addAll(annotations);
+    public void add(Annotation annotation) {
+        this.annotations.add(annotation);
 
         // add new mentions to global map of entity to sentiment
-        for (Annotation annotation : annotations) {
-            Map<String, List<SentimentTarget>> entityToMentions = annotation.get(MergedSentimentTargetsAnnotation.class);
+        Map<String, List<SentimentTarget>> entityToMentions = annotation.get(MergedSentimentTargetsAnnotation.class);
 
-            for (Map.Entry<String, List<SentimentTarget>> entry : entityToMentions.entrySet()) {
-                ComplexSentiment sentiment = entityToSentiment.getOrDefault(entry.getKey(), new ComplexSentiment());
-                sentiment.addMentions(entry.getValue());
-                entityToSentiment.put(entry.getKey(), sentiment);
-            }
+        for (Map.Entry<String, List<SentimentTarget>> entry : entityToMentions.entrySet()) {
+            ComplexSentiment sentiment = entityToSentiment.getOrDefault(entry.getKey(), new ComplexSentiment());
+            sentiment.addMentions(entry.getValue());
+            entityToSentiment.put(entry.getKey(), sentiment);
         }
     }
 }
