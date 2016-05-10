@@ -16,6 +16,8 @@ public class SentimentProfile {
         addAnnotations(annotations);
     }
 
+    // TODO: perhaps add name merge code in this class too?
+
     @Override
     public String toString() {
         return Arrays.asList(entityToSentiment).toString();
