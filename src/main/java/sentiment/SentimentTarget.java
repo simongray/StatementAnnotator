@@ -21,6 +21,7 @@ public class SentimentTarget {
     private List<CoreLabel> tokens;
     private List<CoreLabel> anaphora;
 
+    // TODO: consider whether it would make sense to have the local sentiment Tree as part of this class
     public SentimentTarget(List<CoreLabel> tokens) throws SentimentTargetTokensMissingException {
         if (tokens.isEmpty()) throw new SentimentTargetTokensMissingException();
 
@@ -35,7 +36,7 @@ public class SentimentTarget {
     /**
      * Create anaphor target associated with antecedent.
      */
-    public SentimentTarget getAnaphor(List<CoreLabel> tokens) throws SentimentTargetTokensMissingException {
+    public SentimentTarget createAnaphor(List<CoreLabel> tokens) throws SentimentTargetTokensMissingException {
         SentimentTarget anaphor = new SentimentTarget(this.tokens);
         anaphor.setAnaphora(tokens);
         return anaphor;
@@ -97,6 +98,10 @@ public class SentimentTarget {
         return this.anaphora != null && !this.anaphora.isEmpty();
     }
 
+    /**
+     * Used when creating SentimentTargets that are anaphora.
+     * @param anaphora
+     */
     private void setAnaphora(List<CoreLabel> anaphora) {
         this.sentenceIndex = tokens.get(0).get(CoreAnnotations.SentenceIndexAnnotation.class);
         this.anaphora = anaphora;

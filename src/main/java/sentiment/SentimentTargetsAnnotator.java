@@ -280,7 +280,7 @@ public class SentimentTargetsAnnotator implements Annotator {
         logger.info("antecedent found: " + antecedent);
 
         if (antecedent != null) {
-            SentimentTarget anaphor = antecedent.getAnaphor(anaphoraTokens);
+            SentimentTarget anaphor = antecedent.createAnaphor(anaphoraTokens);
             logger.info("added anaphor: " + anaphor);
             return anaphor;
         }
