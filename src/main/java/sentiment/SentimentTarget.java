@@ -61,12 +61,8 @@ public class SentimentTarget {
         return sentiment != -1;
     }
 
-    private boolean hasGender() {
-        return gender != null;
-    }
-
     public boolean isMale() {
-        if (hasGender()) {
+        if (gender != null) {
             return gender.equals("MALE");
         } else {
             return false;
@@ -74,7 +70,7 @@ public class SentimentTarget {
     }
 
     public boolean isFemale() {
-        if (hasGender()) {
+        if (gender != null) {
             return gender.equals("FEMALE");
         } else {
             return false;
