@@ -105,7 +105,7 @@ public class SentimentTarget {
      * @param anaphora
      */
     private void setAnaphora(List<CoreLabel> anaphora) {
-        this.sentenceIndex = tokens.get(0).get(CoreAnnotations.SentenceIndexAnnotation.class);
+        this.sentenceIndex = tokens.get(0).get(CoreAnnotations.SentenceIndexAnnotation.class);  // TODO: why is this necessary?
         this.anaphora = anaphora;
     }
 
