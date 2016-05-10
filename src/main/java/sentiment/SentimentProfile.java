@@ -6,6 +6,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+/**
+ * Represents a person's entire opinion profile.
+ * It builds this profile from the annotations created by SentimentTargetsAnnotator.
+ */
 public class SentimentProfile {
     final Logger logger = LoggerFactory.getLogger(SentimentProfile.class);
     private List<Annotation> annotations = new ArrayList<>();
@@ -20,14 +24,9 @@ public class SentimentProfile {
 
     // TODO: perhaps add name merge code in this class too?
 
-    @Override
-    public String toString() {
-        return Arrays.asList(entityToSentiment).toString();
-    }
-
     /**
      * Get the ComplexSentiment for every entity.
-     * @return map of entity to sentiment score
+     * @return a shallow copy of the internal map of entity to sentiment
      */
     public Map<String, ComplexSentiment> getSentiments() {
         return new HashMap<>(entityToSentiment);
@@ -35,12 +34,12 @@ public class SentimentProfile {
 
     /**
      * Add new annotation to this SentimentProfile.
+     * This operation also unpackages and assigns included SentimentTargets to the relevant entities.
      * @param annotation
      */
     public void add(Annotation annotation) {
         this.annotations.add(annotation);
 
-        // add new sentimentTargets to global map of entity to sentiment
         Map<String, List<SentimentTarget>> entityToSentimentTargets = annotation.get(MergedSentimentTargetsAnnotation.class);
 
         for (Map.Entry<String, List<SentimentTarget>> entry : entityToSentimentTargets.entrySet()) {
@@ -48,5 +47,10 @@ public class SentimentProfile {
             sentiment.addAll(entry.getValue());
             entityToSentiment.put(entry.getKey(), sentiment);
         }
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.asList(entityToSentiment).toString();
     }
 }
