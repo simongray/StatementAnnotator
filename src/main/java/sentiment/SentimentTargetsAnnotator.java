@@ -79,11 +79,7 @@ public class SentimentTargetsAnnotator implements Annotator {
             for (Integer i : targetsPerSentence.keySet()) {
                 List<SentimentTarget> sentenceTargets = targetsPerSentence.get(i);
                 CoreMap sentence = sentences.get(i);
-                try {
-                    attachSentiment(sentenceTargets, sentence);
-                } catch (InvalidSentimentException e) {
-                    logger.error("could not attach sentiment to targets " + sentenceTargets + " in sentence: " + sentence);
-                }
+                attachSentiment(sentenceTargets, sentence);
             }
 
             // the final annotation object now includes each map produced as well as the list of targets
@@ -119,23 +115,22 @@ public class SentimentTargetsAnnotator implements Annotator {
      * @param sentence
      */
 
-    private void attachSentiment(List<SentimentTarget> targets, CoreMap sentence) throws InvalidSentimentException {
+    private void attachSentiment(List<SentimentTarget> targets, CoreMap sentence)  {
         logger.info("attaching sentiment to targets in sentence: " + sentence);
-        Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
-        int sentenceSentiment = RNNCoreAnnotations.getPredictedClass(tree);
+        Tree sentenceTree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
 
-        parse(tree, 0);  // DEBUGGING
+        parse(sentenceTree, 0);  // DEBUGGING
 
         if (targets.size() == 1) {
             SentimentTarget target = targets.get(0);
-            target.setSentiment(sentenceSentiment);
-            logger.info(target + " had its sentiment score set to the sentence sentiment " + sentenceSentiment);
+            target.setContext(sentenceTree);
+            logger.info(target + " had its sentiment score set to the sentence sentiment: " + target.getSentiment());
         } else if (targets.size() > 1) {
             logger.info("multiple entities in sentence (" + targets + "), finding context for each");
 
             // get all possible paths from ROOT to every leaf
             List<List<Tree>> paths = new ArrayList<>();
-            attachPaths(tree, new ArrayList<>(), paths);
+            attachPaths(sentenceTree, new ArrayList<>(), paths);
 
             // reduce to only relevant paths
             removeIrrelevantPaths(targets, paths);
@@ -147,9 +142,8 @@ public class SentimentTargetsAnnotator implements Annotator {
             for (SentimentTarget target : targets) {
                 List<Tree> relevantPath = paths.get(target.getTokenIndex() - 1);  // note: CoreNLP token indexes start at 1
                 Tree localTree = relevantPath.get(0);
-                int sentiment = RNNCoreAnnotations.getPredictedClass(localTree);
-                target.setSentiment(sentiment);
-                logger.info(target + " had its sentiment score set to " + sentiment + " in the sentence with sentiment " + sentenceSentiment);
+                target.setContext(localTree);
+                logger.info(target + " had its sentiment score set to: " + target.getSentiment());
             }
 
         }

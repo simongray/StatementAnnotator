@@ -3,6 +3,8 @@ package sentiment;
 import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
+import edu.stanford.nlp.trees.Tree;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,11 +19,10 @@ public class SentimentTarget {
     private String gender;
     private int sentenceIndex;
     private int tokenIndex;  // note: CoreNLP token indexes start at 1, not 0!
-    private int sentiment = -1;  // for the sentiment score, -1 means "unset"
     private List<CoreLabel> tokens;
     private List<CoreLabel> anaphora;
+    private Tree context;
 
-    // TODO: consider whether it would make sense to have the local sentiment Tree as part of this class
     public SentimentTarget(List<CoreLabel> tokens) throws SentimentTargetTokensMissingException {
         if (tokens.isEmpty()) throw new SentimentTargetTokensMissingException();
 
@@ -55,11 +56,11 @@ public class SentimentTarget {
     }
 
     public int getSentiment() {
-        return sentiment;
+        return RNNCoreAnnotations.getPredictedClass(context);
     }
 
     public boolean hasSentiment() {
-        return sentiment != -1;
+        return context != null;
     }
 
     public boolean isMale() {
@@ -107,12 +108,8 @@ public class SentimentTarget {
         this.anaphora = anaphora;
     }
 
-    public void setSentiment(int sentiment) throws InvalidSentimentException {
-        if (sentiment >= 0 && sentiment < 5) {
-            this.sentiment = sentiment;
-        } else {
-            throw new InvalidSentimentException("sentiment must integer from 0 to 4");
-        }
+    public void setContext(Tree context) {
+        this.context = context;
     }
 
     /**
