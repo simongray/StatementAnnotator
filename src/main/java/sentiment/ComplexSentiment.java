@@ -6,6 +6,11 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Encapsulates a list of SentimentTargets for the same entity
+ * Includes various methods to query the sentiment expressed in the SentimentTargets.
+ * The purpose is to handle sentiment in a way that is more complex than simply e.g. average polarity score.
+ */
 public class ComplexSentiment {
     final Logger logger = LoggerFactory.getLogger(ComplexSentiment.class);
     List<SentimentTarget> sentimentTargets = new ArrayList<>();
