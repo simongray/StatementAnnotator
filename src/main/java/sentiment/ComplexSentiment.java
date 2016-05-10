@@ -10,7 +10,7 @@ public class ComplexSentiment {
     final Logger logger = LoggerFactory.getLogger(ComplexSentiment.class);
     List<SentimentTarget> mentions = new ArrayList<>();
 
-    public void addMentions(List<SentimentTarget> mentions) {
+    public void addAll(List<SentimentTarget> mentions) {
         this.mentions.addAll(mentions);
     }
 

@@ -45,7 +45,7 @@ public class SentimentProfile {
 
         for (Map.Entry<String, List<SentimentTarget>> entry : entityToMentions.entrySet()) {
             ComplexSentiment sentiment = entityToSentiment.getOrDefault(entry.getKey(), new ComplexSentiment());
-            sentiment.addMentions(entry.getValue());
+            sentiment.addAll(entry.getValue());
             entityToSentiment.put(entry.getKey(), sentiment);
         }
     }
