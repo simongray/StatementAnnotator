@@ -40,10 +40,10 @@ public class SentimentProfile {
     public void add(Annotation annotation) {
         this.annotations.add(annotation);
 
-        // add new mentions to global map of entity to sentiment
-        Map<String, List<SentimentTarget>> entityToMentions = annotation.get(MergedSentimentTargetsAnnotation.class);
+        // add new sentimentTargets to global map of entity to sentiment
+        Map<String, List<SentimentTarget>> entityToSentimentTargets = annotation.get(MergedSentimentTargetsAnnotation.class);
 
-        for (Map.Entry<String, List<SentimentTarget>> entry : entityToMentions.entrySet()) {
+        for (Map.Entry<String, List<SentimentTarget>> entry : entityToSentimentTargets.entrySet()) {
             ComplexSentiment sentiment = entityToSentiment.getOrDefault(entry.getKey(), new ComplexSentiment());
             sentiment.addAll(entry.getValue());
             entityToSentiment.put(entry.getKey(), sentiment);

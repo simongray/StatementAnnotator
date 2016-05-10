@@ -8,32 +8,36 @@ import java.util.List;
 
 public class ComplexSentiment {
     final Logger logger = LoggerFactory.getLogger(ComplexSentiment.class);
-    List<SentimentTarget> mentions = new ArrayList<>();
+    List<SentimentTarget> sentimentTargets = new ArrayList<>();
 
-    public void addAll(List<SentimentTarget> mentions) {
-        this.mentions.addAll(mentions);
+    /**
+     * Add a list of SentimentTargets to the ComplexSentiment.
+     * @param sentimentTargets
+     */
+    public void addAll(List<SentimentTarget> sentimentTargets) {
+        this.sentimentTargets.addAll(sentimentTargets);
     }
 
     /**
-     * Get the composed sentiment of a list of mentions to the same entity.
+     * Get the composed sentiment of a list of sentimentTargets to the same entity.
      * @return integer from 0 through 4
      */
     public int getComposedSentiment() {
         double sum = 0.0;
         int n = 0;
 
-        for (SentimentTarget mention : mentions) {
-            if (mention.hasSentiment()) {
-                int sentiment = mention.getSentiment();
+        for (SentimentTarget sentimentTarget : sentimentTargets) {
+            if (sentimentTarget.hasSentiment()) {
+                int sentiment = sentimentTarget.getSentiment();
 
                 // TODO: figure out if including (and weighting) the neutral sentiment slightly might be more precise
                 // TODO: another option is to make more complicated sentiment assessments, e.g. pos+neg=mixed
                 if (sentiment != 2) {  // only use non-neutral sentiment to calculate composed sentiment
-                    sum += mention.getSentiment();
+                    sum += sentimentTarget.getSentiment();
                     n++;
                 }
             } else {
-                logger.error("mention has no sentiment: " + mention);
+                logger.error("target has no sentiment: " + sentimentTarget);
             }
         }
 
@@ -47,6 +51,6 @@ public class ComplexSentiment {
 
     @Override
     public String toString() {
-        return getComposedSentiment() + ":" + mentions.size();
+        return getComposedSentiment() + ":" + sentimentTargets.size();
     }
 }
