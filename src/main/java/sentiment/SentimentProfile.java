@@ -8,30 +8,24 @@ import java.util.*;
 
 public class SentimentProfile {
     final Logger logger = LoggerFactory.getLogger(SentimentProfile.class);
-    private final String name;
     private List<Annotation> annotations = new ArrayList<>();
     private Map<String, ComplexSentiment> entityToSentiment = new HashMap<>();
 
-    public SentimentProfile(String name, List<Annotation> annotations) {
-        logger.info("created sentiment profile for " + name);
-        this.name = name;
+    public SentimentProfile(List<Annotation> annotations) {
+        logger.info("created sentiment profile");
         addAnnotations(annotations);
-    }
-
-    public String getName() {
-        return name;
     }
 
     @Override
     public String toString() {
-        return name + " " + Arrays.asList(entityToSentiment);
+        return Arrays.asList(entityToSentiment).toString();
     }
 
     /**
-     * Get the composed scored for all entities.
+     * Get the ComplexSentiment for every entity.
      * @return map of entity to sentiment score
      */
-    public Map<String, ComplexSentiment> getEntityScores() {
+    public Map<String, ComplexSentiment> getSentiments() {
         return new HashMap<>(entityToSentiment);
     }
 
@@ -41,7 +35,7 @@ public class SentimentProfile {
      * @param annotations
      */
     public void addAnnotations(List<Annotation> annotations) {
-        logger.info("adding " + annotations.size() + " annotations to the profile of " + name);
+        logger.info("adding " + annotations.size() + " annotations to profile");
         this.annotations.addAll(annotations);
 
         // add new mentions to global map of entity to sentiment

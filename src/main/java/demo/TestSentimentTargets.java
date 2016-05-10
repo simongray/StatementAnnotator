@@ -81,7 +81,7 @@ public class TestSentimentTargets {
         annotations.add(annotation);
         annotations.add(annotation2);
 
-        SentimentProfile profile = new SentimentProfile("Test", annotations);
-        System.out.println(profile);
+        SentimentProfile testProfile = new SentimentProfile(annotations);
+        System.out.println(testProfile);
     }
 }

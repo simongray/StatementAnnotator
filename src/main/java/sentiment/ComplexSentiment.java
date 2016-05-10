@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ComplexSentiment {
-    final Logger logger = LoggerFactory.getLogger(SentimentProfile.class);
+    final Logger logger = LoggerFactory.getLogger(ComplexSentiment.class);
     List<SentimentTarget> mentions = new ArrayList<>();
 
     public void addMentions(List<SentimentTarget> mentions) {
