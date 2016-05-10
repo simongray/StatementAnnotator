@@ -374,15 +374,20 @@ public class SentimentTargetsAnnotator implements Annotator {
         Set<AnaphoraType> anaphoraTypes = getAnaphoraTypes(anaphoraTokens);
 
         // determine whether to perform single or multiple resolution
-        if (entities.size() == 1) {
+        if (anaphoraTypes.isEmpty()) {
+            logger.error("no compatible anaphora available");
+        } else if (entities.isEmpty()) {
+            logger.error("no antecedents available");
+        } else if (entities.size() == 1) {
             return getSingleMentionAntecedent(anaphoraTypes, entities.get(0));
         } else if (anaphoraTypes.size() == 1) {
             AnaphoraType anaphoraType = anaphoraTypes.iterator().next();  // shitty Java syntax
             return getSingleTypeAntecedent(anaphoraType, entities);
         } else {
             logger.error("multiple resolution not implemented yet: " + entities + ", " + anaphoraTokens);
-            return null;  // TODO: implement this
         }
+
+        return null;
     }
 
     /**
