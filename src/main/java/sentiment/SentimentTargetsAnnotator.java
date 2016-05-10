@@ -122,12 +122,14 @@ public class SentimentTargetsAnnotator implements Annotator {
     private void attachSentiment(List<SentimentTarget> targets, CoreMap sentence) throws InvalidSentimentException {
         logger.info("attaching sentiment to targets in sentence: " + sentence);
         Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
+        int sentenceSentiment = RNNCoreAnnotations.getPredictedClass(tree);
+
+        parse(tree, 0);  // DEBUGGING
 
         if (targets.size() == 1) {
             SentimentTarget target = targets.get(0);
-            int sentiment = RNNCoreAnnotations.getPredictedClass(tree);
-            target.setSentiment(sentiment);
-            logger.info(target + " had its sentiment score set to " + sentiment);
+            target.setSentiment(sentenceSentiment);
+            logger.info(target + " had its sentiment score set to the sentence sentiment " + sentenceSentiment);
         } else if (targets.size() > 1) {
             logger.info("multiple entities in sentence (" + targets + "), finding context for each");
 
@@ -147,9 +149,21 @@ public class SentimentTargetsAnnotator implements Annotator {
                 Tree localTree = relevantPath.get(0);
                 int sentiment = RNNCoreAnnotations.getPredictedClass(localTree);
                 target.setSentiment(sentiment);
-                logger.info(target + " had its sentiment score set to " + sentiment);
+                logger.info(target + " had its sentiment score set to " + sentiment + " in the sentence with sentiment " + sentenceSentiment);
             }
 
+        }
+    }
+
+    // TODO: used for debugging, remove eventually
+    public void parse(Tree tree, int n) {
+        // RNNCoreAnnotations.getPredictedClass(tree) returns the sentiment analysis score from 0 to 4 (with -1 for n/a)
+        logger.info("parse " + new String(new char[n]).replace("\0", "- ")
+                + tree.value() + ": " + RNNCoreAnnotations.getPredictedClass(tree)
+        );
+
+        for (Tree child : tree.children()) {
+            parse(child, n+1);
         }
     }
 
