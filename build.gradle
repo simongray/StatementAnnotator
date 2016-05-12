@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    compile 'org.apache.tika:tika-core:1.12'
     compile 'edu.stanford.nlp:stanford-corenlp:3.6.0'
     compile 'edu.stanford.nlp:stanford-corenlp:3.6.0:models'
     compile 'org.slf4j:slf4j-api:1.7.21'
