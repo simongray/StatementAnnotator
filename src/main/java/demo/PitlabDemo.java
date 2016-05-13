@@ -4,14 +4,13 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import org.json.JSONArray;
 import reddit.RedditCommentProcessor;
+import sentiment.ComplexSentiment;
 import sentiment.SentimentProfile;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Created by simongray on 13/05/16.
@@ -28,20 +27,17 @@ public class PitlabDemo {
         props.put("ner.model", "edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz");
         props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");  // fast, more memory usage
 //        props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");  // slow, less memory usage
-        props.setProperty("sentimenttargets.composestyle", "yolo");  // TODO: change into actual style
 
         DemoTimer.start("pipeline launch");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
         DemoTimer.stop();
 
-        List<Annotation> annotations = new ArrayList<>();
-
         String content = RedditCommentProcessor.readFile("src/main/java/demo/data/data.json", Charset.defaultCharset());
         JSONArray jsonArray = new JSONArray(content);
-
         List<String> englishComments = new ArrayList<>();
         List<String> danishComments = new ArrayList<>();
         List<String> otherComments = new ArrayList<>();
+        List<Annotation> annotations = new ArrayList<>();
 
         for (Object obj : jsonArray) {
             // identify language
@@ -75,8 +71,28 @@ public class PitlabDemo {
         DemoTimer.start("building profile");
         SentimentProfile testProfile = new SentimentProfile(annotations);
         DemoTimer.stop();
-        for (Map.Entry entry : testProfile.getSentiments().entrySet()) {
+        List<Entry<String, ComplexSentiment>> sentiments = new ArrayList<>();
+        sentiments.addAll(testProfile.getSentiments().entrySet());
+        Collections.sort(sentiments, new SentimentComparer());
+        for (Entry<String, ComplexSentiment> entry : sentiments) {
             System.out.println(entry.getKey() + " -> " + entry.getValue());
+        }
+    }
+
+    public static class SentimentComparer implements Comparator<Entry<String, ComplexSentiment>> {
+        @Override
+        public int compare(Entry<String, ComplexSentiment> x, Entry<String, ComplexSentiment> y) {
+            int xn = x.getValue().size();
+            int yn = y.getValue().size();
+            if (xn == yn) {
+                return 0;
+            } else {
+                if (xn > yn) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
         }
     }
 }
