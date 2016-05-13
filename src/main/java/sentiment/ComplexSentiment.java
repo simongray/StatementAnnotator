@@ -71,6 +71,15 @@ public class ComplexSentiment {
         return (int) Math.round(sum / n);
     }
 
+    /**
+     * The size of the internal sentimentTargets list.
+     * Useful for evaluating how a ComplexSentiment should be weighted.
+     * @return
+     */
+    public int size() {
+        return sentimentTargets.size();
+    }
+
     @Override
     public String toString() {
         return getAverageSentiment() + ":" + getComposedSentiment() + ":" + sentimentTargets.size();
