@@ -72,6 +72,62 @@ public class ComplexSentiment {
     }
 
     /**
+     * Get the positive to negative ratio for all polar values.
+     * A ratio > 1 is mostly positive, while a ratio < 1 is mostly negative.
+     * A ratio that is equal to 1 has as many negative as positive mentions.
+     * @return ratio
+     */
+    public double getPolarityRatio() {
+        int positiveCount = 0;
+        int negativeCount = 0;
+
+        for (SentimentTarget sentimentTarget : sentimentTargets) {
+            int sentiment = sentimentTarget.getSentiment();
+
+            if (sentiment > 2) {
+                positiveCount++;
+            } else if (sentiment < 2) {
+                negativeCount++;
+            }
+        }
+
+        // return neutral (= 2) in case the list contained no sentiment
+        if (positiveCount + negativeCount == 0) {
+            return 1;
+        } else {
+            return (double) positiveCount / (double) negativeCount;  // TODO: fix possibility of divide by zero
+        }
+    }
+
+    /**
+     * Get the neutral to polar ratio for all values.
+     * A ratio > 1 is mostly neutral, while a ratio < 1 is mostly polar.
+     * A ratio that is equal to 1 has as many neutral as polar mentions.
+     * @return
+     */
+    public double getNeutralRatio() {
+        int neutralCount = 0;
+        int polarCount = 0;
+
+        for (SentimentTarget sentimentTarget : sentimentTargets) {
+            int sentiment = sentimentTarget.getSentiment();
+
+            if (sentiment == 2) {
+                neutralCount++;
+            } else {
+                polarCount++;
+            }
+        }
+
+        // return neutral (= 2) in case the list contained no sentiment
+        if (neutralCount + polarCount == 0) {
+            return 1;
+        } else {
+            return (double) neutralCount / (double) polarCount; // TODO: fix possibility of divide by zero
+        }
+    }
+
+    /**
      * The size of the internal sentimentTargets list.
      * Useful for evaluating how a ComplexSentiment should be weighted.
      * @return
@@ -82,6 +138,6 @@ public class ComplexSentiment {
 
     @Override
     public String toString() {
-        return getAverageSentiment() + ":" + getComposedSentiment() + ":" + sentimentTargets.size();
+        return getAverageSentiment() + ":" + getPolarityRatio() + ":" + getNeutralRatio() + ":"+ sentimentTargets.size();
     }
 }
