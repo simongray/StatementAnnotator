@@ -29,7 +29,7 @@ and startup time when testing.
 props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");  // slow, less memory usage
 ```
 
-However, it should not be enabled in production of if the intent is to parse many pieces of text,
+However, it should not be enabled in production if the intent is to annotate many pieces of text,
 since it is one factor slower than srparser.
 
 Memory requirements
