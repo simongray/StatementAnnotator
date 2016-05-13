@@ -9,6 +9,34 @@ and must be downloaded separately.
 Download it [here](http://nlp.stanford.edu/software/stanford-srparser-2014-10-23-models.jar)
 and put the JAR file in the project directory.
 
+Recommended pipeline
+--------------------
+
+The recommended pipeline for sentimenttargets can be set up in the following way
+
+```java
+Properties props = new Properties();
+props.setProperty("annotators", "tokenize, ssplit, pos, lemma, gender, ner, parse, sentiment, sentimenttargets");
+props.setProperty("customAnnotatorClass.sentimenttargets", "sentiment.SentimentTargetsAnnotator");
+props.put("ner.model", "edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz");
+props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");  // fast, more memory usage
+```
+
+During development, using the standard parser instead of the Shift Reduce parser can reduce memory requirements
+and startup time when testing.
+
+```java
+props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");  // slow, less memory usage
+```
+
+However, it should not be enabled in production of if the intent is to parse many pieces of text,
+since it is one factor slower than srparser.
+
+Memory requirements
+-------------------
+
+Running the recommended pipeline setup requires a lot of of memory. On my 4GB RAM development machine
+I have enabled the VM option -Xmx3g. This is necessary, in fact even more RAM is preferable.
 
 Annotator algorithm
 -------------------
