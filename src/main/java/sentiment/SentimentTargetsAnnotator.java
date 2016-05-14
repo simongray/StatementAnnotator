@@ -2,22 +2,20 @@ package sentiment;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
-import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
-import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.naming.ConfigurationException;
 import java.util.*;
 
 
 public class SentimentTargetsAnnotator implements Annotator {
     public final static String SENTIMENT_TARGETS = "sentimenttargets";
-    public final static String DEFAULT_COMPOSE_STYLE = "polar_mean";  // the default way to compose sentiment
     final Logger logger = LoggerFactory.getLogger(SentimentTargetsAnnotator.class);
+    ContextResolver contextResolver;
 
     // anaphora resolution
     public Set<String> trackedMaleKeywords = new HashSet<>();
@@ -55,8 +53,15 @@ public class SentimentTargetsAnnotator implements Annotator {
      */
     public SentimentTargetsAnnotator(String name, Properties properties) {
         String prefix = (name != null && !name.isEmpty())? name + ".":"";
-        String composeStyle = properties.getProperty(prefix + "composestyle", DEFAULT_COMPOSE_STYLE);
-        logger.info("sentiment compose style: " + composeStyle);
+        String contextResolverOption = properties.getProperty(prefix + "context", LongestPathResolver.NAME);
+
+        if (contextResolverOption.equals(LongestPathResolver.NAME)) {
+            logger.info("context resolver: " + contextResolverOption);
+            contextResolver = new LongestPathResolver();
+        } else {
+            logger.error("unknown context resolver: " + contextResolverOption + ", reverting to default");
+            contextResolver = new LongestPathResolver();
+        }
     }
 
     @Override
@@ -75,11 +80,11 @@ public class SentimentTargetsAnnotator implements Annotator {
             // merge the targets referring to the same entity, producing map of full entity name to targets
             Map<String, List<SentimentTarget>> targetsPerEntity = getMergedEntities(targets);
 
-            // attach sentiment to each mention
+            // attach sentiment to each mention using the specified ContextResolver
             for (Integer i : targetsPerSentence.keySet()) {
                 List<SentimentTarget> sentenceTargets = targetsPerSentence.get(i);
                 CoreMap sentence = sentences.get(i);
-                attachSentiment(sentenceTargets, sentence);
+                contextResolver.attachContext(sentenceTargets, sentence);
             }
 
             // the final annotation object now includes each map produced as well as the list of targets
@@ -106,144 +111,6 @@ public class SentimentTargetsAnnotator implements Annotator {
 //        requirements.add(new Requirement(Annotator.STANFORD_NER));
 //        requirements.add(new Requirement(Annotator.STANFORD_SENTIMENT));
         return requirements;
-    }
-
-    /**
-     * Attaches sentiment to the targets of a sentence.
-     *
-     * @param targets
-     * @param sentence
-     */
-
-    private void attachSentiment(List<SentimentTarget> targets, CoreMap sentence)  {
-        logger.info("attaching sentiment to targets in sentence: " + sentence);
-        Tree sentenceTree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
-
-        parse(sentenceTree, 0);  // DEBUGGING
-
-        if (targets.size() == 1) {
-            SentimentTarget target = targets.get(0);
-
-            try {
-                target.setContext(sentenceTree);
-                logger.info(target + " had its sentiment score set to the sentence sentiment: " + target.getSentiment());
-            } catch (Exception e) {
-                logger.error("could not set context for target " + target + ": " + e.getClass());
-            }
-        } else if (targets.size() > 1) {
-            logger.info("multiple entities in sentence (" + targets + "), finding context for each");
-
-            // get all possible paths from ROOT to every leaf
-            List<List<Tree>> paths = new ArrayList<>();
-            attachPaths(sentenceTree, new ArrayList<>(), paths);
-
-            // reduce to only relevant paths
-            removeIrrelevantPaths(targets, paths);
-
-            // remove shared paths (= context) for each sentiment target
-            removeSharedSections(paths);
-
-            // set each targets sentiment score based on its own local context
-            for (SentimentTarget target : targets) {
-                List<Tree> relevantPath = paths.get(target.getTokenIndex() - 1);  // note: CoreNLP token indexes start at 1
-                Tree localTree = relevantPath.get(0);
-                try {
-                    target.setContext(sentenceTree);
-                    logger.info(target + " had its sentiment score set to: " + target.getSentiment());
-                } catch (Exception e) {
-                    logger.error("could not set context for target " + target + ": " + e.getClass());
-                }
-            }
-
-        }
-    }
-
-    // TODO: used for debugging, remove eventually
-    public void parse(Tree tree, int n) {
-        // RNNCoreAnnotations.getPredictedClass(tree) returns the sentiment analysis score from 0 to 4 (with -1 for n/a)
-        logger.info("parse " + new String(new char[n]).replace("\0", "- ")
-                + tree.value() + ": " + RNNCoreAnnotations.getPredictedClass(tree)
-        );
-
-        for (Tree child : tree.children()) {
-            parse(child, n+1);
-        }
-    }
-
-    /**
-     * Removes any shared sections from a list of paths.
-     * The paths should come from the same sentiment-annotated parse tree.
-     * @param paths
-     */
-    private void removeSharedSections(List<List<Tree>> paths) {
-        // make a deep copy of each relevant List inside paths
-        List<List<Tree>> otherPaths = new ArrayList<>();
-        for (List<Tree> path : paths) {
-            if (!path.isEmpty()) {
-                otherPaths.add(new ArrayList<>(path));  // note: this part is shallow
-            }
-        }
-
-        // use the copy to locate shared sections
-        for (List<Tree> path : paths) {
-            if (!path.isEmpty()) {
-                int n = -1;  // = nothing should be removed
-
-                for (List<Tree> otherPath : otherPaths) {
-                    if (!otherPath.isEmpty()) {
-                        if (path.get(path.size() - 1) != otherPath.get(otherPath.size() - 1)) {  // should not be same path
-                            for (int i = 0; i < path.size() && i < otherPath.size(); i++) {
-
-                                // find lowest common denominator
-                                if (path.get(i) == otherPath.get(i)) {
-                                    n = i;
-                                } else {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Returns the parse tree paths relevant to the stated sentiment targets.
-     * @param targets
-     * @param paths
-     * @return
-     */
-    private void removeIrrelevantPaths(List<SentimentTarget> targets, List<List<Tree>> paths) {
-        Set<Integer> relevantPathIndexes = new HashSet<>();
-
-        for (SentimentTarget target : targets) {
-            relevantPathIndexes.add(target.getTokenIndex() - 1);  // note: CoreNLP token indexes start at 1
-        }
-
-        for (int i = 0; i < paths.size(); i++) {
-            if (!relevantPathIndexes.contains(i)) {
-                paths.set(i, new ArrayList<>());
-            }
-        }
-    }
-
-    /**
-     * Recursively attaches all possible paths in the parse tree to a list of paths.
-     * @param tree
-     * @param path
-     * @param paths
-     */
-    private void attachPaths(Tree tree, List<Tree> path, List<List<Tree>> paths) {
-        path.add(tree);
-
-        if (tree.isLeaf()) {
-            paths.add(path);
-        } else {
-            for (Tree child : tree.children()) {
-                attachPaths(child, new ArrayList<>(path), paths);
-            }
-        }
     }
 
     /**
