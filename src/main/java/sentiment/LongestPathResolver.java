@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 public class LongestPathResolver implements ContextResolver {
-    final Logger logger = LoggerFactory.getLogger(SentimentTargetsAnnotator.class);
+    final Logger logger = LoggerFactory.getLogger(LongestPathResolver.class);
     public final static String NAME = "longestpath";
 
     @Override
