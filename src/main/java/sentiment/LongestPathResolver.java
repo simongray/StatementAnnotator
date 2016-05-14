@@ -45,6 +45,9 @@ public class LongestPathResolver implements ContextResolver {
             // remove shared paths (= context) for each sentiment target
             removeSharedSections(paths);
 
+            // TODO: insert step here that simply removes everything in each path above the first S
+            //       unless there is no S, in which case nothing is removed (= for top level sentences)
+
             // set each targets sentiment score based on its own local context
             for (SentimentTarget target : targets) {
                 List<Tree> relevantPath = paths.get(target.getTokenIndex() - 1);  // note: CoreNLP token indexes start at 1
@@ -99,7 +102,7 @@ public class LongestPathResolver implements ContextResolver {
     }
 
     /**
-     * Returns the parse tree paths relevant to the stated sentiment targets.
+     * Empties paths without sentiment targets.
      * @param targets
      * @param paths
      * @return
