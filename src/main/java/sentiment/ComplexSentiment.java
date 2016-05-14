@@ -3,8 +3,11 @@ package sentiment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Encapsulates a list of SentimentTargets for the same entity
@@ -24,10 +27,10 @@ public class ComplexSentiment {
     }
 
     /**
-     * Get the average sentiment rounded to nearest integer.
+     * Get the average sentiment.
      * @return average sentiment
      */
-    public int getAverageSentiment() {
+    public double getAverageSentiment() {
         double sum = 0.0;
         int n = 0;
 
@@ -38,10 +41,10 @@ public class ComplexSentiment {
 
         // return neutral (= 2) in case the list contained no sentiment
         if (n == 0) {
-            return 2;
+            return 2.0;
         }
 
-        return (int) Math.round(sum / n);
+        return sum / n;
     }
 
     /**
@@ -77,7 +80,7 @@ public class ComplexSentiment {
      * A ratio that is equal to 1 has as many negative as positive mentions.
      * @return ratio
      */
-    public double getPolarityRatio() {
+    public double getPositiveToNegativeRatio() {
         int positiveCount = 0;
         int negativeCount = 0;
 
@@ -127,6 +130,10 @@ public class ComplexSentiment {
         }
     }
 
+    public Evaluation evaluation() {
+        return null; // TODO: a custom evaluation based on the various statistical measures
+    }
+
     /**
      * The size of the internal sentimentTargets list.
      * Useful for evaluating how a ComplexSentiment should be weighted.
@@ -138,6 +145,16 @@ public class ComplexSentiment {
 
     @Override
     public String toString() {
-        return getAverageSentiment() + ":" + getPolarityRatio() + ":" + getNeutralRatio() + ":"+ sentimentTargets.size();
+        NumberFormat nf = NumberFormat.getNumberInstance(Locale.US);
+        DecimalFormat df = (DecimalFormat) nf;
+        df.setMaximumFractionDigits(2);
+        df.setMinimumFractionDigits(2);
+        return df.format(getAverageSentiment()) + ":" + df.format(getPositiveToNegativeRatio()) + ":" + df.format(getNeutralRatio()) + ":"+ sentimentTargets.size();
+    }
+
+    public enum Evaluation {
+        POSITIVE,
+        NEGATIVE,
+        NEUTRAL
     }
 }
