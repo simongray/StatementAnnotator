@@ -3,6 +3,7 @@ package demo;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import org.json.JSONArray;
+import reddit.MarkdownStripper;
 import reddit.RedditCommentProcessor;
 import sentiment.ComplexSentiment;
 import sentiment.SentimentProfile;
@@ -32,6 +33,7 @@ public class PitlabDemo {
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
         DemoTimer.stop();
 
+        MarkdownStripper stripper = new MarkdownStripper();
         String content = RedditCommentProcessor.readFile("src/main/java/demo/data/data.json", Charset.defaultCharset());
         JSONArray jsonArray = new JSONArray(content);
         List<String> englishComments = new ArrayList<>();
@@ -40,13 +42,18 @@ public class PitlabDemo {
         List<Annotation> annotations = new ArrayList<>();
 
         for (Object obj : jsonArray) {
+            String comment = (String) obj;
+
+            // strip markdown
+            comment = stripper.strip(comment);
+
             // identify language
             DemoTimer.start("language identification");
-            String comment = (String) obj;
-            int endIndex = comment.length() < 30? comment.length() - 1: 30;
             String language = RedditCommentProcessor.getLanguage(comment);
-            System.out.println(language + " -> " + comment.substring(0, endIndex));
             DemoTimer.stop();
+
+            int endIndex = comment.length() < 30? comment.length() - 1: 30;
+            System.out.println(language + " -> " + comment.substring(0, endIndex));
 
             if (language.equals(ENGLISH)) {
                 // annotate a piece of text
