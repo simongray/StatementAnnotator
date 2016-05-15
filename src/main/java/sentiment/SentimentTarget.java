@@ -5,6 +5,8 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
  * The mention can be both direct or an anaphor (he, she, it, they, etc).
  */
 public class SentimentTarget {
+    final Logger logger = LoggerFactory.getLogger(SentimentTarget.class);
     private String name;
     private String tag;
     private String gender;
@@ -119,6 +122,7 @@ public class SentimentTarget {
         this.context = context;
         if (context == null) throw new SentimentContextMissingException();
         int sentiment = RNNCoreAnnotations.getPredictedClass(context);
+        logger.info("setting sentiment for " + name + " using context: " + context);
         if (sentiment == -1) throw new SentimentMissingException();
         this.sentiment = sentiment;
     }
