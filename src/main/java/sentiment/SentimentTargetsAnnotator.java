@@ -53,13 +53,13 @@ public class SentimentTargetsAnnotator implements Annotator {
      */
     public SentimentTargetsAnnotator(String name, Properties properties) {
         String prefix = (name != null && !name.isEmpty())? name + ".":"";
-        String contextResolverOption = properties.getProperty(prefix + "context", LongestPathResolver.NAME);
+        String contextResolverProperty = properties.getProperty(prefix + "context", LongestPathResolver.NAME);
 
-        if (contextResolverOption.equals(LongestPathResolver.NAME)) {
-            logger.info("context resolver: " + contextResolverOption);
+        if (contextResolverProperty.equals(LongestPathResolver.NAME)) {
+            logger.info("context resolver: " + contextResolverProperty);
             contextResolver = new LongestPathResolver();
         } else {
-            logger.error("unknown context resolver: " + contextResolverOption + ", reverting to default");
+            logger.error("unknown context resolver: " + contextResolverProperty + ", reverting to default");
             contextResolver = new LongestPathResolver();
         }
     }
