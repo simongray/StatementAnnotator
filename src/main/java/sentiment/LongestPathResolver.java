@@ -16,26 +16,31 @@ public class LongestPathResolver implements ContextResolver {
     final Logger logger = LoggerFactory.getLogger(LongestPathResolver.class);
     public final static String NAME = "longestpath";
 
+    // POS TAGS
+    public final static String ROOT_TAG = "ROOT";
+    public final static String SENTENCE_TAG = "S";
+
     @Override
     public void attachContext(List<SentimentTarget> targets, CoreMap sentence)  {
-        logger.info("attaching sentiment to targets in sentence: " + sentence);
+        logger.info("finding context for targets in sentence: " + sentence);
         Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
 
         parse(tree, 0);  // DEBUGGING
 
-        if (targets.size() == 1) {
+        if (targets.size() == 1 && targets.get(0).isAnaphor()) {
             SentimentTarget target = targets.get(0);
-
+            logger.info("target is anaphor, using entire sentence ROOT as context");
+            // TODO: change this logic in the future, should preferably not use sentence ROOT
             try {
                 target.setContext(tree);
-                logger.info(target + " had its sentiment score set to the sentence sentiment: " + target.getSentiment());
+                logger.info(target + " had its sentiment score set to: " + target.getSentiment());
             } catch (Exception e) {
                 logger.error("could not set context for target " + target + ": " + e.getClass());
             }
-        } else if (targets.size() > 1) {
-            logger.info("multiple entities in sentence (" + targets + "), finding context for each");
-
-            // get all possible paths from ROOT to every leaf
+        } else if (targets.isEmpty()) {
+            logger.error("no targets given!");
+        } else {
+            // get all possible paths from ROOT_TAG to every leaf
             List<List<Tree>> paths = new ArrayList<>();
             attachPaths(tree, new ArrayList<>(), paths);
 
@@ -47,20 +52,71 @@ public class LongestPathResolver implements ContextResolver {
 
             // TODO: insert step here that simply removes everything in each path above the first S
             //       unless there is no S, in which case nothing is removed (= for top level sentences)
+            removeRoot(paths);
 
             // set each targets sentiment score based on its own local context
             for (SentimentTarget target : targets) {
                 List<Tree> relevantPath = paths.get(target.getTokenIndex() - 1);  // note: CoreNLP token indexes start at 1
                 Tree localTree = relevantPath.get(0);
                 try {
-                    target.setContext(tree);
-                    logger.info(target + " had its sentiment score set to: " + target.getSentiment());
+                    target.setContext(localTree);
+                    logger.info(target + " had its sentiment score set to: " + target.getSentiment() + " (based on tag: " + localTree.value() + ")");
                 } catch (Exception e) {
                     logger.error("could not set context for target " + target + ": " + e.getClass());
                 }
             }
-
         }
+    }
+
+    /**
+     * Isolate entities to their biggest sub-sentence.
+     * In practice, this entails removing the path from ROOT to the nearest S tag where applicable.
+     * @param paths
+     */
+    private void removeRoot(List<List<Tree>> paths) {
+        for (int i = 0; i < paths.size(); i++) {
+            paths.set(i, withoutRoot(paths.get(i)));
+        }
+    }
+
+    /**
+     * Removes the sub-path (often just a few steps) down to the nearest S tag.
+     * This is done in order to not use the entire sentence sentiment as the basis of the entity,
+     * if it only exists in a specific part of the sentence.
+     * In cases where there is no S tag, the ROOT is retained.
+     * @param path
+     */
+    private List<Tree> withoutRoot(List<Tree> path) {
+        if (!path.isEmpty()) {
+            if (path.get(0).value().equals(ROOT_TAG)) {
+                int n = -1; // = nothing snould be removed
+
+                // search through path to find next sentence tag
+                for (Tree tree : path) {
+                    n++;
+                    if (tree.value().equals(SENTENCE_TAG)) break;
+                }
+
+                // remove section until (and excluding) sentence tag
+                if (n != -1 && n != path.size() - 1) {
+                    List<Tree> newPath = path.subList(n, path.size());
+
+                    // log removed path
+                    List<Tree> removedPath = path.subList(0, n);
+                    List<String> removedTags = new ArrayList<>();
+                    for (Tree tree : removedPath) {
+                        removedTags.add(tree.value());
+                    }
+                    logger.info("removed tag from path: " + String.join(" -> ", removedTags));
+
+                    return newPath;
+                }
+            }
+
+            logger.info("no tags removed from path, ROOT was retained");
+        }
+
+        return path;
     }
 
     /**
