@@ -47,6 +47,7 @@ public class SentimentTargetsAnnotator implements Annotator {
         trackedNerTags.add("NATIONALITY");
         trackedNerTags.add("RELIGION");
         // TODO: use custom mapping, default includes unwanted stuff, e.g. "right", "left", "centre" = ideology
+        trackedNerTags.add("SUBREDDIT");
     }
 
     /**

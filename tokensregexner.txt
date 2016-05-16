@@ -1,0 +1,3 @@
+/r/[\w]+	SUBREDDIT
+/ r/[\w]+	SUBREDDIT
+r/[\w]+	SUBREDDIT
