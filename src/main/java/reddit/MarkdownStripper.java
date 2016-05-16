@@ -25,6 +25,7 @@ public class MarkdownStripper {
         patterns.put("postfix strike-through", "([^~])~~");
         patterns.put("link", "\\[([^\\[]+)\\]\\([^)]+\\)" );
         patterns.put("quote", ">+\\s*([^>\\n]+)");
+        // TODO: add more patterns
     }
 
     final String DEFAULT_REPLACEMENT = "$1";
