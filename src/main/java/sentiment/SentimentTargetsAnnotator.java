@@ -8,7 +8,6 @@ import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.naming.ConfigurationException;
 import java.util.*;
 
 
@@ -37,10 +36,17 @@ public class SentimentTargetsAnnotator implements Annotator {
     // tracked NER tags
     public Set<String> trackedNerTags = new HashSet<>();
     {
+        // from english.conll.4class.distsim.crf.ser.gz
         trackedNerTags.add("PERSON");
         trackedNerTags.add("ORGANIZATION");
         trackedNerTags.add("LOCATION");
         trackedNerTags.add("MISC");
+
+        // REGEXNER - only using these 3 tags from the default file for now
+        trackedNerTags.add("IDEOLOGY");
+        trackedNerTags.add("NATIONALITY");
+        trackedNerTags.add("RELIGION");
+        // TODO: use custom mapping, default includes unwanted stuff, e.g. "right", "left", "centre" = ideology
     }
 
     /**
