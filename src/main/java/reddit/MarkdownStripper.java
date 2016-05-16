@@ -42,7 +42,7 @@ public class MarkdownStripper {
 
     /**
      * Initialize this MarkdownStripper with a set of ignored patterns.
-     * @param ignoredPatterns
+     * @param ignoredPatterns names of ignored Markdown patterns
      */
     public MarkdownStripper(Set<String> ignoredPatterns) {
         for (String key : ignoredPatterns) {
@@ -52,7 +52,7 @@ public class MarkdownStripper {
 
     /**
      * Strip markdown formatting from a piece of text.
-     * @param text
+     * @param text piece of text to be stripped
      * @return
      */
     public String strip(String text) {
