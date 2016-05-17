@@ -38,7 +38,8 @@ public class PitlabDemo {
         DemoTimer.stop();
 
         MarkdownStripper stripper = new MarkdownStripper();
-        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/data.json", Charset.defaultCharset());
+//        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/data.json", Charset.defaultCharset());
+        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/mark_comment_history.json", Charset.defaultCharset());
         JSONArray jsonArray = new JSONArray(content);
         List<String> englishComments = new ArrayList<>();
         List<String> danishComments = new ArrayList<>();
