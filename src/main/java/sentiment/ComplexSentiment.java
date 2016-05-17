@@ -130,6 +130,48 @@ public class ComplexSentiment {
         }
     }
 
+    /**
+     * Get the count of positives.
+     * @return
+     */
+    public int getPositiveCount() {
+        int count = 0;
+
+        for (SentimentTarget sentimentTarget : sentimentTargets) {
+            if (sentimentTarget.getSentiment() > 2) count++;
+        }
+
+        return count;
+    }
+
+    /**
+     * Get the count of negatives.
+     * @return
+     */
+    public int getNegativeCount() {
+        int count = 0;
+
+        for (SentimentTarget sentimentTarget : sentimentTargets) {
+            if (sentimentTarget.getSentiment() < 2) count++;
+        }
+
+        return count;
+    }
+
+    /**
+     * Get the count of neutrals.
+     * @return
+     */
+    public int getNeutralCount() {
+        int count = 0;
+
+        for (SentimentTarget sentimentTarget : sentimentTargets) {
+            if (sentimentTarget.getSentiment() == 2) count++;
+        }
+
+        return count;
+    }
+
     public Evaluation evaluation() {
         return null; // TODO: a custom evaluation based on the various statistical measures
     }
@@ -149,7 +191,13 @@ public class ComplexSentiment {
         DecimalFormat df = (DecimalFormat) nf;
         df.setMaximumFractionDigits(2);
         df.setMinimumFractionDigits(2);
-        return df.format(getAverageSentiment()) + ":" + df.format(getPositiveToNegativeRatio()) + ":" + df.format(getNeutralRatio()) + ":"+ sentimentTargets.size();
+        return    getPositiveCount() + ":"
+                + getNeutralCount() + ":"
+                + getNegativeCount() + "::"
+                + df.format(getAverageSentiment()) + ":"
+                + df.format(getPositiveToNegativeRatio()) + ":"
+                + df.format(getNeutralRatio()) + "::"
+                + sentimentTargets.size();
     }
 
     public enum Evaluation {
