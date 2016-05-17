@@ -84,7 +84,16 @@ public class PitlabDemo {
         DemoTimer.stop();
         List<Entry<String, ComplexSentiment>> sentiments = new ArrayList<>();
         sentiments.addAll(testProfile.getSentiments().entrySet());
-        Collections.sort(sentiments, new SentimentComparer());
+//        Collections.sort(sentiments, new SentimentComparer());
+        System.out.println();
+        System.out.println("top positive");
+        Collections.sort(sentiments, new PositiveSentimentComparer());
+        for (Entry<String, ComplexSentiment> entry : sentiments) {
+            System.out.println(entry.getKey() + " -> " + entry.getValue());
+        }
+        System.out.println();
+        System.out.println("top negative");
+        Collections.sort(sentiments, new NegativeSentimentComparer());
         for (Entry<String, ComplexSentiment> entry : sentiments) {
             System.out.println(entry.getKey() + " -> " + entry.getValue());
         }
@@ -95,6 +104,40 @@ public class PitlabDemo {
         public int compare(Entry<String, ComplexSentiment> x, Entry<String, ComplexSentiment> y) {
             int xn = x.getValue().size();
             int yn = y.getValue().size();
+            if (xn == yn) {
+                return 0;
+            } else {
+                if (xn > yn) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        }
+    }
+
+    public static class PositiveSentimentComparer implements Comparator<Entry<String, ComplexSentiment>> {
+        @Override
+        public int compare(Entry<String, ComplexSentiment> x, Entry<String, ComplexSentiment> y) {
+            int xn = x.getValue().getPositiveCount();
+            int yn = y.getValue().getPositiveCount();
+            if (xn == yn) {
+                return 0;
+            } else {
+                if (xn > yn) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        }
+    }
+
+    public static class NegativeSentimentComparer implements Comparator<Entry<String, ComplexSentiment>> {
+        @Override
+        public int compare(Entry<String, ComplexSentiment> x, Entry<String, ComplexSentiment> y) {
+            int xn = x.getValue().getNegativeCount();
+            int yn = y.getValue().getNegativeCount();
             if (xn == yn) {
                 return 0;
             } else {
