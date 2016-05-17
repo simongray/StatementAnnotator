@@ -43,9 +43,8 @@ public class SentimentTargetsAnnotator implements Annotator {
         trackedNerTags.add("MISC");
 
         // REGEXNER - only using these 3 tags from the default file for now
-        trackedNerTags.add("IDEOLOGY");
-        trackedNerTags.add("NATIONALITY");
-        trackedNerTags.add("RELIGION");
+        trackedNerTags.add("ISM");
+        trackedNerTags.add("IST");
         // TODO: use custom mapping, default includes unwanted stuff, e.g. "right", "left", "centre" = ideology
         trackedNerTags.add("SUBREDDIT");
     }

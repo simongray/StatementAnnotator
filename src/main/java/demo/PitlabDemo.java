@@ -23,14 +23,12 @@ public class PitlabDemo {
     public static void main(String args[]) throws IOException {
         // setting up the pipeline
         Properties props = new Properties();
-        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, gender, ner, tokensregexner, parse, sentiment, sentimenttargets");
+        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, gender, ner, tokensregex, parse, sentiment, sentimenttargets");
 //        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, gender, ner, regexner, parse, sentiment, sentimenttargets");
         props.setProperty("customAnnotatorClass.sentimenttargets", "sentiment.SentimentTargetsAnnotator");
-        props.setProperty("customAnnotatorClass.tokensregexner", "edu.stanford.nlp.pipeline.TokensRegexNERAnnotator");
-        props.put("tokensregexner.verbose", "true");
-//        props.put("tokensregexner.mapping", "edu/stanford/nlp/models/regexner/type_map_clean");
-        props.put("tokensregexner.mapping", "tokensregexner_mapping.txt");
-//        props.put("tokensregexner.ignorecase", "true");
+        props.setProperty("customAnnotatorClass.tokensregex", "edu.stanford.nlp.pipeline.TokensRegexAnnotator");
+        props.setProperty("tokensregex.rules", "tokensregex_rules.txt");
+        props.put("tokensregex.verbose", "true");
         props.put("ner.model", "edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz");
         props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");  // fast, more memory usage
 //        props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");  // slow, less memory usage

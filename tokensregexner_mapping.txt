@@ -1,3 +1,0 @@
-r/[\w]+	SUBREDDIT
-(?!(sch|Sch|pr|Pr))[\w-]+ism	ISM	LOCATION, MISC
-[A-Z][\w-]+ist	IST
