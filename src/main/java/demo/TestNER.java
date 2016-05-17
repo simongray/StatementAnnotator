@@ -17,7 +17,7 @@ import java.util.Properties;
 public class TestNER {
     public static void main(String[] args) {
         try {
-            String example =   "There is prism with a schism that contains socialism, but is void of Existentialism.";
+            String example =   "There is prism with a schism that contains socialism, but is void of Existentialism and Absentee-ism.";
             System.out.println("pipelined approach");
 
             // initiate pipeline with properties (i.e. what stages)
