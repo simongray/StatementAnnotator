@@ -17,13 +17,7 @@ import java.util.Properties;
 public class TestNER {
     public static void main(String[] args) {
         try {
-            String example =    "Recently moved here with my /r/videos and we have found that it is quite manageable. Here's our solution:" +
-                    "Use an air quality app. We use the one for http://aqicn.org/city/beijing/. I just have a widget on my Android phone that says the current AQI from the nearest measuring station. Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+. Anyway, just make your own rule and stick to it." +
-                    "Bought some 3M 95N-rated conservatism masks for Baptism days. Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes. You can get some nice re-usable masks where you can change the filter too." +
-                    "We also got two Xiami Air purifiers that work quite well. They are smartphone-connected and always on, except when we're out during weekdays. The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers." +
-                    "Before you go, familiarise yourself with the Socialism in your own area so you have a means of comparison. If you live in a city you might be surprised that some days it can actually be quite polluted in Western cities too. I sure was (I come from Copenhagen, Denmark). Of course, Buddhist cities usually don't have those crazy smog days." +
-                    "Don't worry too much. Sometimes there's no r/funny_gifs for a whole week, sometime's it lasts for a whole week and you'll just stay mostly indoors and use Liberalism when outside. You'll get used to it.";
-
+            String example =   "There is prism with a schism that contains socialism, but is void of Existentialism.";
             System.out.println("pipelined approach");
 
             // initiate pipeline with properties (i.e. what stages)
@@ -35,10 +29,11 @@ public class TestNER {
             props.put("tokensregexner.verbose", "true");
 //        props.put("tokensregexner.mapping", "edu/stanford/nlp/models/regexner/type_map_clean");
             props.put("tokensregexner.mapping", "tokensregexner.txt");
+            props.put("tokensregexner.noDefaultOverwriteLabels", "");
 //        props.put("tokensregexner.ignorecase", "true");
             props.put("ner.model", "edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz");
-            props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");  // fast, more memory usage
-//        props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");  // slow, less memory usage
+//            props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");  // fast, more memory usage
+        props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");  // slow, less memory usage
 
 //            props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");  // fast, more memory usage
 //        props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");  // slow, less memory usage
@@ -120,7 +115,7 @@ public class TestNER {
 //        } catch (ClassNotFoundException e) {
 //            e.printStackTrace();
         } catch (Exception e) {
-            //
+            e.printStackTrace();
         }
     }
 }
