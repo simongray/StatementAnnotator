@@ -32,8 +32,10 @@ ENV.defaults["ruleType"] = "tokens"
 }
 
 # NER tagging of ists + normalisation to lowercase
+# TODO: figure out if I can use the lemma for plural stuff
+# TODO: don't change the text too much (e.g. lowercasing), maybe it can be saved to a different annotation?
 {
-	pattern: ( /[A-Z][\w-]+ist/ ),
+	pattern: ( /[A-Z][\w-]+ists?/ ),
 	action: (
     		Annotate($0, ner, "IST"),
     		Annotate($0, text, Lowercase($$0.text))
