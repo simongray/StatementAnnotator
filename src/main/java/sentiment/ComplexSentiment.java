@@ -17,6 +17,11 @@ import java.util.Locale;
 public class ComplexSentiment {
     final Logger logger = LoggerFactory.getLogger(ComplexSentiment.class);
     List<SentimentTarget> sentimentTargets = new ArrayList<>();
+    SentimentProfile profile;
+
+    public ComplexSentiment(SentimentProfile profile) {
+        this.profile = profile;
+    }
 
     /**
      * Add a list of SentimentTargets to the ComplexSentiment.
@@ -173,7 +178,44 @@ public class ComplexSentiment {
     }
 
     public Evaluation evaluation() {
-        return null; // TODO: a custom evaluation based on the various statistical measures
+        if (isNumerous()) {
+            if (isRelativelyPositive()) return Evaluation.POSITIVE;
+            if (isRelativelyNegative()) return Evaluation.NEGATIVE;
+            if (isRelativelyNeutral()) return Evaluation.NEUTRAL;
+        }
+
+        return Evaluation.UNCERTAIN;
+    }
+
+    private boolean isNumerous() {
+        return size() > 3;  // TODO: make this more dynamic
+    }
+
+    private boolean isRelativelyPositive() {
+        double upperBound = profile.getSentenceMean() + profile.getSentenceStandardDeviation()/2;
+        return getMean() > upperBound;
+    }
+
+    private boolean isRelativelyNegative() {
+        double lowerBound = profile.getSentenceMean() - profile.getSentenceStandardDeviation()/2;
+        return getMean() < lowerBound;
+    }
+
+    private boolean isRelativelyNeutral() {
+        return !(isRelativelyNegative() || isRelativelyPositive());
+    }
+
+    /**
+     * Determine whether this ComplexSentiment is strong or not using a heuristic.
+     * The heuristic depends on data from the parent SentimentProfile.
+     * @return
+     */
+    public boolean isStrong() {
+        if (isNumerous() && !isRelativelyNeutral()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -191,7 +233,8 @@ public class ComplexSentiment {
         DecimalFormat df = (DecimalFormat) nf;
         df.setMaximumFractionDigits(2);
         df.setMinimumFractionDigits(2);
-        return    getPositiveCount() + ":"
+        return    evaluation() + " -> "
+                + getPositiveCount() + ":"
                 + getNeutralCount() + ":"
                 + getNegativeCount() + "::"
                 + df.format(getMean()) + ":"
@@ -203,6 +246,7 @@ public class ComplexSentiment {
     public enum Evaluation {
         POSITIVE,
         NEGATIVE,
-        NEUTRAL
+        NEUTRAL,
+        UNCERTAIN
     }
 }

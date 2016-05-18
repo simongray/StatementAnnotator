@@ -51,25 +51,6 @@ public class SentimentProfile {
     }
 
     /**
-     * Determine whether a complex sentiment is strong or not using a heuristic.
-     * @param complexSentiment
-     * @return
-     */
-    private boolean isStrong(ComplexSentiment complexSentiment) {
-        double upperBound = getSentenceMean() + getSentenceStandardDeviation()/2;
-        double lowerBound = getSentenceMean() - getSentenceStandardDeviation()/2;
-        double sentiment = complexSentiment.getMean();
-        int size = complexSentiment.size();
-
-
-        if (size > 3 && (sentiment > upperBound || sentiment < lowerBound)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Get the ComplexSentiment for every entity.
      * @return a shallow copy of the internal map of entity to sentiment
      */
@@ -78,7 +59,7 @@ public class SentimentProfile {
 
         for (String entity : entityToComplexSentiment.keySet()) {
             ComplexSentiment complexSentiment = entityToComplexSentiment.get(entity);
-            if (isStrong(complexSentiment)) {
+            if (complexSentiment.isStrong()) {
                 strongSentiments.put(entity, complexSentiment);
             }
         }
@@ -104,7 +85,7 @@ public class SentimentProfile {
         Map<String, List<SentimentTarget>> entityToSentimentTargets = annotation.get(MergedSentimentTargetsAnnotation.class);
 
         for (Map.Entry<String, List<SentimentTarget>> entry : entityToSentimentTargets.entrySet()) {
-            ComplexSentiment complexSentiment = entityToComplexSentiment.getOrDefault(entry.getKey(), new ComplexSentiment());
+            ComplexSentiment complexSentiment = entityToComplexSentiment.getOrDefault(entry.getKey(), new ComplexSentiment(this));
             complexSentiment.addAll(entry.getValue());
             entityToComplexSentiment.put(entry.getKey(), complexSentiment);
         }
