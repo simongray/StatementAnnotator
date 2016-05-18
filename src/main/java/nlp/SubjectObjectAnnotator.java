@@ -10,9 +10,9 @@ import java.util.*;
 /**
  * Find the subjects in sentences and annotates them.
  */
-public class SubjectAnnotator implements Annotator {
-    public final static String SUBJECT = "subject";
-    final Logger logger = LoggerFactory.getLogger(SubjectAnnotator.class);
+public class SubjectObjectAnnotator implements Annotator {
+    public final static String SUBJECT = "subjectobject";
+    final Logger logger = LoggerFactory.getLogger(SubjectObjectAnnotator.class);
 
     /**
      * This constructor allows for the annotator to accept different properties to alter its behaviour.
@@ -22,7 +22,7 @@ public class SubjectAnnotator implements Annotator {
      * allows for various constructor signatures to be implemented for a custom annotator.
      * @param properties
      */
-    public SubjectAnnotator(String name, Properties properties) {
+    public SubjectObjectAnnotator(String name, Properties properties) {
         String prefix = (name != null && !name.isEmpty())? name + ".":"";
     }
 
