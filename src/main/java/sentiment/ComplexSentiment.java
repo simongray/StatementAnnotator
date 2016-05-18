@@ -18,6 +18,7 @@ public class ComplexSentiment {
     final Logger logger = LoggerFactory.getLogger(ComplexSentiment.class);
     List<SentimentTarget> sentimentTargets = new ArrayList<>();
     SentimentProfile profile;
+    final double RELATIVE_SENTIMENT_MULTIPLIER = 0.33;
 
     /**
      * A reference to the parent SentimentProfile is needed in to order to calculate relative polarity.
@@ -154,14 +155,27 @@ public class ComplexSentiment {
         return count;
     }
 
-    public Evaluation evaluation() {
+    /**
+     * Get the relative polarity of a ComplexSentiment.
+     *
+     * Assuming a general bias in the population of sentiment polarities,
+     * the relative polarity is a heuristic based around distance from the mean polarity,
+     * which is assumed to be neutral with regards to the general level of the comments.
+     *
+     * The standard deviation is then used to calculate new unbiased, relative boundaries
+     * for positive and negative, respectively.
+     *
+     * In order to contain
+     * @return
+     */
+    public Relatively getRelativePolarity() {
         if (isNumerous()) {
-            if (isRelativelyPositive()) return Evaluation.POSITIVE;
-            if (isRelativelyNegative()) return Evaluation.NEGATIVE;
-            if (isRelativelyNeutral()) return Evaluation.NEUTRAL;
+            if (isRelativelyPositive()) return Relatively.POSITIVE;
+            if (isRelativelyNegative()) return Relatively.NEGATIVE;
+            if (isRelativelyNeutral()) return Relatively.NEUTRAL;
         }
 
-        return Evaluation.UNCERTAIN;
+        return Relatively.UNCERTAIN;
     }
 
     private boolean isNumerous() {
@@ -169,12 +183,12 @@ public class ComplexSentiment {
     }
 
     private boolean isRelativelyPositive() {
-        double upperBound = profile.getSentenceMean() + profile.getSentenceStandardDeviation()/2;
+        double upperBound = profile.getSentenceMean() + profile.getSentenceStandardDeviation() * RELATIVE_SENTIMENT_MULTIPLIER;
         return getMean() > upperBound;
     }
 
     private boolean isRelativelyNegative() {
-        double lowerBound = profile.getSentenceMean() - profile.getSentenceStandardDeviation()/2;
+        double lowerBound = profile.getSentenceMean() - profile.getSentenceStandardDeviation() * RELATIVE_SENTIMENT_MULTIPLIER;
         return getMean() < lowerBound;
     }
 
@@ -210,7 +224,7 @@ public class ComplexSentiment {
         DecimalFormat df = (DecimalFormat) nf;
         df.setMaximumFractionDigits(2);
         df.setMinimumFractionDigits(2);
-        return    evaluation() + " -> "
+        return    getRelativePolarity() + " -> "
                 + getPositiveCount() + ":"
                 + getNeutralCount() + ":"
                 + getNegativeCount() + "::"
@@ -220,7 +234,7 @@ public class ComplexSentiment {
                 + sentimentTargets.size();
     }
 
-    public enum Evaluation {
+    public enum Relatively {
         POSITIVE,
         NEGATIVE,
         NEUTRAL,
