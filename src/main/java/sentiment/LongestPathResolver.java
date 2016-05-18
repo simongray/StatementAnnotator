@@ -23,17 +23,16 @@ public class LongestPathResolver implements ContextResolver {
     @Override
     public void attachContext(List<SentimentTarget> targets, CoreMap sentence)  {
         logger.info("finding context for targets in sentence: " + sentence);
-        Tree tree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
+        Tree sentenceTree = sentence.get(SentimentCoreAnnotations.SentimentAnnotatedTree.class);
 
-        parse(tree, 0);  // DEBUGGING
+        parse(sentenceTree, 0);  // DEBUGGING
 
         if (targets.size() == 1 && targets.get(0).isAnaphor()) {
             SentimentTarget target = targets.get(0);
             logger.info("target is anaphor, using entire sentence ROOT as context");
             // TODO: change this logic in the future, should preferably not use sentence ROOT
             try {
-                target.setContext(tree);
-                logger.info(target + " had its sentiment score set to: " + target.getSentiment());
+                target.setContext(null, sentenceTree);
             } catch (Exception e) {
                 logger.error("could not set context for target " + target + ": " + e.getClass());
             }
@@ -42,7 +41,7 @@ public class LongestPathResolver implements ContextResolver {
         } else {
             // get all possible paths from ROOT_TAG to every leaf
             List<List<Tree>> paths = new ArrayList<>();
-            attachPaths(tree, new ArrayList<>(), paths);
+            attachPaths(sentenceTree, new ArrayList<>(), paths);
 
             // reduce to only relevant paths
             removeIrrelevantPaths(targets, paths);
@@ -59,8 +58,8 @@ public class LongestPathResolver implements ContextResolver {
                 List<Tree> relevantPath = paths.get(target.getTokenIndex() - 1);  // note: CoreNLP token indexes start at 1
                 Tree localTree = relevantPath.get(0);
                 try {
-                    target.setContext(localTree);
-                    logger.info(target + " had its sentiment score set to: " + target.getSentiment() + " (based on tag: " + localTree.value() + ")");
+                    target.setContext(localTree, sentenceTree);
+                    logger.info(target + " had its sentiment set (based on tag: " + localTree.value() + ")");
                 } catch (Exception e) {
                     logger.error("could not set context for target " + target + ": " + e.getClass());
                 }

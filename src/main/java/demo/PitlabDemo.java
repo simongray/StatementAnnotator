@@ -80,9 +80,12 @@ public class PitlabDemo {
         System.out.println("danish comments: " + danishComments.size());
         System.out.println("unknown comments: " + otherComments.size());
 
-        DemoTimer.start("building profile");
+        DemoTimer.start("building profile...");
         SentimentProfile testProfile = new SentimentProfile(annotations);
         DemoTimer.stop();
+        System.out.println("base sentiment = " + testProfile.getBaseSentiment());
+        System.out.println();
+
         List<Entry<String, ComplexSentiment>> sentiments = new ArrayList<>();
         sentiments.addAll(testProfile.getSentiments().entrySet());
 //        Collections.sort(sentiments, new SentimentComparer());

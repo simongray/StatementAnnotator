@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A SentimentTarget is a mention of an entity in a context (i.e. a phrase) taken from a larger piece of text.
- * The mention can be both direct or an anaphor (he, she, it, they, etc).
+ * A SentimentTarget is a mention of an entity in a localContext (i.e. a phrase) taken from a larger piece of text.
+ * The target can be both a direct mention or an anaphor (he, she, it, they, etc). referencing an antecedent entity.
  */
 public class SentimentTarget {
     final Logger logger = LoggerFactory.getLogger(SentimentTarget.class);
@@ -24,8 +24,10 @@ public class SentimentTarget {
     private int tokenIndex;  // note: CoreNLP token indexes start at 1, not 0!
     private List<CoreLabel> tokens;
     private List<CoreLabel> anaphora;
-    private Tree context;
-    private int sentiment = 2;  // default to neutral sentiment
+    private Tree localContext;  // TODO: figure out whether it makes sense to save the context after assigning sentiment
+    private Tree sentenceContext;
+    private int sentiment = 2;  // = neutral by default
+    private int sentenceSentiment = 2;
 
     public SentimentTarget(List<CoreLabel> tokens) throws SentimentTargetTokensMissingException {
         if (tokens.isEmpty()) throw new SentimentTargetTokensMissingException();
@@ -65,6 +67,14 @@ public class SentimentTarget {
      */
     public int getSentiment() {
         return sentiment;
+    }
+
+    /**
+     * Returns the sentiment score for the sentence.
+     * @return
+     */
+    public int getSentenceSentiment() {
+        return sentenceSentiment;
     }
 
     public boolean isMale() {
@@ -113,26 +123,29 @@ public class SentimentTarget {
     }
 
     /**
-     * Set the context for this sentiment target.
-     * The context is a CoreNLP sentiment annotated tree.
-     * The sentiment is extracted from the tree when setting the context.
-     * @param context
+     * Set the localContext for this sentiment target.
+     * The localContext is a CoreNLP sentiment annotated tree.
+     * The sentiment is extracted from the tree when setting the localContext.
+     * @param localContext
      */
-    public void setContext(Tree context) throws SentimentContextMissingException, SentimentMissingException {
-        this.context = context;
-        if (context == null) throw new SentimentContextMissingException();
-        int sentiment = RNNCoreAnnotations.getPredictedClass(context);
-        logger.info("setting sentiment for " + name + " using context: " + context);
-        if (sentiment == -1) throw new SentimentMissingException();
-        this.sentiment = sentiment;
-    }
+    public void setContext(Tree localContext, Tree sentenceContext) throws SentimentContextMissingException, SentimentMissingException {
+        this.localContext = localContext;
+        this.sentenceContext = sentenceContext;
 
-    /**
-     * Get the sentence index of the mention in the list of sentences.
-     * @return sentenceIndex
-     */
-    public int getSentenceIndex() {
-        return sentenceIndex;
+        // make sure at least one type of context is available
+        if (sentenceContext == null) throw new SentimentContextMissingException();
+        sentenceSentiment = RNNCoreAnnotations.getPredictedClass(sentenceContext);
+
+        // default to sentence sentiment when no local context is available
+        if (localContext == null) {
+            sentiment = sentenceSentiment;
+            logger.info("setting sentiment to " + sentiment + " for " + name + " using sentence context: " + sentenceContext);
+        } else {
+            sentiment = RNNCoreAnnotations.getPredictedClass(localContext);
+            logger.info("setting sentiment to " + sentiment + " for " + name + " using local context: " + localContext);
+        }
+
+        if (sentiment == -1) throw new SentimentMissingException();
     }
 
     public int getTokenIndex() {
