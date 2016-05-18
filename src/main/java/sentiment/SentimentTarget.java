@@ -148,6 +148,14 @@ public class SentimentTarget {
         if (sentiment == -1) throw new SentimentMissingException();
     }
 
+    public Tree getLocalContext() {
+        return localContext;
+    }
+
+    public Tree getSentenceContext() {
+        return sentenceContext;
+    }
+
     public int getTokenIndex() {
         return tokenIndex;
     }

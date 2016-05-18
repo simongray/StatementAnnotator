@@ -36,6 +36,10 @@ public class ComplexSentiment {
         this.sentimentTargets.addAll(sentimentTargets);
     }
 
+    public List<SentimentTarget> getSentimentTargets() {
+        return new ArrayList<>(sentimentTargets);
+    }
+
     /**
      * Get the average sentiment.
      * @return average sentiment

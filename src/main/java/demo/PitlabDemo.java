@@ -7,6 +7,7 @@ import reddit.MarkdownStripper;
 import reddit.RedditCommentProcessor;
 import sentiment.ComplexSentiment;
 import sentiment.SentimentProfile;
+import sentiment.SentimentTarget;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -98,6 +99,14 @@ public class PitlabDemo {
         Collections.sort(sentiments, new PositiveSentimentComparer());
         for (Entry<String, ComplexSentiment> entry : sentiments) {
             System.out.println(entry.getKey() + " -> " + entry.getValue());
+            for (SentimentTarget sentimentTarget : entry.getValue().getSentimentTargets()) {
+                if (sentimentTarget.getLocalContext() != null) {
+                    System.out.println("    S: " + sentimentTarget.getSentiment() + " " + sentimentTarget.getLocalContext().yieldWords());
+                } else {
+                    System.out.println("    S: N/A");
+                }
+                System.out.println("    R: " + sentimentTarget.getSentenceSentiment() + " " + sentimentTarget.getSentenceContext().yieldWords());
+            }
         }
 //        System.out.println();
 //        System.out.println("top negative");
