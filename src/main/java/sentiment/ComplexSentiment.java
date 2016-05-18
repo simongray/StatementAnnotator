@@ -19,6 +19,10 @@ public class ComplexSentiment {
     List<SentimentTarget> sentimentTargets = new ArrayList<>();
     SentimentProfile profile;
 
+    /**
+     * A reference to the parent SentimentProfile is needed in to order to calculate relative polarity.
+     * @param profile the parent profile
+     */
     public ComplexSentiment(SentimentProfile profile) {
         this.profile = profile;
     }
@@ -50,33 +54,6 @@ public class ComplexSentiment {
         }
 
         return sum / n;
-    }
-
-    /**
-     * Get the composed sentiment of a list of sentimentTargets to the same entity.
-     * @return integer from 0 through 4
-     */
-    public int getComposedSentiment() {
-        double sum = 0.0;
-        int n = 0;
-
-        for (SentimentTarget sentimentTarget : sentimentTargets) {
-            int sentiment = sentimentTarget.getSentiment();
-
-            // TODO: figure out if including (and weighting) the neutral sentiment slightly might be more precise
-            // TODO: another option is to make more complicated sentiment assessments, e.g. pos+neg=mixed
-            if (sentiment != 2) {  // only use non-neutral sentiment to calculate composed sentiment
-                sum += sentimentTarget.getSentiment();
-                n++;
-            }
-        }
-
-        // return neutral (= 2) in case the list contained no sentiment
-        if (n == 0) {
-            return 2;
-        }
-
-        return (int) Math.round(sum / n);
     }
 
     /**
