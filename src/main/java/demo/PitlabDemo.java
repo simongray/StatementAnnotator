@@ -101,11 +101,13 @@ public class PitlabDemo {
             System.out.println(entry.getKey() + " -> " + entry.getValue());
             for (SentimentTarget sentimentTarget : entry.getValue().getSentimentTargets()) {
                 if (sentimentTarget.getLocalContext() != null) {
-                    System.out.println("    S: " + sentimentTarget.getSentiment() + " " + sentimentTarget.getLocalContext().yieldWords());
+                    System.out.println("    S: " + sentimentTarget.getSentiment());
+                    System.out.println("       " + sentimentTarget.getLocalContext().pennString());
                 } else {
                     System.out.println("    S: N/A");
                 }
-                System.out.println("    R: " + sentimentTarget.getSentenceSentiment() + " " + sentimentTarget.getSentenceContext().yieldWords());
+                System.out.println("    R: " + sentimentTarget.getSentenceSentiment());
+                System.out.println("       " + sentimentTarget.getSentenceContext().pennString());
             }
         }
 //        System.out.println();
