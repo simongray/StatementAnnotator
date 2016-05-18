@@ -38,8 +38,8 @@ public class PitlabDemo {
         DemoTimer.stop();
 
         MarkdownStripper stripper = new MarkdownStripper();
-//        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/data.json", Charset.defaultCharset());
-        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/mark_comment_history.json", Charset.defaultCharset());
+        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/data.json", Charset.defaultCharset());
+//        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/mark_comment_history.json", Charset.defaultCharset());
         JSONArray jsonArray = new JSONArray(content);
         List<String> englishComments = new ArrayList<>();
         List<String> danishComments = new ArrayList<>();
@@ -83,24 +83,28 @@ public class PitlabDemo {
         DemoTimer.start("building profile...");
         SentimentProfile testProfile = new SentimentProfile(annotations);
         DemoTimer.stop();
-        System.out.println("base sentiment = " + testProfile.getBaseSentiment());
+        System.out.println("sentence sentiment mean = " + testProfile.getSentenceMean());
+        System.out.println("sentence sentiment variance = " + testProfile.getSentenceVariance());
+        System.out.println("sentence sentiment standard deviation = " + testProfile.getSentenceStandardDeviation());
+        System.out.println("sentence sentiment median = " + testProfile.getSentenceMedian());
         System.out.println();
 
         List<Entry<String, ComplexSentiment>> sentiments = new ArrayList<>();
-        sentiments.addAll(testProfile.getSentiments().entrySet());
-//        Collections.sort(sentiments, new SentimentComparer());
+//        sentiments.addAll(testProfile.getSentiments().entrySet());
+        sentiments.addAll(testProfile.getStrongSentiments().entrySet());
+        Collections.sort(sentiments, new SentimentComparer());
         System.out.println();
         System.out.println("top positive");
         Collections.sort(sentiments, new PositiveSentimentComparer());
         for (Entry<String, ComplexSentiment> entry : sentiments) {
             System.out.println(entry.getKey() + " -> " + entry.getValue());
         }
-        System.out.println();
-        System.out.println("top negative");
-        Collections.sort(sentiments, new NegativeSentimentComparer());
-        for (Entry<String, ComplexSentiment> entry : sentiments) {
-            System.out.println(entry.getKey() + " -> " + entry.getValue());
-        }
+//        System.out.println();
+//        System.out.println("top negative");
+//        Collections.sort(sentiments, new NegativeSentimentComparer());
+//        for (Entry<String, ComplexSentiment> entry : sentiments) {
+//            System.out.println(entry.getKey() + " -> " + entry.getValue());
+//        }
     }
 
     public static class SentimentComparer implements Comparator<Entry<String, ComplexSentiment>> {

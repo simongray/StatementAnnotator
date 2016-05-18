@@ -30,7 +30,7 @@ public class ComplexSentiment {
      * Get the average sentiment.
      * @return average sentiment
      */
-    public double getAverageSentiment() {
+    public double getMean() {
         double sum = 0.0;
         int n = 0;
 
@@ -194,7 +194,7 @@ public class ComplexSentiment {
         return    getPositiveCount() + ":"
                 + getNeutralCount() + ":"
                 + getNegativeCount() + "::"
-                + df.format(getAverageSentiment()) + ":"
+                + df.format(getMean()) + ":"
                 + df.format(getPositiveToNegativeRatio()) + ":"
                 + df.format(getNeutralRatio()) + "::"
                 + sentimentTargets.size();

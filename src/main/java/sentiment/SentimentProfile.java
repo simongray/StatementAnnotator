@@ -51,6 +51,42 @@ public class SentimentProfile {
     }
 
     /**
+     * Determine whether a complex sentiment is strong or not using a heuristic.
+     * @param complexSentiment
+     * @return
+     */
+    private boolean isStrong(ComplexSentiment complexSentiment) {
+        double upperBound = getSentenceMean() + getSentenceStandardDeviation()/2;
+        double lowerBound = getSentenceMean() - getSentenceStandardDeviation()/2;
+        double sentiment = complexSentiment.getMean();
+        int size = complexSentiment.size();
+
+
+        if (size > 3 && (sentiment > upperBound || sentiment < lowerBound)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the ComplexSentiment for every entity.
+     * @return a shallow copy of the internal map of entity to sentiment
+     */
+    public Map<String, ComplexSentiment> getStrongSentiments() {
+        Map<String, ComplexSentiment> strongSentiments = new HashMap<>();
+
+        for (String entity : entityToComplexSentiment.keySet()) {
+            ComplexSentiment complexSentiment = entityToComplexSentiment.get(entity);
+            if (isStrong(complexSentiment)) {
+                strongSentiments.put(entity, complexSentiment);
+            }
+        }
+
+        return strongSentiments;
+    }
+
+    /**
      * Add new annotation to this SentimentProfile.
      * Adds sentiment targets to the relevant complex sentiment.
      * Establishes a new base sentiment based on the sentiment trees for the full sentences.
@@ -91,15 +127,51 @@ public class SentimentProfile {
     }
 
     /**
-     * Returns the base sentiment (= the average sentiment over all sentences).
+     * Returns the mean sentiment (= the average sentiment over all sentences).
      * Useful for determining the bias of the sentiment profile.
      * @return
      */
-    public double getBaseSentiment() {
+    public double getSentenceMean() {
         if (sentenceSentiments.isEmpty()) {
             return 2.0;
         } else {
             return sentenceStatistics.getMean();
+        }
+    }
+
+    /**
+     * Returns the sentence variance (= the sentiment variance over all sentences).
+     * @return
+     */
+    public double getSentenceVariance() {
+        if (sentenceSentiments.isEmpty()) {
+            return 0.0;
+        } else {
+            return sentenceStatistics.getVariance();
+        }
+    }
+
+    /**
+     * Returns the sentence standard deviation (= the sentiment standard deviation over all sentences).
+     * @return
+     */
+    public double getSentenceStandardDeviation() {
+        if (sentenceSentiments.isEmpty()) {
+            return 0.0;
+        } else {
+            return sentenceStatistics.getStandardDeviation();
+        }
+    }
+
+    /**
+     * Returns the sentence median (= the sentiment median over all sentences).
+     * @return
+     */
+    public double getSentenceMedian() {
+        if (sentenceSentiments.isEmpty()) {
+            return 2.0;
+        } else {
+            return sentenceStatistics.getMedian();
         }
     }
 
