@@ -17,9 +17,7 @@ public class RedditCommentProcessor {
         return new LanguageIdentifier(text).getLanguage();
     }
 
-    public static String readFile(String path, Charset encoding)
-            throws IOException
-    {
+    public static String readFile(String path, Charset encoding) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, encoding);
     }
