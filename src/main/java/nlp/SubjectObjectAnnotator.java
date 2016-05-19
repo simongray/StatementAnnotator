@@ -40,17 +40,20 @@ public class SubjectObjectAnnotator implements Annotator {
         for (CoreMap sentence : sentences) {
             logger.info("finding subject in sentence: " + sentence);
             List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
-            SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.BasicDependenciesAnnotation.class);
+            SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
             Collection<TypedDependency> dependencies = graph.typedDependencies();
 
-            // basic noun subjects
-            System.out.println();
-            for (TypedDependency dep : dependencies) {
-                if (dep.reln().getShortName().equals("nsubj")) {
-                    IndexedWord dependent = dep.dep();
+            // TODO: remove, for DEBUGGING
+            graph.prettyPrint();
+            System.out.println(graph);
+            System.out.println(graph.typedDependencies());
 
+            // find all dependants in nsubj relations and attach SubjectAnnotations to tokens based on them
+            for (TypedDependency dependency : dependencies) {
+                if (dependency.reln().getShortName().equals("nsubj")) {
+                    IndexedWord dependent = dependency.dep();
                     CoreLabel subjectToken = tokens.get(dependent.index() - 1);  // since CoreNLP index starts at 1
-                    Subject subject = new Subject(dependent, graph.getChildren(dependent));
+                    Subject subject = new Subject(dependent, graph);
                     subjectToken.set(SubjectAnnotation.class, subject);
                     logger.info("set subject to: " + subject);
                 }
