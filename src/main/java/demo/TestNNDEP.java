@@ -1,14 +1,21 @@
 package demo;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
+import edu.stanford.nlp.semgraph.SemanticGraphEdge;
+import edu.stanford.nlp.trees.GrammaticalRelation;
+import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
+import edu.stanford.nlp.util.Pair;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 
 public class TestNNDEP {
@@ -18,8 +25,8 @@ public class TestNNDEP {
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma, gender, ner, parse, depparse, sentiment");
         props.setProperty("customAnnotatorClass.sentimenttargets", "sentiment.SentimentTargetsAnnotator");
         props.put("ner.model", "edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz");
-        props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");  // fast, more memory usage
-//        props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");  // slow, less memory usage
+//        props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");  // fast, more memory usage
+        props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");  // slow, less memory usage
 
         DemoTimer.start("pipeline launch");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
@@ -66,14 +73,15 @@ public class TestNNDEP {
                 "Bill Clinton and Google haven't had much interaction. He just goes over there sometimes. "  // male antecedent
         ;
         Annotation annotation2 = new Annotation(singleTypeAntencedentsExample);
-        Annotation annotation3 = new Annotation("Benny likes farting and Jasmina loves fishing for gold. Henry doesn't like doing anything, neither does Sheila");
+        Annotation annotation3 = new Annotation(
+                "The amazing Henry doesn't like doing anything in particular");
 
 
         DemoTimer.stop();
 
         DemoTimer.start("annotating");
-        pipeline.annotate(annotation);
-        pipeline.annotate(annotation2);
+//        pipeline.annotate(annotation);
+//        pipeline.annotate(annotation2);
         pipeline.annotate(annotation3);
         DemoTimer.stop();
 
@@ -81,7 +89,55 @@ public class TestNNDEP {
 
         for (CoreMap sentence : sentences) {
             SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.BasicDependenciesAnnotation.class);
-            graph.prettyPrint();
+//            graph.prettyPrint();
+            Collection<TypedDependency> dependencies = graph.typedDependencies();
+            System.out.println();
+            System.out.println(dependencies);
+
+            System.out.println();
+            for (TypedDependency dep : dependencies) {
+                System.out.println("A: "+dep.dep());  // Benny/NNP
+                System.out.println("B: "+dep.gov());  // likes/VBZ
+                System.out.println("C: "+dep.reln());  // nsubj
+            }
+
+            System.out.println();
+            Collection<SemanticGraphEdge> edges = graph.edgeListSorted();
+
+            System.out.println(edges);
+            for (SemanticGraphEdge edge : edges) {
+                System.out.println("1: "+edge.getDependent());
+                System.out.println("2: "+edge.getGovernor());
+                System.out.println("3: "+edge.getRelation());
+                System.out.println("4: "+edge.getSource());
+                System.out.println("5: "+edge.getTarget());
+            }
+
+            System.out.println();
+            for (IndexedWord vertex : graph.vertexSet()) {
+                System.out.println("V  " + vertex + " " + vertex.index());
+            }
+
+            System.out.println();
+            System.out.println(dependencies);
+
+            // basic noun subjects
+            System.out.println();
+            for (TypedDependency dep : dependencies) {
+                if (dep.reln().getShortName().equals("nsubj")) {
+                    IndexedWord dependent = dep.dep();
+                    int index = dep.dep().index();
+                    // example:  "The amazing Henry doesn't like doing anything in particular"
+                    System.out.println("nsubj at " + index + " is " + dependent);  // "nsubj at 3 is Henry/NNP"
+                    System.out.println("getChildren: " + graph.getChildren(dependent));  // for the full subject, including "the" and "incredible"
+                    System.out.println("getParents: " + graph.getParents(dependent));  // "like" in this case
+                    System.out.println("getLeafVertices: " + graph.getLeafVertices());  // [The/DT, amazing/JJ, does/VBZ, n't/RB, anything/NN, in/IN]
+                }
+            }
+
+
+//            List<Pair<GrammaticalRelation, IndexedWord>> childPairs = graph.childPairs();
+
         }
     }
 }
