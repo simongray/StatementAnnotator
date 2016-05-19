@@ -1,7 +1,14 @@
 package nlp;
 
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
+import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
+import edu.stanford.nlp.trees.TypedDependency;
+import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +35,27 @@ public class SubjectObjectAnnotator implements Annotator {
 
     @Override
     public void annotate(Annotation annotation)  {
+        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+
+        for (CoreMap sentence : sentences) {
+            logger.info("finding subject in sentence: " + sentence);
+            List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
+            SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.BasicDependenciesAnnotation.class);
+            Collection<TypedDependency> dependencies = graph.typedDependencies();
+
+            // basic noun subjects
+            System.out.println();
+            for (TypedDependency dep : dependencies) {
+                if (dep.reln().getShortName().equals("nsubj")) {
+                    IndexedWord dependent = dep.dep();
+
+                    CoreLabel subjectToken = tokens.get(dependent.index() - 1);  // since CoreNLP index starts at 1
+                    Subject subject = new Subject(dependent, graph.getChildren(dependent));
+                    subjectToken.set(SubjectAnnotation.class, subject);
+                    logger.info("set subject to: " + subject);
+                }
+            }
+        }
     }
 
     @Override
