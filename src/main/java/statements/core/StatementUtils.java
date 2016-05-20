@@ -20,7 +20,7 @@ public class StatementUtils {
         // since IndexedWords are not joinable in a pretty way
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < words.size(); i++) {
-            if (i != 0 || !words.get(i).tag().equals(",")) buffer.append(" ");
+            if (i != 0 && !words.get(i).tag().equals(",")) buffer.append(" ");
             buffer.append(words.get(i).word());
         }
 
