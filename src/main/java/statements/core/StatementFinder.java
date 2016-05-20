@@ -26,7 +26,7 @@ public class StatementFinder {
         logger.info("finding statements in sentence: " + sentence);
         List<Statement> statements = new ArrayList<>();
 
-        // discard malformed sentences
+        // discard improper sentences
         if (!isProper(sentence)) {
             logger.info("sentence was not proper, no statements found");
             return statements;
