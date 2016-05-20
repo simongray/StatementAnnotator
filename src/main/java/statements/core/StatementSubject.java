@@ -1,4 +1,4 @@
-package semantic.statement;
+package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 

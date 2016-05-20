@@ -1,8 +1,7 @@
-package semantic;
+package statements;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
 import edu.stanford.nlp.semgraph.SemanticGraph;
@@ -11,7 +10,7 @@ import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import semantic.statement.StatementSubject;
+import statements.core.StatementFinder;
 
 import java.util.*;
 
@@ -19,9 +18,9 @@ import java.util.*;
  * Find the subjects in sentences and annotates them.
  * (Using as reference: http://partofspeech.org/subject/)
  */
-public class SemanticAnnotator implements Annotator {
-    public final static String SEMANTIC = "semantic";
-    final Logger logger = LoggerFactory.getLogger(SemanticAnnotator.class);
+public class StatementAnnotator implements Annotator {
+    public final static String SEMANTIC = "statements";
+    final Logger logger = LoggerFactory.getLogger(StatementAnnotator.class);
 
     /**
      * This constructor allows for the annotator to accept different properties to alter its behaviour.
@@ -31,35 +30,37 @@ public class SemanticAnnotator implements Annotator {
      * allows for various constructor signatures to be implemented for a custom annotator.
      * @param properties
      */
-    public SemanticAnnotator(String name, Properties properties) {
+    public StatementAnnotator(String name, Properties properties) {
         String prefix = (name != null && !name.isEmpty())? name + ".":"";
     }
 
     @Override
     public void annotate(Annotation annotation)  {
         List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+        StatementFinder finder = new StatementFinder();
 
         for (CoreMap sentence : sentences) {
-            logger.info("finding subject in sentence: " + sentence);
             List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
             SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
             Collection<TypedDependency> dependencies = graph.typedDependencies();
 
             // TODO: remove, for DEBUGGING
-            graph.prettyPrint();
-            System.out.println(graph);
-            System.out.println(graph.typedDependencies());
+//            graph.prettyPrint();
+//            System.out.println(graph);
+            logger.info("sentence with deps: " + dependencies);
+            finder.find(sentence);
 
-            // find all dependants in nsubj relations and attach SubjectAnnotations to tokens based on them
-            for (TypedDependency dependency : dependencies) {
-                if (dependency.reln().getShortName().equals("nsubj")) {
-                    IndexedWord dependent = dependency.dep();
-                    CoreLabel subjectToken = tokens.get(dependent.index() - 1);  // since CoreNLP index starts at 1
-                    StatementSubject subject = new StatementSubject(dependent, graph);
-//                    subjectToken.set(SubjectAnnotation.class, subject);
-                    logger.info("set subject to: " + subject);
-                }
-            }
+//
+//            // find all dependants in nsubj relations and attach SubjectAnnotations to tokens based on them
+//            for (TypedDependency dependency : dependencies) {
+//                if (dependency.reln().getShortName().equals("nsubj")) {
+//                    IndexedWord dependent = dependency.dep();
+//                    CoreLabel subjectToken = tokens.get(dependent.index() - 1);  // since CoreNLP index starts at 1
+////                    StatementSubject subject = new StatementSubject(dependent, graph);
+////                    subjectToken.set(SubjectAnnotation.class, subject);
+//                    logger.info("set subject to: " + subject);
+//                }
+//            }
         }
     }
 

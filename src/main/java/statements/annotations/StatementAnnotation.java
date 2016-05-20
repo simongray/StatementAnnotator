@@ -1,8 +1,8 @@
-package semantic.annotations;
+package statements.annotations;
 
 import edu.stanford.nlp.ling.CoreAnnotation;
 import edu.stanford.nlp.util.ErasureUtils;
-import semantic.statement.Statement;
+import statements.core.Statement;
 
 /**
  * Annotation for the statements of a sentence.

@@ -1,4 +1,4 @@
-package semantic;
+package statements;
 
 /**
  * This interface defines a way to compare objects using resemblance rather than strict equality or ordering.
