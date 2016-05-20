@@ -11,6 +11,7 @@ import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import semantic.statement.StatementSubject;
 
 import java.util.*;
 
@@ -55,7 +56,7 @@ public class SemanticAnnotator implements Annotator {
                     IndexedWord dependent = dependency.dep();
                     CoreLabel subjectToken = tokens.get(dependent.index() - 1);  // since CoreNLP index starts at 1
                     StatementSubject subject = new StatementSubject(dependent, graph);
-                    subjectToken.set(SubjectAnnotation.class, subject);
+//                    subjectToken.set(SubjectAnnotation.class, subject);
                     logger.info("set subject to: " + subject);
                 }
             }

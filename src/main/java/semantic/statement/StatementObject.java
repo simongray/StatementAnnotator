@@ -1,4 +1,6 @@
-package semantic;
+package semantic.statement;
+
+import semantic.Resembling;
 
 /**
  * This class represents the object of a natural language statement.

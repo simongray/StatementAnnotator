@@ -1,4 +1,6 @@
-package semantic;
+package semantic.statement;
+
+import semantic.Resembling;
 
 /**
  * This class represents the verb of a natural language statement.

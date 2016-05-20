@@ -1,4 +1,6 @@
-package semantic;
+package semantic.statement;
+
+import semantic.Resembling;
 
 /**
  * This class is a formal way to represent the semantics of natural language.

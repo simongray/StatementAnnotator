@@ -1,4 +1,4 @@
-package semantic;
+package semantic.statement;
 
 import edu.stanford.nlp.semgraph.SemanticGraph;
 
