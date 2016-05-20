@@ -39,7 +39,7 @@ public class StatementFinder {
             Algorithm sketch:
                 1. One-word sentences are discarded since they are not proper sentences, as are sentences without an S.
                 2. TODO: The graph is analysed for subjects and these are used to create statements.
-                3. TODO: If no subjects can be found, the statement is assumed to be self-referential
+                3. TODO: If no subjects can be found, the statement is assumed to be self-referencing
                    and the verb phrase is analysed instead (e.g. "hate cycling!").
 
                    TODO: capitalisation confusion in verb phrases
