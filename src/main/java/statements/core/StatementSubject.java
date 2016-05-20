@@ -1,6 +1,7 @@
 package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
+import edu.stanford.nlp.semgraph.SemanticGraph;
 
 import java.util.*;
 
@@ -8,62 +9,62 @@ import java.util.*;
  * This class represents the subject of a natural language statement.
  */
 public class StatementSubject {
-    private final IndexedWord simpleSubject = null;
-    private final Set<IndexedWord> completeSubject = null;
-    private final Set<IndexedWord> compoundParts = null;
+    private final IndexedWord primarySubject;
+    private final Set<IndexedWord> completeSubject;
+    private final Map<IndexedWord, Set<IndexedWord>> compounds;
+
+    public StatementSubject(IndexedWord primarySubject, Set<IndexedWord> secondarySubjects, SemanticGraph graph) {
+        this.primarySubject = primarySubject;
+        this.completeSubject = graph.descendants(primarySubject);
+
+        compounds = new HashMap<>();
+        compounds.put(primarySubject, graph.getChildren(primarySubject));
+        for (IndexedWord subject : secondarySubjects) {
+            compounds.put(subject, graph.getChildren(subject));
+        }
+    }
 
     /**
-     * Get the name of the simple subject.
-     * @return
+     * Returns the name of the simple subject.
+     * @return the shortest subject possible
      */
     public String getSimpleName() {
-        return simpleSubject.word();
+        return primarySubject.word();
     }
 
     /**
-     * Get the name of the complete subject.
-     * @return
+     * Returns the name of the complete subject.
+     * @return the longest subject possible
      */
     public String getCompleteName() {
-        List<IndexedWord> indexedWords = new ArrayList<>(completeSubject);
-        indexedWords.sort(new IndexComparator());
-
-        // since IndexedWords are not joinable in a pretty way
-        List<String> words = new ArrayList<>();
-        for (IndexedWord indexedWord : indexedWords) {
-            words.add(indexedWord.word());
-        }
-
-        return String.join(" ", words);
+        return StatementUtils.join(new ArrayList<>(completeSubject));
     }
 
     /**
-     * Get the other simple subjects making up the compound subject.
+     * Returns the simple subjects contained in the complete subject.
      * @return
      */
-    public Set<IndexedWord> getCompoundParts() {
-        return compoundParts;
+    public Set<IndexedWord> getSimpleSubjects() {
+        return compounds.keySet();
+    }
+
+    /**
+     * Returns the compound subjects contained in the complete subject.
+     * @return
+     */
+    public Set<Set<IndexedWord>> getCompoundSubjects() {
+        Set<Set<IndexedWord>> completeCompoundParts = new HashSet<>();
+        for (IndexedWord simpleCompoundPart : getSimpleSubjects()) {
+            Set<IndexedWord> compoundParts = new HashSet<>(compounds.get(simpleCompoundPart));  // TODO: is copying necessary?
+            compoundParts.add(simpleCompoundPart);
+            completeCompoundParts.add(compoundParts);
+        }
+
+        return completeCompoundParts;
     }
 
     @Override
     public String toString() {
         return getSimpleName() + " (" + getCompleteName() + ")";
-    }
-
-    public static class IndexComparator implements Comparator<IndexedWord> {
-        @Override
-        public int compare(IndexedWord x,IndexedWord y) {
-            int xn = x.index();
-            int yn = y.index();
-            if (xn == yn) {
-                return 0;
-            } else {
-                if (xn > yn) {
-                    return 1;
-                } else {
-                    return -1;
-                }
-            }
-        }
     }
 }

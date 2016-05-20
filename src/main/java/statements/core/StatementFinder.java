@@ -10,32 +10,40 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
- * This class handles the construction of Statements.
+ * This class finds valid Statements in sentences.
  */
-public class StatementFinder {
-    final Logger logger = LoggerFactory.getLogger(StatementFinder.class);
+public  class StatementFinder {
+    private static final Logger logger = LoggerFactory.getLogger(StatementFinder.class);
 
     /**
      * Find statements in a sentence.
      * @param sentence
      * @return
      */
-    public List<Statement> find(CoreMap sentence) {
-        logger.info("finding statements in sentence: " + sentence);
-        List<Statement> statements = new ArrayList<>();
+     public static List<Statement> find(CoreMap sentence) {
+         logger.info("finding statements in sentence: " + sentence);
 
-        // discard improper sentences
-        if (!isProper(sentence)) {
-            logger.info("sentence was not proper, no statements found");
-            return statements;
-        }
+         // saves resources
+         if (!isProper(sentence)) {
+             logger.info("sentence was not proper, no statements found");
+             return null;
+         }
 
-        SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
+         List<Statement> statements = new ArrayList<>();
+         SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
 
-        // TODO: basic algorithm
-        /*
+         Set<StatementSubject> subjects = StatementSubjectFinder.find(graph);
+         logger.info(subjects.toString());
+         for (StatementSubject subject : subjects) {
+             logger.info("components: " + subject.getCompoundSubjects().toString());
+             logger.info("complete name: " + subject.getCompleteName());
+         }
+
+         // TODO: basic algorithm
+         /*
             Algorithm sketch:
                 1. One-word sentences are discarded since they are not proper sentences, as are sentences without an S.
                 2. TODO: The graph is analysed for subjects and these are used to create statements.
@@ -48,8 +56,7 @@ public class StatementFinder {
                    "Hated cycling" resolves correctly, though, since there is no way to confuse it.
                    Will probably need to hack around that somehow to get the best results.
          */
-
-        return null;
+         return null;
     }
 
     /**
@@ -58,7 +65,7 @@ public class StatementFinder {
      * @param sentence
      * @return
      */
-    private boolean isProper(CoreMap sentence) {
+     private static boolean isProper(CoreMap sentence) {
         Tree tree = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
 
         for (Tree child : tree.children()) {
