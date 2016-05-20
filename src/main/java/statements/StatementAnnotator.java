@@ -15,16 +15,14 @@ import statements.core.StatementFinder;
 import java.util.*;
 
 /**
- * Find the subjects in sentences and annotates them.
- * (Using as reference: http://partofspeech.org/subject/)
+ * Annotates sentences with statements as represented by the Statement class.
  */
 public class StatementAnnotator implements Annotator {
-    public final static String SEMANTIC = "statements";
+    public final static String STATEMENT = "statement";
     final Logger logger = LoggerFactory.getLogger(StatementAnnotator.class);
 
     /**
      * This constructor allows for the annotator to accept different properties to alter its behaviour.
-     *
      * It doesn't seem to be documented anywhere, but a method in AnnotatorImplementations.java with signature
      *      public Annotator custom(Properties properties, String property) { ... }
      * allows for various constructor signatures to be implemented for a custom annotator.
@@ -67,7 +65,7 @@ public class StatementAnnotator implements Annotator {
     @Override
     public Set<Requirement> requirementsSatisfied() {
         Set<Requirement> requirementsSatisfied = new HashSet<>();
-        requirementsSatisfied.add(new Requirement(SEMANTIC));
+        requirementsSatisfied.add(new Requirement(STATEMENT));
         return requirementsSatisfied;
     }
 
