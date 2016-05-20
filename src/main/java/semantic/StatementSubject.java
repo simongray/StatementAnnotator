@@ -1,4 +1,4 @@
-package nlp;
+package semantic;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
@@ -6,20 +6,19 @@ import edu.stanford.nlp.semgraph.SemanticGraph;
 import java.util.*;
 
 /**
- * Takes a flexible view of what constitutes a sentence subject.
- * Using as reference: http://partofspeech.org/subject/
+ * This class represents the subject of a natural language statement.
  */
-public class Subject {
+public class StatementSubject {
     private final IndexedWord simpleSubject;
     private final Set<IndexedWord> completeSubject;
     private final Set<IndexedWord> compoundParts;
 
     /**
-     * A Subject in a sentence as based on the nsubj relation.
+     * A StatementSubject in a sentence as based on the nsubj relation.
      * @param simpleSubject the dependant in an nsubj relation
      * @param graph dependency graph containing the dependant
      */
-    public Subject(IndexedWord simpleSubject, SemanticGraph graph) {
+    public StatementSubject(IndexedWord simpleSubject, SemanticGraph graph) {
         this.simpleSubject = simpleSubject;
         this.completeSubject = getCompleteSubject(simpleSubject, graph);
         this.compoundParts = getCompoundParts(simpleSubject, graph);
@@ -44,7 +43,7 @@ public class Subject {
      * @return
      */
     private Set<IndexedWord> getCompoundParts(IndexedWord vertex, SemanticGraph graph) {
-        // TODO: create links to other Subject parts from conj:and and conj:or
+        // TODO: create links to other StatementSubject parts from conj:and and conj:or
         return null;
     }
 

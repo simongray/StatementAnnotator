@@ -1,4 +1,4 @@
-package nlp;
+package semantic;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -16,10 +16,11 @@ import java.util.*;
 
 /**
  * Find the subjects in sentences and annotates them.
+ * (Using as reference: http://partofspeech.org/subject/)
  */
-public class SubjectObjectAnnotator implements Annotator {
-    public final static String SUBJECT = "subjectobject";
-    final Logger logger = LoggerFactory.getLogger(SubjectObjectAnnotator.class);
+public class SemanticAnnotator implements Annotator {
+    public final static String SEMANTIC = "semantic";
+    final Logger logger = LoggerFactory.getLogger(SemanticAnnotator.class);
 
     /**
      * This constructor allows for the annotator to accept different properties to alter its behaviour.
@@ -29,7 +30,7 @@ public class SubjectObjectAnnotator implements Annotator {
      * allows for various constructor signatures to be implemented for a custom annotator.
      * @param properties
      */
-    public SubjectObjectAnnotator(String name, Properties properties) {
+    public SemanticAnnotator(String name, Properties properties) {
         String prefix = (name != null && !name.isEmpty())? name + ".":"";
     }
 
@@ -53,7 +54,7 @@ public class SubjectObjectAnnotator implements Annotator {
                 if (dependency.reln().getShortName().equals("nsubj")) {
                     IndexedWord dependent = dependency.dep();
                     CoreLabel subjectToken = tokens.get(dependent.index() - 1);  // since CoreNLP index starts at 1
-                    Subject subject = new Subject(dependent, graph);
+                    StatementSubject subject = new StatementSubject(dependent, graph);
                     subjectToken.set(SubjectAnnotation.class, subject);
                     logger.info("set subject to: " + subject);
                 }
@@ -64,7 +65,7 @@ public class SubjectObjectAnnotator implements Annotator {
     @Override
     public Set<Requirement> requirementsSatisfied() {
         Set<Requirement> requirementsSatisfied = new HashSet<>();
-        requirementsSatisfied.add(new Requirement(SUBJECT));
+        requirementsSatisfied.add(new Requirement(SEMANTIC));
         return requirementsSatisfied;
     }
 
