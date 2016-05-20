@@ -1,7 +1,6 @@
 package semantic.statement;
 
 import edu.stanford.nlp.ling.IndexedWord;
-import edu.stanford.nlp.semgraph.SemanticGraph;
 
 import java.util.*;
 
@@ -9,43 +8,9 @@ import java.util.*;
  * This class represents the subject of a natural language statement.
  */
 public class StatementSubject {
-    private final IndexedWord simpleSubject;
-    private final Set<IndexedWord> completeSubject;
-    private final Set<IndexedWord> compoundParts;
-
-    /**
-     * A StatementSubject in a sentence as based on the nsubj relation.
-     * @param simpleSubject the dependant in an nsubj relation
-     * @param graph dependency graph containing the dependant
-     */
-    public StatementSubject(IndexedWord simpleSubject, SemanticGraph graph) {
-        this.simpleSubject = simpleSubject;
-        this.completeSubject = getCompleteSubject(simpleSubject, graph);
-        this.compoundParts = getCompoundParts(simpleSubject, graph);
-    }
-
-    /**
-     * Retrieves the words making up the complete subject based on the simple subject and its relations in the graph.
-     * @param simpleSubject
-     * @param graph
-     * @return
-     */
-    private Set<IndexedWord> getCompleteSubject(IndexedWord simpleSubject, SemanticGraph graph) {
-        // TODO: create full name using relations such as compound and det (or perhaps by ignoring relations such as cc)
-        return null;
-    }
-
-    /**
-     * Retrieves simple subjects for the compound subject if applicable.
-     * Useful for keeping track of the entire compound subject from any of its parts.
-     * @param vertex
-     * @param graph
-     * @return
-     */
-    private Set<IndexedWord> getCompoundParts(IndexedWord vertex, SemanticGraph graph) {
-        // TODO: create links to other StatementSubject parts from conj:and and conj:or
-        return null;
-    }
+    private final IndexedWord simpleSubject = null;
+    private final Set<IndexedWord> completeSubject = null;
+    private final Set<IndexedWord> compoundParts = null;
 
     /**
      * Get the name of the simple subject.
