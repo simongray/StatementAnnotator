@@ -34,6 +34,7 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
     private final Set<IndexedWord> completeSubject;
     private final Set<Set<IndexedWord>> compoundSubjects;
 
+    // TODO: remove secondarySubjects requirement from constructor, find dynamically instead
     public CompleteSubject(IndexedWord primarySubject, Set<IndexedWord> secondarySubjects, SemanticGraph graph) {
         this.primarySubject = primarySubject;
         this.secondarySubjects = secondarySubjects;
