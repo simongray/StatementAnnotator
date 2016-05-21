@@ -40,7 +40,7 @@ public class StatementUtils {
 
         for (Resemblance resemblance : resemblances) {
             if (resemblance == Resemblance.NONE) {
-                lowestCommonDenominator = resemblance;
+                lowestCommonDenominator = resemblance; break;
             } else if (resemblance == Resemblance.SLIGHT) {
                 lowestCommonDenominator = resemblance;
             } else if (resemblance == Resemblance.CLOSE) {
