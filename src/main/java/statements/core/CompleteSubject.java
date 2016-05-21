@@ -7,17 +7,19 @@ import edu.stanford.nlp.trees.GrammaticalRelation;
 import java.util.*;
 
 /**
- * This class represents the subject of a natural language statement.
+ * This class represents the complete subject of a natural language statement.
+ *
+ * It encapsulates and facilitates retrieval of the different components of the complete subject.
+ * It can be compared to other CompleteSubjects through it implementation of the Resembling interface.
  *
  * Explanation of terms used:
- *     (simple) subject = single word subject (a direct dependent of a verb)
- *     compound (subject) = multiple word subject (single word subject + relevant dependent words)
- *     complete subject = the complete subject, including all compound subjects
- *
+ *     simple subject = a single word subject (a direct dependent of a verb)
+ *     compound subject = a multiple word subject (single word subject + relevant dependent words)
+ *     complete subject = the complete subject, including all compound subjects and syntactical glue
  *     primary subject = the simple subject that is the primary dependent of the verb
  *     secondary subject = any other simple subjects contained in the complete subject
  */
-public class StatementSubject {
+public class CompleteSubject implements Resembling<CompleteSubject> {
     /**
      * Describes which relations are ignored when producing compound subjects.
      */
@@ -27,13 +29,12 @@ public class StatementSubject {
         IGNORED_RELATIONS.add("cc");     // words like "and"
         IGNORED_RELATIONS.add("punct");  // punctuation like ","
     }
-
     private final IndexedWord primarySubject;
     private final Set<IndexedWord> secondarySubjects;
     private final Set<IndexedWord> completeSubject;
     private final Set<Set<IndexedWord>> compoundSubjects;
 
-    public StatementSubject(IndexedWord primarySubject, Set<IndexedWord> secondarySubjects, SemanticGraph graph) {
+    public CompleteSubject(IndexedWord primarySubject, Set<IndexedWord> secondarySubjects, SemanticGraph graph) {
         this.primarySubject = primarySubject;
         this.secondarySubjects = secondarySubjects;
         this.completeSubject = graph.descendants(primarySubject);
@@ -47,15 +48,15 @@ public class StatementSubject {
     }
 
     /**
-     * Returns the name of the complete subject.
+     * The name of the complete subject.
      * @return the longest subject possible
      */
     public String getName() {
-        return StatementUtils.join(new ArrayList<>(completeSubject));
+        return StatementUtils.join(completeSubject);
     }
 
     /**
-     * Returns the name of the primary simple subject.
+     * The name of the primary simple subject.
      * @return the shortest subject possible
      */
     public String getShortName() {
@@ -63,7 +64,7 @@ public class StatementSubject {
     }
 
     /**
-     * Returns the simple subjects contained in the complete subject.
+     * The simple subjects contained in the complete subject.
      * @return
      */
     public Set<IndexedWord> getSimpleSubjects() {
@@ -73,11 +74,19 @@ public class StatementSubject {
     }
 
     /**
-     * Returns the compound subjects contained in the complete subject.
+     * The compound subjects contained in the complete subject.
      * @return
      */
     public Set<Set<IndexedWord>> getCompoundSubjects() {
         return new HashSet<>(compoundSubjects);
+    }
+
+    public Set<String> getCompoundSubjectNames() {
+        Set<String> compoundSubjectNames = new HashSet<>();
+        for (Set<IndexedWord> compoundSubject : compoundSubjects) {
+            compoundSubjectNames.add(StatementUtils.join(compoundSubject));
+        }
+        return compoundSubjectNames;
     }
 
     /**
@@ -101,11 +110,21 @@ public class StatementSubject {
     }
 
     /**
-     * Returns the amount of individual subjects contained within the complete subject.
+     * The amount of individual subjects contained within the complete subject.
      * @return
      */
     public int size() {
         return secondarySubjects.size() + 1;
+    }
+
+    /**
+     * Returns whether or not this subject resembles anothers.
+     * @param otherSubject
+     * @return
+     */
+    @Override
+    public Resemblance resemble(CompleteSubject otherSubject) {
+        return null;  // TODO: implement
     }
 
     @Override

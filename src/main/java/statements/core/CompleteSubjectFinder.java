@@ -11,8 +11,8 @@ import java.util.*;
 /**
  * This class handles the construction of subjects.
  */
-public class StatementSubjectFinder {
-    private static final Logger logger = LoggerFactory.getLogger(StatementSubjectFinder.class);
+public class CompleteSubjectFinder {
+    private static final Logger logger = LoggerFactory.getLogger(CompleteSubjectFinder.class);
     private static final String NSUBJ_RELATION = "nsubj";
 
     /**
@@ -20,11 +20,11 @@ public class StatementSubjectFinder {
      * @param graph the dependency graph of a sentence
      * @return
      */
-    public static Set<StatementSubject> find(SemanticGraph graph) {
+    public static Set<CompleteSubject> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> simpleSubjects = new HashSet<>();
         Map<IndexedWord, Set<IndexedWord>> subjectMapping = new HashMap<>();
-        Set<StatementSubject> subjects = new HashSet<>();
+        Set<CompleteSubject> subjects = new HashSet<>();
 
         // find simple subjects from relations
         for (TypedDependency dependency : dependencies) {
@@ -45,7 +45,7 @@ public class StatementSubjectFinder {
 
         // build complete subjects from mapping
         for (IndexedWord primarySubject : subjectMapping.keySet()) {
-            subjects.add(new StatementSubject(primarySubject, subjectMapping.get(primarySubject), graph));
+            subjects.add(new CompleteSubject(primarySubject, subjectMapping.get(primarySubject), graph));
         }
 
         return subjects;

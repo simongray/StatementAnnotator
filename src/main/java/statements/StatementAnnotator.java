@@ -54,7 +54,7 @@ public class StatementAnnotator implements Annotator {
 //                if (dependency.reln().getShortName().equals("nsubj")) {
 //                    IndexedWord dependent = dependency.dep();
 //                    CoreLabel subjectToken = tokens.get(dependent.index() - 1);  // since CoreNLP index starts at 1
-////                    StatementSubject subject = new StatementSubject(dependent, graph);
+////                    CompleteSubject subject = new CompleteSubject(dependent, graph);
 ////                    subjectToken.set(SubjectAnnotation.class, subject);
 //                    logger.info("set subject to: " + subject);
 //                }

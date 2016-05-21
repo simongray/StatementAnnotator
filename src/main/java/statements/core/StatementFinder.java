@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -35,10 +36,10 @@ public  class StatementFinder {
          List<Statement> statements = new ArrayList<>();
          SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
 
-         Set<StatementSubject> subjects = StatementSubjectFinder.find(graph);
+         Set<CompleteSubject> subjects = CompleteSubjectFinder.find(graph);
          logger.info(subjects.toString());
-         for (StatementSubject subject : subjects) {
-             logger.info("components: " + subject.getCompoundSubjects().toString());
+         for (CompleteSubject subject : subjects) {
+             logger.info("components: " + subject.getCompoundSubjectNames());
              logger.info("complete name: " + subject.getName());
          }
 

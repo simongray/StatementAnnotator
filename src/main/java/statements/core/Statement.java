@@ -4,11 +4,11 @@ package statements.core;
  * This class is a formal way to represent the semantics of natural language.
  */
 public abstract class Statement implements Resembling<Statement> {
-    private StatementSubject subject;
+    private CompleteSubject subject;
     private StatementVerb verb;
     private StatementObject object;
 
-    public Statement(StatementSubject subject, StatementVerb verb, StatementObject object) {
+    public Statement(CompleteSubject subject, StatementVerb verb, StatementObject object) {
         this.subject = subject;
         this.verb = verb;
         this.object = object;
