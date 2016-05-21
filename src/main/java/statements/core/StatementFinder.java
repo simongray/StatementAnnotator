@@ -66,7 +66,7 @@ public  class StatementFinder {
      * @return
      */
      private static boolean isProper(CoreMap sentence) {
-        Tree tree = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
+        Tree tree = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);  // TODO: do using depparse instead?
 
         for (Tree child : tree.children()) {
             if (child.value().equals("S")) return true;
