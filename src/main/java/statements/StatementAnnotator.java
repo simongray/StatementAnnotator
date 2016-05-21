@@ -35,7 +35,6 @@ public class StatementAnnotator implements Annotator {
     @Override
     public void annotate(Annotation annotation)  {
         List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-        StatementFinder finder = new StatementFinder();
 
         for (CoreMap sentence : sentences) {
             List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
@@ -45,8 +44,8 @@ public class StatementAnnotator implements Annotator {
             // TODO: remove, for DEBUGGING
 //            graph.prettyPrint();
 //            System.out.println(graph);
-            logger.info("sentence with deps: " + dependencies);
-            finder.find(sentence);
+//            logger.info("sentence with deps: " + dependencies);
+            StatementFinder.find(sentence);
 
 //
 //            // find all dependants in nsubj relations and attach SubjectAnnotations to tokens based on them
