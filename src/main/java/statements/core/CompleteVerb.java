@@ -5,7 +5,7 @@ package statements.core;
  */
 public class CompleteVerb implements Resembling<CompleteVerb> {
     /**
-     * The resemblance of this verb to another verb.
+     * The resemblance of another verb to this verb.
      * @param otherVerb subject to be compared with
      * @return resemblance
      */

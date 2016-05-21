@@ -5,7 +5,7 @@ package statements.core;
  */
 public class CompleteObject implements Resembling<CompleteObject> {
     /**
-     * The resemblance of this object to another object.
+     * The resemblance of another object to this object.
      * @param otherObject object to be compared with
      * @return resemblance
      */

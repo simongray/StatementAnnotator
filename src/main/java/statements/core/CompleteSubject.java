@@ -119,7 +119,7 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
     }
 
     /**
-     * The resemblance of this subject to another subject.
+     * The resemblance of another subject to this subject.
      * @param otherSubject subject to be compared with
      * @return resemblance
      */
