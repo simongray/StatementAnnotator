@@ -30,6 +30,28 @@ public class StatementUtils {
     }
 
     /**
+     * Reduce a variable amount of Resemblance objects to a single Resemblance.
+     * Useful for
+     * @param resemblances
+     * @return
+     */
+    static Resemblance reduce(Resemblance... resemblances) {
+        Resemblance lowestCommonDenominator = Resemblance.FULL;  // default
+
+        for (Resemblance resemblance : resemblances) {
+            if (resemblance == Resemblance.NONE) {
+                lowestCommonDenominator = resemblance;
+            } else if (resemblance == Resemblance.SLIGHT) {
+                lowestCommonDenominator = resemblance;
+            } else if (resemblance == Resemblance.CLOSE) {
+                lowestCommonDenominator = resemblance;
+            }
+        }
+
+        return lowestCommonDenominator;
+    }
+
+    /**
      * Usd to sort IndexedWords by index.
      */
     public static class IndexComparator implements Comparator<IndexedWord> {

@@ -13,19 +13,4 @@ public interface Resembling<T> {
      * @return
      */
     Resemblance resemble(T otherObject);
-
-    /**
-     * Resemblance is not boolean.
-     * An object can either:
-     *    * fully resemble another (= direct equality of fields)
-     *    * closely resemble another (= fuzzy equality of fields)
-     *    * slightly resemble another (= partial fuzzy or direct equality of fields)
-     *    * not resemble another (= no direct or fuzzy equality)
-     */
-    enum Resemblance {
-        FULL,
-        CLOSE,
-        SLIGHT,
-        NONE
-    }
 }
