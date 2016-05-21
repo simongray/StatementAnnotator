@@ -1,4 +1,4 @@
-package statements;
+package statements.core;
 
 /**
  * This interface defines a way to compare objects using resemblance rather than strict equality or ordering.

@@ -1,7 +1,5 @@
 package statements.core;
 
-import statements.Resembling;
-
 /**
  * This class represents the object of a natural language statement.
  */
