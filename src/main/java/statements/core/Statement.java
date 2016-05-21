@@ -5,10 +5,10 @@ package statements.core;
  */
 public abstract class Statement implements Resembling<Statement> {
     private CompleteSubject subject;
-    private StatementVerb verb;
-    private StatementObject object;
+    private CompleteVerb verb;
+    private CompleteObject object;
 
-    public Statement(CompleteSubject subject, StatementVerb verb, StatementObject object) {
+    public Statement(CompleteSubject subject, CompleteVerb verb, CompleteObject object) {
         this.subject = subject;
         this.verb = verb;
         this.object = object;

@@ -11,8 +11,8 @@ import java.util.*;
 /**
  * This class handles the construction of subjects.
  */
-public class CompleteSubjectFinder {
-    private static final Logger logger = LoggerFactory.getLogger(CompleteSubjectFinder.class);
+public class SubjectFinder {
+    private static final Logger logger = LoggerFactory.getLogger(SubjectFinder.class);
     private static final String NSUBJ_RELATION = "nsubj";
 
     /**
