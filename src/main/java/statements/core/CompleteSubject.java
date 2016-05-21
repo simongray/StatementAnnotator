@@ -7,7 +7,7 @@ import edu.stanford.nlp.trees.GrammaticalRelation;
 import java.util.*;
 
 /**
- * This class represents the complete subject of a natural language statement.
+ * The complete subject of a natural language statement.
  *
  * It encapsulates and facilitates retrieval of the different components of the complete subject.
  * It can be compared to other CompleteSubjects through it implementation of the Resembling interface.
@@ -119,9 +119,9 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
     }
 
     /**
-     * Returns whether or not this subject resembles anothers.
-     * @param otherSubject
-     * @return
+     * The resemblance of this subject to another subject.
+     * @param otherSubject subject to be compared with
+     * @return resemblance
      */
     @Override
     public Resemblance resemble(CompleteSubject otherSubject) {

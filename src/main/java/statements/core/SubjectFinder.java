@@ -9,14 +9,14 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * This class handles the construction of subjects.
+ * Finds subjects in sentences.
  */
 public class SubjectFinder {
     private static final Logger logger = LoggerFactory.getLogger(SubjectFinder.class);
     private static final String NSUBJ_RELATION = "nsubj";
 
     /**
-     * Returns the StatementSubjects that are found in a sentence.
+     * The subjects that are found in a sentence.
      * @param graph the dependency graph of a sentence
      * @return
      */

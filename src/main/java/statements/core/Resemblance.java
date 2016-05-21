@@ -1,7 +1,7 @@
 package statements.core;
 
 /**
- * Resemblance is non-boolean, non-ordered equality.
+ * Non-boolean, non-ordered equality.
  *
  * An object can either:
  *    * fully resemble another (= direct equality of fields)

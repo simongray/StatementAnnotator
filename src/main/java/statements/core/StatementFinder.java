@@ -13,15 +13,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This class finds valid Statements in sentences.
+ * Finds Statements in sentences.
  */
 public  class StatementFinder {
     private static final Logger logger = LoggerFactory.getLogger(StatementFinder.class);
 
     /**
      * Find statements in a sentence.
-     * @param sentence
-     * @return
+     * @param sentence the sentence to look in
+     * @return statements
      */
      public static List<Statement> find(CoreMap sentence) {
          logger.info("finding statements in sentence: " + sentence);
@@ -60,10 +60,11 @@ public  class StatementFinder {
     }
 
     /**
+     * Test whether a sentence is a proper sentence.
      * Returns true if the ROOT tag is connected an S tag (= there is a VP).
      * This is useful for determining if a sentence is not just an interjection, e.g. "So cool!" or "OK, great.".
-     * @param sentence
-     * @return
+     * @param sentence the sentence to test
+     * @return proper or not
      */
      private static boolean isProper(CoreMap sentence) {
         Tree tree = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);  // TODO: do using depparse instead?

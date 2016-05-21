@@ -1,9 +1,14 @@
 package statements.core;
 
 /**
- * This class represents the object of a natural language statement.
+ * The complete object of a natural language statement.
  */
 public class CompleteObject implements Resembling<CompleteObject> {
+    /**
+     * The resemblance of this object to another object.
+     * @param otherObject object to be compared with
+     * @return resemblance
+     */
     @Override
     public Resemblance resemble(CompleteObject otherObject) {
         return null;  // TODO

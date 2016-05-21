@@ -1,8 +1,10 @@
 package statements.core;
 
 /**
- * This class represents a statement found in a sentence.
- * It is a formal way to represent the semantics of natural language.
+ * A statement found in a natural language sentence.
+ *
+ * It is useful for representing the semantics of natural language in a more formal way.
+ *
  */
 public abstract class Statement implements Resembling<Statement> {
     private CompleteSubject subject;

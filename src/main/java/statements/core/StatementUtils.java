@@ -30,8 +30,7 @@ public class StatementUtils {
     }
 
     /**
-     * Reduce a variable amount of Resemblance objects to a single Resemblance.
-     * Useful for
+     * Reduce a variable amount of Resemblance objects to the lowest common denominator.
      * @param resemblances
      * @return
      */
@@ -52,7 +51,7 @@ public class StatementUtils {
     }
 
     /**
-     * Usd to sort IndexedWords by index.
+     * Used to sort IndexedWords by index.
      */
     public static class IndexComparator implements Comparator<IndexedWord> {
         @Override
