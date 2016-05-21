@@ -40,6 +40,8 @@ public class SubjectFinder {
                 Set<IndexedWord> secondarySubjects = subjectMapping.getOrDefault(parent, new HashSet<>());
                 secondarySubjects.add(simpleSubject);
                 subjectMapping.put(parent, secondarySubjects);
+            } else {
+                subjectMapping.putIfAbsent(simpleSubject, new HashSet<>());
             }
         }
 
