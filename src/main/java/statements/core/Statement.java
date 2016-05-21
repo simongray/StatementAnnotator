@@ -40,7 +40,7 @@ public abstract class Statement implements Resembling<Statement> {
     }
 
     /**
-     * The resemblance to another statement.
+     * The resemblance of this statement to another statement.
      * @param otherStatement statement to be compared with
      * @return resemblance
      */
