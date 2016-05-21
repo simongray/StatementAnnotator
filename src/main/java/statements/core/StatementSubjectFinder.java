@@ -13,6 +13,7 @@ import java.util.*;
  */
 public class StatementSubjectFinder {
     private static final Logger logger = LoggerFactory.getLogger(StatementSubjectFinder.class);
+    private static final String NSUBJ_RELATION = "nsubj";
 
     /**
      * Returns the StatementSubjects that are found in a sentence.
@@ -27,23 +28,22 @@ public class StatementSubjectFinder {
 
         // find simple subjects from relations
         for (TypedDependency dependency : dependencies) {
-            if (dependency.reln().getShortName().equals("nsubj")) {
+            if (dependency.reln().getShortName().equals(NSUBJ_RELATION)) {
                 simpleSubjects.add(dependency.dep());
             }
         }
 
-        // merge into mapped subjects
+        // create mapping based on relations
         for (IndexedWord simpleSubject : simpleSubjects) {
             IndexedWord parent = graph.getParent(simpleSubject);
             if (simpleSubjects.contains(parent)) {
-                Set<IndexedWord> compoundParts = subjectMapping.getOrDefault(parent, new HashSet<>());
-                compoundParts.add(simpleSubject);
-                subjectMapping.put(parent, compoundParts);
-                logger.info(simpleSubject + " is a compound part of: " + parent);
+                Set<IndexedWord> secondarySubjects = subjectMapping.getOrDefault(parent, new HashSet<>());
+                secondarySubjects.add(simpleSubject);
+                subjectMapping.put(parent, secondarySubjects);
             }
         }
 
-        // create complete subjects from mapping
+        // build complete subjects from mapping
         for (IndexedWord primarySubject : subjectMapping.keySet()) {
             subjects.add(new StatementSubject(primarySubject, subjectMapping.get(primarySubject), graph));
         }

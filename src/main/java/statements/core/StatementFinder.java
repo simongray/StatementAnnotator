@@ -39,7 +39,7 @@ public  class StatementFinder {
          logger.info(subjects.toString());
          for (StatementSubject subject : subjects) {
              logger.info("components: " + subject.getCompoundSubjects().toString());
-             logger.info("complete name: " + subject.getCompleteName());
+             logger.info("complete name: " + subject.getName());
          }
 
          // TODO: basic algorithm
