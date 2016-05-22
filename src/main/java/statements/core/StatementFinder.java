@@ -36,19 +36,22 @@ public  class StatementFinder {
          SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
 
          Set<CompleteSubject> subjects = SubjectFinder.find(graph);
-         logger.info(subjects.toString());
-         for (CompleteSubject subject : subjects) {
-             logger.info("components: " + subject.getCompoundSubjectNames());
-             logger.info("complete name: " + subject.getName());
-         }
+//         logger.info(subjects.toString());
+//         for (CompleteSubject subject : subjects) {
+//             logger.info("components: " + subject.getCompoundSubjectNames());
+//             logger.info("complete name: " + subject.getName());
+//         }
+//
+//         for (CompleteSubject subject : subjects) {
+//             System.out.println();
+//             System.out.println(subject + " compares to other subjects in sentence in this way: ");
+//             for (CompleteSubject otherSubject : subjects) {
+//                 System.out.println(subject.resemble(otherSubject) + ": " + otherSubject);
+//             }
+//         }
 
-         for (CompleteSubject subject : subjects) {
-             System.out.println();
-             System.out.println(subject + " compares to other subjects in sentence in this way: ");
-             for (CompleteSubject otherSubject : subjects) {
-                 System.out.println(subject.resemble(otherSubject) + ": " + otherSubject);
-             }
-         }
+         Set<CompleteVerb> verbs = VerbFinder.find(graph);
+         logger.info("verbs: " + verbs.toString());
 
          // TODO: basic algorithm
          /*
