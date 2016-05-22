@@ -2,7 +2,6 @@ package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
-import edu.stanford.nlp.trees.GrammaticalRelation;
 
 import java.util.*;
 
@@ -29,22 +28,22 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
         IGNORED_RELATIONS.add("cc");     // words like "and"
         IGNORED_RELATIONS.add("punct");  // punctuation like ","
     }
-    private final IndexedWord primarySubject;
-    private final Set<IndexedWord> secondarySubjects;
-    private final Set<IndexedWord> completeSubject;
-    private final Set<Set<IndexedWord>> compoundSubjects;
+    private final IndexedWord primary;
+    private final Set<IndexedWord> secondary;
+    private final Set<IndexedWord> complete;
+    private final Set<Set<IndexedWord>> compounds;
 
-    // TODO: remove secondarySubjects requirement from constructor, find dynamically instead
-    public CompleteSubject(IndexedWord primarySubject, Set<IndexedWord> secondarySubjects, SemanticGraph graph) {
-        this.primarySubject = primarySubject;
-        this.secondarySubjects = secondarySubjects;
-        this.completeSubject = graph.descendants(primarySubject);
+    // TODO: remove secondary requirement from constructor, find dynamically instead
+    public CompleteSubject(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
+        this.primary = primary;
+        this.secondary = secondary;
+        this.complete = graph.descendants(primary);
 
         // recursively discover all compound subjects
-        compoundSubjects = new HashSet<>();
-        compoundSubjects.add(StatementUtils.findCompoundComponents(primarySubject, graph, IGNORED_RELATIONS));
-        for (IndexedWord secondarySubject : secondarySubjects) {
-            compoundSubjects.add(StatementUtils.findCompoundComponents(secondarySubject, graph, IGNORED_RELATIONS));
+        compounds = new HashSet<>();
+        compounds.add(StatementUtils.findCompoundComponents(primary, graph, IGNORED_RELATIONS));
+        for (IndexedWord subject : secondary) {
+            compounds.add(StatementUtils.findCompoundComponents(subject, graph, IGNORED_RELATIONS));
         }
     }
 
@@ -53,43 +52,25 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
      * @return the longest subject possible
      */
     public String getName() {
-        return StatementUtils.join(completeSubject);
+        return StatementUtils.join(complete);
     }
 
     /**
-     * The name of the primary simple subject.
-     * @return the shortest subject possible
+     * The primary single subject contained within the complete subject.
+     * @return primary subject
      */
-    public String getShortName() {
-        return primarySubject.word();
-    }
-
-    /**
-     * The simple subjects contained in the complete subject.
-     * @return simple subjects
-     */
-    public Set<IndexedWord> getSimpleSubjects() {
-        Set<IndexedWord> simpleSubjects = new HashSet<>(secondarySubjects);
-        simpleSubjects.add(primarySubject);
-        return simpleSubjects;
-    }
-
-    /**
-     * The compound subjects contained in the complete subject.
-     * @return compound subject components
-     */
-    public Set<Set<IndexedWord>> getCompoundSubjects() {
-        return new HashSet<>(compoundSubjects);
+    public IndexedWord getPrimary() {
+        return primary;
     }
 
     /**
      * The names of all of the compound subjects.
      * @return compound subject names
      */
-    public Set<String> getCompoundSubjectNames() {
+    public Set<String> getCompounds() {
         Set<String> compoundSubjectNames = new HashSet<>();
-        for (Set<IndexedWord> compoundSubject : compoundSubjects) {
-            compoundSubjectNames.add(StatementUtils.join(compoundSubject));
+        for (Set<IndexedWord> compound : compounds) {
+            compoundSubjectNames.add(StatementUtils.join(compound));
         }
         return compoundSubjectNames;
     }
@@ -99,7 +80,7 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
      * @return subjects count
      */
     public int size() {
-        return secondarySubjects.size() + 1;
+        return secondary.size() + 1;
     }
 
     /**
@@ -114,9 +95,9 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
         }
 
         int resemblanceCount = 0;
-        Set<String> otherSubjectCompoundNames = otherSubject.getCompoundSubjectNames();
-        for (String name : getCompoundSubjectNames()) {
-            if (otherSubjectCompoundNames.contains(name)) {
+        Set<String> otherSubjectCompounds = otherSubject.getCompounds();
+        for (String compound : getCompounds()) {
+            if (otherSubjectCompounds.contains(compound)) {
                 resemblanceCount++;
             }
         }
