@@ -22,17 +22,33 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
     }
 
     /**
+     * The lemmatised version of the verb.
+     * @return
+     */
+    public String getLemma() {
+        return verb.lemma();
+    }
+
+    /**
      * The resemblance of another verb to this verb.
      * @param otherVerb subject to be compared with
      * @return resemblance
      */
     @Override
-    public Resemblance resemble(CompleteVerb otherVerb) {
-        return null;
+    public Resemblance resemble(CompleteVerb otherVerb) {  // TODO: implement fully
+        if (getName().equals(otherVerb.getName())) {
+            return Resemblance.FULL;
+        }
+
+        if (getLemma().equals(otherVerb.getLemma())) {  // TODO: needs to be a bit more precise, also compare negative
+            return Resemblance.CLOSE;
+        }
+
+        return Resemblance.NONE;
     }
 
     @Override
     public String toString() {
-        return verb.word() + " (" + verb.lemma() + ")";
+        return getName() + " (" + getLemma() + ")";
     }
 }
