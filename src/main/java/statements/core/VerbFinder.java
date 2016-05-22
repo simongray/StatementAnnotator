@@ -22,6 +22,7 @@ public class VerbFinder {
         RELATIONS.add(DOBJ_RELATION);
         RELATIONS.add(XCOMP_RELATION);
     }
+    private static final String COP_RELATION = "cop";  // copula, ex: in "they're pretty" the "'re" would be copula
 
     /**
      * The verbs that are found in a sentence.
@@ -31,14 +32,21 @@ public class VerbFinder {
     public static Set<CompleteVerb> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> simpleVerbs = new HashSet<>();
+        Set<IndexedWord> adjectives = new HashSet<>();
         Set<CompleteVerb> verbs = new HashSet<>();
 
-        // find verbs from relations
+        // find candidate verbs and adjectives from relations
         for (TypedDependency dependency : dependencies) {
             if (RELATIONS.contains(dependency.reln().getShortName())) {
                 simpleVerbs.add(dependency.gov());
             }
+            if (dependency.reln().getShortName().equals(COP_RELATION)) {
+                adjectives.add(dependency.gov());
+            }
         }
+
+        // remove adjectives from candidate verbs
+        simpleVerbs.removeAll(adjectives);
 
         // disregard verbs that are dependents (act as objects) to the other verb
         for (IndexedWord simpleVerb : simpleVerbs) {

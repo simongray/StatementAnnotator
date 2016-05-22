@@ -21,9 +21,14 @@ public class StatementUtils {
 
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < wordsList.size(); i++) {
-            if (i != 0 && !wordsList.get(i).tag().equals(",")) buffer.append(" ");
-            buffer.append(wordsList.get(i).word());
+            IndexedWord word = wordsList.get(i);
+            if (!word.tag().equals(".")) {
+                if (i != 0 && !word.tag().equals(",")) buffer.append(" ");
+                buffer.append(word.word());
+            }
         }
+
+        // TODO: aux(does) + neg(n't) should be joined correctly
 
         return buffer.toString();
     }

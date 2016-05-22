@@ -3,35 +3,61 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- * The complete verb of a natural language statement.
+ * The complete simpleVerb of a natural language statement.
  */
 public class CompleteVerb implements Resembling<CompleteVerb> {
-    private final IndexedWord verb;
+    /**
+     * Describes which relations are ignored when producing compound subjects.
+     */
+    private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
+    static {
+        IGNORED_RELATIONS.add("nsubj");
+        IGNORED_RELATIONS.add("dobj");  // "<verb>s <verb>ing"
+        IGNORED_RELATIONS.add("nmod");  // "<verb> to/from/etc. <object>"
+        IGNORED_RELATIONS.add("xcomp");  // "<verb>s to <verb>"
+        IGNORED_RELATIONS.add("aux");  // "<subject>'s <verb>ing"
+    }
+    private final IndexedWord simpleVerb;
+    private final Set<IndexedWord> compoundVerb;
 
-    public CompleteVerb(IndexedWord verb, SemanticGraph graph) {
-        this.verb = verb;
+    public CompleteVerb(IndexedWord simpleVerb, SemanticGraph graph) {
+        this.simpleVerb = simpleVerb;
         // TODO: implement compound creation, needs to be smart enough to find negatives etc.
+
+        // recursively discover all compound subjects
+        this.compoundVerb = StatementUtils.findCompoundComponents(simpleVerb, graph, IGNORED_RELATIONS);
     }
 
     /**
      * The name of the complete verb.
-     * @return the longest subject possible
+     * @return the longest verb possible
      */
     public String getName() {
-        return verb.word();  // TODO: implement full version
+        return StatementUtils.join(compoundVerb);
     }
 
     /**
-     * The lemmatised version of the verb.
+     * The name of the primary simple verb.
+     * @return the shortest verb possible
+     */
+    public String getShortName() {
+        return simpleVerb.word();
+    }
+
+    /**
+     * The lemmatised version of the simpleVerb.
      * @return
      */
     public String getLemma() {
-        return verb.lemma();
+        return simpleVerb.lemma();
     }
 
     /**
-     * The resemblance of another verb to this verb.
+     * The resemblance of another simpleVerb to this simpleVerb.
      * @param otherVerb subject to be compared with
      * @return resemblance
      */
