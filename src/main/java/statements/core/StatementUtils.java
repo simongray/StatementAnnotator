@@ -27,7 +27,7 @@ public class StatementUtils {
             boolean shortened = isShortened(word);
 
             if (!tag.equals(".")) {
-                if (i != 0 && !tag.equals(",")  && shortened) buffer.append(" ");
+                if (i != 0 && !tag.equals(",")  && !shortened) buffer.append(" ");
                 if (i == 0 && shortened) {
                     buffer.append(indexedWord.lemma());  // TODO: improve, sort of a hack now ("'s" becomes "be")
                 } else {
@@ -45,7 +45,7 @@ public class StatementUtils {
      * @return shortened or not
      */
     private static boolean isShortened(String word) {
-        return !word.startsWith("'") || !word.equals("n't");
+        return word.startsWith("'") || word.equals("n't");
     }
 
     /**
