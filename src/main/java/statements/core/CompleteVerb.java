@@ -49,6 +49,14 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
     }
 
     /**
+     * The verb compound.
+     * @return compound
+     */
+    public Set<IndexedWord> getCompound() {
+        return new HashSet<>(compound);
+    }
+
+    /**
      * The lemmatised version of the verb.
      * @return
      */

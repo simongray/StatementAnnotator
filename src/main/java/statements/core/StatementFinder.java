@@ -38,7 +38,7 @@ public  class StatementFinder {
          Set<CompleteSubject> subjects = SubjectFinder.find(graph);
          logger.info(subjects.toString());
          for (CompleteSubject subject : subjects) {
-             logger.info("components: " + subject.getCompounds());
+             logger.info("components: " + subject.getCompoundStrings());
              logger.info("complete name: " + subject.getName());
          }
 

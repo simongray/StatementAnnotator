@@ -1,5 +1,10 @@
 package statements.core;
 
+import edu.stanford.nlp.ling.IndexedWord;
+
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * The complete object of a natural language statement.
  */
@@ -10,6 +15,15 @@ public class CompleteObject implements Resembling<CompleteObject> {
      */
     public String getName() {
         return null;  // TODO: implement full version
+    }
+
+    /**
+     * The compound objects.
+     * @return compounds
+     */
+    public Set<Set<IndexedWord>> getCompounds() {
+//        return new HashSet<>(compounds);
+        return null;  // TODO: implement
     }
 
     /**

@@ -1,5 +1,10 @@
 package statements.core;
 
+import edu.stanford.nlp.ling.IndexedWord;
+
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A statement found in a natural language sentence.
  *
@@ -82,21 +87,24 @@ public abstract class Statement implements Resembling<Statement> {
 
     @Override
     public String toString() {
-        // for S+V+O
-        if (subject != null  && verb != null && object != null) {
-            return getSubject().getName() + " " + getVerb().getName() + " " + getObject().getName();
+        Set<IndexedWord> statement = new HashSet<>();
+
+        if (subject != null) {
+            for (Set<IndexedWord> compound : subject.getCompounds()) {
+                statement.addAll(compound);
+            }
         }
 
-        // for S+V
-        if (subject != null  && verb != null) {
-            return getSubject().getName() + " " + getVerb().getName();
+        if (verb != null) {
+            statement.addAll(verb.getCompound());
         }
 
-        // for V+O
-        if (verb != null && object != null) {
-            return getVerb().getName() + " " + getObject().getName();
+        if (object != null) {
+            for (Set<IndexedWord> compound : object.getCompounds()) {
+                statement.addAll(compound);
+            }
         }
 
-        return "<MALFORMED STATEMENT>";
+        return StatementUtils.join(statement);
     }
 }

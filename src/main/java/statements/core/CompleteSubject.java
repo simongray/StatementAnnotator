@@ -64,10 +64,18 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
     }
 
     /**
+     * The compound subjects.
+     * @return compounds
+     */
+    public Set<Set<IndexedWord>> getCompounds() {
+        return new HashSet<>(compounds);
+    }
+
+    /**
      * The names of all of the compound subjects.
      * @return compound subject names
      */
-    public Set<String> getCompounds() {
+    public Set<String> getCompoundStrings() {
         Set<String> compoundSubjectNames = new HashSet<>();
         for (Set<IndexedWord> compound : compounds) {
             compoundSubjectNames.add(StatementUtils.join(compound));
@@ -95,8 +103,8 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
         }
 
         int resemblanceCount = 0;
-        Set<String> otherSubjectCompounds = otherSubject.getCompounds();
-        for (String compound : getCompounds()) {
+        Set<String> otherSubjectCompounds = otherSubject.getCompoundStrings();
+        for (String compound : getCompoundStrings()) {
             if (otherSubjectCompounds.contains(compound)) {
                 resemblanceCount++;
             }
