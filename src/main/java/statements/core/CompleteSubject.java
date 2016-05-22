@@ -42,9 +42,9 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
 
         // recursively discover all compound subjects
         compoundSubjects = new HashSet<>();
-        compoundSubjects.add(findCompoundComponents(primarySubject, graph));
+        compoundSubjects.add(StatementUtils.findCompoundComponents(primarySubject, graph, IGNORED_RELATIONS));
         for (IndexedWord secondarySubject : secondarySubjects) {
-            compoundSubjects.add(findCompoundComponents(secondarySubject, graph));
+            compoundSubjects.add(StatementUtils.findCompoundComponents(secondarySubject, graph, IGNORED_RELATIONS));
         }
     }
 
@@ -92,16 +92,6 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
             compoundSubjectNames.add(StatementUtils.join(compoundSubject));
         }
         return compoundSubjectNames;
-    }
-
-    /**
-     * Recursively finds the components of a compound subject.
-     * @param simpleSubject the simple subject that serves as an entry point
-     * @param graph the graph of the sentence
-     * @return compound components
-     */
-    private Set<IndexedWord> findCompoundComponents(IndexedWord simpleSubject, SemanticGraph graph) {
-        return StatementUtils.findCompoundComponents(simpleSubject, graph, IGNORED_RELATIONS);
     }
 
     /**
