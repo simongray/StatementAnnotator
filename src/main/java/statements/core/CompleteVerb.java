@@ -11,6 +11,7 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
 
     public CompleteVerb(IndexedWord verb, SemanticGraph graph) {
         this.verb = verb;
+        // TODO: implement compound creation, needs to be smart enough to find negatives etc.
     }
 
     /**
