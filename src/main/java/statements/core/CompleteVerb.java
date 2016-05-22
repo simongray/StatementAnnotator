@@ -76,8 +76,13 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
             return Resemblance.FULL;
         }
 
-        if (getLemma().equals(otherVerb.getLemma())) {  // TODO: needs to be a bit more precise, also compare negative
-            return Resemblance.CLOSE;
+        if (isNegated() == otherVerb.isNegated()) {
+            if (getLemma().equals(otherVerb.getLemma())) {
+                return Resemblance.CLOSE;
+            }
+            // TODO: perform resemblance comparison using synonyms
+        } else {
+            // TODO: perform resemblance comparison using antonyms (can never be full, but can be close)
         }
 
         return Resemblance.NONE;
