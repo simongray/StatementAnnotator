@@ -90,6 +90,6 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
 
     @Override
     public String toString() {
-        return getName() + " (" + (isNegated()? "not ": "") + getLemma() + ")";
+        return getName() + " (" + (isNegated()? "!": "") + getLemma() + ")";
     }
 }
