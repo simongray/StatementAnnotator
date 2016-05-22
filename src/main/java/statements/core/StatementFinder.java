@@ -55,6 +55,8 @@ public  class StatementFinder {
             Algorithm sketch:
                 1. One-word sentences are discarded since they are not proper sentences, as are sentences without an S.
                 2. TODO: The graph is analysed for subjects and these are used to create statements.
+                   there is link-up method at the end that produces the actual subjects from the components,
+                   i.e. it gets the list of subjects, verbs, and objects and spits out statements
                 3. TODO: If no subjects can be found, the statement is assumed to be self-referencing
                    and the verb phrase is analysed instead (e.g. "hate cycling!").
 
@@ -64,7 +66,18 @@ public  class StatementFinder {
                    "Hated cycling" resolves correctly, though, since there is no way to confuse it.
                    Will probably need to hack around that somehow to get the best results.
          */
-         return null;
+         return link(subjects, null, null);  // TODO: make not null
+    }
+
+    /**
+     * Produces statements by linking together statement components.
+     * @param subjects subjects found in the sentence
+     * @param verbs verbs found in the sentence
+     * @param objects objects found in the sentence
+     * @return statements
+     */
+    private static List<Statement> link(Set<CompleteSubject> subjects, Set<CompleteVerb> verbs, Set<CompleteObject> objects) {
+        return null;  // TODO: implement
     }
 
     /**
