@@ -1,11 +1,10 @@
 package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
+import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.trees.GrammaticalRelation;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Utilities for Statement and related classes.
@@ -30,11 +29,32 @@ public class StatementUtils {
     }
 
     /**
+     * Recursively finds the components of a compound subject.
+     * @param parent the simple subject that serves as an entry point
+     * @param graph the graph of the sentence
+     * @param ignoredRelations relation types that shouldn't be followed or included
+     * @return compound components
+     */
+    public static Set<IndexedWord> findCompoundComponents(IndexedWord parent, SemanticGraph graph, Set<String> ignoredRelations) {
+        Set<IndexedWord> compoundComponents = new HashSet<>();
+        compoundComponents.add(parent);
+
+        for (IndexedWord child : graph.getChildren(parent)) {
+            GrammaticalRelation relation = graph.reln(parent, child);
+            if (!ignoredRelations.contains(relation.getShortName())) {
+                compoundComponents.addAll(findCompoundComponents(child, graph, ignoredRelations));
+            }
+        }
+
+        return compoundComponents;
+    }
+
+    /**
      * Reduce a variable amount of Resemblance objects to the lowest common denominator.
      * @param resemblances
      * @return
      */
-    static Resemblance reduce(Resemblance... resemblances) {
+    public static Resemblance reduce(Resemblance... resemblances) {
         Resemblance lowestCommonDenominator = Resemblance.FULL;  // default
 
         for (Resemblance resemblance : resemblances) {

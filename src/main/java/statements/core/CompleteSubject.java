@@ -97,17 +97,7 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
      * @return
      */
     private Set<IndexedWord> findCompoundComponents(IndexedWord simpleSubject, SemanticGraph graph) {
-        Set<IndexedWord> compoundComponents = new HashSet<>();
-        compoundComponents.add(simpleSubject);
-
-        for (IndexedWord child : graph.getChildren(simpleSubject)) {
-            GrammaticalRelation relation = graph.reln(simpleSubject, child);
-            if (!IGNORED_RELATIONS.contains(relation.getShortName())) {
-                compoundComponents.addAll(findCompoundComponents(child, graph));
-            }
-        }
-
-        return compoundComponents;
+        return StatementUtils.findCompoundComponents(simpleSubject, graph, IGNORED_RELATIONS);
     }
 
     /**
