@@ -19,10 +19,10 @@ this kind of search gets you the exact Statements that are relevant,
 as well as a way to position them in the input corpus.
 
 This makes it the perfect approach for implementing a piece of software that is designed
-to discover points of agreements between two people on social media in order to increase civility between them.
+to discover points of agreements between two people on social media in order to promote civil discussions.
 This application, that applies some social psychology and communications theory,
 displays points of agreements in real time between users on social media when they are writing to each other.
-These displayed agreements should then help moderate more negative replies into a more positive direction
+These displayed agreements then help moderate more negative replies into a more positive direction
 or perhaps just delight users who will find it a funny and interesting feature.
 
 It can also make good use of the fact that Statements can easily be composed into sentences and paragraphs.
