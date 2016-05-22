@@ -29,7 +29,7 @@ public class StatementUtils {
     }
 
     /**
-     * Recursively finds the components of a compound subject.
+     * Recursively finds the components of a compound (ex: subject, object, etc.).
      * @param parent the simple subject that serves as an entry point
      * @param graph the graph of the sentence
      * @param ignoredRelations relation types that shouldn't be followed or included
