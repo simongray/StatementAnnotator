@@ -69,7 +69,7 @@ public  class StatementFinder {
                    "Hated cycling" resolves correctly, though, since there is no way to confuse it.
                    Will probably need to hack around that somehow to get the best results.
          */
-         return link(subjects, null, null);  // TODO: make not null
+         return link(subjects, verbs, null);  // TODO: make not null
     }
 
     /**
