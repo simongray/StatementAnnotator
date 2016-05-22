@@ -24,7 +24,7 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
      * Describes which relations are ignored when producing compound subjects.
      */
     private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
-    {
+    static {
         IGNORED_RELATIONS.add("conj");   // other simple subjects
         IGNORED_RELATIONS.add("cc");     // words like "and"
         IGNORED_RELATIONS.add("punct");  // punctuation like ","
