@@ -79,6 +79,10 @@ public class Verb implements Resembling<Verb> {
      */
     @Override
     public Resemblance resemble(Verb otherVerb) {  // TODO: implement fully
+        if (otherVerb == null) {
+            return Resemblance.NONE;
+        }
+
         if (getName().equals(otherVerb.getName())) {
             return Resemblance.FULL;
         }

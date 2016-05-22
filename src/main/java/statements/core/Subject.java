@@ -98,6 +98,10 @@ public class Subject implements Resembling<Subject> {
      */
     @Override
     public Resemblance resemble(Subject otherSubject) {
+        if (otherSubject == null) {
+            return Resemblance.NONE;
+        }
+
         if (getName().equals(otherSubject.getName())) {
             return Resemblance.FULL;  // identical complete subject
         }

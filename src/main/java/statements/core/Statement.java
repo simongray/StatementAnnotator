@@ -63,11 +63,18 @@ public abstract class Statement implements Resembling<Statement> {
      */
     @Override
     public Resemblance resemble(Statement otherStatement) {
+        // check that components match
+        if (subject == null && otherStatement.getSubject() != null) return Resemblance.NONE;
+        if (verb == null && otherStatement.getVerb() != null) return Resemblance.NONE;
+        if (directObject == null && otherStatement.getDirectObject() != null) return Resemblance.NONE;
+        if (indirectObject == null && otherStatement.getIndirectObject() != null) return Resemblance.NONE;
+
+        // reduce lowest valued resemblance state
         return StatementUtils.reduce(
-                subject.resemble(otherStatement.getSubject()),
-                verb.resemble(otherStatement.getVerb()),
-                directObject.resemble(otherStatement.getDirectObject()),
-                indirectObject.resemble(otherStatement.getIndirectObject())
+            subject == null? null : subject.resemble(otherStatement.getSubject()),
+            verb == null? null : verb.resemble(otherStatement.getVerb()),
+            directObject == null? null : directObject.resemble(otherStatement.getDirectObject()),
+            indirectObject == null? null : indirectObject.resemble(otherStatement.getIndirectObject())
         );
     }
 
