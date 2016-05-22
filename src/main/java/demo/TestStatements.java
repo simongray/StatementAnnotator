@@ -31,7 +31,8 @@ public class TestStatements {
 //        "We also got two Xiaomi air purifiers that work quite well. They are smartphone-connected and always on, except when we're out during weekdays. The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers. " +
 //        "Before you go, familiarise yourself with the air quality in your own area so you have a means of comparison. If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too. I sure was (I come from Copenhagen, Denmark). Of course, Western cities usually don't have those crazy smog days. " +
 //        "Don't worry too much. Sometimes there's no smog for a whole week, sometime's it lasts for a whole week and you'll just stay mostly indoors and use masks when outside. You'll get used to it.";
-        String example = "They aren't pretty. She's having to make do. He really loves singing out loud.";
+        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
+        // TODO: deal with sentence "She's had it with with"
 
         Annotation annotation = new Annotation(example);
 

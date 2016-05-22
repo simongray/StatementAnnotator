@@ -21,16 +21,31 @@ public class StatementUtils {
 
         StringBuffer buffer = new StringBuffer();
         for (int i = 0; i < wordsList.size(); i++) {
-            IndexedWord word = wordsList.get(i);
-            if (!word.tag().equals(".")) {
-                if (i != 0 && !word.tag().equals(",")) buffer.append(" ");
-                buffer.append(word.word());
+            IndexedWord indexedWord = wordsList.get(i);
+            String tag = indexedWord.tag();
+            String word = indexedWord.word();
+            boolean shortened = isShortened(word);
+
+            if (!tag.equals(".")) {
+                if (i != 0 && !tag.equals(",")  && shortened) buffer.append(" ");
+                if (i == 0 && shortened) {
+                    buffer.append(indexedWord.lemma());  // TODO: improve, sort of a hack now ("'s" becomes "be")
+                } else {
+                    buffer.append(indexedWord.word());
+                }
             }
         }
 
-        // TODO: aux(does) + neg(n't) should be joined correctly
-
         return buffer.toString();
+    }
+
+    /**
+     * Whether or not a word token is shortened.
+     * @param word the word to check
+     * @return shortened or not
+     */
+    private static boolean isShortened(String word) {
+        return !word.startsWith("'") || !word.equals("n't");
     }
 
     /**
