@@ -28,11 +28,7 @@ public class StatementUtils {
 
             if (!tag.equals(".")) {
                 if (i != 0 && !tag.equals(",")  && !shortened) buffer.append(" ");
-                if (i == 0 && shortened) {
-                    buffer.append(indexedWord.lemma());  // TODO: improve, sort of a hack now ("'s" becomes "be")
-                } else {
                     buffer.append(indexedWord.word());
-                }
             }
         }
 
