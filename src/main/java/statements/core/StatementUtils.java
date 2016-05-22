@@ -126,6 +126,18 @@ public class StatementUtils {
     }
 
     /**
+     * Get relevant text search keywords for finding resemblance to statements in text.
+     * The keywords are useful for finding pieces of text that *may* contain resembling statements.
+     * These pieces of text will then have to be put through the StatementAnnotator,
+     * in order to get a set of statements for comparing to the original statements.
+     * @param statements statements to match
+     * @return search keywords
+     */
+    public static Set<String> getSearchKeywords(Set<Statement> statements) {
+        return null;  // TODO: implement, apply some filter like stopwords to total words and return words that survive
+    }
+
+    /**
      * Used to sort IndexedWords by index.
      */
     public static class IndexComparator implements Comparator<IndexedWord> {
