@@ -51,8 +51,8 @@ public class StatementUtils {
 
     /**
      * Reduce a variable amount of Resemblance objects to the lowest common denominator.
-     * @param resemblances
-     * @return
+     * @param resemblances range of Resemblance to reduce
+     * @return common denominator
      */
     public static Resemblance reduce(Resemblance... resemblances) {
         Resemblance lowestCommonDenominator = Resemblance.FULL;  // default
@@ -75,7 +75,7 @@ public class StatementUtils {
      */
     public static class IndexComparator implements Comparator<IndexedWord> {
         @Override
-        public int compare(IndexedWord x,IndexedWord y) {
+        public int compare(IndexedWord x, IndexedWord y) {
             int xn = x.index();
             int yn = y.index();
             if (xn == yn) {
