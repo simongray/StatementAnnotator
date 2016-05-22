@@ -24,3 +24,7 @@ This application, that applies some social psychology and communications theory,
 displays points of agreements in real time between users on social media when they are writing to each other.
 These displayed agreements should then help moderate more negative replies into a more positive direction
 or perhaps just delight users who will find it a funny and interesting feature.
+
+It can also make good use of the fact that Statements can easily be composed into sentences and paragraphs.
+Statements can be grouped by subject and from these groupings it is simple to compose descriptive text.
+This allows for construction of a personal profile in natural language based entirely on data mining.
