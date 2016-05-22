@@ -20,15 +20,17 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
         IGNORED_RELATIONS.add("nmod");  // "<verb> to/from/etc. <object>"
         IGNORED_RELATIONS.add("xcomp");  // "<verb>s to <verb>"
     }
+    private static final String NEG = "neg";
     private final IndexedWord simpleVerb;
     private final Set<IndexedWord> compoundVerb;
+    private final boolean negated;
 
     public CompleteVerb(IndexedWord simpleVerb, SemanticGraph graph) {
         this.simpleVerb = simpleVerb;
-        // TODO: implement compound creation, needs to be smart enough to find negatives etc.
 
         // recursively discover all compound subjects
         this.compoundVerb = StatementUtils.findCompoundComponents(simpleVerb, graph, IGNORED_RELATIONS);
+        this.negated = StatementUtils.isNegated(simpleVerb, graph);
     }
 
     /**
@@ -56,6 +58,14 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
     }
 
     /**
+     * Whether the verb is negated.
+     * @return
+     */
+    public boolean isNegated() {
+        return negated;
+    }
+
+    /**
      * The resemblance of another simpleVerb to this simpleVerb.
      * @param otherVerb subject to be compared with
      * @return resemblance
@@ -75,6 +85,6 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
 
     @Override
     public String toString() {
-        return getName() + " (" + getLemma() + ")";
+        return getName() + " (" + (isNegated()? "not ": "") + getLemma() + ")";
     }
 }
