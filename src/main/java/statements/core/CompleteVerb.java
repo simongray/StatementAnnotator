@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The complete simpleVerb of a natural language statement.
+ * The complete verb of a natural language statement.
  */
 public class CompleteVerb implements Resembling<CompleteVerb> {
     /**
@@ -20,17 +20,16 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
         IGNORED_RELATIONS.add("nmod");  // "<verb> to/from/etc. <object>"
         IGNORED_RELATIONS.add("xcomp");  // "<verb>s to <verb>"
     }
-    private static final String NEG = "neg";
-    private final IndexedWord simpleVerb;
-    private final Set<IndexedWord> compoundVerb;
+    private final IndexedWord verb;
+    private final Set<IndexedWord> compound;
     private final boolean negated;
 
-    public CompleteVerb(IndexedWord simpleVerb, SemanticGraph graph) {
-        this.simpleVerb = simpleVerb;
+    public CompleteVerb(IndexedWord verb, SemanticGraph graph) {
+        this.verb = verb;
 
         // recursively discover all compound subjects
-        this.compoundVerb = StatementUtils.findCompoundComponents(simpleVerb, graph, IGNORED_RELATIONS);
-        this.negated = StatementUtils.isNegated(simpleVerb, graph);
+        this.compound = StatementUtils.findCompoundComponents(verb, graph, IGNORED_RELATIONS);
+        this.negated = StatementUtils.isNegated(verb, graph);
     }
 
     /**
@@ -38,23 +37,23 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
      * @return the longest verb possible
      */
     public String getName() {
-        return StatementUtils.join(compoundVerb);
+        return StatementUtils.join(compound);
     }
 
     /**
-     * The name of the primary simple verb.
+     * The primary verb.
      * @return the shortest verb possible
      */
-    public String getShortName() {
-        return simpleVerb.word();
+    public IndexedWord getPrimary() {
+        return verb;
     }
 
     /**
-     * The lemmatised version of the simpleVerb.
+     * The lemmatised version of the verb.
      * @return
      */
     public String getLemma() {
-        return simpleVerb.lemma();
+        return verb.lemma();
     }
 
     /**
@@ -66,7 +65,7 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
     }
 
     /**
-     * The resemblance of another simpleVerb to this simpleVerb.
+     * The resemblance of another verb to this verb.
      * @param otherVerb subject to be compared with
      * @return resemblance
      */
