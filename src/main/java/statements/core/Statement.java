@@ -7,9 +7,6 @@ import java.util.Set;
 
 /**
  * A statement found in a natural language sentence.
- *
- * It is useful for representing the semantics of natural language in a more formal way.
- *
  */
 public abstract class Statement implements Resembling<Statement> {
     private Subject subject;
