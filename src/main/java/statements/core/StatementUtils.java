@@ -106,6 +106,26 @@ public class StatementUtils {
     }
 
     /**
+     * The haystack of statements partitioned into levels of resemblance to the needle statement.
+     * This useful for finding agreements between statements.
+     * @param needle statement that must be resembled
+     * @param haystack statements to partition into levels of resemblance
+     * @return map of resemblance to statements
+     */
+    public static Map<Resemblance, Set<Statement>> findResemblances(Statement needle, Set<Statement> haystack) {
+        Map<Resemblance, Set<Statement>> partitions = new HashMap<>();
+
+        for (Statement statement : haystack) {
+            Resemblance resemblance = statement.resemble(needle);
+            Set<Statement> partition = partitions.getOrDefault(resemblance, new HashSet<>());
+            partition.add(statement);
+            partitions.put(resemblance, partition);
+        }
+
+        return partitions;
+    }
+
+    /**
      * Used to sort IndexedWords by index.
      */
     public static class IndexComparator implements Comparator<IndexedWord> {
