@@ -14,6 +14,14 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
     }
 
     /**
+     * The name of the complete verb.
+     * @return the longest subject possible
+     */
+    public String getName() {
+        return verb.word();  // TODO: implement full version
+    }
+
+    /**
      * The resemblance of another verb to this verb.
      * @param otherVerb subject to be compared with
      * @return resemblance

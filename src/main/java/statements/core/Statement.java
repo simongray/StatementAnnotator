@@ -79,4 +79,24 @@ public abstract class Statement implements Resembling<Statement> {
 
         return Resemblance.NONE;
     }
+
+    @Override
+    public String toString() {
+        // for S+V+O
+        if (subject != null  && verb != null && object != null) {
+            return getSubject().getName() + " " + getVerb().getName() + " " + getObject().getName();
+        }
+
+        // for S+V
+        if (subject != null  && verb != null) {
+            return getSubject().getName() + " " + getVerb().getName();
+        }
+
+        // for V+O
+        if (verb != null && object != null) {
+            return getVerb().getName() + " " + getObject().getName();
+        }
+
+        return "<MALFORMED STATEMENT>";
+    }
 }
