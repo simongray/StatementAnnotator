@@ -19,7 +19,6 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
         IGNORED_RELATIONS.add("dobj");  // "<verb>s <verb>ing"
         IGNORED_RELATIONS.add("nmod");  // "<verb> to/from/etc. <object>"
         IGNORED_RELATIONS.add("xcomp");  // "<verb>s to <verb>"
-        IGNORED_RELATIONS.add("aux");  // "<subject>'s <verb>ing"
     }
     private final IndexedWord simpleVerb;
     private final Set<IndexedWord> compoundVerb;
