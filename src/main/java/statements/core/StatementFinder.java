@@ -42,6 +42,14 @@ public  class StatementFinder {
              logger.info("complete name: " + subject.getName());
          }
 
+         for (CompleteSubject subject : subjects) {
+             System.out.println();
+             System.out.println(subject + " compares to other subjects in sentence in this way: ");
+             for (CompleteSubject otherSubject : subjects) {
+                 System.out.println(subject.resemble(otherSubject) + ": " + otherSubject);
+             }
+         }
+
          // TODO: basic algorithm
          /*
             Algorithm sketch:
