@@ -18,7 +18,7 @@ import java.util.*;
  *     primary subject = the simple subject that is the primary dependent of the verb
  *     secondary subject = any other simple subjects contained in the complete subject
  */
-public class CompleteSubject implements Resembling<CompleteSubject> {
+public class Subject implements Resembling<Subject> {
     /**
      * Describes which relations are ignored when producing compound subjects.
      */
@@ -34,7 +34,7 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
     private final Set<Set<IndexedWord>> compounds;
 
     // TODO: remove secondary requirement from constructor, find dynamically instead
-    public CompleteSubject(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
+    public Subject(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         this.primary = primary;
         this.secondary = secondary;
         this.complete = graph.descendants(primary);
@@ -97,7 +97,7 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
      * @return resemblance
      */
     @Override
-    public Resemblance resemble(CompleteSubject otherSubject) {
+    public Resemblance resemble(Subject otherSubject) {
         if (getName().equals(otherSubject.getName())) {
             return Resemblance.FULL;  // identical complete subject
         }

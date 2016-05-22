@@ -2,13 +2,12 @@ package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The complete object of a natural language statement.
+ * The complete indirect object of a natural language statement.
  */
-public class CompleteObject implements Resembling<CompleteObject> {
+public class IndirectObject implements Resembling<IndirectObject> {
     /**
      * The name of the complete verb.
      * @return the longest subject possible
@@ -32,7 +31,7 @@ public class CompleteObject implements Resembling<CompleteObject> {
      * @return resemblance
      */
     @Override
-    public Resemblance resemble(CompleteObject otherObject) {
+    public Resemblance resemble(IndirectObject otherObject) {
         return null;  // TODO
     }
 }

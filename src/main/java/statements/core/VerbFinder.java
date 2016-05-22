@@ -29,11 +29,11 @@ public class VerbFinder {
      * @param graph the dependency graph of a sentence
      * @return verbs
      */
-    public static Set<CompleteVerb> find(SemanticGraph graph) {
+    public static Set<Verb> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> simpleVerbs = new HashSet<>();
         Set<IndexedWord> adjectives = new HashSet<>();
-        Set<CompleteVerb> verbs = new HashSet<>();
+        Set<Verb> verbs = new HashSet<>();
 
         // find candidate verbs and adjectives from relations
         for (TypedDependency dependency : dependencies) {
@@ -52,7 +52,7 @@ public class VerbFinder {
         for (IndexedWord simpleVerb : simpleVerbs) {
             IndexedWord parent = graph.getParent(simpleVerb);
             if (!simpleVerbs.contains(parent)) {
-                verbs.add(new CompleteVerb(simpleVerb, graph));
+                verbs.add(new Verb(simpleVerb, graph));
             }
         }
 

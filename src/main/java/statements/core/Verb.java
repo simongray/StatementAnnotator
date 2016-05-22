@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * The complete verb of a natural language statement.
  */
-public class CompleteVerb implements Resembling<CompleteVerb> {
+public class Verb implements Resembling<Verb> {
     /**
      * Describes which relations are ignored when producing compound subjects.
      */
@@ -24,7 +24,7 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
     private final Set<IndexedWord> compound;
     private final boolean negated;
 
-    public CompleteVerb(IndexedWord verb, SemanticGraph graph) {
+    public Verb(IndexedWord verb, SemanticGraph graph) {
         this.verb = verb;
 
         // recursively discover all compound subjects
@@ -78,7 +78,7 @@ public class CompleteVerb implements Resembling<CompleteVerb> {
      * @return resemblance
      */
     @Override
-    public Resemblance resemble(CompleteVerb otherVerb) {  // TODO: implement fully
+    public Resemblance resemble(Verb otherVerb) {  // TODO: implement fully
         if (getName().equals(otherVerb.getName())) {
             return Resemblance.FULL;
         }

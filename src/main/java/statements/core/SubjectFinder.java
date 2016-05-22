@@ -20,11 +20,11 @@ public class SubjectFinder {
      * @param graph the dependency graph of a sentence
      * @return subjects
      */
-    public static Set<CompleteSubject> find(SemanticGraph graph) {
+    public static Set<Subject> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> simpleSubjects = new HashSet<>();
         Map<IndexedWord, Set<IndexedWord>> subjectMapping = new HashMap<>();
-        Set<CompleteSubject> subjects = new HashSet<>();
+        Set<Subject> subjects = new HashSet<>();
 
         // find simple subjects from relations
         for (TypedDependency dependency : dependencies) {
@@ -47,7 +47,7 @@ public class SubjectFinder {
 
         // build complete subjects from mapping
         for (IndexedWord primarySubject : subjectMapping.keySet()) {
-            subjects.add(new CompleteSubject(primarySubject, subjectMapping.get(primarySubject), graph));
+            subjects.add(new Subject(primarySubject, subjectMapping.get(primarySubject), graph));
         }
 
         return subjects;

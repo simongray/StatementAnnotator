@@ -24,13 +24,13 @@ public class ObjectFinder {
      * @param graph the dependency graph of a sentence
      * @return subjects
      */
-    public static Set<CompleteSubject> find(SemanticGraph graph) {
+    public static Set<Subject> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> directObjects = new HashSet<>();
         Set<IndexedWord> copulaObjects = new HashSet<>();
         Set<IndexedWord> indirectObjects = new HashSet<>();
         Map<IndexedWord, Set<IndexedWord>> subjectMapping = new HashMap<>();
-        Set<CompleteSubject> objects = new HashSet<>();
+        Set<Subject> objects = new HashSet<>();
 
         // find simple objects from relations
         for (TypedDependency dependency : dependencies) {
@@ -47,7 +47,7 @@ public class ObjectFinder {
             }
         }
 
-       // TODO: figure out how or whether to merge objects
+        // TODO: split into direct and indirect object finders
 
         return objects;
     }

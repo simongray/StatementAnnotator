@@ -12,21 +12,23 @@ import java.util.Set;
  *
  */
 public abstract class Statement implements Resembling<Statement> {
-    private CompleteSubject subject;
-    private CompleteVerb verb;
-    private CompleteObject object;
+    private Subject subject;
+    private Verb verb;
+    private DirectObject directObject;
+    private IndirectObject indirectObject;
 
-    public Statement(CompleteSubject subject, CompleteVerb verb, CompleteObject object) {
+    public Statement(Subject subject, Verb verb, DirectObject directObject, IndirectObject indirectObject) {
         this.subject = subject;
         this.verb = verb;
-        this.object = object;
+        this.directObject = directObject;
+        this.indirectObject = indirectObject;
     }
 
     /**
      * The subject of the statement.
      * @return subject
      */
-    public CompleteSubject getSubject() {
+    public Subject getSubject() {
         return subject;
     }
 
@@ -34,16 +36,24 @@ public abstract class Statement implements Resembling<Statement> {
      * The verb of the statement.
      * @return verb
      */
-    public CompleteVerb getVerb() {
+    public Verb getVerb() {
         return verb;
     }
 
     /**
-     * The object of the statement.
-     * @return object
+     * The direct object of the statement.
+     * @return direct object
      */
-    public CompleteObject getObject() {
-        return object;
+    public DirectObject getDirectObject() {
+        return directObject;
+    }
+
+    /**
+     * The indirect object of the statement.
+     * @return indirect object
+     */
+    public IndirectObject getIndirectObject() {
+        return indirectObject;
     }
 
     /**
@@ -53,36 +63,12 @@ public abstract class Statement implements Resembling<Statement> {
      */
     @Override
     public Resemblance resemble(Statement otherStatement) {
-        CompleteSubject otherSubject = otherStatement.getSubject();
-        CompleteVerb otherVerb = otherStatement.getVerb();
-        CompleteObject otherObject = otherStatement.getObject();
-
-        // for S+V+O
-        if (subject != null && verb != null && object != null) {
-            return StatementUtils.reduce(
-                    subject.resemble(otherSubject),
-                    verb.resemble(otherVerb),
-                    object.resemble(otherObject)
-            );
-        }
-
-        // for S+V
-        if (subject != null && verb != null) {
-            return StatementUtils.reduce(
-                    subject.resemble(otherSubject),
-                    verb.resemble(otherVerb)
-            );
-        }
-
-        // for V+O
-        if (verb != null && object != null) {
-            return StatementUtils.reduce(
-                    verb.resemble(otherVerb),
-                    object.resemble(otherObject)
-            );
-        }
-
-        return Resemblance.NONE;
+        return StatementUtils.reduce(
+                subject.resemble(otherStatement.getSubject()),
+                verb.resemble(otherStatement.getVerb()),
+                directObject.resemble(otherStatement.getDirectObject()),
+                indirectObject.resemble(otherStatement.getIndirectObject())
+        );
     }
 
     @Override
@@ -99,8 +85,14 @@ public abstract class Statement implements Resembling<Statement> {
             statement.addAll(verb.getCompound());
         }
 
-        if (object != null) {
-            for (Set<IndexedWord> compound : object.getCompounds()) {
+        if (directObject != null) {
+            for (Set<IndexedWord> compound : directObject.getCompounds()) {
+                statement.addAll(compound);
+            }
+        }
+
+        if (indirectObject != null) {
+            for (Set<IndexedWord> compound : indirectObject.getCompounds()) {
                 statement.addAll(compound);
             }
         }

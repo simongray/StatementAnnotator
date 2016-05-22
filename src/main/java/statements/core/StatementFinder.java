@@ -35,22 +35,22 @@ public  class StatementFinder {
          List<Statement> statements = new ArrayList<>();
          SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
 
-         Set<CompleteSubject> subjects = SubjectFinder.find(graph);
+         Set<Subject> subjects = SubjectFinder.find(graph);
          logger.info(subjects.toString());
-         for (CompleteSubject subject : subjects) {
+         for (Subject subject : subjects) {
              logger.info("components: " + subject.getCompoundStrings());
              logger.info("complete name: " + subject.getName());
          }
 
-//         for (CompleteSubject subject : subjects) {
+//         for (Subject subject : subjects) {
 //             System.out.println();
 //             System.out.println(subject + " compares to other subjects in sentence in this way: ");
-//             for (CompleteSubject otherSubject : subjects) {
+//             for (Subject otherSubject : subjects) {
 //                 System.out.println(subject.resemble(otherSubject) + ": " + otherSubject);
 //             }
 //         }
 
-         Set<CompleteVerb> verbs = VerbFinder.find(graph);
+         Set<Verb> verbs = VerbFinder.find(graph);
          logger.info("verbs: " + verbs.toString());
 
          // TODO: basic algorithm
@@ -80,7 +80,7 @@ public  class StatementFinder {
      * @param objects objects found in the sentence
      * @return statements
      */
-    private static List<Statement> link(Set<CompleteSubject> subjects, Set<CompleteVerb> verbs, Set<CompleteObject> objects) {
+    private static List<Statement> link(Set<Subject> subjects, Set<Verb> verbs, Set<IndirectObject> objects) {
         return null;  // TODO: implement
     }
 
