@@ -66,7 +66,7 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
 
     /**
      * The simple subjects contained in the complete subject.
-     * @return
+     * @return simple subjects
      */
     public Set<IndexedWord> getSimpleSubjects() {
         Set<IndexedWord> simpleSubjects = new HashSet<>(secondarySubjects);
@@ -76,12 +76,16 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
 
     /**
      * The compound subjects contained in the complete subject.
-     * @return
+     * @return compound subject components
      */
     public Set<Set<IndexedWord>> getCompoundSubjects() {
         return new HashSet<>(compoundSubjects);
     }
 
+    /**
+     * The names of all of the compound subjects.
+     * @return compound subject names
+     */
     public Set<String> getCompoundSubjectNames() {
         Set<String> compoundSubjectNames = new HashSet<>();
         for (Set<IndexedWord> compoundSubject : compoundSubjects) {
@@ -94,7 +98,7 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
      * Recursively finds the components of a compound subject.
      * @param simpleSubject the simple subject that serves as an entry point
      * @param graph the graph of the sentence
-     * @return
+     * @return compound components
      */
     private Set<IndexedWord> findCompoundComponents(IndexedWord simpleSubject, SemanticGraph graph) {
         return StatementUtils.findCompoundComponents(simpleSubject, graph, IGNORED_RELATIONS);
@@ -102,7 +106,7 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
 
     /**
      * The amount of individual subjects contained within the complete subject.
-     * @return
+     * @return subjects count
      */
     public int size() {
         return secondarySubjects.size() + 1;
@@ -115,7 +119,27 @@ public class CompleteSubject implements Resembling<CompleteSubject> {
      */
     @Override
     public Resemblance resemble(CompleteSubject otherSubject) {
-        return null;  // TODO: implement
+        if (getName().equals(otherSubject.getName())) {
+            return Resemblance.FULL;  // identical complete subject
+        }
+
+        int resemblanceCount = 0;
+        Set<String> otherSubjectCompoundNames = otherSubject.getCompoundSubjectNames();
+        for (String name : getCompoundSubjectNames()) {
+            if (otherSubjectCompoundNames.contains(name)) {
+                resemblanceCount++;
+            }
+        }
+
+        if (resemblanceCount == size()) {
+            return Resemblance.CLOSE;  // identical subject compounds
+        }
+
+        if (resemblanceCount > 0) {
+            return Resemblance.SLIGHT;  // at least 1 identical subject compound
+        }
+
+        return Resemblance.NONE;
     }
 
     @Override
