@@ -60,6 +60,7 @@ public  class StatementFinder {
                 2. TODO: The graph is analysed for subjects and these are used to create statements.
                    there is link-up method at the end that produces the actual subjects from the components,
                    i.e. it gets the list of subjects, verbs, and objects and spits out statements
+                   // TODO: figure out how to deal with stuff like "she's not pretty"
                 3. TODO: If no subjects can be found, the statement is assumed to be self-referencing
                    and the verb phrase is analysed instead (e.g. "hate cycling!").
 
