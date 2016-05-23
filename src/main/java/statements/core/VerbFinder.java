@@ -23,6 +23,7 @@ public class VerbFinder {
         RELATIONS.add(XCOMP_RELATION);
     }
     private static final String COP_RELATION = "cop";  // copula, ex: in "they're pretty" the "'re" would be copula
+    private static final String CONJ_RELATION = "conj";  // conjunctions
 
     /**
      * The verbs that are found in a sentence.
@@ -48,10 +49,13 @@ public class VerbFinder {
         // remove adjectives from candidate verbs
         simpleVerbs.removeAll(adjectives);
 
-        // disregard verbs that are dependents (act as objects) to the other verb
+        // disregard verbs that are dependents (act as objects) to the other verb (unless part of a conjunction)
         for (IndexedWord simpleVerb : simpleVerbs) {
             IndexedWord parent = graph.getParent(simpleVerb);
+
             if (!simpleVerbs.contains(parent)) {
+                verbs.add(new Verb(simpleVerb, graph));
+            } else if (graph.reln(parent, simpleVerb).getShortName().equals(CONJ_RELATION)) {
                 verbs.add(new Verb(simpleVerb, graph));
             }
         }

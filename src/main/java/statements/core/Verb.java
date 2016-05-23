@@ -19,6 +19,8 @@ public class Verb implements Resembling<Verb> {
         IGNORED_RELATIONS.add("dobj");  // "<verb>s <verb>ing"
         IGNORED_RELATIONS.add("nmod");  // "<verb> to/from/etc. <object>"
         IGNORED_RELATIONS.add("xcomp");  // "<verb>s to <verb>"
+        IGNORED_RELATIONS.add("cc");  // "and", "or", etc.
+        IGNORED_RELATIONS.add("conj");  // connections to other verbs
     }
     private final IndexedWord verb;
     private final Set<IndexedWord> compound;
