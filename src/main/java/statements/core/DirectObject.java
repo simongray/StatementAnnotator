@@ -67,6 +67,14 @@ public class DirectObject implements Resembling<DirectObject> {
     }
 
     /**
+     * Whether this direct object has a copula.
+     * @return true if has
+     */
+    public boolean hasCopula() {
+        return copula;
+    }
+
+    /**
      * The resemblance of another direct object to this direct object.
      * @param otherObject direct object to be compared with
      * @return resemblance
