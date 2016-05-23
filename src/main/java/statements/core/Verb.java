@@ -16,6 +16,7 @@ public class Verb implements StatementComponent, Resembling<Verb> {
     private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
     static {
         IGNORED_RELATIONS.add("nsubj");
+        IGNORED_RELATIONS.add("nsubjpass");
         IGNORED_RELATIONS.add("dobj");  // "<verb>s <verb>ing"
         IGNORED_RELATIONS.add("nmod");  // "<verb> to/from/etc. <object>"
         IGNORED_RELATIONS.add("xcomp");  // "<verb>s to <verb>"
