@@ -101,16 +101,6 @@ public class StatementUtils {
     }
 
     /**
-     * Finds out the negation status of a word.
-     * @param word the verb to examine
-     * @param graph the graph of the sentence
-     * @return true if negated
-     */
-    public static boolean isNegated(IndexedWord word, SemanticGraph graph) {
-        return isNegated(findSpecificDescendants("neg", word, graph));
-    }
-
-    /**
      * Reduce a variable amount of Resemblance objects to the lowest common denominator.
      * @param resemblances range of Resemblance to reduce
      * @return common denominator
