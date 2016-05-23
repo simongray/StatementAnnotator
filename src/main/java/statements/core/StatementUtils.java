@@ -3,6 +3,8 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.trees.GrammaticalRelation;
+import edu.stanford.nlp.util.CoreMap;
+import statements.annotations.StatementsAnnotation;
 
 import java.util.*;
 
@@ -151,6 +153,32 @@ public class StatementUtils {
      */
     public static Set<String> getSearchKeywords(Set<Statement> statements) {
         return null;  // TODO: implement, apply some filter like stopwords to total words and return words that survive
+    }
+
+    /**
+     * Print statements of a sentence in a pretty way.
+     * @param sentence sentence annotated with statements.
+     */
+    public static void printStatements(CoreMap sentence) {
+        List<Statement> statements = sentence.get(StatementsAnnotation.class);
+        System.out.println(sentence);
+
+        if (statements != null) {
+            for (int i = 0; i < statements.size(); i++) {
+                Statement statement = statements.get(i);
+                System.out.println("  |_ statement: " + statement);
+
+                for (StatementComponent component : statement.getComponents()) {
+                    if (i < statements.size() - 1) {
+                        System.out.println("  |  |_ component: " + component);
+                    } else {
+                        System.out.println("     |_ component: " + component);
+                    }
+                }
+            }
+        } else {
+            System.out.println("  |_ NO STATEMENTS");
+        }
     }
 
     /**

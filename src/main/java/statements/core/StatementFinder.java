@@ -23,8 +23,6 @@ public  class StatementFinder {
      * @return statements
      */
     public static List<Statement> find(CoreMap sentence) {
-        logger.info("finding statements in sentence: " + sentence);
-
         // saves resources
         if (!isProper(sentence)) {
             logger.info("sentence was not proper, no statements found");

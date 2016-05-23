@@ -9,6 +9,7 @@ import edu.stanford.nlp.util.CoreMap;
 import statements.annotations.StatementsAnnotation;
 import statements.core.Statement;
 import statements.core.StatementComponent;
+import statements.core.StatementUtils;
 
 import java.util.List;
 import java.util.Properties;
@@ -51,25 +52,8 @@ public class TestStatements {
         List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
 
         for (CoreMap sentence : sentences) {
-            List<Statement> statements = sentence.get(StatementsAnnotation.class);
-            System.out.println(sentence);
-
-            if (statements != null) {
-                for (int i = 0; i < statements.size(); i++) {
-                    Statement statement = statements.get(i);
-                    System.out.println("  |_ statement: " + statement);
-
-                    for (StatementComponent component : statement.getComponents()) {
-                        if (i < statements.size() - 1) {
-                            System.out.println("  |  |_ component: " + component);
-                        } else {
-                            System.out.println("     |_ component: " + component);
-                        }
-                    }
-                }
-            } else {
-                System.out.println("  NONE");
-            }
+            StatementUtils.printStatements(sentence);
+            System.out.println();
         }
     }
 }
