@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Finds subjects in sentences.
+ * Finds direct objects in sentences.
  */
 public class DirectObjectFinder {
     private static final Logger logger = LoggerFactory.getLogger(DirectObjectFinder.class);

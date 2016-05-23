@@ -9,16 +9,16 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Finds subjects in sentences.
+ * Finds indirect objects in sentences.
  */
 public class IndirectObjectFinder {
     private static final Logger logger = LoggerFactory.getLogger(IndirectObjectFinder.class);
     private static final String NMOD_RELATION = "nmod";
 
     /**
-     * The subjects that are found in a sentence.
+     * The indirect objects that are found in a sentence.
      * @param graph the dependency graph of a sentence
-     * @return subjects
+     * @return indirect objects
      */
     public static Set<IndirectObject> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();

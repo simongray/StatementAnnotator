@@ -27,6 +27,7 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
     private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
     static {
         IGNORED_RELATIONS.add("nsubj");
+        IGNORED_RELATIONS.add("nmod");
     }
     private static final Set<String> IGNORED_CHILD_RELATIONS = new HashSet<>();
     static {
