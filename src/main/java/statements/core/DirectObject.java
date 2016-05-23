@@ -27,7 +27,6 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
     private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
     static {
         IGNORED_RELATIONS.add("nsubj");
-        IGNORED_RELATIONS.add("cop");
     }
     private static final Set<String> IGNORED_CHILD_RELATIONS = new HashSet<>();
     static {
@@ -41,8 +40,8 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
     private Set<IndexedWord> secondary;
     private Type type;
     private final Set<IndexedWord> complete;
-    private final Map<IndexedWord, Set<IndexedWord>> negations = new HashMap<>();  // only applicable to copula objects
-    private final Map<IndexedWord, Set<IndexedWord>> copulas = new HashMap<>();  // only applicable to copula objects
+    private final Map<IndexedWord, Set<IndexedWord>> negationMap = new HashMap<>();
+    private final Map<IndexedWord, Set<IndexedWord>> copulaMap = new HashMap<>();  // only applicable to copula objects
     private final Set<Set<IndexedWord>> compounds;
 
     public DirectObject(IndexedWord primary, Set<IndexedWord> secondary, Type type, SemanticGraph graph) {
@@ -52,16 +51,16 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
         this.complete = StatementUtils.findCompoundComponents(primary, graph, IGNORED_RELATIONS);
 
         // find negations (relevant for COP (adjectives) and XCOMP (verb) types)
-        negations.put(primary, StatementUtils.findSpecificDescendants(NEG_RELATION, primary, graph));
+        negationMap.put(primary, StatementUtils.findSpecificDescendants(NEG_RELATION, primary, graph));
         for (IndexedWord object : secondary) {
-            negations.put(object, StatementUtils.findSpecificDescendants(NEG_RELATION, object, graph));
+            negationMap.put(object, StatementUtils.findSpecificDescendants(NEG_RELATION, object, graph));
         }
 
-        // find negations and copulas for copula objects
+        // find copulas (only relevant for COP)
         if (type == Type.COP) {
-            copulas.put(primary, StatementUtils.findSpecificDescendants(COP_RELATION, primary, graph));
+            copulaMap.put(primary, StatementUtils.findSpecificDescendants(COP_RELATION, primary, graph));
             for (IndexedWord object : secondary) {
-                copulas.put(object, StatementUtils.findSpecificDescendants(COP_RELATION, object, graph));
+                copulaMap.put(object, StatementUtils.findSpecificDescendants(COP_RELATION, object, graph));
             }
         }
 
@@ -78,7 +77,18 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
      * @return the longest name possible
      */
     public String getName() {
-        return StatementUtils.join(complete);
+        return StatementUtils.join(withoutCopula(complete));
+    }
+
+    /**
+     * Remove copulas from a set of words.
+     * @param words words
+     * @return words without copulas
+     */
+    private Set<IndexedWord> withoutCopula(Set<IndexedWord> words) {
+        Set<IndexedWord> newWords = new HashSet<>(words);
+        newWords.removeIf(indexedWord -> getCopulas().contains(indexedWord));
+        return newWords;
     }
 
     /**
@@ -123,7 +133,7 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
      * @return negations
      */
     public Set<IndexedWord> getNegations(IndexedWord object) {
-        return new HashSet<>(negations.get(object));
+        return new HashSet<>(negationMap.get(object));
     }
 
     /**
@@ -132,7 +142,7 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
      * @return true if negated
      */
     public boolean isNegated(IndexedWord object) {
-        return StatementUtils.isNegated(negations.get(object));
+        return StatementUtils.isNegated(negationMap.get(object));
     }
 
 
@@ -142,7 +152,19 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
      * @return copulas
      */
     public Set<IndexedWord> getCopulas(IndexedWord object) {
-        return new HashSet<>(copulas.get(object));
+        return new HashSet<>(copulaMap.get(object));
+    }
+
+    /**
+     * Copulas for all contained objects.
+     * @return copulas
+     */
+    public Set<IndexedWord> getCopulas() {
+        Set<IndexedWord> copulas = new HashSet<>();
+        for (Set<IndexedWord> copulaSet : copulaMap.values()) {
+            copulas.addAll(copulaSet);
+        }
+        return copulas;
     }
 
     /**
