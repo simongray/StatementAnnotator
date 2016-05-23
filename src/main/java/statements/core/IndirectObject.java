@@ -1,19 +1,33 @@
 package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
+import edu.stanford.nlp.semgraph.SemanticGraph;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * The complete indirect object of a natural language statement.
  */
 public class IndirectObject implements Resembling<IndirectObject> {
-    private IndexedWord indirectObject;
-    private boolean copula;
+    private final IndexedWord primary;
+    private final Set<IndexedWord> secondary;
+    private final Set<IndexedWord> complete;
+    private final boolean copula;
+    private final Set<Set<IndexedWord>> compounds;
 
-    public IndirectObject(IndexedWord indirectObject, boolean copula) {
-        this.indirectObject = indirectObject;
+    public IndirectObject(IndexedWord primary, Set<IndexedWord> secondary, boolean copula, SemanticGraph graph) {
+        this.primary = primary;
+        this.secondary = secondary;
         this.copula = copula;
+        this.complete = graph.descendants(primary);
+
+        // recursively discover all compound objects
+        compounds = new HashSet<>();
+        compounds.add(StatementUtils.findCompoundComponents(primary, graph, null));
+        for (IndexedWord object : secondary) {
+            compounds.add(StatementUtils.findCompoundComponents(object, graph, null));
+        }
     }
 
     /**
@@ -21,7 +35,15 @@ public class IndirectObject implements Resembling<IndirectObject> {
      * @return the longest name possible
      */
     public String getName() {
-        return indirectObject.word();  // TODO: implement full version
+        return StatementUtils.join(complete);
+    }
+
+    /**
+     * The primary single indirect object contained within the complete indirect object.
+     * @return primary object
+     */
+    public IndexedWord getPrimary() {
+        return primary;
     }
 
     /**
@@ -34,12 +56,38 @@ public class IndirectObject implements Resembling<IndirectObject> {
     }
 
     /**
+     * The strings of all of the compound indirect objects.
+     * @return compound indirect object strings
+     */
+    public Set<String> getCompoundStrings() {
+        Set<String> compoundObjectStrings = new HashSet<>();
+        for (Set<IndexedWord> compound : compounds) {
+            compoundObjectStrings.add(StatementUtils.join(compound));
+        }
+        return compoundObjectStrings;
+    }
+
+    /**
      * The resemblance of another indirect object to this indirect object.
      * @param otherObject object to be compared with
      * @return resemblance
      */
     @Override
-    public Resemblance resemble(IndirectObject otherIndirectObject) {
+    public Resemblance resemble(IndirectObject otherObject) {
         return null;  // TODO
+    }
+
+    /**
+     * The amount of individual objects contained within the complete indirect object.
+     * @return objects count
+     */
+    public int size() {
+        return secondary.size() + 1;
+    }
+
+
+    @Override
+    public String toString() {
+        return getName() + " (" + size() + ")";
     }
 }
