@@ -51,8 +51,7 @@ public class IndirectObject implements Resembling<IndirectObject> {
      * @return compounds
      */
     public Set<Set<IndexedWord>> getCompounds() {
-//        return new HashSet<>(compounds);
-        return null;  // TODO: implement
+        return compounds;
     }
 
     /**

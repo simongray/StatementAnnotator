@@ -22,16 +22,29 @@ public class IndirectObjectFinder {
      */
     public static Set<IndirectObject> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
-        Set<IndexedWord> indirectObjects = new HashSet<>();
-        Set<IndirectObject> objects = new HashSet<>();
+        Set<IndexedWord> nmodObjects = new HashSet<>();
+        Map<IndexedWord, Set<IndexedWord>> nmodObjectMapping = new HashMap<>();
+        Set<IndirectObject> indirectObjects = new HashSet<>();
 
         // find simple objects from relations
         for (TypedDependency dependency : dependencies) {
             if (dependency.reln().getShortName().equals(NMOD_RELATION)) {
-                indirectObjects.add(dependency.dep());
+                nmodObjects.add(dependency.dep());
             }
         }
 
-        return objects;
+        // create indirect object mapping based on relations
+        for (IndexedWord object : nmodObjects) {
+            IndexedWord parent = graph.getParent(object);
+            if (nmodObjects.contains(parent)) {
+                Set<IndexedWord> objects = nmodObjectMapping.getOrDefault(parent, new HashSet<>());
+                objects.add(object);
+                nmodObjectMapping.put(parent, objects);
+            } else {
+                nmodObjectMapping.putIfAbsent(object, new HashSet<>());
+            }
+        }
+
+        return indirectObjects;
     }
 }
