@@ -2,7 +2,9 @@ package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -59,6 +61,20 @@ public class Statement implements Resembling<Statement> {
      */
     public IndirectObject getIndirectObject() {
         return indirectObject;
+    }
+
+    /**
+     * The components making up the statement.
+     * @return components
+     */
+    public List<StatementComponent> getComponents() {
+        List<StatementComponent> components = new ArrayList<>();
+        if (subject != null) components.add(subject);
+        if (verb != null) components.add(verb);
+        if (directObject != null) components.add(directObject);
+        if (indirectObject != null) components.add(indirectObject);
+
+        return components;
     }
 
     /**

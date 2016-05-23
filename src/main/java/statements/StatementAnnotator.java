@@ -10,6 +10,7 @@ import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import statements.annotations.StatementsAnnotation;
 import statements.core.Statement;
 import statements.core.StatementFinder;
 
@@ -38,28 +39,10 @@ public class StatementAnnotator implements Annotator {
         List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
 
         for (CoreMap sentence : sentences) {
-            List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
-            SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
-            Collection<TypedDependency> dependencies = graph.typedDependencies();
-
-            // TODO: remove, for DEBUGGING
-//            graph.prettyPrint();
-//            System.out.println(graph);
-//            logger.info("sentence with deps: " + dependencies);
+            logger.info("checking sentence for statements: " + sentence);
             List<Statement> statements = StatementFinder.find(sentence);
-            System.out.println(statements);
-
-//
-//            // find all dependants in nsubj relations and attach SubjectAnnotations to tokens based on them
-//            for (TypedDependency dependency : dependencies) {
-//                if (dependency.reln().getShortName().equals("nsubj")) {
-//                    IndexedWord dependent = dependency.dep();
-//                    CoreLabel subjectToken = tokens.get(dependent.index() - 1);  // since CoreNLP index starts at 1
-////                    Subject subject = new Subject(dependent, graph);
-////                    subjectToken.set(SubjectAnnotation.class, subject);
-//                    logger.info("set subject to: " + subject);
-//                }
-//            }
+            logger.info("statements found: " + statements);
+            sentence.set(StatementsAnnotation.class, statements);
         }
     }
 

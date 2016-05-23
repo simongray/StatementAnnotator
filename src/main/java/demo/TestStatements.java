@@ -1,8 +1,16 @@
 package demo;
 
 
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.util.CoreMap;
+import statements.annotations.StatementsAnnotation;
+import statements.core.Statement;
+import statements.core.StatementComponent;
+
+import java.util.List;
 import java.util.Properties;
 
 
@@ -33,10 +41,26 @@ public class TestStatements {
 //        "Don't worry too much. Sometimes there's no smog for a whole week, sometime's it lasts for a whole week and you'll just stay mostly indoors and use masks when outside. You'll get used to it.";
 //        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
         String example = "She hates flying and he loves it.";
-        // TODO: deal with sentence "She's had it with with"
+        // TODO: deal with sentence "She's had it with"
 
         Annotation annotation = new Annotation(example);
-
         pipeline.annotate(annotation);
+        List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
+
+        for (CoreMap sentence : sentences) {
+            List<Statement> statements = sentence.get(StatementsAnnotation.class);
+            System.out.println(sentence);
+
+            if (statements != null) {
+                for (Statement statement : statements) {
+                    System.out.println("  |_ statement: " + statement);
+                    for (StatementComponent component : statement.getComponents()) {
+                        System.out.println("    |_ component: " + component);
+                    }
+                }
+            } else {
+                System.out.println("  NONE");
+            }
+        }
     }
 }
