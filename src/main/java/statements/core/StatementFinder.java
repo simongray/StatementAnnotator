@@ -59,14 +59,10 @@ public  class StatementFinder {
          logger.info("direct objects: " + directObjects);
          logger.info("indirect objects: " + indirectObjects);
 
-         // TODO: basic algorithm
          /*
             Algorithm sketch:
-                1. One-word sentences are discarded since they are not proper sentences, as are sentences without an S.
-                2. TODO: The graph is analysed for subjects and these are used to create statements.
                    there is link-up method at the end that produces the actual subjects from the components,
                    i.e. it gets the list of subjects, verbs, and objects and spits out statements
-                   // TODO: figure out how to deal with stuff like "she's not pretty"
                 3. TODO: If no subjects can be found, the statement is assumed to be self-referencing
                    and the verb phrase is analysed instead (e.g. "hate cycling!").
 
@@ -76,7 +72,7 @@ public  class StatementFinder {
                    "Hated cycling" resolves correctly, though, since there is no way to confuse it.
                    Will probably need to hack around that somehow to get the best results.
          */
-         return link(subjects, verbs, null);  // TODO: make not null
+         return link(subjects, verbs, directObjects, indirectObjects, graph);
     }
 
     /**
@@ -86,7 +82,7 @@ public  class StatementFinder {
      * @param objects objects found in the sentence
      * @return statements
      */
-    private static List<Statement> link(Set<Subject> subjects, Set<Verb> verbs, Set<IndirectObject> objects) {
+    private static List<Statement> link(Set<Subject> subjects, Set<Verb> verbs, Set<DirectObject> directObjects, Set<IndirectObject> objects, SemanticGraph graph) {
         return null;  // TODO: implement
     }
 
