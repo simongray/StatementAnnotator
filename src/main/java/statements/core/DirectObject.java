@@ -8,12 +8,20 @@ import java.util.Set;
  * The complete direct object of a natural language statement.
  */
 public class DirectObject implements Resembling<DirectObject> {
+    private IndexedWord directObject;
+    private boolean copula;
+
+    public DirectObject(IndexedWord directObject, boolean copula) {
+        this.directObject = directObject;
+        this.copula = copula;
+    }
+
     /**
      * The name of the complete verb.
      * @return the longest subject possible
      */
     public String getName() {
-        return null;  // TODO: implement full version
+        return directObject.word();  // TODO: implement full version
     }
 
     /**
