@@ -45,6 +45,11 @@ public class IndirectObjectFinder {
             }
         }
 
+        // build complete objects from mapping
+        for (IndexedWord object : nmodObjectMapping.keySet()) {
+            indirectObjects.add(new IndirectObject(object, nmodObjectMapping.get(object), graph));
+        }
+
         return indirectObjects;
     }
 }

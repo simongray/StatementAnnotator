@@ -13,13 +13,11 @@ public class IndirectObject implements Resembling<IndirectObject> {
     private final IndexedWord primary;
     private final Set<IndexedWord> secondary;
     private final Set<IndexedWord> complete;
-    private final boolean copula;
     private final Set<Set<IndexedWord>> compounds;
 
-    public IndirectObject(IndexedWord primary, Set<IndexedWord> secondary, boolean copula, SemanticGraph graph) {
+    public IndirectObject(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         this.primary = primary;
         this.secondary = secondary;
-        this.copula = copula;
         this.complete = graph.descendants(primary);
 
         // recursively discover all compound objects
