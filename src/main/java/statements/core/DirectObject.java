@@ -25,8 +25,8 @@ public class DirectObject implements Resembling<DirectObject> {
         // recursively discover all compound objects
         compounds = new HashSet<>();
         compounds.add(StatementUtils.findCompoundComponents(primary, graph, null));
-        for (IndexedWord subject : secondary) {
-            compounds.add(StatementUtils.findCompoundComponents(subject, graph, null));
+        for (IndexedWord object : secondary) {
+            compounds.add(StatementUtils.findCompoundComponents(object, graph, null));
         }
     }
 
@@ -59,11 +59,11 @@ public class DirectObject implements Resembling<DirectObject> {
      * @return compound direct object strings
      */
     public Set<String> getCompoundStrings() {
-        Set<String> compoundSubjectNames = new HashSet<>();
+        Set<String> compoundObjectStrings = new HashSet<>();
         for (Set<IndexedWord> compound : compounds) {
-            compoundSubjectNames.add(StatementUtils.join(compound));
+            compoundObjectStrings.add(StatementUtils.join(compound));
         }
-        return compoundSubjectNames;
+        return compoundObjectStrings;
     }
 
     /**
@@ -77,7 +77,7 @@ public class DirectObject implements Resembling<DirectObject> {
     }
 
     /**
-     * The amount of individual subjects contained within the complete direct object.
+     * The amount of individual objects contained within the complete direct object.
      * @return objects count
      */
     public int size() {
