@@ -40,7 +40,7 @@ public class DirectObject implements Resembling<DirectObject> {
 
     /**
      * The primary single direct object contained within the complete direct object.
-     * @return primary objct
+     * @return primary object
      */
     public IndexedWord getPrimary() {
         return primary;
