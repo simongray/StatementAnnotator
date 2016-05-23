@@ -14,6 +14,14 @@ public abstract class Statement implements Resembling<Statement> {
     private DirectObject directObject;
     private IndirectObject indirectObject;
 
+    /**
+     * Initialised by setting statement components as parameters. Params can be left null if the component type is N/A.
+     * Initialisation should not be performed manually, but by using StatementFinder to build Statement objects.
+     * @param subject subject
+     * @param verb verb
+     * @param directObject direct object
+     * @param indirectObject indirect object
+     */
     public Statement(Subject subject, Verb verb, DirectObject directObject, IndirectObject indirectObject) {
         this.subject = subject;
         this.verb = verb;
