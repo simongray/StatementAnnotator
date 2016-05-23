@@ -41,8 +41,10 @@ public class StatementAnnotator implements Annotator {
         for (CoreMap sentence : sentences) {
             logger.info("checking sentence for statements: " + sentence);
             List<Statement> statements = StatementFinder.find(sentence);
-            logger.info("statements found: " + statements);
-            sentence.set(StatementsAnnotation.class, statements);
+            if (statements != null && statements.size() > 0) {
+                logger.info("statements found: " + statements);
+                sentence.set(StatementsAnnotation.class, statements);
+            }
         }
     }
 
