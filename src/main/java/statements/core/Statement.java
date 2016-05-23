@@ -75,8 +75,11 @@ public abstract class Statement implements Resembling<Statement> {
         );
     }
 
-    @Override
-    public String toString() {
+    /**
+     * Every word of the statement.
+     * @return words
+     */
+    public Set<IndexedWord> getFullStatement() {
         Set<IndexedWord> statement = new HashSet<>();
 
         if (subject != null) {
@@ -101,6 +104,20 @@ public abstract class Statement implements Resembling<Statement> {
             }
         }
 
-        return StatementUtils.join(statement);
+        return statement;
+    }
+
+    /**
+     * The size of the statement (number of tokens).
+     * Useful for sorting statements.
+     * @return size
+     */
+    public int size() {
+        return getFullStatement().size();
+    }
+
+    @Override
+    public String toString() {
+        return StatementUtils.join(getFullStatement());
     }
 }
