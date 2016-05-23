@@ -24,31 +24,57 @@ public class DirectObjectFinder {
      */
     public static Set<DirectObject> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
-        Set<IndexedWord> directObjects = new HashSet<>();
-        Set<IndexedWord> copulaObjects = new HashSet<>();
-        Map<IndexedWord, Set<IndexedWord>> subjectMapping = new HashMap<>();
-        Set<DirectObject> objects = new HashSet<>();
+        Set<IndexedWord> dobjObjects = new HashSet<>();
+        Set<IndexedWord> copObjects = new HashSet<>();
+        Map<IndexedWord, Set<IndexedWord>> dobjObjectMapping = new HashMap<>();
+        Map<IndexedWord, Set<IndexedWord>> copObjectMapping = new HashMap<>();
+        Set<DirectObject> directObjects = new HashSet<>();
 
         // find simple objects from relations
         for (TypedDependency dependency : dependencies) {
             if (dependency.reln().getShortName().equals(DOBJ_RELATION)) {
-                directObjects.add(dependency.dep());
+                dobjObjects.add(dependency.dep());
             }
             if (dependency.reln().getShortName().equals(NSUBJ_RELATION)) {
                 if (hasCopula(dependency.gov(), graph)) {
-                    copulaObjects.add(dependency.dep());
+                    copObjects.add(dependency.dep());
                 }
             }
         }
 
-        for (IndexedWord directObject : directObjects) {
-            objects.add(new DirectObject(directObject, false));
-        }
-        for (IndexedWord copulaObject : copulaObjects) {
-            objects.add(new DirectObject(copulaObject, true));
+        // create direct object mapping based on relations
+        for (IndexedWord object : dobjObjects) {
+            IndexedWord parent = graph.getParent(object);
+            if (dobjObjects.contains(parent)) {
+                Set<IndexedWord> objects = dobjObjectMapping.getOrDefault(parent, new HashSet<>());
+                objects.add(object);
+                dobjObjectMapping.put(parent, objects);
+            } else {
+                dobjObjectMapping.putIfAbsent(object, new HashSet<>());
+            }
         }
 
-        return objects;
+        // create copula object mapping based on relations
+        for (IndexedWord object : copObjects) {
+            IndexedWord parent = graph.getParent(object);
+            if (copObjects.contains(parent)) {
+                Set<IndexedWord> objects = copObjectMapping.getOrDefault(parent, new HashSet<>());
+                objects.add(object);
+                copObjectMapping.put(parent, objects);
+            } else {
+                copObjectMapping.putIfAbsent(object, new HashSet<>());
+            }
+        }
+
+        // build complete objects from mappings
+        for (IndexedWord object : dobjObjectMapping.keySet()) {
+            directObjects.add(new DirectObject(object, dobjObjectMapping.get(object), false, graph));
+        }
+        for (IndexedWord object : copObjectMapping.keySet()) {
+            directObjects.add(new DirectObject(object, copObjectMapping.get(object), true, graph));
+        }
+
+        return directObjects;
     }
 
     /**

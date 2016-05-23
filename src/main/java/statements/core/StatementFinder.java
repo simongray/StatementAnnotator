@@ -53,6 +53,12 @@ public  class StatementFinder {
          Set<Verb> verbs = VerbFinder.find(graph);
          logger.info("verbs: " + verbs.toString());
 
+         Set<DirectObject> directObjects = DirectObjectFinder.find(graph);
+         Set<IndirectObject> indirectObjects = IndirectObjectFinder.find(graph);
+
+         logger.info("direct objects: " + directObjects);
+         logger.info("indirect objects: " + indirectObjects);
+
          // TODO: basic algorithm
          /*
             Algorithm sketch:
