@@ -85,6 +85,6 @@ public class IndirectObject implements StatementComponent, Resembling<IndirectOb
 
     @Override
     public String toString() {
-        return getName() + " (" + size() + ")";
+        return "IO: " + getName() + " (" + size() + ")";
     }
 }

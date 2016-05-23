@@ -127,6 +127,6 @@ public class Subject implements StatementComponent, Resembling<Subject> {
 
     @Override
     public String toString() {
-        return getName() + " (" + size() + ")";
+        return "S: " + getName() + " (" + size() + ")";
     }
 }

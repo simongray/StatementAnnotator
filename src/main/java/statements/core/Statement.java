@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * A statement found in a natural language sentence.
  */
-public abstract class Statement implements Resembling<Statement> {
+public class Statement implements Resembling<Statement> {
     private Subject subject;
     private Verb verb;
     private DirectObject directObject;
@@ -87,7 +87,7 @@ public abstract class Statement implements Resembling<Statement> {
      * Every word of the statement.
      * @return words
      */
-    public Set<IndexedWord> getFullStatement() {
+    public Set<IndexedWord> getFull() {
         Set<IndexedWord> statement = new HashSet<>();
 
         if (subject != null) {
@@ -121,11 +121,11 @@ public abstract class Statement implements Resembling<Statement> {
      * @return size
      */
     public int size() {
-        return getFullStatement().size();
+        return getFull().size();
     }
 
     @Override
     public String toString() {
-        return StatementUtils.join(getFullStatement());
+        return StatementUtils.join(getFull());
     }
 }

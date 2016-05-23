@@ -10,6 +10,7 @@ import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import statements.core.Statement;
 import statements.core.StatementFinder;
 
 import java.util.*;
@@ -45,7 +46,8 @@ public class StatementAnnotator implements Annotator {
 //            graph.prettyPrint();
 //            System.out.println(graph);
 //            logger.info("sentence with deps: " + dependencies);
-            StatementFinder.find(sentence);
+            List<Statement> statements = StatementFinder.find(sentence);
+            System.out.println(statements);
 
 //
 //            // find all dependants in nsubj relations and attach SubjectAnnotations to tokens based on them
