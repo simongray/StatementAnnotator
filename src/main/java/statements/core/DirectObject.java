@@ -3,16 +3,36 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
  * The complete direct object of a natural language statement.
  */
 public class DirectObject implements Resembling<DirectObject> {
+    /**
+     * Describes which relations are ignored when producing compound subjects.
+     */
+    private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
+    static {
+        IGNORED_RELATIONS.add("nsubj");
+        IGNORED_RELATIONS.add("cop");
+    }
+    private static final Set<String> IGNORED_CHILD_RELATIONS = new HashSet<>();
+    static {
+        IGNORED_CHILD_RELATIONS.addAll(IGNORED_RELATIONS);
+        IGNORED_RELATIONS.add("conj");
+        IGNORED_RELATIONS.add("cc");
+    }
+    private static final String NEG_RELATION = "neg";
+    private static final String COP_RELATION = "cop";
     private final IndexedWord primary;
     private Set<IndexedWord> secondary;
     private final Set<IndexedWord> complete;
+    private final Map<IndexedWord, Set<IndexedWord>> negations = new HashMap<>();  // only applicable to copula objects
+    private final Map<IndexedWord, Set<IndexedWord>> copulas = new HashMap<>();  // only applicable to copula objects
     private final boolean copula;
     private final Set<Set<IndexedWord>> compounds;
 
@@ -20,13 +40,25 @@ public class DirectObject implements Resembling<DirectObject> {
         this.primary = primary;
         this.secondary = secondary;
         this.copula = copula;
-        this.complete = graph.descendants(primary);
+        this.complete = StatementUtils.findCompoundComponents(primary, graph, IGNORED_RELATIONS);
+
+        // find negations and copulas for copula objects
+        if (copula) {
+            negations.put(primary, StatementUtils.findSpecificDescendants(NEG_RELATION, primary, graph));
+            for (IndexedWord object : secondary) {
+                negations.put(object, StatementUtils.findSpecificDescendants(NEG_RELATION, object, graph));
+            }
+            copulas.put(primary, StatementUtils.findSpecificDescendants(COP_RELATION, primary, graph));
+            for (IndexedWord object : secondary) {
+                copulas.put(object, StatementUtils.findSpecificDescendants(COP_RELATION, object, graph));
+            }
+        }
 
         // recursively discover all compound objects
         compounds = new HashSet<>();
-        compounds.add(StatementUtils.findCompoundComponents(primary, graph, null));
+        compounds.add(StatementUtils.findCompoundComponents(primary, graph, IGNORED_CHILD_RELATIONS));
         for (IndexedWord object : secondary) {
-            compounds.add(StatementUtils.findCompoundComponents(object, graph, null));
+            compounds.add(StatementUtils.findCompoundComponents(object, graph, IGNORED_CHILD_RELATIONS));
         }
     }
 
@@ -72,6 +104,34 @@ public class DirectObject implements Resembling<DirectObject> {
      */
     public boolean hasCopula() {
         return copula;
+    }
+
+    /**
+     * The negations for a specific contained object.
+     * @param object simple direct object
+     * @return negations
+     */
+    public Set<IndexedWord> getNegations(IndexedWord object) {
+        return new HashSet<>(negations.get(object));
+    }
+
+    /**
+     * Whether a certain contained object is negated.
+     * @param object simple direct object
+     * @return true if negated
+     */
+    public boolean isNegated(IndexedWord object) {
+        return StatementUtils.isNegated(negations.get(object));
+    }
+
+
+    /**
+     * The copula(s) for a specific contained object.
+     * @param object simple direct object
+     * @return copulas
+     */
+    public Set<IndexedWord> getCopulas(IndexedWord object) {
+        return new HashSet<>(copulas.get(object));
     }
 
     /**

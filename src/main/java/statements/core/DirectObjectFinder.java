@@ -37,7 +37,7 @@ public class DirectObjectFinder {
             }
             if (dependency.reln().getShortName().equals(NSUBJ_RELATION)) {
                 if (hasCopula(dependency.gov(), graph)) {
-                    copObjects.add(dependency.dep());
+                    copObjects.add(dependency.gov());
                 }
             }
         }

@@ -27,8 +27,15 @@ public class StatementUtils {
             boolean shortened = isShortened(word);
 
             if (!tag.equals(".")) {
-                if (i != 0 && !tag.equals(",")  && !shortened) buffer.append(" ");
-                    buffer.append(indexedWord.word());
+                if (i != 0 && !tag.equals(",")  && !shortened) {
+                    buffer.append(" ");
+                }
+
+                if (i == 0 && word.equals("n't")) {
+                    buffer.append("not");  // special rule
+                } else {
+                    buffer.append(word);  // default
+                }
             }
         }
 
@@ -46,7 +53,7 @@ public class StatementUtils {
 
     /**
      * Recursively finds the components of a compound (ex: subject, object, etc.).
-     * @param parent the simple subject that serves as an entry point
+     * @param parent the word that serves as an entry point
      * @param graph the graph of the sentence
      * @param ignoredRelations relation types that shouldn't be followed or included
      * @return compound components
@@ -67,22 +74,40 @@ public class StatementUtils {
     }
 
     /**
-     * Finds out the negation status of a verb.
-     * @param simpleVerb the verb to examine
+     * Recursively finds specific descendants of a word.
+     * @param word the word that serves as an entry point
      * @param graph the graph of the sentence
-     * @return true if negated
+     * @return specific descendants
      */
-    public static boolean isNegated(IndexedWord simpleVerb, SemanticGraph graph) {
-        Set<IndexedWord> children = graph.getChildren(simpleVerb);
-        int negations = 0;
+    public static Set<IndexedWord> findSpecificDescendants(String relation, IndexedWord word, SemanticGraph graph) {
+        Set<IndexedWord> specificDescendants = new HashSet<>();
 
-        for (IndexedWord child : children) {
-            if (graph.reln(simpleVerb, child).getShortName().equals("neg")) {
-                negations++;
+        for (IndexedWord child : graph.getChildren(word)) {
+            if (graph.reln(word, child).getShortName().equals(relation)) {
+                specificDescendants.add(child);
             }
         }
 
-        return negations % 2 != 0;
+        return specificDescendants;
+    }
+
+    /**
+     * Finds out the negation status based on a set of negations.
+     * @param negations
+     * @return
+     */
+    public static boolean isNegated(Set<IndexedWord> negations) {
+        return negations.size() % 2 != 0;
+    }
+
+    /**
+     * Finds out the negation status of a word.
+     * @param word the verb to examine
+     * @param graph the graph of the sentence
+     * @return true if negated
+     */
+    public static boolean isNegated(IndexedWord word, SemanticGraph graph) {
+        return isNegated(findSpecificDescendants("neg", word, graph));
     }
 
     /**
