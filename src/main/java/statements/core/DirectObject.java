@@ -13,6 +13,15 @@ import java.util.Set;
  */
 public class DirectObject implements StatementComponent, Resembling<DirectObject> {
     /**
+     * Different kinds of direct objects.
+     */
+    public enum Type {
+        DOBJ,
+        XCOMP,
+        COP
+    }
+
+    /**
      * Describes which relations are ignored when producing compound subjects.
      */
     private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
@@ -30,24 +39,26 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
     private static final String COP_RELATION = "cop";
     private final IndexedWord primary;
     private Set<IndexedWord> secondary;
+    private Type type;
     private final Set<IndexedWord> complete;
     private final Map<IndexedWord, Set<IndexedWord>> negations = new HashMap<>();  // only applicable to copula objects
     private final Map<IndexedWord, Set<IndexedWord>> copulas = new HashMap<>();  // only applicable to copula objects
-    private final boolean copula;
     private final Set<Set<IndexedWord>> compounds;
 
-    public DirectObject(IndexedWord primary, Set<IndexedWord> secondary, boolean copula, SemanticGraph graph) {
+    public DirectObject(IndexedWord primary, Set<IndexedWord> secondary, Type type, SemanticGraph graph) {
         this.primary = primary;
         this.secondary = secondary;
-        this.copula = copula;
+        this.type = type;
         this.complete = StatementUtils.findCompoundComponents(primary, graph, IGNORED_RELATIONS);
 
+        // find negations (relevant for COP (adjectives) and XCOMP (verb) types)
+        negations.put(primary, StatementUtils.findSpecificDescendants(NEG_RELATION, primary, graph));
+        for (IndexedWord object : secondary) {
+            negations.put(object, StatementUtils.findSpecificDescendants(NEG_RELATION, object, graph));
+        }
+
         // find negations and copulas for copula objects
-        if (copula) {
-            negations.put(primary, StatementUtils.findSpecificDescendants(NEG_RELATION, primary, graph));
-            for (IndexedWord object : secondary) {
-                negations.put(object, StatementUtils.findSpecificDescendants(NEG_RELATION, object, graph));
-            }
+        if (type == Type.COP) {
             copulas.put(primary, StatementUtils.findSpecificDescendants(COP_RELATION, primary, graph));
             for (IndexedWord object : secondary) {
                 copulas.put(object, StatementUtils.findSpecificDescendants(COP_RELATION, object, graph));
@@ -102,8 +113,8 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
      * Whether this direct object has a copula.
      * @return true if has
      */
-    public boolean hasCopula() {
-        return copula;
+    public Type getType() {
+        return type;
     }
 
     /**

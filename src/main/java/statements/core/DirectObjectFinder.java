@@ -15,6 +15,7 @@ public class DirectObjectFinder {
     private static final Logger logger = LoggerFactory.getLogger(DirectObjectFinder.class);
     private static final String NSUBJ_RELATION = "nsubj";
     private static final String DOBJ_RELATION = "dobj";
+    private static final String XCOMP_RELATION = "xcomp";
     private static final String COP_RELATION = "cop";
 
     /**
@@ -25,8 +26,10 @@ public class DirectObjectFinder {
     public static Set<DirectObject> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> dobjObjects = new HashSet<>();
+        Set<IndexedWord> xcompObjects = new HashSet<>();
         Set<IndexedWord> copObjects = new HashSet<>();
         Map<IndexedWord, Set<IndexedWord>> dobjObjectMapping = new HashMap<>();
+        Map<IndexedWord, Set<IndexedWord>> xcompObjectMapping = new HashMap<>();
         Map<IndexedWord, Set<IndexedWord>> copObjectMapping = new HashMap<>();
         Set<DirectObject> directObjects = new HashSet<>();
 
@@ -34,6 +37,9 @@ public class DirectObjectFinder {
         for (TypedDependency dependency : dependencies) {
             if (dependency.reln().getShortName().equals(DOBJ_RELATION)) {
                 dobjObjects.add(dependency.dep());
+            }
+            if (dependency.reln().getShortName().equals(XCOMP_RELATION)) {
+                xcompObjects.add(dependency.dep());
             }
             if (dependency.reln().getShortName().equals(NSUBJ_RELATION)) {
                 if (hasCopula(dependency.gov(), graph)) {
@@ -54,6 +60,18 @@ public class DirectObjectFinder {
             }
         }
 
+        // create xcomp object mapping based on relations
+        for (IndexedWord object : xcompObjects) {
+            IndexedWord parent = graph.getParent(object);
+            if (xcompObjects.contains(parent)) {
+                Set<IndexedWord> objects = xcompObjectMapping.getOrDefault(parent, new HashSet<>());
+                objects.add(object);
+                xcompObjectMapping.put(parent, objects);
+            } else {
+                xcompObjectMapping.putIfAbsent(object, new HashSet<>());
+            }
+        }
+
         // create copula object mapping based on relations
         for (IndexedWord object : copObjects) {
             IndexedWord parent = graph.getParent(object);
@@ -68,10 +86,13 @@ public class DirectObjectFinder {
 
         // build complete objects from mappings
         for (IndexedWord object : dobjObjectMapping.keySet()) {
-            directObjects.add(new DirectObject(object, dobjObjectMapping.get(object), false, graph));
+            directObjects.add(new DirectObject(object, dobjObjectMapping.get(object), DirectObject.Type.DOBJ, graph));
+        }
+        for (IndexedWord object : xcompObjectMapping.keySet()) {
+            directObjects.add(new DirectObject(object, xcompObjectMapping.get(object), DirectObject.Type.XCOMP, graph));
         }
         for (IndexedWord object : copObjectMapping.keySet()) {
-            directObjects.add(new DirectObject(object, copObjectMapping.get(object), true, graph));
+            directObjects.add(new DirectObject(object, copObjectMapping.get(object), DirectObject.Type.COP, graph));
         }
 
         return directObjects;
