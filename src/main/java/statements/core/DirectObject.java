@@ -17,15 +17,15 @@ public class DirectObject implements Resembling<DirectObject> {
     }
 
     /**
-     * The name of the complete verb.
-     * @return the longest subject possible
+     * The name of the complete indirect object.
+     * @return the longest name possible
      */
     public String getName() {
         return directObject.word();  // TODO: implement full version
     }
 
     /**
-     * The compound objects.
+     * The compound direct objects.
      * @return compounds
      */
     public Set<Set<IndexedWord>> getCompounds() {
@@ -34,12 +34,12 @@ public class DirectObject implements Resembling<DirectObject> {
     }
 
     /**
-     * The resemblance of another object to this object.
-     * @param otherObject object to be compared with
+     * The resemblance of another direct object to this direct object.
+     * @param otherObject direct object to be compared with
      * @return resemblance
      */
     @Override
-    public Resemblance resemble(DirectObject otherObject) {
+    public Resemblance resemble(DirectObject otherDirectObject) {
         return null;  // TODO
     }
 }
