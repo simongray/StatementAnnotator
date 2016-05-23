@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * The complete verb of a natural language statement.
  */
-public class Verb implements Resembling<Verb> {
+public class Verb implements StatementComponent, Resembling<Verb> {
     /**
      * Describes which relations are ignored when producing compound subjects.
      */

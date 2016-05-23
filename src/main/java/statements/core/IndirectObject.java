@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * The complete indirect object of a natural language statement.
  */
-public class IndirectObject implements Resembling<IndirectObject> {
+public class IndirectObject implements StatementComponent, Resembling<IndirectObject> {
     private final IndexedWord primary;
     private final Set<IndexedWord> secondary;
     private final Set<IndexedWord> complete;

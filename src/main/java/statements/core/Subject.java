@@ -18,7 +18,7 @@ import java.util.*;
  *     primary subject = the simple subject that is the primary dependent of the verb
  *     secondary subject = any other simple subjects contained in the complete subject
  */
-public class Subject implements Resembling<Subject> {
+public class Subject implements StatementComponent, Resembling<Subject> {
     /**
      * Describes which relations are ignored when producing compound subjects.
      */

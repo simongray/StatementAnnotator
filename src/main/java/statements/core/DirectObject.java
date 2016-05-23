@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * The complete direct object of a natural language statement.
  */
-public class DirectObject implements Resembling<DirectObject> {
+public class DirectObject implements StatementComponent, Resembling<DirectObject> {
     /**
      * Describes which relations are ignored when producing compound subjects.
      */

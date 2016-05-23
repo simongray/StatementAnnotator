@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -72,17 +73,22 @@ public  class StatementFinder {
                    "Hated cycling" resolves correctly, though, since there is no way to confuse it.
                    Will probably need to hack around that somehow to get the best results.
          */
-         return link(subjects, verbs, directObjects, indirectObjects, graph);
+
+         Set<StatementComponent> components = new HashSet<>();
+         components.addAll(subjects);
+         components.addAll(verbs);
+         components.addAll(directObjects);
+         components.addAll(indirectObjects);
+         return link(graph, components);
     }
 
     /**
      * Produces statements by linking together statement components.
-     * @param subjects subjects found in the sentence
-     * @param verbs verbs found in the sentence
-     * @param objects objects found in the sentence
+     * @param graph the graph of the sentence
+     * @param components the various statement components found in sentence
      * @return statements
      */
-    private static List<Statement> link(Set<Subject> subjects, Set<Verb> verbs, Set<DirectObject> directObjects, Set<IndirectObject> objects, SemanticGraph graph) {
+    private static List<Statement> link(SemanticGraph graph, Set<StatementComponent> components) {
         return null;  // TODO: implement
     }
 
