@@ -23,12 +23,9 @@ public class Verb implements StatementComponent, Resembling<Verb> {
         IGNORED_RELATIONS.add("conj");  // connections to other verbs
     }
     private static final String NEG_RELATION = "neg";
-    private static final String AUX_RELATION = "aux";
     private final IndexedWord verb;
     private final Set<IndexedWord> compound;
     private final Set<IndexedWord> negations;
-    private final Set<IndexedWord> aux;
-    private final boolean negated;
 
     public Verb(IndexedWord verb, SemanticGraph graph) {
         this.verb = verb;
@@ -38,10 +35,6 @@ public class Verb implements StatementComponent, Resembling<Verb> {
 
         // find negations
         this.negations = StatementUtils.findSpecificDescendants(NEG_RELATION, verb, graph);
-        this.negated = StatementUtils.isNegated(negations);
-
-        // find aux words (like in "'s <verb>ing")
-        this.aux = StatementUtils.findSpecificDescendants(AUX_RELATION, verb, graph);
     }
 
     /**
@@ -49,18 +42,7 @@ public class Verb implements StatementComponent, Resembling<Verb> {
      * @return the longest verb possible
      */
     public String getName() {
-        return StatementUtils.join(withoutAux(compound));
-    }
-
-    /**
-     * Remove aux from a set of words.
-     * @param words words
-     * @return words without aux
-     */
-    private Set<IndexedWord> withoutAux(Set<IndexedWord> words) {
-        Set<IndexedWord> newWords = new HashSet<>(words);
-        newWords.removeIf(aux::contains);
-        return newWords;
+        return StatementUtils.join(compound);
     }
 
     /**
@@ -88,11 +70,19 @@ public class Verb implements StatementComponent, Resembling<Verb> {
     }
 
     /**
+     * The negations for the verb.
+     * @return negations
+     */
+    public Set<IndexedWord> getNegations() {
+        return new HashSet<>(negations);
+    }
+
+    /**
      * Whether the verb is negated.
      * @return
      */
     public boolean isNegated() {
-        return negated;
+        return StatementUtils.isNegated(negations);
     }
 
     /**
