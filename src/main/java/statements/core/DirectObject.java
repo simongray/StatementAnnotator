@@ -189,6 +189,6 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
 
     @Override
     public String toString() {
-        return "DO: " + getName() + " (" + size() + ")";
+        return "DO: " + getName() + " (" + getPrimary().word() + ", " + size() + ")";
     }
 }

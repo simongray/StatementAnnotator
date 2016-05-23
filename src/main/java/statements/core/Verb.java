@@ -115,6 +115,6 @@ public class Verb implements StatementComponent, Resembling<Verb> {
 
     @Override
     public String toString() {
-        return "V: " + getName() + " (" + (isNegated()? "!": "") + getLemma() + ")";
+        return "V: " + getName() + " (" + (isNegated()? "not ": "") + getPrimary().word() + ")";
     }
 }
