@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The complete verb of a natural language statement.
+ * The complete primary of a natural language statement.
  */
 public class Verb implements StatementComponent, Resembling<Verb> {
     /**
@@ -17,26 +17,43 @@ public class Verb implements StatementComponent, Resembling<Verb> {
     static {
         IGNORED_RELATIONS.add("nsubj");
         IGNORED_RELATIONS.add("nsubjpass");
-        IGNORED_RELATIONS.add("dobj");  // "<verb>s <verb>ing"
-        IGNORED_RELATIONS.add("nmod");  // "<verb> to/from/etc. <object>"
-        IGNORED_RELATIONS.add("xcomp");  // "<verb>s to <verb>"
-        IGNORED_RELATIONS.add("cc");  // "and", "or", etc.
-        IGNORED_RELATIONS.add("conj");  // connections to other verbs
-        IGNORED_RELATIONS.add("ccomp");  // <verb> that <statement>, e.g. "we have <found> that <it is great>"
+        IGNORED_RELATIONS.add("dobj");  // "<primary>s <primary>ing"
+        IGNORED_RELATIONS.add("nmod");  // "<primary> to/from/etc. <object>"
+        IGNORED_RELATIONS.add("xcomp");  // "<primary>s to <primary>"
+        IGNORED_RELATIONS.add("ccomp");  // <primary> that <statement>, e.g. "we have <found> that <it is great>"
     }
-    private static final String NEG_RELATION = "neg";
-    private final IndexedWord verb;
-    private final Set<IndexedWord> compound;
-    private final Set<IndexedWord> negations;
+    private static final Set<String> IGNORED_COMPOUND_RELATIONS = new HashSet<>();
+    static {
+        IGNORED_COMPOUND_RELATIONS.addAll(IGNORED_RELATIONS);
+        IGNORED_COMPOUND_RELATIONS.add("cc");  // "and", "or", etc.
+        IGNORED_COMPOUND_RELATIONS.add("conj");  // connections to other verbs
+    }
 
-    public Verb(IndexedWord verb, SemanticGraph graph) {
-        this.verb = verb;
+    private static final String NEG_RELATION = "neg";
+    private static final String CC_RELATION = "cc";
+    private final IndexedWord primary;
+    private Set<IndexedWord> secondary;
+    private final Set<IndexedWord> complete;
+    private final Set<Set<IndexedWord>> compounds;
+    private final Set<IndexedWord> negations;
+    private final Set<IndexedWord> conjuctions;
+
+    public Verb(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
+        this.primary = primary;
+        this.secondary = secondary;
+        this.complete = StatementUtils.findCompoundComponents(primary, graph, IGNORED_RELATIONS);
 
         // recursively discover all compound subjects
-        this.compound = StatementUtils.findCompoundComponents(verb, graph, IGNORED_RELATIONS);
+        // recursively discover all compound subjects
+        compounds = new HashSet<>();
+        compounds.add(StatementUtils.findCompoundComponents(primary, graph, IGNORED_COMPOUND_RELATIONS));
+        for (IndexedWord subject : secondary) {
+            compounds.add(StatementUtils.findCompoundComponents(subject, graph, IGNORED_COMPOUND_RELATIONS));
+        }
 
-        // find negations
-        this.negations = StatementUtils.findSpecificDescendants(NEG_RELATION, verb, graph);
+        // find specific words
+        this.negations = StatementUtils.findSpecificDescendants(NEG_RELATION, primary, graph);
+        this.conjuctions = StatementUtils.findSpecificDescendants(CC_RELATION, primary, graph);
     }
 
     /**
@@ -44,7 +61,7 @@ public class Verb implements StatementComponent, Resembling<Verb> {
      * @return the longest verb possible
      */
     public String getName() {
-        return StatementUtils.join(compound);
+        return StatementUtils.join(complete);
     }
 
     /**
@@ -52,23 +69,15 @@ public class Verb implements StatementComponent, Resembling<Verb> {
      * @return the shortest verb possible
      */
     public IndexedWord getPrimary() {
-        return verb;
+        return primary;
     }
 
     /**
      * The verb compound.
      * @return compound
      */
-    public Set<IndexedWord> getCompound() {
-        return new HashSet<>(compound);
-    }
-
-    /**
-     * The lemmatised version of the verb.
-     * @return
-     */
-    public String getLemma() {
-        return verb.lemma();
+    public Set<Set<IndexedWord>> getCompounds() {
+        return new HashSet<>(compounds);
     }
 
     /**
@@ -80,11 +89,27 @@ public class Verb implements StatementComponent, Resembling<Verb> {
     }
 
     /**
+     * The conjunctions for the verb.
+     * @return negations
+     */
+    public Set<IndexedWord> getConjuctions() {
+        return new HashSet<>(conjuctions);
+    }
+
+    /**
      * Whether the verb is negated.
      * @return
      */
     public boolean isNegated() {
         return StatementUtils.isNegated(negations);
+    }
+
+    /**
+     * The amount of individual verbs contained within the complete verb.
+     * @return verbs count
+     */
+    public int size() {
+        return secondary.size() + 1;
     }
 
     /**
@@ -103,9 +128,9 @@ public class Verb implements StatementComponent, Resembling<Verb> {
         }
 
         if (isNegated() == otherVerb.isNegated()) {
-            if (getLemma().equals(otherVerb.getLemma())) {
-                return Resemblance.CLOSE;
-            }
+//            if (getLemma().equals(otherVerb.getLemma())) {
+//                return Resemblance.CLOSE;
+//            }
             // TODO: perform resemblance comparison using synonyms
         } else {
             // TODO: perform resemblance comparison using antonyms (can never be full, but can be close)
@@ -116,6 +141,6 @@ public class Verb implements StatementComponent, Resembling<Verb> {
 
     @Override
     public String toString() {
-        return "V: " + getName() + " (" + (isNegated()? "not ": "") + getPrimary().word() + ")";
+        return "V: " + getName() + " (" + (isNegated()? "not ": "") + getPrimary().word() + ", " + size() +")";
     }
 }

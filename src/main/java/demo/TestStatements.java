@@ -33,9 +33,9 @@ public class TestStatements {
 //        String example = "Hey, cool! Very cool, in fact. Henry, Louis the Dragon and Sally Bates don't like doing anything in particular.";
 //        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";
 //        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament.";
-//        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament...\n" +
+//        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament... \n" +
 //        "I'm sure you meant the EU as a whole and not the European Parliament specifically, just thought it was funny that a Brit would complain about this when the UK voting system is one of the absolute worst in the world at representing the will of the people + your other house consists of a bunch of noble people.";
-//        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable. Here's our solution:" +
+//        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable. Here's our solution: " +
 //        "Use an air quality app. We use the one for http://aqicn.org/city/beijing/. I just have a widget on my Android phone that says the current AQI from the nearest measuring station. Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+. Anyway, just make your own rule and stick to it. " +
 //        "Bought some 3M 95N-rated face masks for smoggy days. Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes. You can get some nice re-usable masks where you can change the filter too. " +
 //        "We also got two Xiaomi air purifiers that work quite well. They are smartphone-connected and always on, except when we're out during weekdays. The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers. " +
@@ -49,7 +49,19 @@ public class TestStatements {
         // TODO: preserve conjuctions like "and" and "or" for recreating the statement
 
 //        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable. Here's our solution:";
-        String example =    "We have found that it is quite manageable.";
+//        String example =    "We have found that it is quite manageable.";
+
+//        String example = "Here's our solution: Use an air quality app.";
+//        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
+//        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
+//        String example = "Anyway, just make your own rule and stick to it.";
+//        String example = "She speaks and shoots.";
+//        String example = "Bought some 3M 95N-rated face masks for smoggy days.\n";
+//        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
+//        String example = "We also got two Xiaomi air purifiers that work quite well.";
+        String example = "She's having to make do. She speaks and shouts. The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
+
+
 
 
         Annotation annotation = new Annotation(example);

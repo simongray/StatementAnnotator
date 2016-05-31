@@ -114,7 +114,9 @@ public class Statement implements Resembling<Statement> {
         }
 
         if (verb != null) {
-            statement.addAll(verb.getCompound());
+            for (Set<IndexedWord> compound : verb.getCompounds()) {
+                statement.addAll(compound);
+            }
         }
 
         if (directObject != null) {
