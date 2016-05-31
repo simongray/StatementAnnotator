@@ -142,8 +142,27 @@ public  class StatementFinder {
             statements.add(new Statement(subject, verb, directObject, indirectObject));
         }
 
-        // link composed statements
-        // TODO
+        // link composed statements together
+        for (AbstractComponent childComponent : interStatementMapping.keySet()) {
+            AbstractComponent parentComponent = interStatementMapping.get(childComponent);
+            Statement child = null;
+            Statement parent = null;
+
+            for (Statement statement : statements) {
+                if (statement.contains(childComponent)) {
+                    child = statement;
+                }
+                if (statement.contains(parentComponent)) {
+                    parent = statement;
+                }
+            }
+
+            // compose into parent statements
+            if (parent != null && child != null) {
+                parent.link(child);
+                statements.remove(child);
+            }
+        }
 
         logger.info("component mapping: " + childToParentMapping);
         logger.info("based on dependencies: " + graph.typedDependencies());

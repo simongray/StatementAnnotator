@@ -89,7 +89,7 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     public Set<IndexedWord> getMarkers() {
         Set<IndexedWord> markers = new HashSet<>();
         for (Set<IndexedWord> markerSet : markerMap.values()) {
-            markers.addAll(markerSet);
+            markers.addAll(markerSet);  // TODO: needs to search though descendants too
         }
         return markers;
     }

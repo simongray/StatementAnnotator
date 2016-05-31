@@ -201,20 +201,21 @@ public class StatementUtils {
      *
      * @param sentence sentence annotated with statements.
      */
-    public static void printStatements(CoreMap sentence) {
+    public static void printStatements(CoreMap sentence, String indent) {
         Set<Statement> statements = sentence.get(StatementsAnnotation.class);
         System.out.println(sentence);
 
         if (statements != null) {
             int i = 0;
             for (Statement statement : statements) {
-                System.out.println("  |_ statement: " + statement);
+                System.out.println(indent + "  |_ statement: " + statement);
 
                 for (StatementComponent component : statement.getComponents()) {
-                    if (i < statements.size() - 1) {
-                        System.out.println("  |  |_ component: " + component);
+                    String prefix = i < statements.size() - 1? "  |  |_ " : "     |_ ";
+                    if (component instanceof Statement) {
+                        System.out.println(indent + prefix + "component: " + ((Statement) component).getComponents());  // TODO: make pretty with indent and stuff
                     } else {
-                        System.out.println("     |_ component: " + component);
+                        System.out.println(indent + prefix + "component: " + component);
                     }
                 }
 
