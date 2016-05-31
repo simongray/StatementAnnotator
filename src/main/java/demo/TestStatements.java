@@ -20,7 +20,7 @@ public class TestStatements {
         // setting up the pipeline
         Properties props = new Properties();
 //        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, gender, ner, parse, depparse, subjectobject, sentiment, sentimenttargets");  // long pipeline
-        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, parse, depparse, subjectobject");  // short pipeline
+        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, depparse, subjectobject");  // short pipeline
         props.setProperty("customAnnotatorClass.subjectobject", "statements.StatementAnnotator");
         props.setProperty("customAnnotatorClass.sentimenttargets", "sentiment.SentimentTargetsAnnotator");
         props.put("ner.model", "edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz");
@@ -43,7 +43,8 @@ public class TestStatements {
 //        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
 //        String example = "He really doesn't love singing out loud.";
 //        String example = "She hates flying and he loves it.";
-        String example = "They don't like doing anything in particular. Sally and Mads don't like doing anything in particular.";
+//        String example = "They don't like doing anything in particular. Sally and Mads don't like doing anything in particular.";
+        String example = "They don't like doing anything in particular and neither does she.";
         // TODO: find out why this is screwing up
         // TODO: preserve conjuctions like "and" and "or" for recreating the statement
 

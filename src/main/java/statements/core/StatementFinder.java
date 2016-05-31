@@ -3,8 +3,6 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreeCoreAnnotations;
 import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +21,6 @@ public  class StatementFinder {
      * @return statements
      */
     public static List<Statement> find(CoreMap sentence) {
-        // saves resources
-        if (!isProper(sentence)) {
-            logger.info("sentence was not proper, no statements found");
-            return null;
-        }
-
         SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
 
         // find statement components
@@ -120,27 +112,31 @@ public  class StatementFinder {
 
         // create statements from component sets
         for (Set<StatementComponent> componentSet : mergedComponentSets) {
-            Subject subject = null;
-            Verb verb = null;
-            DirectObject directObject = null;
-            IndirectObject indirectObject = null;
+            if (componentSet.size() > 1) {
+                Subject subject = null;
+                Verb verb = null;
+                DirectObject directObject = null;
+                IndirectObject indirectObject = null;
 
-            for (StatementComponent component : componentSet) {
-                if (component instanceof Subject) {
-                    subject = (Subject) component;
-                } else if (component instanceof Verb) {
-                    verb = (Verb) component;
-                } else if (component instanceof DirectObject) {
-                    directObject = (DirectObject) component;
-                } else if (component instanceof IndirectObject) {
-                    indirectObject = (IndirectObject) component;
+                for (StatementComponent component : componentSet) {
+                    if (component instanceof Subject) {
+                        subject = (Subject) component;
+                    } else if (component instanceof Verb) {
+                        verb = (Verb) component;
+                    } else if (component instanceof DirectObject) {
+                        directObject = (DirectObject) component;
+                    } else if (component instanceof IndirectObject) {
+                        indirectObject = (IndirectObject) component;
+                    }
                 }
-            }
 
-            logger.info("component mapping: " + childToParentMapping);
-            logger.info("linked statement from components: " + componentSet);
-            logger.info("based on dependencies: " + graph.typedDependencies());
-            statements.add(new Statement(subject, verb, directObject, indirectObject));
+                logger.info("component mapping: " + childToParentMapping);
+                logger.info("linked statement from components: " + componentSet);
+                logger.info("based on dependencies: " + graph.typedDependencies());
+                statements.add(new Statement(subject, verb, directObject, indirectObject));
+            } else {
+                logger.info("too few components available (" + componentSet.size()+ "), statement not created");
+            }
         }
 
         return statements;
@@ -174,22 +170,5 @@ public  class StatementFinder {
         }
 
         return null;
-    }
-
-    /**
-     * Test whether a sentence is a proper sentence.
-     * Returns true if the ROOT tag is connected an S tag (= there is a VP).
-     * This is useful for determining if a sentence is not just an interjection, e.g. "So cool!" or "OK, great.".
-     * @param sentence the sentence to test
-     * @return proper or not
-     */
-    private static boolean isProper(CoreMap sentence) {
-        Tree tree = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);  // TODO: do using depparse instead?
-
-        for (Tree child : tree.children()) {
-            if (child.value().equals("S")) return true;
-        }
-
-        return false;
     }
 }
