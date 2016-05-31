@@ -79,14 +79,6 @@ public abstract class AbstractComponent implements StatementComponent {
 
     @Override
     public String toString() {
-        return getIdentifier() + ": " + getString() + " (" + size() + ")";
+        return "{" + getClass().getSimpleName() + ": " + getString() + "}";
     }
-
-    /**
-     * The identifier for this component.
-     *
-     * @return identifier
-     */
-    protected abstract String getIdentifier();
-
 }

@@ -57,14 +57,4 @@ public class Subject extends AbstractComponent implements Resembling<Subject> {
 
         return Resemblance.NONE;
     }
-
-    /**
-     * The identifier for this component.
-     *
-     * @return identifier
-     */
-    @Override
-    protected String getIdentifier() {
-        return "S";
-    }
 }

@@ -24,14 +24,4 @@ public class IndirectObject extends AbstractComponent implements Resembling<Indi
     public Resemblance resemble(IndirectObject otherObject) {
         return null;  // TODO
     }
-
-    /**
-     * The identifier for this component.
-     *
-     * @return identifier
-     */
-    @Override
-    protected String getIdentifier() {
-        return "IO";
-    }
 }

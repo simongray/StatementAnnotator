@@ -125,14 +125,4 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
 
         return Resemblance.NONE;
     }
-
-    /**
-     * The identifier for this component.
-     *
-     * @return identifier
-     */
-    @Override
-    protected String getIdentifier() {
-        return "V";
-    }
 }

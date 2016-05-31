@@ -129,14 +129,4 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
     public Resemblance resemble(DirectObject otherObject) {
         return null;  // TODO
     }
-
-    /**
-     * The identifier for this component.
-     *
-     * @return identifier
-     */
-    @Override
-    protected String getIdentifier() {
-        return "DO";
-    }
 }
