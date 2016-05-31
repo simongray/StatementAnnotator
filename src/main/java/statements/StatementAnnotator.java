@@ -1,12 +1,8 @@
 package statements;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
-import edu.stanford.nlp.semgraph.SemanticGraph;
-import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
-import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +36,7 @@ public class StatementAnnotator implements Annotator {
 
         for (CoreMap sentence : sentences) {
             logger.info("checking sentence for statements: " + sentence);
-            List<Statement> statements = StatementFinder.find(sentence);
+            Set<Statement> statements = StatementFinder.find(sentence);
             if (statements != null && statements.size() > 0) {
                 logger.info("statements found: " + statements);
                 sentence.set(StatementsAnnotation.class, statements);

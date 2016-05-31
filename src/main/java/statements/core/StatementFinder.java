@@ -23,7 +23,7 @@ public  class StatementFinder {
      * @param sentence the sentence to look in
      * @return statements
      */
-    public static List<Statement> find(CoreMap sentence) {
+    public static Set<Statement> find(CoreMap sentence) {
         SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
 
         // find statement components
@@ -50,11 +50,11 @@ public  class StatementFinder {
      * @param components the various statement components found in sentence
      * @return statements
      */
-    private static List<Statement> link(SemanticGraph graph, Set<AbstractComponent> components) {
+    private static Set<Statement> link(SemanticGraph graph, Set<AbstractComponent> components) {
         Map<AbstractComponent, AbstractComponent> childToParentMapping = new HashMap<>();
         Map<AbstractComponent, AbstractComponent> interStatementMapping = new HashMap<>();
         Set<Set<AbstractComponent>> componentSets = new HashSet<>();
-        List<Statement> statements = new ArrayList<>();
+        Set<Statement> statements = new HashSet<>();
 
         // find the direct parent for each component based on its primary word
         for (AbstractComponent component : components) {
@@ -141,6 +141,9 @@ public  class StatementFinder {
             logger.info("linked statement from components: " + componentSet);
             statements.add(new Statement(subject, verb, directObject, indirectObject));
         }
+
+        // link composed statements
+        // TODO
 
         logger.info("component mapping: " + childToParentMapping);
         logger.info("based on dependencies: " + graph.typedDependencies());

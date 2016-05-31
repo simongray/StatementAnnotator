@@ -202,12 +202,12 @@ public class StatementUtils {
      * @param sentence sentence annotated with statements.
      */
     public static void printStatements(CoreMap sentence) {
-        List<Statement> statements = sentence.get(StatementsAnnotation.class);
+        Set<Statement> statements = sentence.get(StatementsAnnotation.class);
         System.out.println(sentence);
 
         if (statements != null) {
-            for (int i = 0; i < statements.size(); i++) {
-                Statement statement = statements.get(i);
+            int i = 0;
+            for (Statement statement : statements) {
                 System.out.println("  |_ statement: " + statement);
 
                 for (StatementComponent component : statement.getComponents()) {
@@ -217,6 +217,8 @@ public class StatementUtils {
                         System.out.println("     |_ component: " + component);
                     }
                 }
+
+                i++;
             }
         } else {
             System.out.println("  |_ NO STATEMENTS");
