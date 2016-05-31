@@ -78,18 +78,7 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
      * @return the longest name possible
      */
     public String getName() {
-        return StatementUtils.join(withoutCopula(complete));
-    }
-
-    /**
-     * Remove copulas from a set of words.
-     * @param words words
-     * @return words without copulas
-     */
-    private Set<IndexedWord> withoutCopula(Set<IndexedWord> words) {
-        Set<IndexedWord> newWords = new HashSet<>(words);
-        newWords.removeIf(indexedWord -> getCopulas().contains(indexedWord));
-        return newWords;
+        return StatementUtils.join(StatementUtils.without(getCopulas(), complete));
     }
 
     /**
