@@ -31,7 +31,7 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     private static final String NEG_RELATION = "neg";
     private static final String CC_RELATION = "cc";
     private static final String MARK_RELATION = "mark";  // for markers, e.g. "whether"
-    private final Map<IndexedWord, Set<IndexedWord>> markerMap = new HashMap<>();
+    private final Map<IndexedWord, Set<IndexedWord>> markerMap;
     private final Set<IndexedWord> negations;
     private final Set<IndexedWord> conjunctions;
 
@@ -43,10 +43,7 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
         this.conjunctions = StatementUtils.findSpecificDescendants(CC_RELATION, primary, graph);
 
         // find markers (only relevant for COP)
-        markerMap.put(primary, StatementUtils.findSpecificDescendants(MARK_RELATION, primary, graph));
-        for (IndexedWord verb : secondary) {
-            markerMap.put(verb, StatementUtils.findSpecificDescendants(MARK_RELATION, verb, graph));
-        }
+        markerMap = StatementUtils.makeRelationsMap(entries, MARK_RELATION, graph);
     }
 
     /**

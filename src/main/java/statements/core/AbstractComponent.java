@@ -23,6 +23,7 @@ public abstract class AbstractComponent implements StatementComponent {
 
     protected final IndexedWord primary;
     protected final Set<IndexedWord> secondary;
+    protected final Set<IndexedWord> entries;
     protected final Set<IndexedWord> complete;
     protected final Set<Set<IndexedWord>> compounds;
 
@@ -32,10 +33,16 @@ public abstract class AbstractComponent implements StatementComponent {
         this.secondary = secondary;
         this.complete = StatementUtils.findCompoundComponents(primary, graph, IGNORED_RELATIONS);
 
+        // store primary word + secondary word(s) together for simple retrieval
+        this.entries = new HashSet<>();
+        entries.add(primary);
+        for (IndexedWord word : secondary) {
+            entries.add(word);
+        }
+
         // recursively discover all compounds
         compounds = new HashSet<>();
-        compounds.add(StatementUtils.findCompoundComponents(primary, graph, IGNORED_COMPOUND_RELATIONS));
-        for (IndexedWord word : secondary) {
+        for (IndexedWord word : entries) {
             compounds.add(StatementUtils.findCompoundComponents(word, graph, IGNORED_COMPOUND_RELATIONS));
         }
     }
@@ -66,6 +73,15 @@ public abstract class AbstractComponent implements StatementComponent {
      */
     public Set<Set<IndexedWord>> getCompounds() {
         return compounds;
+    }
+
+    /**
+     * The entries of the complete component.
+     *
+     * @return compounds
+     */
+    public Set<IndexedWord> getEntries() {
+        return entries;
     }
 
     /**

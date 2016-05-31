@@ -111,6 +111,26 @@ public class StatementUtils {
     }
 
     /**
+     * Create a relations map for a specific compound part.
+     * Useful for isolating words such as negations, markers, copulas, etc.
+     *
+     * @param entries the entries to find relations for
+     * @param relation the relation type
+     * @param graph the graph to search in
+     * @return relations map
+     */
+    public static Map<IndexedWord, Set<IndexedWord>> makeRelationsMap(Set<IndexedWord> entries, String relation, SemanticGraph graph) {
+        Map<IndexedWord, Set<IndexedWord>> relationsMap = new HashMap<>();
+
+        // find markers (only relevant for COP)
+        for (IndexedWord word : entries) {
+            relationsMap.put(word, StatementUtils.findSpecificDescendants(relation, word, graph));
+        }
+
+        return relationsMap;
+    }
+
+    /**
      * Finds out the negation status based on a set of negations.
      *
      * @param negations

@@ -35,26 +35,18 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
     private static final String NEG_RELATION = "neg";
     private static final String COP_RELATION = "cop";
     private Type type;
-    private final Map<IndexedWord, Set<IndexedWord>> negationMap = new HashMap<>();
-    private final Map<IndexedWord, Set<IndexedWord>> copulaMap = new HashMap<>();  // only applicable to copula objects
+    private final Map<IndexedWord, Set<IndexedWord>> negationMap;
+    private final Map<IndexedWord, Set<IndexedWord>> copulaMap;  // only applicable to copula objects
 
     public DirectObject(IndexedWord primary, Set<IndexedWord> secondary, Type type, SemanticGraph graph) {
         super(primary, secondary, graph);
         this.type = type;
 
         // find negations (relevant for COP (adjectives) and XCOMP (verb) types)
-        negationMap.put(primary, StatementUtils.findSpecificDescendants(NEG_RELATION, primary, graph));
-        for (IndexedWord object : secondary) {
-            negationMap.put(object, StatementUtils.findSpecificDescendants(NEG_RELATION, object, graph));
-        }
+        negationMap = StatementUtils.makeRelationsMap(entries, NEG_RELATION, graph);
 
         // find copulas (only relevant for COP)
-        if (type == Type.COP) {
-            copulaMap.put(primary, StatementUtils.findSpecificDescendants(COP_RELATION, primary, graph));
-            for (IndexedWord object : secondary) {
-                copulaMap.put(object, StatementUtils.findSpecificDescendants(COP_RELATION, object, graph));
-            }
-        }
+        copulaMap = StatementUtils.makeRelationsMap(entries, COP_RELATION, graph);
     }
 
     /**
