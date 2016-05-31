@@ -60,13 +60,6 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
-     * The identifier for this component.
-     *
-     * @return identifier
-     */
-    protected abstract String getIdentifier();
-
-    /**
      * The compounds of the complete component.
      *
      * @return compounds
@@ -88,5 +81,12 @@ public abstract class AbstractComponent implements StatementComponent {
     public String toString() {
         return getIdentifier() + ": " + getString() + " (" + size() + ")";
     }
+
+    /**
+     * The identifier for this component.
+     *
+     * @return identifier
+     */
+    protected abstract String getIdentifier();
 
 }
