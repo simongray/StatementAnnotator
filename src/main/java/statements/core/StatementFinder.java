@@ -89,6 +89,7 @@ public  class StatementFinder {
                     if (parent != null) componentSet.add(parent);
                     componentSet.add(child);
                     found = true;
+                    logger.info("added " + parent + " " + child + " to existing set: " + componentSet);
                     break;
                 }
             }
@@ -99,11 +100,26 @@ public  class StatementFinder {
                 if (parent != null) newComponentSet.add(parent);
                 newComponentSet.add(child);
                 componentSets.add(newComponentSet);
+                logger.info("created new set: " + newComponentSet);
             }
         }
 
-        // create statements from component sets
+        // merge any component sets that intersect
+        Set<Set<StatementComponent>> mergedComponentSets = new HashSet<>();
         for (Set<StatementComponent> componentSet : componentSets) {
+            Set<StatementComponent> mergedComponentSet = new HashSet<>(componentSet);
+
+            for (Set<StatementComponent> otherComponentSet : componentSets) {
+                if (intersect(mergedComponentSet, otherComponentSet)) {
+                    mergedComponentSet.addAll(otherComponentSet);
+                }
+            }
+
+            mergedComponentSets.add(mergedComponentSet);  // re-adding identical merged sets has no effect
+        }
+
+        // create statements from component sets
+        for (Set<StatementComponent> componentSet : mergedComponentSets) {
             Subject subject = null;
             Verb verb = null;
             DirectObject directObject = null;
@@ -128,6 +144,22 @@ public  class StatementFinder {
         }
 
         return statements;
+    }
+
+    /**
+     * Test whether two component sets intersect.
+     * @param set1
+     * @param set2
+     * @return
+     */
+    private static boolean intersect(Set<StatementComponent> set1, Set<StatementComponent> set2) {
+        for (StatementComponent component : set1) {
+            if (set2.contains(component)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
