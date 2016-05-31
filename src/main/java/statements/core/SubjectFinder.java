@@ -51,7 +51,7 @@ public class SubjectFinder {
             }
         }
 
-        // create passive subjct mapping based on relations
+        // create passive subject mapping based on relations
         for (IndexedWord simplePassiveSubject : simplePassiveSubjects) {
             IndexedWord parent = graph.getParent(simplePassiveSubject);
             if (simplePassiveSubjects.contains(parent)) {
