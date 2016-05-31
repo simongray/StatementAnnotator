@@ -14,6 +14,7 @@ import java.util.*;
 public class StatementUtils {
     /**
      * Joins a list of IndexedWords together in the correct order without putting spaces before commas.
+     *
      * @param words the list of words to be joined
      * @return the string representing the words
      */
@@ -46,6 +47,7 @@ public class StatementUtils {
 
     /**
      * Remove certain words from a list of words.
+     *
      * @param undesired words to remove
      * @param allWords words to remove from
      * @return remaining words
@@ -58,6 +60,7 @@ public class StatementUtils {
 
     /**
      * Whether or not a word token is shortened.
+     *
      * @param word the word to check
      * @return shortened or not
      */
@@ -67,6 +70,7 @@ public class StatementUtils {
 
     /**
      * Recursively finds the components of a compound (ex: subject, object, etc.).
+     *
      * @param parent the word that serves as an entry point
      * @param graph the graph of the sentence
      * @param ignoredRelations relation types that shouldn't be followed or included
@@ -89,6 +93,7 @@ public class StatementUtils {
 
     /**
      * Recursively finds specific descendants of a word.
+     *
      * @param word the word that serves as an entry point
      * @param graph the graph of the sentence
      * @return specific descendants
@@ -107,6 +112,7 @@ public class StatementUtils {
 
     /**
      * Finds out the negation status based on a set of negations.
+     *
      * @param negations
      * @return
      */
@@ -116,6 +122,7 @@ public class StatementUtils {
 
     /**
      * Reduce a variable amount of Resemblance objects to the lowest common denominator.
+     *
      * @param resemblances range of Resemblance to reduce
      * @return common denominator
      */
@@ -138,6 +145,7 @@ public class StatementUtils {
     /**
      * The haystack of statements partitioned into levels of resemblance to the needle statement.
      * This useful for finding agreements between statements.
+     *
      * @param needle statement that must be resembled
      * @param haystack statements to partition into levels of resemblance
      * @return map of resemblance to statements
@@ -160,6 +168,7 @@ public class StatementUtils {
      * The keywords are useful for finding pieces of text that *may* contain resembling statements.
      * These pieces of text will then have to be put through the StatementAnnotator,
      * in order to get a set of statements for comparing to the original statements.
+     *
      * @param statements statements to match
      * @return search keywords
      */
@@ -169,6 +178,7 @@ public class StatementUtils {
 
     /**
      * Print statements of a sentence in a pretty way.
+     *
      * @param sentence sentence annotated with statements.
      */
     public static void printStatements(CoreMap sentence) {

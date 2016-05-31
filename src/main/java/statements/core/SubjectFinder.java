@@ -18,6 +18,7 @@ public class SubjectFinder {
 
     /**
      * The subjects that are found in a sentence.
+     *
      * @param graph the dependency graph of a sentence
      * @return subjects
      */

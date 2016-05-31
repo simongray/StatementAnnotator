@@ -25,6 +25,7 @@ public class Subject extends AbstractComponent implements Resembling<Subject> {
 
     /**
      * The resemblance of another subject to this subject.
+     *
      * @param otherSubject subject to be compared with
      * @return resemblance
      */

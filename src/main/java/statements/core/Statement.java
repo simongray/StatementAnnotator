@@ -19,6 +19,7 @@ public class Statement implements Resembling<Statement> {
     /**
      * Initialised by setting statement components as parameters. Params can be left null if the component type is N/A.
      * Initialisation should not be performed manually, but by using StatementFinder to build Statement objects.
+     *
      * @param subject subject
      * @param verb verb
      * @param directObject direct object
@@ -33,6 +34,7 @@ public class Statement implements Resembling<Statement> {
 
     /**
      * The subject of the statement.
+     *
      * @return subject
      */
     public Subject getSubject() {
@@ -41,6 +43,7 @@ public class Statement implements Resembling<Statement> {
 
     /**
      * The verb of the statement.
+     *
      * @return verb
      */
     public Verb getVerb() {
@@ -49,6 +52,7 @@ public class Statement implements Resembling<Statement> {
 
     /**
      * The direct object of the statement.
+     *
      * @return direct object
      */
     public DirectObject getDirectObject() {
@@ -57,6 +61,7 @@ public class Statement implements Resembling<Statement> {
 
     /**
      * The indirect object of the statement.
+     *
      * @return indirect object
      */
     public IndirectObject getIndirectObject() {
@@ -65,6 +70,7 @@ public class Statement implements Resembling<Statement> {
 
     /**
      * The components making up the statement.
+     *
      * @return components
      */
     public List<StatementComponent> getComponents() {
@@ -79,6 +85,7 @@ public class Statement implements Resembling<Statement> {
 
     /**
      * The resemblance of another statement to this statement.
+     *
      * @param otherStatement statement to be compared with
      * @return resemblance
      */
@@ -101,6 +108,7 @@ public class Statement implements Resembling<Statement> {
 
     /**
      * Every word of the statement.
+     *
      * @return words
      */
     public Set<IndexedWord> getFull() {
@@ -137,6 +145,7 @@ public class Statement implements Resembling<Statement> {
     /**
      * The size of the statement (number of tokens).
      * Useful for sorting statements.
+     *
      * @return size
      */
     public int size() {

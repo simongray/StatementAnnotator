@@ -59,6 +59,7 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
 
     /**
      * The string of the complete indirect object.
+     *
      * @return the longest string possible
      */
     public String getString() {
@@ -67,6 +68,7 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
 
     /**
      * Whether this direct object has a copula.
+     *
      * @return true if has
      */
     public Type getType() {
@@ -75,6 +77,7 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
 
     /**
      * The negations for a specific contained object.
+     *
      * @param object simple direct object
      * @return negations
      */
@@ -84,6 +87,7 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
 
     /**
      * Whether a certain contained object is negated.
+     *
      * @param object simple direct object
      * @return true if negated
      */
@@ -94,6 +98,7 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
 
     /**
      * The copula(s) for a specific contained object.
+     *
      * @param object simple direct object
      * @return copulas
      */
@@ -103,6 +108,7 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
 
     /**
      * Copulas for all contained objects.
+     *
      * @return copulas
      */
     public Set<IndexedWord> getCopulas() {
@@ -115,6 +121,7 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
 
     /**
      * The resemblance of another direct object to this direct object.
+     *
      * @param otherObject direct object to be compared with
      * @return resemblance
      */

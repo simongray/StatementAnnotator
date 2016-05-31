@@ -51,6 +51,7 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
 
     /**
      * The string of the complete verb.
+     *
      * @return the longest string possible
      */
     public String getString() {
@@ -59,6 +60,7 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
 
     /**
      * The negations for the verb.
+     *
      * @return negations
      */
     public Set<IndexedWord> getNegations() {
@@ -67,6 +69,7 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
 
     /**
      * The conjunctions for the verb.
+     *
      * @return negations
      */
     public Set<IndexedWord> getConjunctions() {
@@ -75,7 +78,8 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
 
     /**
      * Whether the verb is negated.
-     * @return
+     *
+     * @return negation status
      */
     public boolean isNegated() {
         return StatementUtils.isNegated(negations);
@@ -83,6 +87,7 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
 
     /**
      * Markers for all contained verbs.
+     *
      * @return copulas
      */
     public Set<IndexedWord> getMarkers() {
@@ -95,6 +100,7 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
 
     /**
      * The resemblance of another verb to this verb.
+     *
      * @param otherVerb subject to be compared with
      * @return resemblance
      */

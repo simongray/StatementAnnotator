@@ -19,6 +19,7 @@ public  class StatementFinder {
 
     /**
      * Find statements in a sentence.
+     *
      * @param sentence the sentence to look in
      * @return statements
      */
@@ -44,6 +45,7 @@ public  class StatementFinder {
 
     /**
      * Produces statements by linking together statement components.
+     *
      * @param graph the graph of the sentence
      * @param components the various statement components found in sentence
      * @return statements
@@ -149,6 +151,7 @@ public  class StatementFinder {
 
     /**
      * Test whether two component sets intersect.
+     *
      * @param set1
      * @param set2
      * @return
@@ -165,6 +168,7 @@ public  class StatementFinder {
 
     /**
      * The StatementComponent corresponding to a primary word.
+     *
      * @param primary primary word of component
      * @param components set of components to search in
      * @return component

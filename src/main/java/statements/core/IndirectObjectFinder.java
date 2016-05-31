@@ -17,6 +17,7 @@ public class IndirectObjectFinder {
 
     /**
      * The indirect objects that are found in a sentence.
+     *
      * @param graph the dependency graph of a sentence
      * @return indirect objects
      */

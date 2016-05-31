@@ -20,6 +20,7 @@ public class DirectObjectFinder {
 
     /**
      * The direct objects that are found in a sentence.
+     *
      * @param graph the dependency graph of a sentence
      * @return direct objects
      */
@@ -100,6 +101,7 @@ public class DirectObjectFinder {
 
     /**
      * Whether or not a word has a copula relation.
+     *
      * @param word the word to examine
      * @param graph the graph in which the word appears
      * @return copula existence

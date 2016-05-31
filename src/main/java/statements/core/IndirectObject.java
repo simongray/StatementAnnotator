@@ -16,6 +16,7 @@ public class IndirectObject extends AbstractComponent implements Resembling<Indi
 
     /**
      * The resemblance of another indirect object to this indirect object.
+     *
      * @param otherObject object to be compared with
      * @return resemblance
      */
