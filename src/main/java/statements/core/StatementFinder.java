@@ -78,12 +78,12 @@ public  class StatementFinder {
             }
         }
 
-        // create sets of components by following all connections
+        // create sets of components by following all dependencies
         for (StatementComponent child : childToParentMapping.keySet()) {
             StatementComponent parent = childToParentMapping.get(child);
             boolean found = false;
 
-            // find existing component set to link up
+            // find existing component set to link up to
             for (Set<StatementComponent> componentSet : componentSets) {
                 if (componentSet.contains(parent) || componentSet.contains(child)) {
                     if (parent != null) componentSet.add(parent);
@@ -93,7 +93,7 @@ public  class StatementFinder {
                 }
             }
 
-            // create new component set if none found
+            // create new component set if no parent was found
             if (!found) {
                 Set<StatementComponent> newComponentSet = new HashSet<>();
                 if (parent != null) newComponentSet.add(parent);
@@ -121,7 +121,9 @@ public  class StatementFinder {
                 }
             }
 
-            logger.info("linked statement from: " + componentSet);
+            logger.info("component mapping: " + childToParentMapping);
+            logger.info("linked statement from components: " + componentSet);
+            logger.info("based on dependencies: " + graph.typedDependencies());
             statements.add(new Statement(subject, verb, directObject, indirectObject));
         }
 
