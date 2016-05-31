@@ -28,10 +28,9 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
         IGNORED_RELATIONS.add("nsubj");
         IGNORED_RELATIONS.add("nmod");
 
-        // TODO: seems like conj and cc are being added to the wrong set
         IGNORED_COMPOUND_RELATIONS.addAll(IGNORED_RELATIONS);
-        IGNORED_RELATIONS.add("conj");
-        IGNORED_RELATIONS.add("cc");
+        IGNORED_COMPOUND_RELATIONS.add("conj");
+        IGNORED_COMPOUND_RELATIONS.add("cc");
     }
     private static final String NEG_RELATION = "neg";
     private static final String COP_RELATION = "cop";
