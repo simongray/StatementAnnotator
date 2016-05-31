@@ -52,7 +52,6 @@ public abstract class AbstractComponent implements StatementComponent {
      *
      * @return primary word
      */
-    @Override
     public IndexedWord getPrimary() {
         return primary;
     }
