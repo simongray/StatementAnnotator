@@ -73,8 +73,8 @@ public class Statement implements Resembling<Statement> {
      *
      * @return components
      */
-    public List<AbstractComponent> getComponents() {
-        List<AbstractComponent> components = new ArrayList<>();
+    public Set<AbstractComponent> getComponents() {
+        Set<AbstractComponent> components = new HashSet<>();
         if (subject != null) components.add(subject);
         if (verb != null) components.add(verb);
         if (directObject != null) components.add(directObject);
@@ -112,6 +112,16 @@ public class Statement implements Resembling<Statement> {
     @Override
     public String toString() {
         return StatementUtils.join(getFull());
+    }
+
+    /**
+     * Whether this statement includes a specific component.
+     *
+     * @param component component to search for
+     * @return true if contains component
+     */
+    public boolean contains(StatementComponent component) {
+        return getComponents().contains(component);
     }
 
     /**
