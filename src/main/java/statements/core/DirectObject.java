@@ -66,18 +66,6 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
     }
 
     /**
-     * The strings of all of the compound direct objects.
-     * @return compound direct object strings
-     */
-    public Set<String> getCompoundStrings() {
-        Set<String> compoundObjectStrings = new HashSet<>();
-        for (Set<IndexedWord> compound : compounds) {
-            compoundObjectStrings.add(StatementUtils.join(compound));
-        }
-        return compoundObjectStrings;
-    }
-
-    /**
      * Whether this direct object has a copula.
      * @return true if has
      */

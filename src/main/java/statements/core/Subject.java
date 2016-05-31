@@ -7,16 +7,6 @@ import java.util.*;
 
 /**
  * The complete subject of a natural language statement.
- *
- * It encapsulates and facilitates retrieval of the different components of the complete subject.
- * It can be compared to other CompleteSubjects through it implementation of the Resembling interface.
- *
- * Explanation of terms used:
- *     simple subject = a single word subject (a direct dependent of a verb)
- *     compound subject = a multiple word subject (single word subject + relevant dependent words)
- *     complete subject = the complete subject, including all compound subjects and syntactical glue
- *     primary subject = the simple subject that is the primary dependent of the verb
- *     secondary subject = any other simple subjects contained in the complete subject
  */
 public class Subject extends AbstractComponent implements Resembling<Subject> {
     /**
@@ -30,18 +20,6 @@ public class Subject extends AbstractComponent implements Resembling<Subject> {
 
     public Subject(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         super(primary, secondary, graph);
-    }
-
-    /**
-     * The names of all of the compound subjects.
-     * @return compound subject names
-     */
-    public Set<String> getCompoundStrings() {
-        Set<String> compoundSubjectNames = new HashSet<>();
-        for (Set<IndexedWord> compound : compounds) {
-            compoundSubjectNames.add(StatementUtils.join(compound));
-        }
-        return compoundSubjectNames;
     }
 
     /**
@@ -60,12 +38,12 @@ public class Subject extends AbstractComponent implements Resembling<Subject> {
         }
 
         int resemblanceCount = 0;
-        Set<String> otherSubjectCompounds = otherSubject.getCompoundStrings();
-        for (String compound : getCompoundStrings()) {
-            if (otherSubjectCompounds.contains(compound)) {
-                resemblanceCount++;
-            }
-        }
+//        Set<String> otherSubjectCompounds = otherSubject.getCompoundStrings();
+//        for (String compound : getCompoundStrings()) {
+//            if (otherSubjectCompounds.contains(compound)) {
+//                resemblanceCount++;
+//            }
+//        }
 
         if (resemblanceCount == size()) {
             return Resemblance.CLOSE;  // identical subject compounds

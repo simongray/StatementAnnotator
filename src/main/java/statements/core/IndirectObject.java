@@ -16,18 +16,6 @@ public class IndirectObject extends AbstractComponent implements Resembling<Indi
     }
 
     /**
-     * The strings of all of the compound indirect objects.
-     * @return compound indirect object strings
-     */
-    public Set<String> getCompoundStrings() {
-        Set<String> compoundObjectStrings = new HashSet<>();
-        for (Set<IndexedWord> compound : compounds) {
-            compoundObjectStrings.add(StatementUtils.join(compound));
-        }
-        return compoundObjectStrings;
-    }
-
-    /**
      * The resemblance of another indirect object to this indirect object.
      * @param otherObject object to be compared with
      * @return resemblance
