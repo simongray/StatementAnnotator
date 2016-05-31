@@ -57,13 +57,23 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
+     * Every word of the complete component.
+     *
+     * @return complete component
+     */
+    public Set<IndexedWord> getComplete() {
+        return complete;
+    }
+
+    /**
      * The string of the complete component.
      *
      * @return the longest string possible
      */
     protected String getString() {
-        return StatementUtils.join(complete);
+        return StatementUtils.join(getComplete());
     }
+
 
     /**
      * The compounds of the complete component.

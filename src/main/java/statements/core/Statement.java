@@ -73,8 +73,8 @@ public class Statement implements Resembling<Statement> {
      *
      * @return components
      */
-    public List<StatementComponent> getComponents() {
-        List<StatementComponent> components = new ArrayList<>();
+    public List<AbstractComponent> getComponents() {
+        List<AbstractComponent> components = new ArrayList<>();
         if (subject != null) components.add(subject);
         if (verb != null) components.add(verb);
         if (directObject != null) components.add(directObject);
@@ -112,34 +112,13 @@ public class Statement implements Resembling<Statement> {
      * @return words
      */
     public Set<IndexedWord> getFull() {
-        Set<IndexedWord> statement = new HashSet<>();
-        // TODO: use getComplete() rathert than getCompounds() to also include conjuctions in statement
+        Set<IndexedWord> full = new HashSet<>();
 
-        if (subject != null) {
-            for (Set<IndexedWord> compound : subject.getCompounds()) {
-                statement.addAll(compound);
-            }
+        for (AbstractComponent component : getComponents()) {
+            full.addAll(component.getComplete());
         }
 
-        if (verb != null) {
-            for (Set<IndexedWord> compound : verb.getCompounds()) {
-                statement.addAll(compound);
-            }
-        }
-
-        if (directObject != null) {
-            for (Set<IndexedWord> compound : directObject.getCompounds()) {
-                statement.addAll(compound);
-            }
-        }
-
-        if (indirectObject != null) {
-            for (Set<IndexedWord> compound : indirectObject.getCompounds()) {
-                statement.addAll(compound);
-            }
-        }
-
-        return statement;
+        return full;
     }
 
     /**
