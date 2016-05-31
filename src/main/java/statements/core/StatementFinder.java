@@ -119,29 +119,25 @@ public  class StatementFinder {
 
         // create statements from component sets
         for (Set<StatementComponent> componentSet : mergedComponentSets) {
-            if (componentSet.size() > 1) {
-                Subject subject = null;
-                Verb verb = null;
-                DirectObject directObject = null;
-                IndirectObject indirectObject = null;
+            Subject subject = null;
+            Verb verb = null;
+            DirectObject directObject = null;
+            IndirectObject indirectObject = null;
 
-                for (StatementComponent component : componentSet) {
-                    if (component instanceof Subject) {
-                        subject = (Subject) component;
-                    } else if (component instanceof Verb) {
-                        verb = (Verb) component;
-                    } else if (component instanceof DirectObject) {
-                        directObject = (DirectObject) component;
-                    } else if (component instanceof IndirectObject) {
-                        indirectObject = (IndirectObject) component;
-                    }
+            for (StatementComponent component : componentSet) {
+                if (component instanceof Subject) {
+                    subject = (Subject) component;
+                } else if (component instanceof Verb) {
+                    verb = (Verb) component;
+                } else if (component instanceof DirectObject) {
+                    directObject = (DirectObject) component;
+                } else if (component instanceof IndirectObject) {
+                    indirectObject = (IndirectObject) component;
                 }
-
-                logger.info("linked statement from components: " + componentSet);
-                statements.add(new Statement(subject, verb, directObject, indirectObject));
-            } else {
-                logger.info("too few components available (" + componentSet.size()+ "), statement not created");
             }
+
+            logger.info("linked statement from components: " + componentSet);
+            statements.add(new Statement(subject, verb, directObject, indirectObject));
         }
 
         logger.info("component mapping: " + childToParentMapping);

@@ -3,7 +3,6 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.trees.TypedDependency;
-import edu.stanford.nlp.util.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,6 @@ public class VerbFinder {
         // find candidate verbs and adjectives from relations
         for (TypedDependency dependency : dependencies) {
             if (RELATIONS.contains(dependency.reln().getShortName())) {
-
                 simpleVerbs.add(dependency.gov());
             }
             if (dependency.reln().getShortName().equals(COP_RELATION)) {
@@ -54,13 +52,9 @@ public class VerbFinder {
         // remove adjectives from candidate verbs
         simpleVerbs.removeAll(adjectives);
 
-
-        // TODO: add multiple verbs to Verb object if found in "conj"
         // find verb conjunctions
         for (IndexedWord simpleVerb : simpleVerbs) {
             for (IndexedWord child : graph.getChildren(simpleVerb)) {
-                logger.info("verb: " + simpleVerb + " --- child: " + child);
-                logger.info("relation: " + graph.reln(simpleVerb, child).getShortName());
                 if (graph.reln(simpleVerb, child).getShortName().equals(CONJ_RELATION)) {
                     Set<IndexedWord> conjuctedVerbs = conjunctions.getOrDefault(simpleVerb, new HashSet<>());
                     conjuctedVerbs.add(child);
@@ -76,9 +70,9 @@ public class VerbFinder {
 
         // remaining verbs are only included if not connected to the main verb
         for (IndexedWord simpleVerb : simpleVerbs) {
-            IndexedWord parent = graph.getParent(simpleVerb);
-            if (!simpleVerbs.contains(parent) && !allConjunctedVerbs.contains(simpleVerb) && !conjunctions.keySet().contains(simpleVerb)) {
+            if (!allConjunctedVerbs.contains(simpleVerb) && !conjunctions.keySet().contains(simpleVerb)) {
                 conjunctions.put(simpleVerb, new HashSet<>());
+                logger.info("added non-conjunction: " + simpleVerb);
             }
         }
 
