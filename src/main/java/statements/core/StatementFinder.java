@@ -159,7 +159,7 @@ public  class StatementFinder {
 
             // compose into parent statements
             if (parent != null && child != null) {
-                parent.link(child);
+                parent.addChild(child);
                 statements.remove(child);
             }
         }

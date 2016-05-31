@@ -130,7 +130,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
      *
      * @param childStatement
      */
-    public void link(Statement childStatement) {
+    public void addChild(Statement childStatement) {
         this.childStatement = childStatement;
     }
 
