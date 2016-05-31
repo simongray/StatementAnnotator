@@ -84,29 +84,6 @@ public class Statement implements Resembling<Statement> {
     }
 
     /**
-     * The resemblance of another statement to this statement.
-     *
-     * @param otherStatement statement to be compared with
-     * @return resemblance
-     */
-    @Override
-    public Resemblance resemble(Statement otherStatement) {
-        // check that components match
-        if (subject == null && otherStatement.getSubject() != null) return Resemblance.NONE;
-        if (verb == null && otherStatement.getVerb() != null) return Resemblance.NONE;
-        if (directObject == null && otherStatement.getDirectObject() != null) return Resemblance.NONE;
-        if (indirectObject == null && otherStatement.getIndirectObject() != null) return Resemblance.NONE;
-
-        // reduce lowest valued resemblance state
-        return StatementUtils.reduce(
-            subject == null? null : subject.resemble(otherStatement.getSubject()),
-            verb == null? null : verb.resemble(otherStatement.getVerb()),
-            directObject == null? null : directObject.resemble(otherStatement.getDirectObject()),
-            indirectObject == null? null : indirectObject.resemble(otherStatement.getIndirectObject())
-        );
-    }
-
-    /**
      * Every word of the statement.
      *
      * @return words
@@ -131,8 +108,32 @@ public class Statement implements Resembling<Statement> {
         return getFull().size();
     }
 
+
     @Override
     public String toString() {
         return StatementUtils.join(getFull());
+    }
+
+    /**
+     * The resemblance of another statement to this statement.
+     *
+     * @param otherStatement statement to be compared with
+     * @return resemblance
+     */
+    @Override
+    public Resemblance resemble(Statement otherStatement) {
+        // check that components match
+        if (subject == null && otherStatement.getSubject() != null) return Resemblance.NONE;
+        if (verb == null && otherStatement.getVerb() != null) return Resemblance.NONE;
+        if (directObject == null && otherStatement.getDirectObject() != null) return Resemblance.NONE;
+        if (indirectObject == null && otherStatement.getIndirectObject() != null) return Resemblance.NONE;
+
+        // reduce lowest valued resemblance state
+        return StatementUtils.reduce(
+            subject == null? null : subject.resemble(otherStatement.getSubject()),
+            verb == null? null : verb.resemble(otherStatement.getVerb()),
+            directObject == null? null : directObject.resemble(otherStatement.getDirectObject()),
+            indirectObject == null? null : indirectObject.resemble(otherStatement.getIndirectObject())
+        );
     }
 }
