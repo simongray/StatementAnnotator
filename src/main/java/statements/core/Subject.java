@@ -3,7 +3,8 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 
-import java.util.*;
+import java.util.Set;
+
 
 /**
  * The complete subject of a natural language statement.
