@@ -105,6 +105,7 @@ public class Statement implements Resembling<Statement> {
      */
     public Set<IndexedWord> getFull() {
         Set<IndexedWord> statement = new HashSet<>();
+        // TODO: use getComplete() rathert than getCompounds() to also include conjuctions in statement
 
         if (subject != null) {
             for (Set<IndexedWord> compound : subject.getCompounds()) {
