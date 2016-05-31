@@ -48,6 +48,8 @@ public class VerbFinder {
             }
         }
 
+        // TODO: add multiple verbs to Verb object if found in "conj"
+
         // remove adjectives from candidate verbs
         simpleVerbs.removeAll(adjectives);
 
