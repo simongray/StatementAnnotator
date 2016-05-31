@@ -135,15 +135,6 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
         return null;  // TODO
     }
 
-    /**
-     * The amount of individual objects contained within the complete direct object.
-     * @return objects count
-     */
-    public int size() {
-        return secondary.size() + 1;
-    }
-
-
     @Override
     public String toString() {
         return "DO: " + getName() + " (" + getPrimary().word() + ", " + size() + ")";

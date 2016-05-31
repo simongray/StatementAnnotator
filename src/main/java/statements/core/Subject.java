@@ -53,14 +53,6 @@ public class Subject extends AbstractComponent implements Resembling<Subject> {
     }
 
     /**
-     * The amount of individual subjects contained within the complete subject.
-     * @return subjects count
-     */
-    public int size() {
-        return secondary.size() + 1;
-    }
-
-    /**
      * The resemblance of another subject to this subject.
      * @param otherSubject subject to be compared with
      * @return resemblance

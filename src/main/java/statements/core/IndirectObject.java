@@ -45,14 +45,6 @@ public class IndirectObject extends AbstractComponent implements Resembling<Indi
         return null;  // TODO
     }
 
-    /**
-     * The amount of individual objects contained within the complete indirect object.
-     * @return objects count
-     */
-    public int size() {
-        return secondary.size() + 1;
-    }
-
 
     @Override
     public String toString() {

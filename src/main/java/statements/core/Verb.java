@@ -94,14 +94,6 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     }
 
     /**
-     * The amount of individual verbs contained within the complete verb.
-     * @return verbs count
-     */
-    public int size() {
-        return secondary.size() + 1;
-    }
-
-    /**
      * The resemblance of another verb to this verb.
      * @param otherVerb subject to be compared with
      * @return resemblance

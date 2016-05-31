@@ -57,4 +57,12 @@ public abstract class AbstractComponent implements StatementComponent {
         return compounds;
     }
 
+    /**
+     * The amount of individual compounds contained within the complete component.
+     * @return compound count
+     */
+    public int size() {
+        return compounds.size();
+    }
+
 }
