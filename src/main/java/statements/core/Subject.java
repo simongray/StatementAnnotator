@@ -18,33 +18,18 @@ import java.util.*;
  *     primary subject = the simple subject that is the primary dependent of the verb
  *     secondary subject = any other simple subjects contained in the complete subject
  */
-public class Subject implements StatementComponent, Resembling<Subject> {
+public class Subject extends AbstractComponent implements Resembling<Subject> {
     /**
      * Describes which relations are ignored when producing compound subjects.
      */
-    private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
     static {
-        IGNORED_RELATIONS.add("conj");   // other simple subjects
-        IGNORED_RELATIONS.add("cc");     // words like "and"
-        IGNORED_RELATIONS.add("punct");  // punctuation like ","
+        IGNORED_COMPOUND_RELATIONS.add("conj");   // other simple subjects
+        IGNORED_COMPOUND_RELATIONS.add("cc");     // words like "and"
+        IGNORED_COMPOUND_RELATIONS.add("punct");  // punctuation like ","
     }
-    private final IndexedWord primary;
-    private final Set<IndexedWord> secondary;
-    private final Set<IndexedWord> complete;
-    private final Set<Set<IndexedWord>> compounds;
 
-    // TODO: remove secondary requirement from constructor, find dynamically instead
     public Subject(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
-        this.primary = primary;
-        this.secondary = secondary;
-        this.complete = graph.descendants(primary);
-
-        // recursively discover all compound subjects
-        compounds = new HashSet<>();
-        compounds.add(StatementUtils.findCompoundComponents(primary, graph, IGNORED_RELATIONS));
-        for (IndexedWord subject : secondary) {
-            compounds.add(StatementUtils.findCompoundComponents(subject, graph, IGNORED_RELATIONS));
-        }
+        super(primary, secondary, graph);
     }
 
     /**
@@ -53,14 +38,6 @@ public class Subject implements StatementComponent, Resembling<Subject> {
      */
     public String getName() {
         return StatementUtils.join(complete);
-    }
-
-    /**
-     * The primary single subject contained within the complete subject.
-     * @return primary subject
-     */
-    public IndexedWord getPrimary() {
-        return primary;
     }
 
     /**

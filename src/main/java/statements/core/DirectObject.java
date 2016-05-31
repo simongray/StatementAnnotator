@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * The complete direct object of a natural language statement.
  */
-public class DirectObject implements StatementComponent, Resembling<DirectObject> {
+public class DirectObject extends AbstractComponent implements Resembling<DirectObject> {
     /**
      * Different kinds of direct objects.
      */
@@ -24,32 +24,24 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
     /**
      * Describes which relations are ignored when producing compound subjects.
      */
-    private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
     static {
         IGNORED_RELATIONS.add("nsubj");
         IGNORED_RELATIONS.add("nmod");
-    }
-    private static final Set<String> IGNORED_CHILD_RELATIONS = new HashSet<>();
-    static {
-        IGNORED_CHILD_RELATIONS.addAll(IGNORED_RELATIONS);
+
+        // TODO: seems like conj and cc are being added to the wrong set
+        IGNORED_COMPOUND_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_RELATIONS.add("conj");
         IGNORED_RELATIONS.add("cc");
     }
     private static final String NEG_RELATION = "neg";
     private static final String COP_RELATION = "cop";
-    private final IndexedWord primary;
-    private Set<IndexedWord> secondary;
     private Type type;
-    private final Set<IndexedWord> complete;
     private final Map<IndexedWord, Set<IndexedWord>> negationMap = new HashMap<>();
     private final Map<IndexedWord, Set<IndexedWord>> copulaMap = new HashMap<>();  // only applicable to copula objects
-    private final Set<Set<IndexedWord>> compounds;
 
     public DirectObject(IndexedWord primary, Set<IndexedWord> secondary, Type type, SemanticGraph graph) {
-        this.primary = primary;
-        this.secondary = secondary;
+        super(primary, secondary, graph);
         this.type = type;
-        this.complete = StatementUtils.findCompoundComponents(primary, graph, IGNORED_RELATIONS);
 
         // find negations (relevant for COP (adjectives) and XCOMP (verb) types)
         negationMap.put(primary, StatementUtils.findSpecificDescendants(NEG_RELATION, primary, graph));
@@ -64,13 +56,6 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
                 copulaMap.put(object, StatementUtils.findSpecificDescendants(COP_RELATION, object, graph));
             }
         }
-
-        // recursively discover all compound objects
-        compounds = new HashSet<>();
-        compounds.add(StatementUtils.findCompoundComponents(primary, graph, IGNORED_CHILD_RELATIONS));
-        for (IndexedWord object : secondary) {
-            compounds.add(StatementUtils.findCompoundComponents(object, graph, IGNORED_CHILD_RELATIONS));
-        }
     }
 
     /**
@@ -79,14 +64,6 @@ public class DirectObject implements StatementComponent, Resembling<DirectObject
      */
     public String getName() {
         return StatementUtils.join(StatementUtils.without(getCopulas(), complete));
-    }
-
-    /**
-     * The primary single direct object contained within the complete direct object.
-     * @return primary object
-     */
-    public IndexedWord getPrimary() {
-        return primary;
     }
 
     /**

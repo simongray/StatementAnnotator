@@ -9,23 +9,10 @@ import java.util.Set;
 /**
  * The complete indirect object of a natural language statement.
  */
-public class IndirectObject implements StatementComponent, Resembling<IndirectObject> {
-    private final IndexedWord primary;
-    private final Set<IndexedWord> secondary;
-    private final Set<IndexedWord> complete;
-    private final Set<Set<IndexedWord>> compounds;
+public class IndirectObject extends AbstractComponent implements Resembling<IndirectObject> {
 
     public IndirectObject(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
-        this.primary = primary;
-        this.secondary = secondary;
-        this.complete = graph.descendants(primary);
-
-        // recursively discover all compound objects
-        compounds = new HashSet<>();
-        compounds.add(StatementUtils.findCompoundComponents(primary, graph, null));
-        for (IndexedWord object : secondary) {
-            compounds.add(StatementUtils.findCompoundComponents(object, graph, null));
-        }
+        super(primary, secondary, graph);
     }
 
     /**
@@ -34,14 +21,6 @@ public class IndirectObject implements StatementComponent, Resembling<IndirectOb
      */
     public String getName() {
         return StatementUtils.join(complete);
-    }
-
-    /**
-     * The primary single indirect object contained within the complete indirect object.
-     * @return primary object
-     */
-    public IndexedWord getPrimary() {
-        return primary;
     }
 
     /**
