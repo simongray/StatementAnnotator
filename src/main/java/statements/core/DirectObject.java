@@ -58,10 +58,10 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
     }
 
     /**
-     * The name of the complete indirect object.
-     * @return the longest name possible
+     * The string of the complete indirect object.
+     * @return the longest string possible
      */
-    public String getName() {
+    public String getString() {
         return StatementUtils.join(StatementUtils.without(getCopulas(), complete));
     }
 
@@ -135,8 +135,13 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
         return null;  // TODO
     }
 
+    /**
+     * The identifier for this component.
+     *
+     * @return identifier
+     */
     @Override
-    public String toString() {
-        return "DO: " + getName() + " (" + getPrimary().word() + ", " + size() + ")";
+    protected String getIdentifier() {
+        return "DO";
     }
 }

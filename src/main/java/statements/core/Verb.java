@@ -50,10 +50,10 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     }
 
     /**
-     * The name of the complete verb.
-     * @return the longest verb possible
+     * The string of the complete verb.
+     * @return the longest string possible
      */
-    public String getName() {
+    public String getString() {
         return StatementUtils.join(StatementUtils.without(getMarkers(), complete));
     }
 
@@ -104,7 +104,7 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
             return Resemblance.NONE;
         }
 
-        if (getName().equals(otherVerb.getName())) {
+        if (getString().equals(otherVerb.getString())) {
             return Resemblance.FULL;
         }
 
@@ -120,8 +120,13 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
         return Resemblance.NONE;
     }
 
+    /**
+     * The identifier for this component.
+     *
+     * @return identifier
+     */
     @Override
-    public String toString() {
-        return "V: " + getName() + " (" + (isNegated()? "not ": "") + getPrimary().word() + ", " + size() +")";
+    protected String getIdentifier() {
+        return "V";
     }
 }

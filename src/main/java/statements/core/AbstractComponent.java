@@ -42,6 +42,7 @@ public abstract class AbstractComponent implements StatementComponent {
 
     /**
      * The primary word contained within the complete component.
+     *
      * @return primary word
      */
     @Override
@@ -50,7 +51,24 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
+     * The string of the complete component.
+     *
+     * @return the longest string possible
+     */
+    protected String getString() {
+        return StatementUtils.join(complete);
+    }
+
+    /**
+     * The identifier for this component.
+     *
+     * @return identifier
+     */
+    protected abstract String getIdentifier();
+
+    /**
      * The compounds of the complete component.
+     *
      * @return compounds
      */
     public Set<Set<IndexedWord>> getCompounds() {
@@ -59,10 +77,16 @@ public abstract class AbstractComponent implements StatementComponent {
 
     /**
      * The amount of individual compounds contained within the complete component.
+     *
      * @return compound count
      */
     public int size() {
         return compounds.size();
+    }
+
+    @Override
+    public String toString() {
+        return getIdentifier() + ": " + getString() + " (" + size() + ")";
     }
 
 }

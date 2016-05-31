@@ -33,14 +33,6 @@ public class Subject extends AbstractComponent implements Resembling<Subject> {
     }
 
     /**
-     * The name of the complete subject.
-     * @return the longest subject possible
-     */
-    public String getName() {
-        return StatementUtils.join(complete);
-    }
-
-    /**
      * The names of all of the compound subjects.
      * @return compound subject names
      */
@@ -63,7 +55,7 @@ public class Subject extends AbstractComponent implements Resembling<Subject> {
             return Resemblance.NONE;
         }
 
-        if (getName().equals(otherSubject.getName())) {
+        if (getString().equals(otherSubject.getString())) {
             return Resemblance.FULL;  // identical complete subject
         }
 
@@ -86,8 +78,13 @@ public class Subject extends AbstractComponent implements Resembling<Subject> {
         return Resemblance.NONE;
     }
 
+    /**
+     * The identifier for this component.
+     *
+     * @return identifier
+     */
     @Override
-    public String toString() {
-        return "S: " + getName() + " (" + getPrimary().word() + ", " + size() + ")";
+    protected String getIdentifier() {
+        return "S";
     }
 }

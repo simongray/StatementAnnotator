@@ -16,14 +16,6 @@ public class IndirectObject extends AbstractComponent implements Resembling<Indi
     }
 
     /**
-     * The name of the complete indirect object.
-     * @return the longest name possible
-     */
-    public String getName() {
-        return StatementUtils.join(complete);
-    }
-
-    /**
      * The strings of all of the compound indirect objects.
      * @return compound indirect object strings
      */
@@ -45,9 +37,13 @@ public class IndirectObject extends AbstractComponent implements Resembling<Indi
         return null;  // TODO
     }
 
-
+    /**
+     * The identifier for this component.
+     *
+     * @return identifier
+     */
     @Override
-    public String toString() {
-        return "IO: " + getName() + " (" + getPrimary().word() + ", " + size() + ")";
+    protected String getIdentifier() {
+        return "IO";
     }
 }
