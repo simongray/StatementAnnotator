@@ -45,6 +45,18 @@ public class StatementUtils {
     }
 
     /**
+     * Remove certain words from a list of words.
+     * @param undesired words to remove
+     * @param allWords words to remove from
+     * @return remaining words
+     */
+    public static Set<IndexedWord> without(Set<IndexedWord> undesired, Set<IndexedWord> allWords) {
+        Set<IndexedWord> remainingWords = new HashSet<>(allWords);
+        remainingWords.removeIf(indexedWord -> undesired.contains(indexedWord));
+        return remainingWords;
+    }
+
+    /**
      * Whether or not a word token is shortened.
      * @param word the word to check
      * @return shortened or not
