@@ -174,8 +174,8 @@ public  class StatementFinder {
     /**
      * Test whether two component sets intersect.
      *
-     * @param set1
-     * @param set2
+     * @param set1 set 1
+     * @param set2 set 2
      * @return
      */
     private static boolean intersect(Set<AbstractComponent> set1, Set<AbstractComponent> set2) {
