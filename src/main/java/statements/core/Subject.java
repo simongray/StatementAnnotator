@@ -41,14 +41,6 @@ public class Subject extends AbstractComponent implements Resembling<Subject> {
     }
 
     /**
-     * The compound subjects.
-     * @return compounds
-     */
-    public Set<Set<IndexedWord>> getCompounds() {
-        return new HashSet<>(compounds);
-    }
-
-    /**
      * The names of all of the compound subjects.
      * @return compound subject names
      */

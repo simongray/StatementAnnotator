@@ -58,14 +58,6 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     }
 
     /**
-     * The verb compound.
-     * @return compound
-     */
-    public Set<Set<IndexedWord>> getCompounds() {
-        return new HashSet<>(compounds);
-    }
-
-    /**
      * The negations for the verb.
      * @return negations
      */

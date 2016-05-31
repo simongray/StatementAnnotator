@@ -24,14 +24,6 @@ public class IndirectObject extends AbstractComponent implements Resembling<Indi
     }
 
     /**
-     * The compound indirect objects.
-     * @return compounds
-     */
-    public Set<Set<IndexedWord>> getCompounds() {
-        return compounds;
-    }
-
-    /**
      * The strings of all of the compound indirect objects.
      * @return compound indirect object strings
      */

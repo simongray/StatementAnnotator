@@ -66,14 +66,6 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
     }
 
     /**
-     * The compound direct objects.
-     * @return compounds
-     */
-    public Set<Set<IndexedWord>> getCompounds() {
-        return compounds;
-    }
-
-    /**
      * The strings of all of the compound direct objects.
      * @return compound direct object strings
      */

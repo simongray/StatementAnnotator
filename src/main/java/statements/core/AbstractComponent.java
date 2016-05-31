@@ -48,4 +48,13 @@ public abstract class AbstractComponent implements StatementComponent {
     public IndexedWord getPrimary() {
         return primary;
     }
+
+    /**
+     * The compounds of the complete component.
+     * @return compounds
+     */
+    public Set<Set<IndexedWord>> getCompounds() {
+        return compounds;
+    }
+
 }
