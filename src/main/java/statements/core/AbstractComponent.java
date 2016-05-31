@@ -57,6 +57,15 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
+     * The entries of the complete component.
+     *
+     * @return compounds
+     */
+    public Set<IndexedWord> getEntries() {
+        return entries;
+    }
+
+    /**
      * Every word of the complete component.
      *
      * @return complete component
@@ -64,16 +73,6 @@ public abstract class AbstractComponent implements StatementComponent {
     public Set<IndexedWord> getComplete() {
         return complete;
     }
-
-    /**
-     * The string of the complete component.
-     *
-     * @return the longest string possible
-     */
-    protected String getString() {
-        return StatementUtils.join(getComplete());
-    }
-
 
     /**
      * The compounds of the complete component.
@@ -85,12 +84,12 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
-     * The entries of the complete component.
+     * The string of the complete component.
      *
-     * @return compounds
+     * @return the longest string possible
      */
-    public Set<IndexedWord> getEntries() {
-        return entries;
+    protected String getString() {
+        return StatementUtils.join(getComplete());
     }
 
     /**
@@ -98,8 +97,17 @@ public abstract class AbstractComponent implements StatementComponent {
      *
      * @return compound count
      */
+    public int count() {
+        return getCompounds().size();
+    }
+
+    /**
+     * The amount of words contained within the complete component.
+     *
+     * @return word count
+     */
     public int size() {
-        return compounds.size();
+        return getComplete().size();
     }
 
     @Override
