@@ -22,6 +22,7 @@ public class Verb implements StatementComponent, Resembling<Verb> {
         IGNORED_RELATIONS.add("xcomp");  // "<verb>s to <verb>"
         IGNORED_RELATIONS.add("cc");  // "and", "or", etc.
         IGNORED_RELATIONS.add("conj");  // connections to other verbs
+        IGNORED_RELATIONS.add("ccomp");  // <verb> that <statement>, e.g. "we have <found> that <it is great>"
     }
     private static final String NEG_RELATION = "neg";
     private final IndexedWord verb;

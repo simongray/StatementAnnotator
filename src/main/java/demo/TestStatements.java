@@ -32,6 +32,7 @@ public class TestStatements {
 //        String example = "The amazing Henry doesn't like doing anything in particular.";
 //        String example = "Hey, cool! Very cool, in fact. Henry, Louis the Dragon and Sally Bates don't like doing anything in particular.";
 //        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";
+//        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament.";
 //        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament...\n" +
 //        "I'm sure you meant the EU as a whole and not the European Parliament specifically, just thought it was funny that a Brit would complain about this when the UK voting system is one of the absolute worst in the world at representing the will of the people + your other house consists of a bunch of noble people.";
 //        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable. Here's our solution:" +
@@ -44,9 +45,12 @@ public class TestStatements {
 //        String example = "He really doesn't love singing out loud.";
 //        String example = "She hates flying and he loves it.";
 //        String example = "They don't like doing anything in particular. Sally and Mads don't like doing anything in particular.";
-        String example = "They don't like doing anything in particular and neither does she.";
-        // TODO: find out why this is screwing up
+//        String example = "They don't like doing anything in particular and neither does she.";
         // TODO: preserve conjuctions like "and" and "or" for recreating the statement
+
+//        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable. Here's our solution:";
+        String example =    "We have found that it is quite manageable.";
+
 
         Annotation annotation = new Annotation(example);
         pipeline.annotate(annotation);

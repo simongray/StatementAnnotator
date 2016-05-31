@@ -15,6 +15,8 @@ import java.util.*;
 public  class StatementFinder {
     private static final Logger logger = LoggerFactory.getLogger(StatementFinder.class);
 
+    private static final String CCOMP_RELATION = "ccomp"; // "we have found <that ....>"
+
     /**
      * Find statements in a sentence.
      * @param sentence the sentence to look in
@@ -48,6 +50,7 @@ public  class StatementFinder {
      */
     private static List<Statement> link(SemanticGraph graph, Set<StatementComponent> components) {
         Map<StatementComponent, StatementComponent> childToParentMapping = new HashMap<>();
+        Map<StatementComponent, StatementComponent> interStatementMapping = new HashMap<>();
         Set<Set<StatementComponent>> componentSets = new HashSet<>();
         List<Statement> statements = new ArrayList<>();
 
@@ -55,7 +58,13 @@ public  class StatementFinder {
         for (StatementComponent component : components) {
             IndexedWord parentPrimary = graph.getParent(component.getPrimary());
             StatementComponent parent = getFromPrimary(parentPrimary, components);
-            childToParentMapping.put(component, parent);
+
+            // keep track of linked statements
+            if (parentPrimary != null && graph.reln(parentPrimary, component.getPrimary()).getShortName().equals(CCOMP_RELATION)) {
+                interStatementMapping.put(component, parent);
+            } else {
+                childToParentMapping.put(component, parent);
+            }
         }
 
         // remove connections between identical component types
@@ -81,7 +90,6 @@ public  class StatementFinder {
                     if (parent != null) componentSet.add(parent);
                     componentSet.add(child);
                     found = true;
-                    logger.info("added " + parent + " " + child + " to existing set: " + componentSet);
                     break;
                 }
             }
@@ -92,7 +100,6 @@ public  class StatementFinder {
                 if (parent != null) newComponentSet.add(parent);
                 newComponentSet.add(child);
                 componentSets.add(newComponentSet);
-                logger.info("created new set: " + newComponentSet);
             }
         }
 
@@ -130,14 +137,16 @@ public  class StatementFinder {
                     }
                 }
 
-                logger.info("component mapping: " + childToParentMapping);
                 logger.info("linked statement from components: " + componentSet);
-                logger.info("based on dependencies: " + graph.typedDependencies());
                 statements.add(new Statement(subject, verb, directObject, indirectObject));
             } else {
                 logger.info("too few components available (" + componentSet.size()+ "), statement not created");
             }
         }
+
+        logger.info("component mapping: " + childToParentMapping);
+        logger.info("based on dependencies: " + graph.typedDependencies());
+        logger.info("links between statements: " + interStatementMapping);
 
         return statements;
     }
