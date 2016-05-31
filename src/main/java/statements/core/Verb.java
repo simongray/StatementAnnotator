@@ -3,7 +3,9 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -31,7 +33,9 @@ public class Verb implements StatementComponent, Resembling<Verb> {
 
     private static final String NEG_RELATION = "neg";
     private static final String CC_RELATION = "cc";
+    private static final String MARK_RELATION = "mark";  // for markers, e.g. "whether"
     private final IndexedWord primary;
+    private final Map<IndexedWord, Set<IndexedWord>> markerMap = new HashMap<>();
     private Set<IndexedWord> secondary;
     private final Set<IndexedWord> complete;
     private final Set<Set<IndexedWord>> compounds;
@@ -44,7 +48,6 @@ public class Verb implements StatementComponent, Resembling<Verb> {
         this.complete = StatementUtils.findCompoundComponents(primary, graph, IGNORED_RELATIONS);
 
         // recursively discover all compound subjects
-        // recursively discover all compound subjects
         compounds = new HashSet<>();
         compounds.add(StatementUtils.findCompoundComponents(primary, graph, IGNORED_COMPOUND_RELATIONS));
         for (IndexedWord subject : secondary) {
@@ -54,6 +57,12 @@ public class Verb implements StatementComponent, Resembling<Verb> {
         // find specific words
         this.negations = StatementUtils.findSpecificDescendants(NEG_RELATION, primary, graph);
         this.conjuctions = StatementUtils.findSpecificDescendants(CC_RELATION, primary, graph);
+
+        // find markers (only relevant for COP)
+        markerMap.put(primary, StatementUtils.findSpecificDescendants(MARK_RELATION, primary, graph));
+        for (IndexedWord verb : secondary) {
+            markerMap.put(verb, StatementUtils.findSpecificDescendants(MARK_RELATION, verb, graph));
+        }
     }
 
     /**
@@ -61,7 +70,7 @@ public class Verb implements StatementComponent, Resembling<Verb> {
      * @return the longest verb possible
      */
     public String getName() {
-        return StatementUtils.join(complete);
+        return StatementUtils.join(StatementUtils.without(getMarkers(), complete));
     }
 
     /**
@@ -102,6 +111,18 @@ public class Verb implements StatementComponent, Resembling<Verb> {
      */
     public boolean isNegated() {
         return StatementUtils.isNegated(negations);
+    }
+
+    /**
+     * Markers for all contained verbs.
+     * @return copulas
+     */
+    public Set<IndexedWord> getMarkers() {
+        Set<IndexedWord> markers = new HashSet<>();
+        for (Set<IndexedWord> markerSet : markerMap.values()) {
+            markers.addAll(markerSet);
+        }
+        return markers;
     }
 
     /**
