@@ -11,9 +11,10 @@ import java.util.Set;
  * The complete primary of a natural language statement.
  */
 public class Verb extends AbstractComponent implements Resembling<Verb> {
-    /**
-     * Describes which relations are ignored when producing compound subjects.
-     */
+
+    private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
+    private static final Set<String> IGNORED_COMPOUND_RELATIONS = new HashSet<>();
+
     static {
         IGNORED_RELATIONS.add("nsubj");
         IGNORED_RELATIONS.add("nsubjpass");
@@ -43,6 +44,20 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
 
         // find markers (only relevant for COP)
         markerMap = StatementUtils.makeRelationsMap(entries, MARK_RELATION, graph);
+    }
+
+    /**
+     * Describes which relations are ignored when producing the complete subject.
+     */
+    protected Set<String> getIgnoredRelations() {
+        return IGNORED_RELATIONS;
+    }
+
+    /**
+     * Describes which relations are ignored when producing compound subjects.
+     */
+    protected Set<String> getIgnoredCompoundRelations() {
+        return IGNORED_COMPOUND_RELATIONS;
     }
 
     /**

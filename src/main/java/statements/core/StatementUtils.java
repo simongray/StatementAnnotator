@@ -4,6 +4,8 @@ import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.trees.GrammaticalRelation;
 import edu.stanford.nlp.util.CoreMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import statements.annotations.StatementsAnnotation;
 
 import java.util.*;
@@ -12,6 +14,8 @@ import java.util.*;
  * Utilities for Statement and related classes.
  */
 public class StatementUtils {
+    private static final Logger logger = LoggerFactory.getLogger(StatementUtils.class);
+
     /**
      * Joins a list of IndexedWords together in the correct order without putting spaces before commas.
      *
@@ -80,11 +84,14 @@ public class StatementUtils {
         if (ignoredRelations == null) ignoredRelations = new HashSet<>();
         Set<IndexedWord> compoundComponents = new HashSet<>();
         compoundComponents.add(parent);
+        logger.info("added " + parent + " as part of compound");
 
         for (IndexedWord child : graph.getChildren(parent)) {
             GrammaticalRelation relation = graph.reln(parent, child);
             if (!ignoredRelations.contains(relation.getShortName())) {
                 compoundComponents.addAll(findCompoundComponents(child, graph, ignoredRelations));
+            } else {
+                logger.info("ignoring " + child + " with relation " + relation.getShortName() + " (ignored relations: " + ignoredRelations + ")");
             }
         }
 

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+
 /**
  * Finds verbs in sentences.
  */
@@ -22,7 +23,6 @@ public class VerbFinder {
         RELATIONS.add(NSUBJ_RELATION);
         RELATIONS.add(NSUBJPASS_RELATION);
         RELATIONS.add(DOBJ_RELATION);
-        RELATIONS.add(XCOMP_RELATION);
     }
     private static final String COP_RELATION = "cop";  // copula, ex: in "they're pretty" the "'re" would be copula
     private static final String CONJ_RELATION = "conj";  // conjunctions
@@ -38,6 +38,7 @@ public class VerbFinder {
         Set<IndexedWord> simpleVerbs = new HashSet<>();
         Map<IndexedWord, Set<IndexedWord>> conjunctions = new HashMap<>();
         Set<IndexedWord> adjectives = new HashSet<>();
+        Set<IndexedWord> xcompVerbs = new HashSet<>();  // for verbs that act as objects of another verb
         Set<Verb> verbs = new HashSet<>();
 
         // find candidate verbs and adjectives from relations
@@ -48,10 +49,16 @@ public class VerbFinder {
             if (dependency.reln().getShortName().equals(COP_RELATION)) {
                 adjectives.add(dependency.gov());
             }
+            if (dependency.reln().getShortName().equals(XCOMP_RELATION)) {
+                xcompVerbs.add(dependency.dep());
+            }
         }
 
         // remove adjectives from candidate verbs
         simpleVerbs.removeAll(adjectives);
+
+        // remove verbs that act as objects
+        simpleVerbs.removeAll(xcompVerbs);
 
         // find verb conjunctions
         for (IndexedWord simpleVerb : simpleVerbs) {

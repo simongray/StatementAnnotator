@@ -14,12 +14,16 @@ public abstract class AbstractComponent implements StatementComponent {
     /**
      * Describes which relations are ignored when producing the complete subject.
      */
-    protected static final Set<String> IGNORED_RELATIONS = new HashSet<>();
+    protected Set<String> getIgnoredRelations() {
+        return null;
+    }
 
     /**
      * Describes which relations are ignored when producing compound subjects.
      */
-    protected static final Set<String> IGNORED_COMPOUND_RELATIONS = new HashSet<>();
+    protected Set<String> getIgnoredCompoundRelations() {
+        return null;
+    }
 
     protected final IndexedWord primary;
     protected final Set<IndexedWord> secondary;
@@ -31,7 +35,7 @@ public abstract class AbstractComponent implements StatementComponent {
     public AbstractComponent(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         this.primary = primary;
         this.secondary = secondary;
-        this.complete = StatementUtils.findCompoundComponents(primary, graph, IGNORED_RELATIONS);
+        this.complete = StatementUtils.findCompoundComponents(primary, graph, getIgnoredRelations());
 
         // store primary word + secondary word(s) together for simple retrieval
         this.entries = new HashSet<>();
@@ -43,7 +47,7 @@ public abstract class AbstractComponent implements StatementComponent {
         // recursively discover all compounds
         compounds = new HashSet<>();
         for (IndexedWord word : entries) {
-            compounds.add(StatementUtils.findCompoundComponents(word, graph, IGNORED_COMPOUND_RELATIONS));
+            compounds.add(StatementUtils.findCompoundComponents(word, graph, getIgnoredCompoundRelations()));
         }
     }
 

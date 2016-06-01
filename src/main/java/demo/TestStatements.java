@@ -61,8 +61,8 @@ public class TestStatements {
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";
 //        String example = "She's having to make do. She speaks and shouts. The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
 //        String example =    "I don't care whether she likes me.";
-        String example =    "I think she's mad. I don't care whether she likes me. She says that they should go. I don't care whether or not they come.";
-
+//        String example =    "I think she's mad. I don't care whether she likes me. She says that they should go. I don't care whether or not they come.";
+        String example = "He doesn't like doing anything.";
 
 
 

@@ -20,9 +20,8 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
         COP
     }
 
-    /**
-     * Describes which relations are ignored when producing compound subjects.
-     */
+    private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
+    private static final Set<String> IGNORED_COMPOUND_RELATIONS = new HashSet<>();
     static {
         IGNORED_RELATIONS.add("nsubj");
         IGNORED_RELATIONS.add("nmod");
@@ -31,12 +30,28 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
         IGNORED_COMPOUND_RELATIONS.add("conj");
         IGNORED_COMPOUND_RELATIONS.add("cc");
     }
+
+    /**
+     * Describes which relations are ignored when producing the complete subject.
+     */
+    protected Set<String> getIgnoredRelations() {
+        return IGNORED_RELATIONS;
+    }
+
+    /**
+     * Describes which relations are ignored when producing compound subjects.
+     */
+    protected Set<String> getIgnoredCompoundRelations() {
+        return IGNORED_COMPOUND_RELATIONS;
+    }
+
     private static final String NEG_RELATION = "neg";
     private static final String COP_RELATION = "cop";
     private Type type;
     private final Map<IndexedWord, Set<IndexedWord>> negationMap;
     private final Map<IndexedWord, Set<IndexedWord>> copulaMap;  // only applicable to copula objects
 
+    // TODO: shouldn't be necessary to set type manually
     public DirectObject(IndexedWord primary, Set<IndexedWord> secondary, Type type, SemanticGraph graph) {
         super(primary, secondary, graph);
         this.type = type;

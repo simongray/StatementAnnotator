@@ -111,7 +111,8 @@ public  class StatementFinder {
             Set<AbstractComponent> mergedComponentSet = new HashSet<>(componentSet);
 
             for (Set<AbstractComponent> otherComponentSet : componentSets) {
-                if (intersect(mergedComponentSet, otherComponentSet)) {
+                if (!mergedComponentSet.equals(otherComponentSet) && intersect(mergedComponentSet, otherComponentSet)) {
+                    logger.info("merging " + otherComponentSet + " into " + mergedComponentSet);
                     mergedComponentSet.addAll(otherComponentSet);
                 }
             }
@@ -142,7 +143,7 @@ public  class StatementFinder {
             statements.add(new Statement(subject, verb, directObject, indirectObject));
         }
 
-        // link composed statements together
+        // link dependent clauses together with the main statements
         for (AbstractComponent childComponent : interStatementMapping.keySet()) {
             AbstractComponent parentComponent = interStatementMapping.get(childComponent);
             Statement child = null;

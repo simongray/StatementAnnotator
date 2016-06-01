@@ -49,6 +49,24 @@ public class DirectObjectFinder {
             }
         }
 
+        logger.info("dobj objects found: " + dobjObjects);
+        logger.info("xcomp objects found: " + xcompObjects);
+        logger.info("cop objects found: " + copObjects);
+
+        // find possible xcomp+dobj (V+O constructions)
+        Set<IndexedWord> voContstructionObjects = new HashSet<>();
+
+        for (IndexedWord xcompObject : xcompObjects) {
+            for (IndexedWord dobjObject : dobjObjects) {
+                if (graph.reln(xcompObject, dobjObject).getShortName().equals(DOBJ_RELATION)) {
+                    voContstructionObjects.add(dobjObject);
+                }
+            }
+        }
+
+        // remove dobj objects if part of V+O construction
+        dobjObjects.removeAll(voContstructionObjects);
+
         // create direct object mapping based on relations
         for (IndexedWord object : dobjObjects) {
             IndexedWord parent = graph.getParent(object);
@@ -95,6 +113,8 @@ public class DirectObjectFinder {
         for (IndexedWord object : copObjectMapping.keySet()) {
             directObjects.add(new DirectObject(object, copObjectMapping.get(object), DirectObject.Type.COP, graph));
         }
+
+        logger.info("final list of direct objects: " + directObjects);
 
         return directObjects;
     }
