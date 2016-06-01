@@ -64,7 +64,7 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
      */
     public Type getType() {
         return type;
-    }
+    }  // TODO: is it relevant?
 
     /**
      * The negations for a specific contained object.
