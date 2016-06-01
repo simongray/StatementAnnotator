@@ -2,6 +2,7 @@ package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.trees.GrammaticalRelation;
 import edu.stanford.nlp.trees.TypedDependency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,8 @@ public class DirectObjectFinder {
 
         for (IndexedWord xcompObject : xcompObjects) {
             for (IndexedWord dobjObject : dobjObjects) {
-                if (graph.reln(xcompObject, dobjObject).getShortName().equals(DOBJ_RELATION)) {
+                GrammaticalRelation relation = graph.reln(xcompObject, dobjObject);
+                if (relation != null && relation.getShortName().equals(DOBJ_RELATION)) {
                     voContstructionObjects.add(dobjObject);
                 }
             }
