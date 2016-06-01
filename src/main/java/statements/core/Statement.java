@@ -14,21 +14,30 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     private DirectObject directObject;
     private IndirectObject indirectObject;
     private Statement childStatement;
+    private Set<AbstractComponent> pureComponents;
 
     /**
      * Initialised by setting statement components as parameters. Params can be left null if the component type is N/A.
      * Initialisation should not be performed manually, but by using StatementFinder to build Statement objects.
-     *
-     * @param subject subject
-     * @param verb verb
-     * @param directObject direct object
-     * @param indirectObject indirect object
+
      */
-    public Statement(Subject subject, Verb verb, DirectObject directObject, IndirectObject indirectObject) {
-        this.subject = subject;
-        this.verb = verb;
-        this.directObject = directObject;
-        this.indirectObject = indirectObject;
+    public Statement(Set<AbstractComponent> pureComponents) {
+        init(pureComponents);
+    }
+
+    private void init(Set<AbstractComponent> pureComponents) {
+        for (StatementComponent component : pureComponents) {
+            if (component instanceof Subject) {
+                subject = (Subject) component;
+            } else if (component instanceof Verb) {
+                verb = (Verb) component;
+            } else if (component instanceof DirectObject) {
+                directObject = (DirectObject) component;
+            } else if (component instanceof IndirectObject) {
+                indirectObject = (IndirectObject) component;
+            }
+        }
+        this.pureComponents = pureComponents;
     }
 
     /**
@@ -68,18 +77,23 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     }
 
     /**
-     * The components making up the statement.
+     * The pure components making up the statement (not including any nested statement).
+     *
+     * @return components
+     */
+    public Set<AbstractComponent> getPureComponents() {
+        // TODO: do away with this eventually
+        return new HashSet<>(pureComponents);
+    }
+
+    /**
+     * All components making up the statement (including any nested statement).
      *
      * @return components
      */
     public Set<StatementComponent> getComponents() {
-        Set<StatementComponent> components = new HashSet<>();
-        if (subject != null) components.add(subject);
-        if (verb != null) components.add(verb);
-        if (directObject != null) components.add(directObject);
-        if (indirectObject != null) components.add(indirectObject);
+        Set<StatementComponent> components = new HashSet<>(pureComponents);
         if (childStatement != null) components.add(childStatement);
-
         return components;
     }
 
@@ -111,7 +125,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
 
     @Override
     public String toString() {
-        return StatementUtils.join(getComplete());
+        return "{" + StatementUtils.join(getComplete()) + "}";
     }
 
     /**

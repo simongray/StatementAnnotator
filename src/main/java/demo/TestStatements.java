@@ -43,7 +43,7 @@ public class TestStatements {
 //        "Don't worry too much. Sometimes there's no smog for a whole week, sometime's it lasts for a whole week and you'll just stay mostly indoors and use masks when outside. You'll get used to it.";
 //        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
 //        String example = "He really doesn't love singing out loud.";
-        String example = "She hates flying and he loves it.";  // TODO: conj should be ignored when nouns are not point to the same verb
+//        String example = "She hates flying and he loves it.";
 //        String example = "They don't like doing anything in particular. Sally and Mads don't like doing anything in particular.";
 //        String example = "They don't like doing anything in particular and neither does she.";
 
@@ -54,7 +54,8 @@ public class TestStatements {
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
 //        String example = "Anyway, just make your own rule and stick to it.";
-//        String example = "She speaks and shoots.";
+        String example = "She speaks and shoots. She hates flying and he loves it.";
+        // TODO: the sentence "Hates and loves it." - doesn't separate into two statements, however doubtful if it is possible to do in a non-hackish way
 //        String example = "Bought some 3M 95N-rated face masks for smoggy days.\n";
 //        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";
