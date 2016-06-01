@@ -36,7 +36,6 @@ public class VerbFinder {
     public static Set<Verb> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> simpleVerbs = new HashSet<>();
-        Map<IndexedWord, Set<IndexedWord>> conjunctions = new HashMap<>();
         Set<IndexedWord> adjectives = new HashSet<>();
         Set<IndexedWord> xcompVerbs = new HashSet<>();  // for verbs that act as objects of another verb
         Set<Verb> verbs = new HashSet<>();
@@ -60,36 +59,11 @@ public class VerbFinder {
         // remove verbs that act as objects
         simpleVerbs.removeAll(xcompVerbs);
 
-        // find verb conjunctions
         for (IndexedWord simpleVerb : simpleVerbs) {
-            for (IndexedWord child : graph.getChildren(simpleVerb)) {
-                if (graph.reln(simpleVerb, child).getShortName().equals(CONJ_RELATION)) {
-                    Set<IndexedWord> conjuctedVerbs = conjunctions.getOrDefault(simpleVerb, new HashSet<>());
-                    conjuctedVerbs.add(child);
-                    conjunctions.put(simpleVerb, conjuctedVerbs);
-                }
-            }
-        }
-
-        Set<IndexedWord> allConjunctedVerbs = new HashSet<>();
-        for (Set<IndexedWord> conjuctedVerbs : conjunctions.values()) {
-            allConjunctedVerbs.addAll(conjuctedVerbs);
-        }
-
-        // remaining verbs are only included if not connected to the main verb
-        for (IndexedWord simpleVerb : simpleVerbs) {
-            if (!allConjunctedVerbs.contains(simpleVerb) && !conjunctions.keySet().contains(simpleVerb)) {
-                conjunctions.put(simpleVerb, new HashSet<>());
-                logger.info("added non-conjunction: " + simpleVerb);
-            }
-        }
-
-        for (IndexedWord simpleVerb : conjunctions.keySet()) {
-            verbs.add(new Verb(simpleVerb, conjunctions.get(simpleVerb), graph));
+            verbs.add(new Verb(simpleVerb, null, graph));
         }
 
         logger.info("simple verbs: " + simpleVerbs);
-        logger.info("verb conjunctions: " + conjunctions);
 
         return verbs;
     }

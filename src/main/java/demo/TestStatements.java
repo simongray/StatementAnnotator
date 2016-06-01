@@ -43,8 +43,8 @@ public class TestStatements {
 //        "Don't worry too much. Sometimes there's no smog for a whole week, sometime's it lasts for a whole week and you'll just stay mostly indoors and use masks when outside. You'll get used to it.";
 //        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
 //        String example = "He really doesn't love singing out loud.";
-//        String example = "She hates flying and he loves it.";
-        String example = "They don't like doing anything in particular. Sally and Mads don't like doing anything in particular.";
+        String example = "She hates flying and he loves it.";  // TODO: conj should be ignored when nouns are not point to the same verb
+//        String example = "They don't like doing anything in particular. Sally and Mads don't like doing anything in particular.";
 //        String example = "They don't like doing anything in particular and neither does she.";
 
 //        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable. Here's our solution:";

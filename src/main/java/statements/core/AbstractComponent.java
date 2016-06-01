@@ -34,13 +34,13 @@ public abstract class AbstractComponent implements StatementComponent {
     // TODO: remove secondary requirement from constructor, find dynamically instead
     public AbstractComponent(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         this.primary = primary;
-        this.secondary = secondary;
+        this.secondary = secondary == null? new HashSet<>() : secondary;
         this.complete = StatementUtils.findCompoundComponents(primary, graph, getIgnoredRelations());
 
         // store primary word + secondary word(s) together for simple retrieval
         this.entries = new HashSet<>();
         entries.add(primary);
-        for (IndexedWord word : secondary) {
+        for (IndexedWord word : this.secondary) {
             entries.add(word);
         }
 

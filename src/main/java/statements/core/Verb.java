@@ -22,10 +22,10 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
         IGNORED_RELATIONS.add("nmod");  // "<primary> to/from/etc. <object>"
         IGNORED_RELATIONS.add("xcomp");  // "<primary>s to <primary>"
         IGNORED_RELATIONS.add("ccomp");  // <primary> that <statement>, e.g. "we have <found> that <it is great>"
+        IGNORED_RELATIONS.add("conj");  // connections to other verbs
+        IGNORED_RELATIONS.add("cc");  // "and", "or", etc.
 
         IGNORED_COMPOUND_RELATIONS.addAll(IGNORED_RELATIONS);
-        IGNORED_COMPOUND_RELATIONS.add("cc");  // "and", "or", etc.
-        IGNORED_COMPOUND_RELATIONS.add("conj");  // connections to other verbs
     }
 
     private static final String NEG_RELATION = "neg";
