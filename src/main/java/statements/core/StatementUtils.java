@@ -208,7 +208,16 @@ public class StatementUtils {
      *
      * @param sentence sentence annotated with statements.
      */
-    public static void printStatements(CoreMap sentence, String indent) {
+    public static void printStatements(CoreMap sentence) {
+        printStatements(sentence, "");
+    }
+
+    /**
+     * Helper method for printStatements(CoreMap sentence).
+     *
+     * @param sentence sentence annotated with statements.
+     */
+    private static void printStatements(CoreMap sentence, String indent) {
         Set<Statement> statements = sentence.get(StatementsAnnotation.class);
         System.out.println(sentence);
 
