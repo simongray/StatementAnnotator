@@ -57,7 +57,7 @@ public class OpenIEDemo {
             System.out.println("Sentence #" + ++sentNo + ": " + sentence.get(CoreAnnotations.TextAnnotation.class));
 
             // Print SemanticGraph
-            System.out.println(sentence.get(SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation.class).toString(SemanticGraph.OutputFormat.LIST));
+//            System.out.println(sentence.get(SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation.class).toString(SemanticGraph.OutputFormat.LIST));
 
             // Get the OpenIE triples for the sentence
             Collection<RelationTriple> triples = sentence.get(NaturalLogicAnnotations.RelationTriplesAnnotation.class);
@@ -71,11 +71,11 @@ public class OpenIEDemo {
             }
 
             // Alternately, to only run e.g., the clause splitter:
-            List<SentenceFragment> clauses = new OpenIE(props).clausesInSentence(sentence);
-            for (SentenceFragment clause : clauses) {
-                System.out.println(clause.parseTree.toString(SemanticGraph.OutputFormat.LIST));
-            }
-            System.out.println();
+//            List<SentenceFragment> clauses = new OpenIE(props).clausesInSentence(sentence);
+//            for (SentenceFragment clause : clauses) {
+//                System.out.println(clause.parseTree.toString(SemanticGraph.OutputFormat.LIST));
+//            }
+//            System.out.println();
         }
     }
 
