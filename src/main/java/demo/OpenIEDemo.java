@@ -55,6 +55,7 @@ public class OpenIEDemo {
         int sentNo = 0;
         for (CoreMap sentence : doc.get(CoreAnnotations.SentencesAnnotation.class)) {
             System.out.println("Sentence #" + ++sentNo + ": " + sentence.get(CoreAnnotations.TextAnnotation.class));
+            System.out.println();
 
             // Print SemanticGraph
 //            System.out.println(sentence.get(SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation.class).toString(SemanticGraph.OutputFormat.LIST));
@@ -64,10 +65,18 @@ public class OpenIEDemo {
 
             // Print the triples
             for (RelationTriple triple : triples) {
+//                System.out.println(triple.confidence + "\t" +
+//                        triple.subjectLemmaGloss() + "\t" +
+//                        triple.relationLemmaGloss() + "\t" +
+//                        triple.objectLemmaGloss());
                 System.out.println(triple.confidence + "\t" +
-                        triple.subjectLemmaGloss() + "\t" +
-                        triple.relationLemmaGloss() + "\t" +
-                        triple.objectLemmaGloss());
+                        triple.subjectGloss()+ "\t" +
+                        triple.relationGloss() + "\t" +
+                        triple.objectGloss());
+                System.out.println( "head, span, head " +
+                        triple.subjectHead()+ "\t" +
+                        triple.relationTokenSpan() + "\t" +
+                        triple.objectHead());
             }
 
             // Alternately, to only run e.g., the clause splitter:
