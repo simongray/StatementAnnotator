@@ -5,14 +5,14 @@ Definition
 ----------
 Statements can consist of the following pure components:
 
-	* subjects
-	* verbs
-	* direct objects
-	* indirect objects
+* subjects
+* verbs
+* direct objects
+* indirect objects
 
 as well as
 
-	* nested statements (= statements that act as dependent clauses)
+* nested statements (= statements that act as dependent clauses)
 
 A statement may _only_ contain 1 or 0 of each component type.
 
