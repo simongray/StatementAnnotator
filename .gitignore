@@ -88,3 +88,4 @@ gradle-app.setting
 # local dependencies
 titles-sorted.txt
 stanford-srparser-2014-10-23-models.jar
+stanford-openie-models.jar
