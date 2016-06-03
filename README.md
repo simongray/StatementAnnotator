@@ -3,7 +3,7 @@ Statement annotator
 
 This is a custom annotator for CoreNLP that performs information extraction on sentences.
 The extractions are added as annotations on the sentences and are essentially a more flexible kind of n-tuple
-than what is typically used for information extraction, e.g. 3-tuple fact extraction.
+than what is typically used for information extraction, e.g. triples used in fact extraction.
 
 It has not been developed to populate large knowledge databases,
 but rather as way to structure natural language to allow for easier
