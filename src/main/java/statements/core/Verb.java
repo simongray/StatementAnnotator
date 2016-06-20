@@ -110,30 +110,13 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     }
 
     /**
-     * The resemblance of another verb to this verb.
+     * The resemblance of this object to another object.
      *
-     * @param otherVerb subject to be compared with
+     * @param otherObject subject to be compared with
      * @return resemblance
      */
     @Override
-    public Resemblance resemble(Verb otherVerb) {  // TODO: implement fully
-        if (otherVerb == null) {
-            return Resemblance.NONE;
-        }
-
-        if (getString().equals(otherVerb.getString())) {
-            return Resemblance.FULL;
-        }
-
-        if (isNegated() == otherVerb.isNegated()) {
-//            if (getLemma().equals(otherVerb.getLemma())) {
-//                return Resemblance.CLOSE;
-//            }
-            // TODO: perform resemblance comparison using synonyms
-        } else {
-            // TODO: perform resemblance comparison using antonyms (can never be full, but can be close)
-        }
-
-        return Resemblance.NONE;
+    public Resemblance resemble(Verb otherObject) {
+        return null;  // TODO
     }
 }

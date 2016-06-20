@@ -39,37 +39,13 @@ public class Subject extends AbstractComponent implements Resembling<Subject> {
     }
 
     /**
-     * The resemblance of another subject to this subject.
+     * The resemblance of this object to another object.
      *
-     * @param otherSubject subject to be compared with
+     * @param otherObject subject to be compared with
      * @return resemblance
      */
     @Override
-    public Resemblance resemble(Subject otherSubject) {
-        if (otherSubject == null) {
-            return Resemblance.NONE;
-        }
-
-        if (getString().equals(otherSubject.getString())) {
-            return Resemblance.FULL;  // identical complete subject
-        }
-
-        int resemblanceCount = 0;
-//        Set<String> otherSubjectCompounds = otherSubject.getCompoundStrings();
-//        for (String compound : getCompoundStrings()) {
-//            if (otherSubjectCompounds.contains(compound)) {
-//                resemblanceCount++;
-//            }
-//        }
-
-        if (resemblanceCount == size()) {
-            return Resemblance.CLOSE;  // identical subject compounds
-        }
-
-        if (resemblanceCount > 0) {
-            return Resemblance.SLIGHT;  // at least 1 identical subject compound
-        }
-
-        return Resemblance.NONE;
+    public Resemblance resemble(Subject otherObject) {
+        return null;  // TODO
     }
 }
