@@ -116,7 +116,7 @@ public class DirectObjectFinder {
             directObjects.add(new DirectObject(object, copObjectMapping.get(object), DirectObject.Type.COP, graph));
         }
 
-        logger.info("final list of direct objects: " + directObjects);
+        logger.info("direct objects found: " + directObjects);
 
         return directObjects;
     }

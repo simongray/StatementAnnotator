@@ -72,6 +72,8 @@ public class SubjectFinder {
             subjects.add(new Subject(primarySubject, passiveSubjectMapping.get(primarySubject), graph));
         }
 
+        logger.info("subjects found: " + subjects);
+
         return subjects;
     }
 }

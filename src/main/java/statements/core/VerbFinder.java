@@ -62,7 +62,7 @@ public class VerbFinder {
             verbs.add(new Verb(simpleVerb, graph));
         }
 
-        logger.info("simple verbs: " + simpleVerbs);
+        logger.info("verbs found: " + verbs);
 
         return verbs;
     }

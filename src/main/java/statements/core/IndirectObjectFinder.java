@@ -51,6 +51,9 @@ public class IndirectObjectFinder {
             indirectObjects.add(new IndirectObject(object, nmodObjectMapping.get(object), graph));
         }
 
+        logger.info("indirect objects found: " + indirectObjects);
+
+
         return indirectObjects;
     }
 }
