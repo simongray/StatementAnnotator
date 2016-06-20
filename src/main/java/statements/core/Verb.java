@@ -29,7 +29,7 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     }
 
     private final Map<IndexedWord, Set<IndexedWord>> markerMap;
-    private final Set<IndexedWord> negations;
+    private final Set<IndexedWord> negations;  // TODO: make negations for every entry
     private final Set<IndexedWord> conjunctions;
 
     public Verb(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {

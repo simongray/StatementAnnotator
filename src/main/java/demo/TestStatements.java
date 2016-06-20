@@ -53,7 +53,7 @@ public class TestStatements {
 //        String example = "Sally and Mads in particular don't like doing anything. Sally and Mads don't like doing anything in particular.";
 
         // TODO: doesn't catch the final "for anyone", instead "in particular" is treated as indirect object
-        String example = "Sally and Mads in particular don't like doing anything for anyone.";
+//        String example = "Sally and Mads in particular don't like doing anything for anyone.";
 
 //        String example = "They don't like doing anything in particular and neither does she.";
 
