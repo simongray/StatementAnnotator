@@ -25,7 +25,6 @@ public class VerbFinder {
         RELATIONS.add(DOBJ_RELATION);
     }
     private static final String COP_RELATION = "cop";  // copula, ex: in "they're pretty" the "'re" would be copula
-    private static final String CONJ_RELATION = "conj";  // conjunctions
 
     /**
      * The verbs that are found in a sentence.
