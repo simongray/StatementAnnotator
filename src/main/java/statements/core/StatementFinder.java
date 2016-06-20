@@ -89,7 +89,7 @@ public  class StatementFinder {
                     if (relation != null && relation.getShortName().equals(Relations.CONJ)) {
 
                         // should only be split if they share e.g. the same subject, otherwise will be separate anyway
-                        if (intersect(graph.getChildren(parent.getPrimary()), graph.getChildren(component.getPrimary()))) {
+                        if (StatementUtils.intersects(graph.getChildren(parent.getPrimary()), graph.getChildren(component.getPrimary()))) {
                             conjVerbMapping.put(parent, component);
                             logger.info("found conjunct verb, putting aside for split statement: " + component);
                         }
@@ -131,7 +131,7 @@ public  class StatementFinder {
             Set<AbstractComponent> mergedComponentSet = new HashSet<>(componentSet);
 
             for (Set<AbstractComponent> otherComponentSet : componentSets) {
-                if (!mergedComponentSet.equals(otherComponentSet) && intersect(mergedComponentSet, otherComponentSet)) {
+                if (!mergedComponentSet.equals(otherComponentSet) && StatementUtils.intersects(mergedComponentSet, otherComponentSet)) {
                     logger.info("merging " + otherComponentSet + " into " + mergedComponentSet);
                     mergedComponentSet.addAll(otherComponentSet);
                 }
@@ -189,23 +189,6 @@ public  class StatementFinder {
         logger.info("final statements: " + statements);
 
         return statements;
-    }
-
-    /**
-     * Test whether two sets intersect.
-     *
-     * @param set1 set 1
-     * @param set2 set 2
-     * @return
-     */
-    private static <T> boolean intersect(Set<T> set1, Set<T> set2) {
-        for (T component : set1) {
-            if (set2.contains(component)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**

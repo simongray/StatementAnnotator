@@ -243,6 +243,23 @@ public class StatementUtils {
     }
 
     /**
+     * Test whether two sets intersect.
+     *
+     * @param set1 set 1
+     * @param set2 set 2
+     * @return
+     */
+    public static <T> boolean intersects(Set<T> set1, Set<T> set2) {
+        for (T component : set1) {
+            if (set2.contains(component)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Used to sort IndexedWords by index.
      */
     public static class IndexComparator implements Comparator<IndexedWord> {
