@@ -35,8 +35,8 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     private final Set<IndexedWord> negations;
     private final Set<IndexedWord> conjunctions;
 
-    public Verb(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
-        super(primary, secondary, graph);
+    public Verb(IndexedWord primary, SemanticGraph graph) {
+        super(primary, null, graph);
 
         // find specific words
         this.negations = StatementUtils.findSpecificDescendants(NEG_RELATION, primary, graph);

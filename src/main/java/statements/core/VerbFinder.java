@@ -60,7 +60,7 @@ public class VerbFinder {
         simpleVerbs.removeAll(xcompVerbs);
 
         for (IndexedWord simpleVerb : simpleVerbs) {
-            verbs.add(new Verb(simpleVerb, null, graph));
+            verbs.add(new Verb(simpleVerb, graph));
         }
 
         logger.info("simple verbs: " + simpleVerbs);
