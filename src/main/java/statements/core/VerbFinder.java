@@ -17,7 +17,6 @@ public class VerbFinder {
     private static final String NSUBJ_RELATION = "nsubj";
     private static final String NSUBJPASS_RELATION = "nsubjpass";  // for passives
     private static final String DOBJ_RELATION = "dobj";
-    private static final String XCOMP_RELATION = "xcomp";  // e.g "she <verb>s to <verb>" or "she <verb>ed <verb>ing"
     private static final Set<String> RELATIONS = new HashSet<>();
     static {
         RELATIONS.add(NSUBJ_RELATION);
@@ -25,6 +24,7 @@ public class VerbFinder {
         RELATIONS.add(DOBJ_RELATION);
     }
     private static final String COP_RELATION = "cop";  // copula, ex: in "they're pretty" the "'re" would be copula
+    private static final String XCOMP_RELATION = "xcomp";  // e.g "she <verb>s to <verb>" or "she <verb>ed <verb>ing"
 
     /**
      * The verbs that are found in a sentence.
