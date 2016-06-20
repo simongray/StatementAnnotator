@@ -53,7 +53,6 @@ public class IndirectObjectFinder {
 
         logger.info("indirect objects found: " + indirectObjects);
 
-
         return indirectObjects;
     }
 }
