@@ -147,6 +147,7 @@ public  class StatementFinder {
             statements.add(statement);
 
             // check for potential split statements based on conjunct verb
+            // TODO: does it make more sense to keep all verbs in a statement and simply split when doing comparisons?
             for (AbstractComponent conjVerb : conjVerbMapping.keySet()) {
                 if (statement.contains(conjVerb)) {
                     Set<AbstractComponent> conjunctVerbComponentSet = statement.getPureComponents();
