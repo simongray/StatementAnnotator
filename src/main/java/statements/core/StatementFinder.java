@@ -67,7 +67,6 @@ public  class StatementFinder {
             // keep track of linked statements
             if (parentPrimary != null && graph.reln(parentPrimary, component.getPrimary()).getShortName().equals(Relations.CCOMP)) {
                 interStatementMapping.put(component, parent);
-                // TODO: potential issue here that conjverbs cannot be linked to nested statements
             } else {
                 childToParentMapping.put(component, parent);
             }
@@ -81,21 +80,6 @@ public  class StatementFinder {
                     || parent instanceof Verb && component instanceof Verb
                     || parent instanceof DirectObject && component instanceof DirectObject
                     || parent instanceof IndirectObject && component instanceof IndirectObject) {
-
-
-                // find instances of statements to split based on conjunct verbs
-                if (parent instanceof Verb) {
-                    GrammaticalRelation relation = graph.reln(parent.getPrimary(), component.getPrimary());
-                    if (relation != null && relation.getShortName().equals(Relations.CONJ)) {
-
-                        // should only be split if they share e.g. the same subject, otherwise will be separate anyway
-                        if (StatementUtils.intersects(graph.getChildren(parent.getPrimary()), graph.getChildren(component.getPrimary()))) {
-                            conjVerbMapping.put(parent, component);
-                            logger.info("found conjunct verb, putting aside for split statement: " + component);
-                        }
-                    }
-                }
-
                 logger.info("removing identical component type relation: " + component);
                 childToParentMapping.remove(component);
             }
@@ -145,18 +129,6 @@ public  class StatementFinder {
             logger.info("linked statement from components: " + componentSet);
             Statement statement = new Statement(componentSet);
             statements.add(statement);
-
-            // check for potential split statements based on conjunct verb
-            // TODO: does it make more sense to keep all verbs in a statement and simply split when doing comparisons?
-            for (AbstractComponent conjVerb : conjVerbMapping.keySet()) {
-                if (statement.contains(conjVerb)) {
-                    Set<AbstractComponent> conjunctVerbComponentSet = statement.getPureComponents();
-                    conjunctVerbComponentSet.remove(conjVerb);
-                    conjunctVerbComponentSet.add(conjVerbMapping.get(conjVerb));
-                    logger.info("linked split statement from components: " + conjunctVerbComponentSet);
-                    statements.add(new Statement(conjunctVerbComponentSet));
-                }
-            }
         }
 
         // link dependent clauses together with the main statements

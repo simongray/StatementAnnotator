@@ -54,8 +54,13 @@ public class VerbFinder {
         // remove verbs that act as objects
         simpleVerbs.removeAll(xcompVerbs);
 
-        for (IndexedWord simpleVerb : simpleVerbs) {
-            verbs.add(new Verb(simpleVerb, graph));
+
+        // create normal subject mapping based on relations
+        Map<IndexedWord, Set<IndexedWord>> verbMapping = StatementUtils.makeRelationsMap(simpleVerbs, Relations.CONJ, graph);
+
+        // build complete verbs from mappings
+        for (IndexedWord primarySubject : verbMapping.keySet()) {
+            verbs.add(new Verb(primarySubject, verbMapping.get(primarySubject), graph));
         }
 
         logger.info("verbs found: " + verbs);

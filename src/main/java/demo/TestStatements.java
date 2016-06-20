@@ -67,7 +67,9 @@ public class TestStatements {
         // TODO: this fucks up
 //        String example = "She and the rest speaks and shoots at her and him from here and there.";
 //        String example = "He speaks to her and him.";
-        String example = "He and she speaks the words + sentences to her or him.";
+
+        // TODO: fucks up with verb conjunction, objects depends on "yells" not on "speaks", while subject depends on "speaks"
+        String example = "He and she speaks and yells the words and sentences to her or him.";
 
 
 
