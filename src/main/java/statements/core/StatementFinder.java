@@ -61,14 +61,19 @@ public  class StatementFinder {
         // find the direct parent for each component based on its primary word
         // this relation will be used to link components
         for (AbstractComponent component : components) {
-            IndexedWord parentPrimary = graph.getParent(component.getPrimary());
-            AbstractComponent parent = getFromPrimary(parentPrimary, components);
+            for (AbstractComponent otherComponent : components) {
+                if (isChild(component, otherComponent, graph)) {
+                    // TODO: figure out whether this can be made more readable/less resource intensive
+                    IndexedWord parentPrimary = graph.getParent(component.getPrimary());
+                    AbstractComponent parent = getFromPrimary(parentPrimary, components);
 
-            // keep track of linked statements
-            if (parentPrimary != null && graph.reln(parentPrimary, component.getPrimary()).getShortName().equals(Relations.CCOMP)) {
-                interStatementMapping.put(component, parent);
-            } else {
-                childToParentMapping.put(component, parent);
+                    // keep track of linked statements
+                    if (parentPrimary != null && graph.reln(parentPrimary, component.getPrimary()).getShortName().equals(Relations.CCOMP)) {
+                        interStatementMapping.put(component, parent);
+                    } else {
+                        childToParentMapping.put(component, otherComponent);
+                    }
+                }
             }
         }
 
@@ -180,29 +185,22 @@ public  class StatementFinder {
     }
 
     /**
-     * Find out whether a component is a connected to another.
+     * Find out whether a component is a connected to another through a parent-child relationship.
+     * Checks every entry of both components, not just the primary word.
      * Useful when linking components together, especially in case a primary word is not part of the relation.
      *
      * @param component
      * @param otherComponent
      * @param graph
-     * @return
+     * @return whether the component is a child or not
      */
-    private static boolean isConnected(AbstractComponent component, AbstractComponent otherComponent, SemanticGraph graph) {
+    private static boolean isChild(AbstractComponent component, AbstractComponent otherComponent, SemanticGraph graph) {
         if (component == otherComponent) return false;
 
         // check if component is a child of otherComponent
         for (IndexedWord childEntry : component.getEntries()) {
             Set<IndexedWord> parents = graph.getParents(childEntry);
             if (StatementUtils.intersects(parents, otherComponent.getEntries())) {
-                return true;
-            }
-        }
-
-        // check if otherComponent is a child of component
-        for (IndexedWord childEntry : otherComponent.getEntries()) {
-            Set<IndexedWord> parents = graph.getParents(childEntry);
-            if (StatementUtils.intersects(parents, component.getEntries())) {
                 return true;
             }
         }
