@@ -23,12 +23,12 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
     private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
     private static final Set<String> IGNORED_COMPOUND_RELATIONS = new HashSet<>();
     static {
-        IGNORED_RELATIONS.add("nsubj");
-        IGNORED_RELATIONS.add("nmod");
+        IGNORED_RELATIONS.add(Relations.NSUBJ);
+        IGNORED_RELATIONS.add(Relations.NMOD);
 
         IGNORED_COMPOUND_RELATIONS.addAll(IGNORED_RELATIONS);
-        IGNORED_COMPOUND_RELATIONS.add("conj");
-        IGNORED_COMPOUND_RELATIONS.add("cc");
+        IGNORED_COMPOUND_RELATIONS.add(Relations.CONJ);
+        IGNORED_COMPOUND_RELATIONS.add(Relations.CC);
     }
 
     /**
@@ -45,8 +45,6 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
         return IGNORED_COMPOUND_RELATIONS;
     }
 
-    private static final String NEG_RELATION = "neg";
-    private static final String COP_RELATION = "cop";
     private Type type;
     private final Map<IndexedWord, Set<IndexedWord>> negationMap;
     private final Map<IndexedWord, Set<IndexedWord>> copulaMap;  // only applicable to copula objects
@@ -57,10 +55,10 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
         this.type = type;
 
         // find negations (relevant for COP (adjectives) and XCOMP (verb) types)
-        negationMap = StatementUtils.makeRelationsMap(entries, NEG_RELATION, graph);
+        negationMap = StatementUtils.makeRelationsMap(entries, Relations.NEG, graph);
 
         // find copulas (only relevant for COP)
-        copulaMap = StatementUtils.makeRelationsMap(entries, COP_RELATION, graph);
+        copulaMap = StatementUtils.makeRelationsMap(entries, Relations.COP, graph);
     }
 
     /**

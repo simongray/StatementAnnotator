@@ -16,21 +16,18 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     private static final Set<String> IGNORED_COMPOUND_RELATIONS = new HashSet<>();
 
     static {
-        IGNORED_RELATIONS.add("nsubj");
-        IGNORED_RELATIONS.add("nsubjpass");
-        IGNORED_RELATIONS.add("dobj");  // "<primary>s <primary>ing"
-        IGNORED_RELATIONS.add("nmod");  // "<primary> to/from/etc. <object>"
-        IGNORED_RELATIONS.add("xcomp");  // "<primary>s to <primary>"
-        IGNORED_RELATIONS.add("ccomp");  // <primary> that <statement>, e.g. "we have <found> that <it is great>"
-        IGNORED_RELATIONS.add("conj");  // connections to other verbs
-        IGNORED_RELATIONS.add("cc");  // "and", "or", etc.
+        IGNORED_RELATIONS.add(Relations.NSUBJ);
+        IGNORED_RELATIONS.add(Relations.NSUBJPASS);
+        IGNORED_RELATIONS.add(Relations.DOBJ);  // "<primary>s <primary>ing"
+        IGNORED_RELATIONS.add(Relations.NMOD);  // "<primary> to/from/etc. <object>"
+        IGNORED_RELATIONS.add(Relations.XCOMP);  // "<primary>s to <primary>"
+        IGNORED_RELATIONS.add(Relations.CCOMP);  // <primary> that <statement>, e.g. "we have <found> that <it is great>"
+        IGNORED_RELATIONS.add(Relations.CONJ);  // connections to other verbs
+        IGNORED_RELATIONS.add(Relations.CC);  // "and", "or", etc.
 
         IGNORED_COMPOUND_RELATIONS.addAll(IGNORED_RELATIONS);
     }
 
-    private static final String NEG_RELATION = "neg";
-    private static final String CC_RELATION = "cc";
-    private static final String MARK_RELATION = "mark";  // for markers, e.g. "whether"
     private final Map<IndexedWord, Set<IndexedWord>> markerMap;
     private final Set<IndexedWord> negations;
     private final Set<IndexedWord> conjunctions;
@@ -39,11 +36,11 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
         super(primary, null, graph);
 
         // find specific words
-        this.negations = StatementUtils.findSpecificDescendants(NEG_RELATION, primary, graph);
-        this.conjunctions = StatementUtils.findSpecificDescendants(CC_RELATION, primary, graph);
+        this.negations = StatementUtils.findSpecificDescendants(Relations.NEG, primary, graph);
+        this.conjunctions = StatementUtils.findSpecificDescendants(Relations.CC, primary, graph);
 
         // find markers (only relevant for COP)
-        markerMap = StatementUtils.makeRelationsMap(entries, MARK_RELATION, graph);
+        markerMap = StatementUtils.makeRelationsMap(entries, Relations.MARK, graph);
     }
 
     /**

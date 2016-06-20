@@ -15,9 +15,9 @@ public class Subject extends AbstractComponent implements Resembling<Subject> {
     private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
     private static final Set<String> IGNORED_COMPOUND_RELATIONS = new HashSet<>();
     static {
-        IGNORED_COMPOUND_RELATIONS.add("conj");   // other simple subjects
-        IGNORED_COMPOUND_RELATIONS.add("cc");     // words like "and"
-        IGNORED_COMPOUND_RELATIONS.add("punct");  // punctuation like ","
+        IGNORED_COMPOUND_RELATIONS.add(Relations.CONJ);   // other simple subjects
+        IGNORED_COMPOUND_RELATIONS.add(Relations.CC);     // words like "and"
+        IGNORED_COMPOUND_RELATIONS.add(Relations.PUNCT);  // punctuation like ","
     }
 
     public Subject(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {

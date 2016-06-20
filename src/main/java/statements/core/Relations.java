@@ -12,4 +12,8 @@ public class Relations {
     public static final String NMOD = "nmod";  // indicates that a preposition is present
     public static final String CCOMP = "ccomp"; // "we have found <that ....>"
     public static final String CONJ = "conj"; // connections between words based on "and", "or", etc.
+    public static final String CC = "cc";  // the "and", "or", etc. itself
+    public static final String NEG = "neg";  // negations such as "not" or "never"
+    public static final String PUNCT = "punct";  // punctuation like ","
+    public static final String MARK = "mark";  // for markers, e.g. "whether"
 }
