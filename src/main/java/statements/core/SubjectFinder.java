@@ -13,8 +13,6 @@ import java.util.*;
  */
 public class SubjectFinder {
     private static final Logger logger = LoggerFactory.getLogger(SubjectFinder.class);
-    private static final String NSUBJ_RELATION = "nsubj";
-    private static final String NSUBJPASS_RELATION = "nsubjpass";  // for passive voice
 
     /**
      * The subjects that are found in a sentence.
@@ -32,10 +30,10 @@ public class SubjectFinder {
 
         // find simple subjects from relations
         for (TypedDependency dependency : dependencies) {
-            if (dependency.reln().getShortName().equals(NSUBJ_RELATION)) {
+            if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
                 simpleSubjects.add(dependency.dep());
             }
-            if (dependency.reln().getShortName().equals(NSUBJPASS_RELATION)) {
+            if (dependency.reln().getShortName().equals(Relations.NSUBJPASS)) {
                 simplePassiveSubjects.add(dependency.dep());
             }
         }

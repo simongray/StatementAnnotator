@@ -14,10 +14,6 @@ import java.util.*;
  */
 public class DirectObjectFinder {
     private static final Logger logger = LoggerFactory.getLogger(DirectObjectFinder.class);
-    private static final String NSUBJ_RELATION = "nsubj";
-    private static final String DOBJ_RELATION = "dobj";
-    private static final String XCOMP_RELATION = "xcomp";
-    private static final String COP_RELATION = "cop";
 
     /**
      * The direct objects that are found in a sentence.
@@ -37,13 +33,13 @@ public class DirectObjectFinder {
 
         // find simple objects from relations
         for (TypedDependency dependency : dependencies) {
-            if (dependency.reln().getShortName().equals(DOBJ_RELATION)) {
+            if (dependency.reln().getShortName().equals(Relations.DOBJ)) {
                 dobjObjects.add(dependency.dep());
             }
-            if (dependency.reln().getShortName().equals(XCOMP_RELATION)) {
+            if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
                 xcompObjects.add(dependency.dep());
             }
-            if (dependency.reln().getShortName().equals(NSUBJ_RELATION)) {
+            if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
                 if (hasCopula(dependency.gov(), graph)) {
                     copObjects.add(dependency.gov());
                 }
@@ -60,7 +56,7 @@ public class DirectObjectFinder {
         for (IndexedWord xcompObject : xcompObjects) {
             for (IndexedWord dobjObject : dobjObjects) {
                 GrammaticalRelation relation = graph.reln(xcompObject, dobjObject);
-                if (relation != null && relation.getShortName().equals(DOBJ_RELATION)) {
+                if (relation != null && relation.getShortName().equals(Relations.DOBJ)) {
                     voContstructionObjects.add(dobjObject);
                 }
             }
@@ -130,7 +126,7 @@ public class DirectObjectFinder {
      */
     private static boolean hasCopula(IndexedWord word, SemanticGraph graph) {
         for (IndexedWord child : graph.getChildren(word)) {
-            if (graph.reln(word, child).getShortName().equals(COP_RELATION)) {
+            if (graph.reln(word, child).getShortName().equals(Relations.COP)) {
                 return true;
             }
         }

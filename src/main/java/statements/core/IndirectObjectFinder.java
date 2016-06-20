@@ -13,7 +13,6 @@ import java.util.*;
  */
 public class IndirectObjectFinder {
     private static final Logger logger = LoggerFactory.getLogger(IndirectObjectFinder.class);
-    private static final String NMOD_RELATION = "nmod";
 
     /**
      * The indirect objects that are found in a sentence.
@@ -29,7 +28,7 @@ public class IndirectObjectFinder {
 
         // find simple objects from relations
         for (TypedDependency dependency : dependencies) {
-            if (dependency.reln().getShortName().equals(NMOD_RELATION)) {
+            if (dependency.reln().getShortName().equals(Relations.NMOD)) {
                 nmodObjects.add(dependency.dep());
             }
         }
