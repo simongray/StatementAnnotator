@@ -10,4 +10,6 @@ public class Relations {
     public static final String COP= "cop";  // copula, ex: in "they're pretty" the "'re" would be copula
     public static final String XCOMP = "xcomp";  // e.g "she <verb>s to <verb>" or "she <verb>ed <verb>ing"
     public static final String NMOD = "nmod";  // indicates that a preposition is present
+    public static final String CCOMP = "ccomp"; // "we have found <that ....>"
+    public static final String CONJ = "conj"; // connections between words based on "and", "or", etc.
 }

@@ -16,9 +16,6 @@ import java.util.*;
 public  class StatementFinder {
     private static final Logger logger = LoggerFactory.getLogger(StatementFinder.class);
 
-    private static final String CCOMP_RELATION = "ccomp"; // "we have found <that ....>"
-    private static final String CONJ_RELATION = "conj"; // connections between words based on "and", "or", etc.
-
     /**
      * Find statements in a sentence.
      *
@@ -68,7 +65,7 @@ public  class StatementFinder {
             AbstractComponent parent = getFromPrimary(parentPrimary, components);
 
             // keep track of linked statements
-            if (parentPrimary != null && graph.reln(parentPrimary, component.getPrimary()).getShortName().equals(CCOMP_RELATION)) {
+            if (parentPrimary != null && graph.reln(parentPrimary, component.getPrimary()).getShortName().equals(Relations.CCOMP)) {
                 interStatementMapping.put(component, parent);
                 // TODO: potential issue here that conjverbs cannot be linked to nested statements
             } else {
@@ -89,7 +86,7 @@ public  class StatementFinder {
                 // find instances of statements to split based on conjunct verbs
                 if (parent instanceof Verb) {
                     GrammaticalRelation relation = graph.reln(parent.getPrimary(), component.getPrimary());
-                    if (relation != null && relation.getShortName().equals(CONJ_RELATION)) {
+                    if (relation != null && relation.getShortName().equals(Relations.CONJ)) {
 
                         // should only be split if they share e.g. the same subject, otherwise will be separate anyway
                         if (intersect(graph.getChildren(parent.getPrimary()), graph.getChildren(component.getPrimary()))) {
