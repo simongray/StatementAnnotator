@@ -14,17 +14,13 @@ import java.util.*;
  */
 public class VerbFinder {
     private static final Logger logger = LoggerFactory.getLogger(VerbFinder.class);
-    private static final String NSUBJ_RELATION = "nsubj";
-    private static final String NSUBJPASS_RELATION = "nsubjpass";  // for passives
-    private static final String DOBJ_RELATION = "dobj";
-    private static final Set<String> RELATIONS = new HashSet<>();
+
+    private static final Set<String> VERB_RELATIONS = new HashSet<>();
     static {
-        RELATIONS.add(NSUBJ_RELATION);
-        RELATIONS.add(NSUBJPASS_RELATION);
-        RELATIONS.add(DOBJ_RELATION);
+        VERB_RELATIONS.add(Relations.NSUBJ);
+        VERB_RELATIONS.add(Relations.NSUBJPASS);
+        VERB_RELATIONS.add(Relations.DOBJ);
     }
-    private static final String COP_RELATION = "cop";  // copula, ex: in "they're pretty" the "'re" would be copula
-    private static final String XCOMP_RELATION = "xcomp";  // e.g "she <verb>s to <verb>" or "she <verb>ed <verb>ing"
 
     /**
      * The verbs that are found in a sentence.
@@ -41,13 +37,13 @@ public class VerbFinder {
 
         // find candidate verbs and adjectives from relations
         for (TypedDependency dependency : dependencies) {
-            if (RELATIONS.contains(dependency.reln().getShortName())) {
+            if (VERB_RELATIONS.contains(dependency.reln().getShortName())) {
                 simpleVerbs.add(dependency.gov());
             }
-            if (dependency.reln().getShortName().equals(COP_RELATION)) {
+            if (dependency.reln().getShortName().equals(Relations.COP)) {
                 adjectives.add(dependency.gov());
             }
-            if (dependency.reln().getShortName().equals(XCOMP_RELATION)) {
+            if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
                 xcompVerbs.add(dependency.dep());
             }
         }
