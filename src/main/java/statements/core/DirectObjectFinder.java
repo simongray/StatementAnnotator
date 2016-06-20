@@ -66,40 +66,13 @@ public class DirectObjectFinder {
         dobjObjects.removeAll(voContstructionObjects);
 
         // create direct object mapping based on relations
-        for (IndexedWord object : dobjObjects) {
-            IndexedWord parent = graph.getParent(object);
-            if (dobjObjects.contains(parent)) {
-                Set<IndexedWord> objects = dobjObjectMapping.getOrDefault(parent, new HashSet<>());
-                objects.add(object);
-                dobjObjectMapping.put(parent, objects);
-            } else {
-                dobjObjectMapping.putIfAbsent(object, new HashSet<>());
-            }
-        }
+        dobjObjectMapping = StatementUtils.makeRelationsMap(dobjObjects, Relations.CONJ, graph);
 
         // create xcomp object mapping based on relations
-        for (IndexedWord object : xcompObjects) {
-            IndexedWord parent = graph.getParent(object);
-            if (xcompObjects.contains(parent)) {
-                Set<IndexedWord> objects = xcompObjectMapping.getOrDefault(parent, new HashSet<>());
-                objects.add(object);
-                xcompObjectMapping.put(parent, objects);
-            } else {
-                xcompObjectMapping.putIfAbsent(object, new HashSet<>());
-            }
-        }
+        xcompObjectMapping = StatementUtils.makeRelationsMap(xcompObjects, Relations.CONJ, graph);
 
         // create copula object mapping based on relations
-        for (IndexedWord object : copObjects) {
-            IndexedWord parent = graph.getParent(object);
-            if (copObjects.contains(parent)) {
-                Set<IndexedWord> objects = copObjectMapping.getOrDefault(parent, new HashSet<>());
-                objects.add(object);
-                copObjectMapping.put(parent, objects);
-            } else {
-                copObjectMapping.putIfAbsent(object, new HashSet<>());
-            }
-        }
+        copObjectMapping = StatementUtils.makeRelationsMap(copObjects, Relations.CONJ, graph);
 
         // build complete objects from mappings
         for (IndexedWord object : dobjObjectMapping.keySet()) {

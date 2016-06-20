@@ -64,7 +64,13 @@ public class TestStatements {
         // TODO: this fucks up majorly
 //        String example = "Anyway, just make your own rule and stick to it.";
 
-        String example = "She speaks and shoots.";
+        // TODO: this fucks up
+//        String example = "She and the rest speaks and shoots at her and him from here and there.";
+//        String example = "He speaks to her and him.";
+        String example = "He and she speaks the words + sentences to her or him.";
+
+
+
         // TODO: the sentence "Hates and loves it." - doesn't separate into two statements, however doubtful if it is possible to do in a non-hackish way
 //        String example = "Bought some 3M 95N-rated face masks for smoggy days.\n";
 //        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";

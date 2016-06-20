@@ -3,10 +3,8 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.trees.GrammaticalRelation;
-import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import statements.annotations.StatementsAnnotation;
 
 import java.util.*;
 
@@ -120,18 +118,27 @@ public class StatementUtils {
     /**
      * Create a relations map for a specific compound part.
      * Useful for isolating words such as negations, markers, copulas, etc.
+     * Also useful for separating conjunctions.
      *
-     * @param entries the entries to find relations for
+     * @param words the entries to find relations for
      * @param relation the relation type
      * @param graph the graph to search in
      * @return relations map
      */
-    public static Map<IndexedWord, Set<IndexedWord>> makeRelationsMap(Set<IndexedWord> entries, String relation, SemanticGraph graph) {
+    public static Map<IndexedWord, Set<IndexedWord>> makeRelationsMap(Set<IndexedWord> words, String relation, SemanticGraph graph) {
         Map<IndexedWord, Set<IndexedWord>> relationsMap = new HashMap<>();
+        Set<IndexedWord> allChildren = new HashSet<>();
 
-        // find markers (only relevant for COP)
-        for (IndexedWord word : entries) {
-            relationsMap.put(word, StatementUtils.findSpecificDescendants(relation, word, graph));
+        // map children to parents
+        for (IndexedWord word : words) {
+            Set<IndexedWord> children = StatementUtils.findSpecificDescendants(relation, word, graph);
+            relationsMap.put(word, children);
+            allChildren.addAll(children);
+        }
+
+        // children cannot also be parents in this simple relations map
+        for (IndexedWord child : allChildren) {
+            relationsMap.remove(child);
         }
 
         return relationsMap;

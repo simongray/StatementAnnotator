@@ -39,28 +39,10 @@ public class SubjectFinder {
         }
 
         // create normal subject mapping based on relations
-        for (IndexedWord simpleSubject : simpleSubjects) {
-            IndexedWord parent = graph.getParent(simpleSubject);
-            if (simpleSubjects.contains(parent)) {
-                Set<IndexedWord> secondarySubjects = subjectMapping.getOrDefault(parent, new HashSet<>());
-                secondarySubjects.add(simpleSubject);
-                subjectMapping.put(parent, secondarySubjects);
-            } else {
-                subjectMapping.putIfAbsent(simpleSubject, new HashSet<>());
-            }
-        }
+        subjectMapping = StatementUtils.makeRelationsMap(simpleSubjects, Relations.CONJ, graph);
 
         // create passive subject mapping based on relations
-        for (IndexedWord simplePassiveSubject : simplePassiveSubjects) {
-            IndexedWord parent = graph.getParent(simplePassiveSubject);
-            if (simplePassiveSubjects.contains(parent)) {
-                Set<IndexedWord> secondarySubjects = passiveSubjectMapping.getOrDefault(parent, new HashSet<>());
-                secondarySubjects.add(simplePassiveSubject);
-                passiveSubjectMapping.put(parent, secondarySubjects);
-            } else {
-                passiveSubjectMapping.putIfAbsent(simplePassiveSubject, new HashSet<>());
-            }
-        }
+        passiveSubjectMapping = StatementUtils.makeRelationsMap(simplePassiveSubjects, Relations.CONJ, graph);
 
         // build complete subjects from mappings
         for (IndexedWord primarySubject : subjectMapping.keySet()) {

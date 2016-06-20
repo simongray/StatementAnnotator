@@ -34,22 +34,14 @@ public class IndirectObjectFinder {
         }
 
         // create indirect object mapping based on relations
-        for (IndexedWord object : nmodObjects) {
-            IndexedWord parent = graph.getParent(object);
-            if (nmodObjects.contains(parent)) {
-                Set<IndexedWord> objects = nmodObjectMapping.getOrDefault(parent, new HashSet<>());
-                objects.add(object);
-                nmodObjectMapping.put(parent, objects);
-            } else {
-                nmodObjectMapping.putIfAbsent(object, new HashSet<>());
-            }
-        }
+        nmodObjectMapping = StatementUtils.makeRelationsMap(nmodObjects, Relations.CONJ, graph);
 
         // build complete objects from mapping
         for (IndexedWord object : nmodObjectMapping.keySet()) {
             indirectObjects.add(new IndirectObject(object, nmodObjectMapping.get(object), graph));
         }
 
+        logger.info("nmodObjectMapping: " + nmodObjectMapping);
         logger.info("indirect objects found: " + indirectObjects);
 
         return indirectObjects;

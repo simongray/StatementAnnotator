@@ -116,6 +116,6 @@ public abstract class AbstractComponent implements StatementComponent {
 
     @Override
     public String toString() {
-        return "{" + getClass().getSimpleName() + ": " + getString() + "}";
+        return "{" + getClass().getSimpleName() + ": " + getString() + (count() > 1? ", count: " + count() : "") + "}";
     }
 }
