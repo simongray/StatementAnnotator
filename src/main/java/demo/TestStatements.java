@@ -49,8 +49,11 @@ public class TestStatements {
 //        String example = "He really doesn't love singing out loud.";
 //        String example = "She hates flying and he loves it.";
 
-        // TODO: the inverted first version fucks stuff up
+        // No longer fucks up
 //        String example = "Sally and Mads in particular don't like doing anything. Sally and Mads don't like doing anything in particular.";
+
+        // TODO: doesn't catch the final "for anyone", instead "in particular" is treated as indirect object
+        String example = "Sally and Mads in particular don't like doing anything for anyone.";
 
 //        String example = "They don't like doing anything in particular and neither does she.";
 
@@ -64,12 +67,8 @@ public class TestStatements {
         // TODO: this fucks up majorly
 //        String example = "Anyway, just make your own rule and stick to it.";
 
-        // TODO: this fucks up
-//        String example = "She and the rest speaks and shoots at her and him from here and there.";
-//        String example = "He speaks to her and him.";
-
         // no longer fucks this up! yay
-        String example = "He and she speaks and yells the words and sentences to her or him.";
+//        String example = "He and she speaks and yells the words and sentences to her or him.";
 
 
 

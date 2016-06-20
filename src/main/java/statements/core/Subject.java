@@ -13,8 +13,12 @@ import java.util.Set;
 public class Subject extends AbstractComponent implements Resembling<Subject> {
 
     private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
+    static {
+        IGNORED_RELATIONS.add(Relations.NMOD);
+    }
     private static final Set<String> IGNORED_COMPOUND_RELATIONS = new HashSet<>();
     static {
+        IGNORED_COMPOUND_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_COMPOUND_RELATIONS.add(Relations.CONJ);   // other simple subjects
         IGNORED_COMPOUND_RELATIONS.add(Relations.CC);     // words like "and"
         IGNORED_COMPOUND_RELATIONS.add(Relations.PUNCT);  // punctuation like ","
