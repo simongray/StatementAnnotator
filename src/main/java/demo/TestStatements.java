@@ -33,7 +33,7 @@ public class TestStatements {
 //        String example = "Hey, cool! Very cool, in fact. Henry, Louis the Dragon and Sally Bates don't like doing anything in particular.";
 
         // TODO: consider if subjects like this should be split into multiple statements like verbs are
-        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";
+//        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";
 
 //        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament."; // TODO: this one is still tough
 //        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament... \n" +
@@ -63,7 +63,7 @@ public class TestStatements {
         // TODO: this fucks up majorly
 //        String example = "Anyway, just make your own rule and stick to it.";
 
-//        String example = "She speaks and shoots. She hates flying and he loves it.";
+        String example = "She speaks and shoots. She hates flying and he loves it.";
         // TODO: the sentence "Hates and loves it." - doesn't separate into two statements, however doubtful if it is possible to do in a non-hackish way
 //        String example = "Bought some 3M 95N-rated face masks for smoggy days.\n";
 //        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
