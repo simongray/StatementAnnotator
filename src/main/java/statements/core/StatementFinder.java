@@ -178,4 +178,35 @@ public  class StatementFinder {
 
         return null;
     }
+
+    /**
+     * Find out whether a component is a connected to another.
+     * Useful when linking components together, especially in case a primary word is not part of the relation.
+     *
+     * @param component
+     * @param otherComponent
+     * @param graph
+     * @return
+     */
+    private static boolean isConnected(AbstractComponent component, AbstractComponent otherComponent, SemanticGraph graph) {
+        if (component == otherComponent) return false;
+
+        // check if component is a child of otherComponent
+        for (IndexedWord childEntry : component.getEntries()) {
+            Set<IndexedWord> parents = graph.getParents(childEntry);
+            if (StatementUtils.intersects(parents, otherComponent.getEntries())) {
+                return true;
+            }
+        }
+
+        // check if otherComponent is a child of component
+        for (IndexedWord childEntry : otherComponent.getEntries()) {
+            Set<IndexedWord> parents = graph.getParents(childEntry);
+            if (StatementUtils.intersects(parents, component.getEntries())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
