@@ -22,10 +22,10 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
         IGNORED_RELATIONS.add(Relations.NMOD);  // "<primary> to/from/etc. <object>"
         IGNORED_RELATIONS.add(Relations.XCOMP);  // "<primary>s to <primary>"
         IGNORED_RELATIONS.add(Relations.CCOMP);  // <primary> that <statement>, e.g. "we have <found> that <it is great>"
-        IGNORED_RELATIONS.add(Relations.CONJ);  // connections to other verbs
-        IGNORED_RELATIONS.add(Relations.CC);  // "and", "or", etc.
 
         IGNORED_COMPOUND_RELATIONS.addAll(IGNORED_RELATIONS);
+        IGNORED_COMPOUND_RELATIONS.add(Relations.CONJ); // connections to other verbs
+        IGNORED_COMPOUND_RELATIONS.add(Relations.CC);  // "and", "or", etc.
     }
 
     private final Map<IndexedWord, Set<IndexedWord>> markerMap;
