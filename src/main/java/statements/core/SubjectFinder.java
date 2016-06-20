@@ -24,8 +24,6 @@ public class SubjectFinder {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> simpleSubjects = new HashSet<>();
         Set<IndexedWord> simplePassiveSubjects = new HashSet<>();
-        Map<IndexedWord, Set<IndexedWord>> subjectMapping = new HashMap<>();
-        Map<IndexedWord, Set<IndexedWord>> passiveSubjectMapping = new HashMap<>();
         Set<Subject> subjects = new HashSet<>();
 
         // find simple subjects from relations
@@ -39,10 +37,10 @@ public class SubjectFinder {
         }
 
         // create normal subject mapping based on relations
-        subjectMapping = StatementUtils.makeRelationsMap(simpleSubjects, Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> subjectMapping = StatementUtils.makeRelationsMap(simpleSubjects, Relations.CONJ, graph);
 
         // create passive subject mapping based on relations
-        passiveSubjectMapping = StatementUtils.makeRelationsMap(simplePassiveSubjects, Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> passiveSubjectMapping = StatementUtils.makeRelationsMap(simplePassiveSubjects, Relations.CONJ, graph);
 
         // build complete subjects from mappings
         for (IndexedWord primarySubject : subjectMapping.keySet()) {

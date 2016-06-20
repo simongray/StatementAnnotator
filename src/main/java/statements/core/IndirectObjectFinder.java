@@ -23,7 +23,6 @@ public class IndirectObjectFinder {
     public static Set<IndirectObject> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> nmodObjects = new HashSet<>();
-        Map<IndexedWord, Set<IndexedWord>> nmodObjectMapping = new HashMap<>();
         Set<IndirectObject> indirectObjects = new HashSet<>();
 
         // find simple objects from relations
@@ -34,7 +33,7 @@ public class IndirectObjectFinder {
         }
 
         // create indirect object mapping based on relations
-        nmodObjectMapping = StatementUtils.makeRelationsMap(nmodObjects, Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> nmodObjectMapping = StatementUtils.makeRelationsMap(nmodObjects, Relations.CONJ, graph);
 
         // build complete objects from mapping
         for (IndexedWord object : nmodObjectMapping.keySet()) {

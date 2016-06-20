@@ -26,9 +26,6 @@ public class DirectObjectFinder {
         Set<IndexedWord> dobjObjects = new HashSet<>();
         Set<IndexedWord> xcompObjects = new HashSet<>();
         Set<IndexedWord> copObjects = new HashSet<>();
-        Map<IndexedWord, Set<IndexedWord>> dobjObjectMapping = new HashMap<>();
-        Map<IndexedWord, Set<IndexedWord>> xcompObjectMapping = new HashMap<>();
-        Map<IndexedWord, Set<IndexedWord>> copObjectMapping = new HashMap<>();
         Set<DirectObject> directObjects = new HashSet<>();
 
         // find simple objects from relations
@@ -66,13 +63,13 @@ public class DirectObjectFinder {
         dobjObjects.removeAll(voContstructionObjects);
 
         // create direct object mapping based on relations
-        dobjObjectMapping = StatementUtils.makeRelationsMap(dobjObjects, Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> dobjObjectMapping = StatementUtils.makeRelationsMap(dobjObjects, Relations.CONJ, graph);
 
         // create xcomp object mapping based on relations
-        xcompObjectMapping = StatementUtils.makeRelationsMap(xcompObjects, Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> xcompObjectMapping = StatementUtils.makeRelationsMap(xcompObjects, Relations.CONJ, graph);
 
         // create copula object mapping based on relations
-        copObjectMapping = StatementUtils.makeRelationsMap(copObjects, Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> copObjectMapping = StatementUtils.makeRelationsMap(copObjects, Relations.CONJ, graph);
 
         // build complete objects from mappings
         for (IndexedWord object : dobjObjectMapping.keySet()) {
