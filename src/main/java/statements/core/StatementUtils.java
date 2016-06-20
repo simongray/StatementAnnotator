@@ -206,21 +206,18 @@ public class StatementUtils {
     /**
      * Print statements of a sentence in a pretty way.
      *
-     * @param sentence sentence annotated with statements.
+     * @param statements statements from a sentence.
      */
-    public static void printStatements(CoreMap sentence) {
-        printStatements(sentence, "");
+    public static void printStatements(Set<Statement> statements) {
+        printStatements(statements, "");
     }
 
     /**
      * Helper method for printStatements(CoreMap sentence).
      *
-     * @param sentence sentence annotated with statements.
+     * @param statements statements from a sentence.
      */
-    private static void printStatements(CoreMap sentence, String indent) {
-        Set<Statement> statements = sentence.get(StatementsAnnotation.class);
-        System.out.println(sentence);
-
+    private static void printStatements(Set<Statement> statements, String indent) {
         if (statements != null) {
             int i = 0;
             for (Statement statement : statements) {

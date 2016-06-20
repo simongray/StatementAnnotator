@@ -13,6 +13,7 @@ import statements.core.StatementUtils;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 
 public class TestStatements {
@@ -63,7 +64,7 @@ public class TestStatements {
         // TODO: this fucks up majorly
 //        String example = "Anyway, just make your own rule and stick to it.";
 
-        String example = "She speaks and shoots. She hates flying and he loves it.";
+        String example = "She speaks and shoots.";
         // TODO: the sentence "Hates and loves it." - doesn't separate into two statements, however doubtful if it is possible to do in a non-hackish way
 //        String example = "Bought some 3M 95N-rated face masks for smoggy days.\n";
 //        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
@@ -80,7 +81,9 @@ public class TestStatements {
         List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
 
         for (CoreMap sentence : sentences) {
-            StatementUtils.printStatements(sentence);
+            Set<Statement> statements = sentence.get(StatementsAnnotation.class);
+            System.out.println(sentence);
+            StatementUtils.printStatements(statements);
             System.out.println();
         }
     }
