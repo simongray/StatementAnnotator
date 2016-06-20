@@ -84,7 +84,7 @@ public class TestStatements {
             Set<Statement> statements = sentence.get(StatementsAnnotation.class);
             System.out.println(sentence);
             StatementUtils.printStatements(statements);
-            System.out.println();
+            System.out.println(statements);
         }
     }
 }
