@@ -43,7 +43,6 @@ public class StatementFinder {
      * @return statements
      */
     private static Set<Statement> link(SemanticGraph graph, Set<AbstractComponent> components) {
-        Set<Set<AbstractComponent>> componentSets = new HashSet<>();
         Set<Statement> statements = new HashSet<>();
 
         logger.info("components for linking: " + components);
@@ -74,43 +73,11 @@ public class StatementFinder {
         }
 
         // create sets of components by following all dependencies
-        for (AbstractComponent child : componentMapping.keySet()) {
-            AbstractComponent parent = componentMapping.get(child);
-            boolean found = false;
-
-            // find existing component set to link up to
-            for (Set<AbstractComponent> componentSet : componentSets) {
-                if (componentSet.contains(parent) || componentSet.contains(child)) {
-                    if (parent != null) componentSet.add(parent);
-                    componentSet.add(child);
-                    found = true;
-                    break;
-                }
-            }
-
-            // create new component set if no parent was found
-            if (!found) {
-                Set<AbstractComponent> newComponentSet = new HashSet<>();
-                if (parent != null) newComponentSet.add(parent);
-                newComponentSet.add(child);
-                componentSets.add(newComponentSet);
-            }
-        }
+        Set<Set<AbstractComponent>> componentSets = findLinks(componentMapping);
 
         // merge any component sets that intersect
-        Set<Set<AbstractComponent>> mergedComponentSets = new HashSet<>();
-        for (Set<AbstractComponent> componentSet : componentSets) {
-            Set<AbstractComponent> mergedComponentSet = new HashSet<>(componentSet);
-
-            for (Set<AbstractComponent> otherComponentSet : componentSets) {
-                if (!mergedComponentSet.equals(otherComponentSet) && StatementUtils.intersects(mergedComponentSet, otherComponentSet)) {
-                    logger.info("merging " + otherComponentSet + " into " + mergedComponentSet);
-                    mergedComponentSet.addAll(otherComponentSet);
-                }
-            }
-
-            mergedComponentSets.add(mergedComponentSet);  // re-adding identical merged sets has no effect
-        }
+        // TODO: figure out whether this is really necessary
+        Set<Set<AbstractComponent>> mergedComponentSets = merge(componentSets);
 
         // create statements from component sets
         for (Set<AbstractComponent> componentSet : mergedComponentSets) {
@@ -119,29 +86,8 @@ public class StatementFinder {
             statements.add(statement);
         }
 
-        // link dependent clauses together with the main statements
-        for (AbstractComponent childComponent : statementMapping.keySet()) {
-            AbstractComponent parentComponent = statementMapping.get(childComponent);
-            Statement child = null;
-            Statement parent = null;
-
-            for (Statement statement : statements) {
-                if (statement.contains(childComponent)) {
-                    child = statement;
-                }
-                if (statement.contains(parentComponent)) {
-                    parent = statement;
-                }
-            }
-
-            // compose into parent statements
-            if (parent != null && child != null) {
-                logger.info("nesting " + child + " within " + parent);
-                parent.addChild(child);
-                statements.remove(child);
-                logger.info("components of parent: "+parent.getComponents());
-            }
-        }
+        // attach dependent clauses to the main statements (and remove as independent statements)
+        attachNestedStatements(statementMapping, statements);
 
         logger.info("component mapping: " + componentMapping);
         logger.info("based on dependencies: " + graph.typedDependencies());
@@ -248,5 +194,99 @@ public class StatementFinder {
         }
 
         return statementMapping;
+    }
+
+    /**
+     * Get the sets of linked components found in the component mapping.
+     *
+     * @param componentMapping
+     * @return
+     */
+    private static Set<Set<AbstractComponent>> findLinks(Map<AbstractComponent, AbstractComponent> componentMapping) {
+        Set<Set<AbstractComponent>> linkedComponents = new HashSet<>();
+
+        // create sets of components by following all dependencies in component mapping
+        for (AbstractComponent child : componentMapping.keySet()) {
+            AbstractComponent parent = componentMapping.get(child);
+            boolean found = false;
+
+            // find existing component set to link up to
+            for (Set<AbstractComponent> componentSet : linkedComponents) {
+                if (componentSet.contains(parent) || componentSet.contains(child)) {
+                    if (parent != null) componentSet.add(parent);
+                    componentSet.add(child);
+                    found = true;
+                    break;
+                }
+            }
+
+            // create new component set if no parent was found
+            if (!found) {
+                Set<AbstractComponent> newComponentSet = new HashSet<>();
+                if (parent != null) newComponentSet.add(parent);
+                newComponentSet.add(child);
+                linkedComponents.add(newComponentSet);
+            }
+        }
+
+        return linkedComponents;
+    }
+
+    /**
+     * Merge component sets that intersect.
+     *
+     * @param linkedComponents
+     * @return
+     */
+    private static Set<Set<AbstractComponent>> merge(Set<Set<AbstractComponent>> linkedComponents) {
+        Set<Set<AbstractComponent>> mergedComponentSets = new HashSet<>();
+
+        for (Set<AbstractComponent> componentSet : linkedComponents) {
+            Set<AbstractComponent> mergedComponentSet = new HashSet<>(componentSet);
+
+            for (Set<AbstractComponent> otherComponentSet : linkedComponents) {
+                if (!mergedComponentSet.equals(otherComponentSet) && StatementUtils.intersects(mergedComponentSet, otherComponentSet)) {
+                    logger.info("merging " + otherComponentSet + " into " + mergedComponentSet);
+                    mergedComponentSet.addAll(otherComponentSet);
+                }
+            }
+
+            mergedComponentSets.add(mergedComponentSet);  // re-adding identical merged sets has no effect
+        }
+
+        return mergedComponentSets;
+    }
+
+    /**
+     * Attaches nested statements (= dependent clauses) to their parent statements.
+     * Then removes them from list of statements.
+     *
+     * @param statementMapping
+     * @param statements
+     */
+    private static void attachNestedStatements(Map<AbstractComponent, AbstractComponent> statementMapping, Set<Statement> statements) {
+        // link dependent clauses together with the main statements
+        for (AbstractComponent childComponent : statementMapping.keySet()) {
+            AbstractComponent parentComponent = statementMapping.get(childComponent);
+            Statement child = null;
+            Statement parent = null;
+
+            for (Statement statement : statements) {
+                if (statement.contains(childComponent)) {
+                    child = statement;
+                }
+                if (statement.contains(parentComponent)) {
+                    parent = statement;
+                }
+            }
+
+            // compose into parent statements
+            if (parent != null && child != null) {
+                logger.info("nesting " + child + " within " + parent);
+                parent.addChild(child);
+                statements.remove(child);
+                logger.info("components of parent: "+parent.getComponents());
+            }
+        }
     }
 }
