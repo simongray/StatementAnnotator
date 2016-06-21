@@ -145,16 +145,6 @@ public class StatementUtils {
     }
 
     /**
-     * Finds out the negation status based on a set of negations.
-     *
-     * @param negations
-     * @return
-     */
-    public static boolean isNegated(Set<IndexedWord> negations) {
-        return negations.size() % 2 != 0;
-    }
-
-    /**
      * Reduce a variable amount of Resemblance objects to the lowest common denominator.
      *
      * @param resemblances range of Resemblance to reduce

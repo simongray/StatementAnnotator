@@ -3,6 +3,7 @@ package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
+import statements.core.exceptions.MissingEntryException;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -99,7 +100,8 @@ public abstract class AbstractComponent implements StatementComponent {
      * @param entry the entry to get the negations for
      * @return negations for the entry
      */
-    public Set<IndexedWord> getNegations(IndexedWord entry) {
+    public Set<IndexedWord> getNegations(IndexedWord entry) throws MissingEntryException {
+        if (!negationMapping.containsKey(entry)) throw new MissingEntryException(entry + " is not a part of this component");
         return new HashSet<>(negationMapping.get(entry));
     }
 
@@ -109,8 +111,9 @@ public abstract class AbstractComponent implements StatementComponent {
      * @param entry the entry to get the negation status for
      * @return true if negated
      */
-    public boolean isNegated(IndexedWord entry) {
-        return StatementUtils.isNegated(negationMapping.get(entry));
+    public boolean isNegated(IndexedWord entry) throws MissingEntryException {
+        Set<IndexedWord> negations = getNegations(entry);
+        return negations.size() % 2 != 0;
     }
 
     /**
