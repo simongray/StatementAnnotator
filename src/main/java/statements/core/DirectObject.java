@@ -46,16 +46,12 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
     }
 
     private Type type;
-    private final Map<IndexedWord, Set<IndexedWord>> negationMap;
     private final Map<IndexedWord, Set<IndexedWord>> copulaMap;  // only applicable to copula objects
 
     // TODO: shouldn't be necessary to set type manually
     public DirectObject(IndexedWord primary, Set<IndexedWord> secondary, Type type, SemanticGraph graph) {
         super(primary, secondary, graph);
         this.type = type;
-
-        // find negations (relevant for COP (adjectives) and XCOMP (verb) types)
-        negationMap = StatementUtils.makeRelationsMap(entries, Relations.NEG, graph);
 
         // find copulas (only relevant for COP)
         copulaMap = StatementUtils.makeRelationsMap(entries, Relations.COP, graph);
@@ -78,27 +74,6 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
     public Type getType() {
         return type;
     }  // TODO: is it relevant?
-
-    /**
-     * The negations for a specific contained object.
-     *
-     * @param object simple direct object
-     * @return negations
-     */
-    public Set<IndexedWord> getNegations(IndexedWord object) {
-        return new HashSet<>(negationMap.get(object));
-    }
-
-    /**
-     * Whether a certain contained object is negated.
-     *
-     * @param object simple direct object
-     * @return true if negated
-     */
-    public boolean isNegated(IndexedWord object) {
-        return StatementUtils.isNegated(negationMap.get(object));
-    }
-
 
     /**
      * The copula(s) for a specific contained object.

@@ -29,14 +29,12 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     }
 
     private final Map<IndexedWord, Set<IndexedWord>> markerMap;
-    private final Set<IndexedWord> negations;  // TODO: make negations for every entry
     private final Set<IndexedWord> conjunctions;
 
     public Verb(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         super(primary, secondary, graph);
 
         // find specific words
-        this.negations = StatementUtils.findSpecificDescendants(Relations.NEG, primary, graph);
         this.conjunctions = StatementUtils.findSpecificDescendants(Relations.CC, primary, graph);
 
         // find markers (only relevant for COP)
@@ -67,30 +65,12 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     }
 
     /**
-     * The negations for the verb.
-     *
-     * @return negations
-     */
-    public Set<IndexedWord> getNegations() {
-        return new HashSet<>(negations);
-    }
-
-    /**
      * The conjunctions for the verb.
      *
      * @return negations
      */
     public Set<IndexedWord> getConjunctions() {
         return new HashSet<>(conjunctions);
-    }
-
-    /**
-     * Whether the verb is negated.
-     *
-     * @return negation status
-     */
-    public boolean isNegated() {
-        return StatementUtils.isNegated(negations);
     }
 
     /**

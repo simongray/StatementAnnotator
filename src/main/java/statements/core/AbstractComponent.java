@@ -5,6 +5,7 @@ import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -30,6 +31,8 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> entries;
     protected final Set<IndexedWord> complete;
     protected final Set<Set<IndexedWord>> compounds;
+    protected final Map<IndexedWord, Set<IndexedWord>> negationMapping;
+
 
     // TODO: remove secondary requirement from constructor, find dynamically instead
     public AbstractComponent(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
@@ -49,6 +52,9 @@ public abstract class AbstractComponent implements StatementComponent {
         for (IndexedWord word : entries) {
             compounds.add(StatementUtils.findCompoundComponents(word, graph, getIgnoredCompoundRelations()));
         }
+
+        // find negations for each entry
+        negationMapping = StatementUtils.makeRelationsMap(entries, Relations.NEG, graph);
     }
 
     /**
@@ -85,6 +91,26 @@ public abstract class AbstractComponent implements StatementComponent {
      */
     public Set<Set<IndexedWord>> getCompounds() {
         return compounds;
+    }
+
+    /**
+     * The negations for a specific entry
+     *
+     * @param entry the entry to get the negations for
+     * @return negations for the entry
+     */
+    public Set<IndexedWord> getNegations(IndexedWord entry) {
+        return new HashSet<>(negationMapping.get(entry));
+    }
+
+    /**
+     * Whether specific entry is negated.
+     *
+     * @param entry the entry to get the negation status for
+     * @return true if negated
+     */
+    public boolean isNegated(IndexedWord entry) {
+        return StatementUtils.isNegated(negationMapping.get(entry));
     }
 
     /**
