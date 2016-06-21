@@ -3,7 +3,6 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
-import edu.stanford.nlp.trees.GrammaticalRelation;
 import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,17 +25,11 @@ public  class StatementFinder {
         SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
 
         // find statement components
-        Set<Subject> subjects = SubjectFinder.find(graph);
-        Set<Verb> verbs = VerbFinder.find(graph);
-        Set<DirectObject> directObjects = DirectObjectFinder.find(graph);
-        Set<IndirectObject> indirectObjects = IndirectObjectFinder.find(graph);
-
-        // merge all components into same set before linking
         Set<AbstractComponent> components = new HashSet<>();
-        components.addAll(subjects);
-        components.addAll(verbs);
-        components.addAll(directObjects);
-        components.addAll(indirectObjects);
+        components.addAll(SubjectFinder.find(graph));
+        components.addAll(VerbFinder.find(graph));
+        components.addAll(DirectObjectFinder.find(graph));
+        components.addAll(IndirectObjectFinder.find(graph));
 
         // link components to produce statements
         return link(graph, components);
