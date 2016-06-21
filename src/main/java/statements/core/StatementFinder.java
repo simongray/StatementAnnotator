@@ -56,18 +56,17 @@ public class StatementFinder {
         Map<AbstractComponent, AbstractComponent> statementMapping = getStatementMapping(componentMapping, graph);
 
         // remove component relationships found in the inter-statement mapping
+        // these components will be replaced by links to separate statements
         for (AbstractComponent component : statementMapping.keySet()) {
             componentMapping.remove(component);
         }
 
         // remove connections between identical component types
+        // TODO: this mainly a debugging step, figure out whether to keep it
         for (AbstractComponent component : components) {
             AbstractComponent parent = componentMapping.getOrDefault(component, null);
 
-            if (parent instanceof Subject && component instanceof Subject
-                    || parent instanceof Verb && component instanceof Verb
-                    || parent instanceof DirectObject && component instanceof DirectObject
-                    || parent instanceof IndirectObject && component instanceof IndirectObject) {
+            if (isSameType(component, parent)) {
                 logger.info("removing identical component type relation: " + component);
                 componentMapping.remove(component);
             }
@@ -189,6 +188,20 @@ public class StatementFinder {
         }
 
         return false;
+    }
+
+    /**
+     * Returns whether the two components are the same component type.
+     *
+     * @param component
+     * @param otherComponent
+     * @return
+     */
+    private static boolean isSameType(AbstractComponent component, AbstractComponent otherComponent) {
+        return (component instanceof Subject && otherComponent instanceof Subject
+                || component instanceof Verb && otherComponent instanceof Verb
+                || component instanceof DirectObject && otherComponent instanceof DirectObject
+                || component instanceof IndirectObject && otherComponent instanceof IndirectObject);
     }
 
     /**
