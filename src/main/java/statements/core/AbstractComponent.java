@@ -13,27 +13,12 @@ import java.util.Set;
  * A component of a natural language statement.
  */
 public abstract class AbstractComponent implements StatementComponent {
-    /**
-     * Describes which relations are ignored when producing the complete subject.
-     */
-    protected Set<String> getIgnoredRelations() {
-        return null;
-    }
-
-    /**
-     * Describes which relations are ignored when producing compound subjects.
-     */
-    protected Set<String> getIgnoredCompoundRelations() {
-        return null;
-    }
-
     protected final IndexedWord primary;
     protected final Set<IndexedWord> secondary;
     protected final Set<IndexedWord> entries;
     protected final Set<IndexedWord> complete;
     protected final Set<Set<IndexedWord>> compounds;
     protected final Map<IndexedWord, Set<IndexedWord>> negationMapping;
-
 
     // TODO: remove secondary requirement from constructor, find dynamically instead
     public AbstractComponent(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
@@ -56,6 +41,20 @@ public abstract class AbstractComponent implements StatementComponent {
 
         // find negations for each entry
         negationMapping = StatementUtils.makeRelationsMap(entries, Relations.NEG, graph);
+    }
+
+    /**
+     * Describes which relations are ignored when producing the complete subject.
+     */
+    protected Set<String> getIgnoredRelations() {
+        return null;
+    }
+
+    /**
+     * Describes which relations are ignored when producing compound subjects.
+     */
+    protected Set<String> getIgnoredCompoundRelations() {
+        return null;
     }
 
     /**

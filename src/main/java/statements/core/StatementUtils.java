@@ -79,14 +79,14 @@ public class StatementUtils {
      * @return compound components
      */
     public static Set<IndexedWord> findCompoundComponents(IndexedWord parent, SemanticGraph graph, Set<String> ignoredRelations) {
-        if (ignoredRelations == null) ignoredRelations = new HashSet<>();
         Set<IndexedWord> compoundComponents = new HashSet<>();
         compoundComponents.add(parent);
         logger.info("added " + parent + " as part of compound");
 
         for (IndexedWord child : graph.getChildren(parent)) {
             GrammaticalRelation relation = graph.reln(parent, child);
-            if (!ignoredRelations.contains(relation.getShortName())) {
+
+            if (ignoredRelations == null || !ignoredRelations.contains(relation.getShortName())) {
                 compoundComponents.addAll(findCompoundComponents(child, graph, ignoredRelations));
             } else {
                 logger.info("ignoring " + child + " with relation " + relation.getShortName() + " (ignored relations: " + ignoredRelations + ")");
