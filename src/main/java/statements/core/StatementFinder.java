@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * Finds Statements in sentences.
  */
-public  class StatementFinder {
+public class StatementFinder {
     private static final Logger logger = LoggerFactory.getLogger(StatementFinder.class);
 
     /**
@@ -43,49 +43,39 @@ public  class StatementFinder {
      * @return statements
      */
     private static Set<Statement> link(SemanticGraph graph, Set<AbstractComponent> components) {
-        Map<AbstractComponent, AbstractComponent> childToParentMapping = new HashMap<>();
-        Map<AbstractComponent, AbstractComponent> interStatementMapping = new HashMap<>();
         Map<AbstractComponent, AbstractComponent> conjVerbMapping = new HashMap<>();  // verb conjunctions to split into separate statements
         Set<Set<AbstractComponent>> componentSets = new HashSet<>();
         Set<Statement> statements = new HashSet<>();
 
         logger.info("components for linking: " + components);
 
-        // find the direct parent for each component based on its primary word
-        // this relation will be used to link components
-        for (AbstractComponent component : components) {
-            for (AbstractComponent otherComponent : components) {
-                if (isChild(component, otherComponent, graph)) {
-                    // TODO: figure out whether this can be made more readable/less resource intensive
-                    IndexedWord parentPrimary = graph.getParent(component.getPrimary());
-                    AbstractComponent parent = getFromPrimary(parentPrimary, components);
+        // find the direct child-parent relationships between components
+        Map<AbstractComponent, AbstractComponent> componentMapping = getComponentMapping(components, graph);
 
-                    // keep track of linked statements
-                    if (parentPrimary != null && graph.reln(parentPrimary, component.getPrimary()).getShortName().equals(Relations.CCOMP)) {
-                        interStatementMapping.put(component, parent);
-                    } else {
-                        childToParentMapping.put(component, otherComponent);
-                    }
-                }
-            }
+        // discover inter-statement relationships
+        Map<AbstractComponent, AbstractComponent> statementMapping = getStatementMapping(componentMapping, graph);
+
+        // remove component relationships found in the inter-statement mapping
+        for (AbstractComponent component : statementMapping.keySet()) {
+            componentMapping.remove(component);
         }
 
         // remove connections between identical component types
         for (AbstractComponent component : components) {
-            AbstractComponent parent = childToParentMapping.getOrDefault(component, null);
+            AbstractComponent parent = componentMapping.getOrDefault(component, null);
 
             if (parent instanceof Subject && component instanceof Subject
                     || parent instanceof Verb && component instanceof Verb
                     || parent instanceof DirectObject && component instanceof DirectObject
                     || parent instanceof IndirectObject && component instanceof IndirectObject) {
                 logger.info("removing identical component type relation: " + component);
-                childToParentMapping.remove(component);
+                componentMapping.remove(component);
             }
         }
 
         // create sets of components by following all dependencies
-        for (AbstractComponent child : childToParentMapping.keySet()) {
-            AbstractComponent parent = childToParentMapping.get(child);
+        for (AbstractComponent child : componentMapping.keySet()) {
+            AbstractComponent parent = componentMapping.get(child);
             boolean found = false;
 
             // find existing component set to link up to
@@ -130,8 +120,8 @@ public  class StatementFinder {
         }
 
         // link dependent clauses together with the main statements
-        for (AbstractComponent childComponent : interStatementMapping.keySet()) {
-            AbstractComponent parentComponent = interStatementMapping.get(childComponent);
+        for (AbstractComponent childComponent : statementMapping.keySet()) {
+            AbstractComponent parentComponent = statementMapping.get(childComponent);
             Statement child = null;
             Statement parent = null;
 
@@ -153,9 +143,9 @@ public  class StatementFinder {
             }
         }
 
-        logger.info("component mapping: " + childToParentMapping);
+        logger.info("component mapping: " + componentMapping);
         logger.info("based on dependencies: " + graph.typedDependencies());
-        logger.info("links between statements: " + interStatementMapping);
+        logger.info("links between statements: " + statementMapping);
         logger.info("links between verbs: " + conjVerbMapping);
         logger.info("final statements: " + statements);
 
@@ -199,5 +189,51 @@ public  class StatementFinder {
         }
 
         return false;
+    }
+
+    /**
+     * Get the child-parent mapping for a list of statement components.
+     *
+     * @param components
+     * @param graph
+     * @return
+     */
+    private static Map<AbstractComponent, AbstractComponent> getComponentMapping(Set<AbstractComponent> components, SemanticGraph graph) {
+        Map<AbstractComponent, AbstractComponent> componentMapping = new HashMap<>();
+
+        // find the direct parent for each component based on its primary word
+        // this relation will be used to link components
+        for (AbstractComponent component : components) {
+            for (AbstractComponent otherComponent : components) {
+                if (isChild(component, otherComponent, graph)) {
+                    componentMapping.put(component, otherComponent);
+                }
+            }
+        }
+
+        return componentMapping;
+    }
+
+    /**
+     * Get the inter-statement mapping from a child-parent mapping of components.
+     *
+     * @param componentMapping
+     * @param graph
+     * @return
+     */
+    private static Map<AbstractComponent, AbstractComponent> getStatementMapping(Map<AbstractComponent, AbstractComponent>componentMapping, SemanticGraph graph) {
+        Map<AbstractComponent, AbstractComponent> statementMapping = new HashMap<>();
+
+        for (AbstractComponent child : componentMapping.keySet()) {
+            AbstractComponent parent = componentMapping.get(child);
+            IndexedWord childPrimary = child.getPrimary();
+            IndexedWord parentPrimary = parent.getPrimary();
+
+            if (parentPrimary != null && childPrimary != null && graph.reln(parentPrimary, childPrimary).getShortName().equals(Relations.CCOMP)) {
+                statementMapping.put(child, parent);
+            }
+        }
+
+        return statementMapping;
     }
 }
