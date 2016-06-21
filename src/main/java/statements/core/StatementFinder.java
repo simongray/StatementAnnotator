@@ -43,16 +43,17 @@ public class StatementFinder {
      * @return statements
      */
     private static Set<Statement> link(SemanticGraph graph, Set<AbstractComponent> components) {
-        Map<AbstractComponent, AbstractComponent> conjVerbMapping = new HashMap<>();  // verb conjunctions to split into separate statements
         Set<Set<AbstractComponent>> componentSets = new HashSet<>();
         Set<Statement> statements = new HashSet<>();
 
         logger.info("components for linking: " + components);
 
         // find the direct child-parent relationships between components
+        // this mapping is used to create sets of linked components which can be turned into statements
         Map<AbstractComponent, AbstractComponent> componentMapping = getComponentMapping(components, graph);
 
         // discover inter-statement relationships
+        // this mapping is used to compose statements together if they're connected
         Map<AbstractComponent, AbstractComponent> statementMapping = getStatementMapping(componentMapping, graph);
 
         // remove component relationships found in the inter-statement mapping
@@ -145,7 +146,6 @@ public class StatementFinder {
         logger.info("component mapping: " + componentMapping);
         logger.info("based on dependencies: " + graph.typedDependencies());
         logger.info("links between statements: " + statementMapping);
-        logger.info("links between verbs: " + conjVerbMapping);
         logger.info("final statements: " + statements);
 
         return statements;
