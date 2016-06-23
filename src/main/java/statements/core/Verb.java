@@ -11,25 +11,6 @@ import java.util.Set;
  * The complete primary of a natural language statement.
  */
 public class Verb extends AbstractComponent implements Resembling<Verb> {
-
-    private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
-    private static final Set<String> IGNORED_COMPOUND_RELATIONS = new HashSet<>();
-
-    static {
-        IGNORED_RELATIONS.add(Relations.NSUBJ);
-        IGNORED_RELATIONS.add(Relations.NSUBJPASS);
-        IGNORED_RELATIONS.add(Relations.DOBJ);  // "<primary>s <primary>ing"
-        IGNORED_RELATIONS.add(Relations.NMOD);  // "<primary> to/from/etc. <object>"
-        IGNORED_RELATIONS.add(Relations.XCOMP);  // "<primary>s to <primary>"
-        IGNORED_RELATIONS.add(Relations.CCOMP);  // <primary> that <statement>, e.g. "we have <found> that <it is great>"
-        IGNORED_RELATIONS.add(Relations.DEP);
-        IGNORED_RELATIONS.add(Relations.PUNCT);
-
-        IGNORED_COMPOUND_RELATIONS.addAll(IGNORED_RELATIONS);
-        IGNORED_COMPOUND_RELATIONS.add(Relations.CONJ); // connections to other verbs
-        IGNORED_COMPOUND_RELATIONS.add(Relations.CC);  // "and", "or", etc.
-    }
-
     private final Map<IndexedWord, Set<IndexedWord>> markerMap;
 
     public Verb(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
@@ -43,14 +24,14 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
      * Describes which relations are ignored when producing the complete subject.
      */
     protected Set<String> getIgnoredRelations() {
-        return IGNORED_RELATIONS;
+        return Relations.IGNORED_VERB_RELATIONS;
     }
 
     /**
      * Describes which relations are ignored when producing compound subjects.
      */
     protected Set<String> getIgnoredCompoundRelations() {
-        return IGNORED_COMPOUND_RELATIONS;
+        return Relations.IGNORED_VERB_COMPOUND_RELATIONS;
     }
 
     /**
