@@ -5,6 +5,9 @@ import java.util.Set;
 
 /**
  * The relations used for the various finders.
+ *
+ * The various ignore lists are used to determine the exact boundaries of components in the dependency graph,
+ * as well as the boundaries of the compounds within the components.
  */
 public class Relations {
     public static final String DEP = "dep";  // unknown dependency
@@ -33,7 +36,7 @@ public class Relations {
 
     static {
         /**
-         * Relations that are ignored when constructing any component.
+         * Relations that are ignored when constructing ANY component.
          */
         IGNORED_RELATIONS.add(Relations.DEP);  // ignoring all unknown dependencies
         IGNORED_RELATIONS.add(Relations.PUNCT);  // ignoring all punctuation (can still be accessed for recomposing as text)
@@ -63,24 +66,27 @@ public class Relations {
         IGNORED_DIRECT_OBJECT_RELATIONS.add(Relations.NMOD);
 
         /**
+         * Relations that are ignored when determining ANY compound boundaries.
+         */
+        IGNORED_COMPOUND_RELATIONS.add(Relations.CONJ);   // ignoring all links to conjunct verbs, nouns, etc.
+        IGNORED_COMPOUND_RELATIONS.add(Relations.CC);     // ignoring all conjunction words (like "and", "or", etc.)
+
+        /**
          * Relations that are ignored when determining subject compound boundaries.
          */
         IGNORED_SUBJECT_COMPOUND_RELATIONS.addAll(IGNORED_SUBJECT_RELATIONS);
-        IGNORED_SUBJECT_COMPOUND_RELATIONS.add(Relations.CONJ);   // other simple subjects
-        IGNORED_SUBJECT_COMPOUND_RELATIONS.add(Relations.CC);     // words like "and"
+        IGNORED_SUBJECT_COMPOUND_RELATIONS.addAll(IGNORED_COMPOUND_RELATIONS);
 
         /**
          * Relations that are ignored when determining verb compound boundaries.
          */
         IGNORED_VERB_COMPOUND_RELATIONS.addAll(IGNORED_VERB_RELATIONS);
-        IGNORED_VERB_COMPOUND_RELATIONS.add(Relations.CONJ); // connections to other verbs
-        IGNORED_VERB_COMPOUND_RELATIONS.add(Relations.CC);  // "and", "or", etc.
+        IGNORED_VERB_COMPOUND_RELATIONS.addAll(IGNORED_COMPOUND_RELATIONS);
 
         /**
          * Relations that are ignored when determining direct object compound boundaries.
          */
         IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS.addAll(IGNORED_DIRECT_OBJECT_RELATIONS);
-        IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS.add(Relations.CONJ);
-        IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS.add(Relations.CC);
+        IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS.addAll(IGNORED_COMPOUND_RELATIONS);
     }
 }
