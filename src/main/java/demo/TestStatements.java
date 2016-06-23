@@ -83,7 +83,7 @@ public class TestStatements {
 //        String example = "Anyway, just make your own rule and stick to it.";
 
         // FIXED
-        String example = "Here's our solution: Use an air quality app.";
+        String example = "Here's our solution: Use an air quality app.";  // TODO: allow to decide specifity of noun compounds, i.e. "the" or "an"
 
 
 
