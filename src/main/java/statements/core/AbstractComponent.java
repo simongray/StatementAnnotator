@@ -51,14 +51,14 @@ public abstract class AbstractComponent implements StatementComponent {
      * Describes which relations are ignored when producing the complete subject.
      */
     protected Set<String> getIgnoredRelations() {
-        return null;
+        return Relations.IGNORED_RELATIONS;
     }
 
     /**
      * Describes which relations are ignored when producing compound subjects.
      */
     protected Set<String> getIgnoredCompoundRelations() {
-        return null;
+        return Relations.IGNORED_COMPOUND_RELATIONS;
     }
 
     /**
