@@ -4,6 +4,7 @@ package statements.core;
  * The relations used for the various finders.
  */
 public class Relations {
+    public static final String DEP = "dep";  // unknown dependency
     public static final String NSUBJ = "nsubj";  // for subjects
     public static final String NSUBJPASS = "nsubjpass";  // for passives
     public static final String DOBJ = "dobj";  // direct objects (or verbs acting in their place)

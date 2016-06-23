@@ -60,12 +60,8 @@ public class TestStatements {
 //        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable. Here's our solution:";
 //        String example =    "We have found that it is quite manageable.";
 
-//        String example = "Here's our solution: Use an air quality app.";
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
-
-        // TODO: this fucks up majorly
-//        String example = "Anyway, just make your own rule and stick to it.";
 
         // no longer fucks this up! yay
 //        String example = "He and she speaks and yells the words and sentences to her or him.";
@@ -77,9 +73,17 @@ public class TestStatements {
 //        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";
 //        String example = "She's having to make do. She speaks and shouts. The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
-        String example =    "I don't care whether she likes me.";
+//        String example =    "I don't care whether she likes me.";
+//        String example =    "I don't care whether she likes me.";
 //        String example =    "I think she's mad. I don't care whether she likes me. She says that they should go. I don't care whether or not they come.";
 //        String example = "He doesn't like doing anything.";
+
+
+        // CANNOT BE FIXED, DUE TO BUGGY PARSING
+//        String example = "Anyway, just make your own rule and stick to it.";
+
+        // FIXED
+        String example = "Here's our solution: Use an air quality app.";
 
 
 

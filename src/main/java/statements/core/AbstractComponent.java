@@ -19,6 +19,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> complete;
     protected final Set<Set<IndexedWord>> compounds;
     protected final Map<IndexedWord, Set<IndexedWord>> negationMapping;
+    private final Map<IndexedWord, Set<IndexedWord>> punctuationMapping;
 
     // TODO: remove secondary requirement from constructor, find dynamically instead
     public AbstractComponent(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
@@ -41,6 +42,9 @@ public abstract class AbstractComponent implements StatementComponent {
 
         // find negations for each entry
         negationMapping = StatementUtils.makeRelationsMap(entries, Relations.NEG, graph);
+
+        // find punctuation for each entry
+        punctuationMapping = StatementUtils.makeRelationsMap(entries, Relations.PUNCT, graph);
     }
 
     /**
@@ -102,6 +106,17 @@ public abstract class AbstractComponent implements StatementComponent {
     public Set<IndexedWord> getNegations(IndexedWord entry) throws MissingEntryException {
         if (!negationMapping.containsKey(entry)) throw new MissingEntryException(entry + " is not a part of this component");
         return new HashSet<>(negationMapping.get(entry));
+    }
+
+    /**
+     * The punctuation for a specific entry
+     *
+     * @param entry the entry to get the punctuation for
+     * @return punctuation for the entry
+     */
+    public Set<IndexedWord> getPunctuation(IndexedWord entry) throws MissingEntryException {
+        if (!punctuationMapping.containsKey(entry)) throw new MissingEntryException(entry + " is not a part of this component");
+        return new HashSet<>(punctuationMapping.get(entry));
     }
 
     /**
