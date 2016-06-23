@@ -20,6 +20,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<Set<IndexedWord>> compounds;
     protected final Map<IndexedWord, Set<IndexedWord>> negationMapping;
     private final Map<IndexedWord, Set<IndexedWord>> punctuationMapping;
+    private final Map<IndexedWord, Set<IndexedWord>> markerMapping;
 
     // TODO: remove secondary requirement from constructor, find dynamically instead
     public AbstractComponent(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
@@ -45,6 +46,9 @@ public abstract class AbstractComponent implements StatementComponent {
 
         // find punctuation for each entry
         punctuationMapping = StatementUtils.makeRelationsMap(entries, Relations.PUNCT, graph);
+
+        // find markers for each entry
+        markerMapping = StatementUtils.makeRelationsMap(entries, Relations.MARK, graph);
     }
 
     /**
@@ -117,6 +121,17 @@ public abstract class AbstractComponent implements StatementComponent {
     public Set<IndexedWord> getPunctuation(IndexedWord entry) throws MissingEntryException {
         if (!punctuationMapping.containsKey(entry)) throw new MissingEntryException(entry + " is not a part of this component");
         return new HashSet<>(punctuationMapping.get(entry));
+    }
+
+    /**
+     * The markers for a specific entry
+     *
+     * @param entry the entry to get the markers for
+     * @return markers for the entry
+     */
+    public Set<IndexedWord> getMarkers(IndexedWord entry) throws MissingEntryException {
+        if (!markerMapping.containsKey(entry)) throw new MissingEntryException(entry + " is not a part of this component");
+        return new HashSet<>(markerMapping.get(entry));
     }
 
     /**

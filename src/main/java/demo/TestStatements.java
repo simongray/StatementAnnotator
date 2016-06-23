@@ -32,8 +32,6 @@ public class TestStatements {
 //        String example = "The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
 //        String example = "The amazing Henry doesn't like doing anything in particular.";
 //        String example = "Hey, cool! Very cool, in fact. Henry, Louis the Dragon and Sally Bates don't like doing anything in particular.";
-
-        // TODO: consider if subjects like this should be split into multiple statements like verbs are
 //        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";
 
 //        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament."; // TODO: this one is still tough
@@ -58,7 +56,6 @@ public class TestStatements {
 //        String example = "They don't like doing anything in particular and neither does she.";
 
 //        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable. Here's our solution:";
-//        String example =    "We have found that it is quite manageable.";
 
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
@@ -82,8 +79,9 @@ public class TestStatements {
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
 //        String example = "Anyway, just make your own rule and stick to it.";
 
-        // FIXED
-        String example = "Here's our solution: Use an air quality app.";  // TODO: allow to decide specifity of noun compounds, i.e. "the" or "an"
+        // FIXED (SOMEWHAT)
+//        String example = "Here's our solution: Use an air quality app.";  // TODO: allow to decide specifity of noun compounds, i.e. "the" or "an"
+        String example =    "We have found that it is quite manageable.";  // TODO: when recomposing a full statement, "that" is now missing
 
 
 
