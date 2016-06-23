@@ -29,13 +29,9 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     }
 
     private final Map<IndexedWord, Set<IndexedWord>> markerMap;
-    private final Set<IndexedWord> conjunctions;
 
     public Verb(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         super(primary, secondary, graph);
-
-        // find specific words
-        this.conjunctions = StatementUtils.findSpecificDescendants(Relations.CC, primary, graph);
 
         // find markers (only relevant for COP)
         markerMap = StatementUtils.makeRelationsMap(entries, Relations.MARK, graph);
@@ -62,15 +58,6 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
      */
     public String getString() {
         return StatementUtils.join(StatementUtils.without(getMarkers(), complete));
-    }
-
-    /**
-     * The conjunctions for the verb.
-     *
-     * @return negations
-     */
-    public Set<IndexedWord> getConjunctions() {
-        return new HashSet<>(conjunctions);
     }
 
     /**
