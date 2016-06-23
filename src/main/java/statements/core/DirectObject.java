@@ -2,6 +2,7 @@ package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
+import statements.core.exceptions.MissingEntryException;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
     }
 
     private Type type;
-    private final Map<IndexedWord, Set<IndexedWord>> copulaMap;  // only applicable to copula objects
+    private final Map<IndexedWord, Set<IndexedWord>> copulaMapping;  // only applicable to copula objects
 
     // TODO: shouldn't be necessary to set type manually
     public DirectObject(IndexedWord primary, Set<IndexedWord> secondary, Type type, SemanticGraph graph) {
@@ -54,7 +55,7 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
         this.type = type;
 
         // find copulas (only relevant for COP)
-        copulaMap = StatementUtils.makeRelationsMap(entries, Relations.COP, graph);
+        copulaMapping = StatementUtils.makeRelationsMap(entries, Relations.COP, graph);
     }
 
     /**
@@ -76,13 +77,14 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
     }  // TODO: is it relevant?
 
     /**
-     * The copula(s) for a specific contained object.
+     * The copula(s) for a specific contained entry.
      *
-     * @param object simple direct object
+     * @param entry simple direct entry
      * @return copulas
      */
-    public Set<IndexedWord> getCopulas(IndexedWord object) {
-        return new HashSet<>(copulaMap.get(object));
+    public Set<IndexedWord> getCopulas(IndexedWord entry) throws MissingEntryException {
+        if (!copulaMapping.containsKey(entry)) throw new MissingEntryException(entry + " is not a part of this component");
+        return new HashSet<>(copulaMapping.get(entry));
     }
 
     /**
@@ -92,7 +94,7 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
      */
     public Set<IndexedWord> getCopulas() {
         Set<IndexedWord> copulas = new HashSet<>();
-        for (Set<IndexedWord> copulaSet : copulaMap.values()) {
+        for (Set<IndexedWord> copulaSet : copulaMapping.values()) {
             copulas.addAll(copulaSet);
         }
         return copulas;
