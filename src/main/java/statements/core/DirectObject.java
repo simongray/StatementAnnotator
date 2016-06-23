@@ -12,13 +12,16 @@ import java.util.Set;
  * The complete direct object of a natural language statement.
  */
 public class DirectObject extends AbstractComponent implements Resembling<DirectObject> {
-    /**
-     * Different kinds of direct objects.
-     */
-    public enum Type {
-        DOBJ,
-        XCOMP,
-        COP
+    private Type type;
+    private final Map<IndexedWord, Set<IndexedWord>> copulaMapping;  // only applicable to copula objects
+
+    // TODO: shouldn't be necessary to set type manually
+    public DirectObject(IndexedWord primary, Set<IndexedWord> secondary, Type type, SemanticGraph graph) {
+        super(primary, secondary, graph);
+        this.type = type;
+
+        // find copulas (only relevant for COP)
+        copulaMapping = StatementUtils.makeRelationsMap(entries, Relations.COP, graph);
     }
 
     /**
@@ -33,18 +36,6 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
      */
     protected Set<String> getIgnoredCompoundRelations() {
         return Relations.IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS;
-    }
-
-    private Type type;
-    private final Map<IndexedWord, Set<IndexedWord>> copulaMapping;  // only applicable to copula objects
-
-    // TODO: shouldn't be necessary to set type manually
-    public DirectObject(IndexedWord primary, Set<IndexedWord> secondary, Type type, SemanticGraph graph) {
-        super(primary, secondary, graph);
-        this.type = type;
-
-        // find copulas (only relevant for COP)
-        copulaMapping = StatementUtils.makeRelationsMap(entries, Relations.COP, graph);
     }
 
     /**
@@ -98,5 +89,14 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
     @Override
     public Resemblance resemble(DirectObject otherObject) {
         return null;  // TODO
+    }
+
+    /**
+     * Different kinds of direct objects.
+     */
+    public enum Type {
+        DOBJ,
+        XCOMP,
+        COP
     }
 }
