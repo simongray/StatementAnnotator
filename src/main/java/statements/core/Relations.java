@@ -24,10 +24,12 @@ public class Relations {
     public static final Set<String> IGNORED_RELATIONS = new HashSet<>();
     public static final Set<String> IGNORED_VERB_RELATIONS = new HashSet<>();
     public static final Set<String> IGNORED_SUBJECT_RELATIONS = new HashSet<>();
+    public static final Set<String> IGNORED_DIRECT_OBJECT_RELATIONS = new HashSet<>();
 
     public static final Set<String> IGNORED_COMPOUND_RELATIONS = new HashSet<>();
     public static final Set<String> IGNORED_VERB_COMPOUND_RELATIONS = new HashSet<>();
     public static final Set<String> IGNORED_SUBJECT_COMPOUND_RELATIONS = new HashSet<>();
+    public static final Set<String> IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS = new HashSet<>();
 
     static {
         /**
@@ -35,17 +37,18 @@ public class Relations {
          */
         IGNORED_RELATIONS.add(Relations.DEP);  // ignoring all unknown dependencies
         IGNORED_RELATIONS.add(Relations.PUNCT);  // ignoring all punctuation (can still be accessed for recomposing as text)
+        IGNORED_SUBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
+        IGNORED_VERB_RELATIONS.addAll(IGNORED_RELATIONS);
+        IGNORED_DIRECT_OBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
 
         /**
          * Relations that are ignored when constructing subjects.
          */
-        IGNORED_SUBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_SUBJECT_RELATIONS.add(Relations.NMOD);
 
         /**
          * Relations that are ignored when constructing verbs.
          */
-        IGNORED_VERB_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_VERB_RELATIONS.add(Relations.NSUBJ);
         IGNORED_VERB_RELATIONS.add(Relations.NSUBJPASS);
         IGNORED_VERB_RELATIONS.add(Relations.DOBJ);
@@ -54,9 +57,14 @@ public class Relations {
         IGNORED_VERB_RELATIONS.add(Relations.CCOMP);
 
         /**
+         * Relations that are ignored when constructing direct objects.
+         */
+        IGNORED_DIRECT_OBJECT_RELATIONS.add(Relations.NSUBJ);
+        IGNORED_DIRECT_OBJECT_RELATIONS.add(Relations.NMOD);
+
+        /**
          * Relations that are ignored when determining subject compound boundaries.
          */
-        IGNORED_SUBJECT_COMPOUND_RELATIONS.addAll(IGNORED_COMPOUND_RELATIONS);
         IGNORED_SUBJECT_COMPOUND_RELATIONS.addAll(IGNORED_SUBJECT_RELATIONS);
         IGNORED_SUBJECT_COMPOUND_RELATIONS.add(Relations.CONJ);   // other simple subjects
         IGNORED_SUBJECT_COMPOUND_RELATIONS.add(Relations.CC);     // words like "and"
@@ -64,9 +72,15 @@ public class Relations {
         /**
          * Relations that are ignored when determining verb compound boundaries.
          */
-        IGNORED_VERB_COMPOUND_RELATIONS.addAll(IGNORED_COMPOUND_RELATIONS);
         IGNORED_VERB_COMPOUND_RELATIONS.addAll(IGNORED_VERB_RELATIONS);
         IGNORED_VERB_COMPOUND_RELATIONS.add(Relations.CONJ); // connections to other verbs
         IGNORED_VERB_COMPOUND_RELATIONS.add(Relations.CC);  // "and", "or", etc.
+
+        /**
+         * Relations that are ignored when determining direct object compound boundaries.
+         */
+        IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS.addAll(IGNORED_DIRECT_OBJECT_RELATIONS);
+        IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS.add(Relations.CONJ);
+        IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS.add(Relations.CC);
     }
 }

@@ -21,29 +21,18 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
         COP
     }
 
-    private static final Set<String> IGNORED_RELATIONS = new HashSet<>();
-    private static final Set<String> IGNORED_COMPOUND_RELATIONS = new HashSet<>();
-    static {
-        IGNORED_RELATIONS.add(Relations.NSUBJ);
-        IGNORED_RELATIONS.add(Relations.NMOD);
-
-        IGNORED_COMPOUND_RELATIONS.addAll(IGNORED_RELATIONS);
-        IGNORED_COMPOUND_RELATIONS.add(Relations.CONJ);
-        IGNORED_COMPOUND_RELATIONS.add(Relations.CC);
-    }
-
     /**
      * Describes which relations are ignored when producing the complete subject.
      */
     protected Set<String> getIgnoredRelations() {
-        return IGNORED_RELATIONS;
+        return Relations.IGNORED_DIRECT_OBJECT_RELATIONS;
     }
 
     /**
      * Describes which relations are ignored when producing compound subjects.
      */
     protected Set<String> getIgnoredCompoundRelations() {
-        return IGNORED_COMPOUND_RELATIONS;
+        return Relations.IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS;
     }
 
     private Type type;
