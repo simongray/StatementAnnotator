@@ -81,15 +81,12 @@ public class StatementUtils {
     public static Set<IndexedWord> findCompoundComponents(IndexedWord parent, SemanticGraph graph, Set<String> ignoredRelations) {
         Set<IndexedWord> compoundComponents = new HashSet<>();
         compoundComponents.add(parent);
-        logger.info("added " + parent + " as part of compound");
 
         for (IndexedWord child : graph.getChildren(parent)) {
             GrammaticalRelation relation = graph.reln(parent, child);
 
             if (ignoredRelations == null || !ignoredRelations.contains(relation.getShortName())) {
                 compoundComponents.addAll(findCompoundComponents(child, graph, ignoredRelations));
-            } else {
-                logger.info("ignoring " + child + " with relation " + relation.getShortName() + " (ignored relations: " + ignoredRelations + ")");
             }
         }
 
@@ -103,6 +100,7 @@ public class StatementUtils {
      * @param graph the graph of the sentence
      * @return specific descendants
      */
+    // TODO: rename to children, in line with findSpecificParents()
     public static Set<IndexedWord> findSpecificDescendants(String relation, IndexedWord word, SemanticGraph graph) {
         Set<IndexedWord> specificDescendants = new HashSet<>();
 
@@ -116,9 +114,31 @@ public class StatementUtils {
     }
 
     /**
-     * Create a relations map for a specific compound part.
+     * Recursively finds specific parents for a word.
+     *
+     * @param word the word that serves as an entry point
+     * @param graph the graph of the sentence
+     * @return specific descendants
+     */
+    public static Set<IndexedWord> findSpecificParents(String relation, IndexedWord word, SemanticGraph graph) {
+        Set<IndexedWord> specificParents = new HashSet<>();
+
+        for (IndexedWord parent : graph.getParents(word)) {
+            logger.info("checking parent for " + word + ": " + parent);
+            logger.info("relation name: " + graph.reln(parent, word).getShortName());
+            if (graph.reln(parent, word).getShortName().equals(relation)) {
+                specificParents.add(parent);
+                logger.info(parent + " was related to " + word + " by " + relation);
+            }
+        }
+
+        return specificParents;
+    }
+
+    /**
+     * Create a relations map of parent-children based on a specific type of relation.
      * Useful for isolating words such as negations, markers, copulas, etc.
-     * Also useful for separating conjunctions.
+     * Also useful for separating conjunctions in subjects or objects (but not verbs, see: findJointlyGoverned).
      *
      * @param words the entries to find relations for
      * @param relation the relation type
@@ -142,6 +162,53 @@ public class StatementUtils {
         }
 
         return relationsMap;
+    }
+
+    /**
+     * Create sets of words that are linked by a common governor (= parent) in a specific relation.
+     * Useful for finding conjunct verbs, for example, using the nsubj relation.
+     *
+     * @param words
+     * @param relation
+     * @param graph
+     * @return
+     */
+    public static Set<Set<IndexedWord>> findJointlyGoverned(Set<IndexedWord> words, String relation, SemanticGraph graph) {
+        Map<IndexedWord, Set<IndexedWord>> parentMapping = new HashMap<>();
+
+        // retrieve the relevant parent nodes based on the relation
+        // store word as child of each parent in parent-child mapping
+        for (IndexedWord word : words) {
+            Set<IndexedWord> specificParents = findSpecificParents(relation, word, graph);
+            logger.info("specific parents for " + word + " with relation " + relation + ": " + specificParents);
+
+            for (IndexedWord parent : specificParents) {
+                Set<IndexedWord> children = parentMapping.getOrDefault(parent, new HashSet<>());
+                children.add(word);
+                parentMapping.put(parent, children);
+            }
+        }
+
+        logger.info("parent mapping: " + parentMapping);
+
+        Set<Set<IndexedWord>> jointlyGoverned = new HashSet<>();
+        for (Set<IndexedWord> jointlyGovernedSet : parentMapping.values()) {
+            jointlyGoverned.add(jointlyGovernedSet);
+        }
+
+        // make sure that each word is also separately represented as a set
+        // if they are jointly governed, then they will be merged anyway
+        // this ensures that all words survive the merge process
+        for (IndexedWord word : words) {
+            Set<IndexedWord> singleWordSet = new HashSet<>();
+            singleWordSet.add(word);
+            jointlyGoverned.add(singleWordSet);
+        }
+
+        // merge the words together into sets when they share parents
+        merge(jointlyGoverned);
+
+        return jointlyGoverned;
     }
 
     /**
@@ -251,6 +318,33 @@ public class StatementUtils {
         }
 
         return false;
+    }
+
+    /**
+     * Merge sets that intersect.
+     * Useful for merging component or verb sets, for example.
+     *
+     * @param objectSets
+     * @return
+     */
+    public static <T> void merge(Collection<Set<T>> objectSets) {
+        Collection<Set<T>> mergedObjectSets = new HashSet<>();
+
+        for (Set<T> objectSet : objectSets) {
+            Set<T> mergedObjectSet = new HashSet<>(objectSet);
+
+            for (Set<T> otherObjectSet : objectSets) {
+                if (!mergedObjectSet.equals(otherObjectSet) && intersects(mergedObjectSet, otherObjectSet)) {
+                    logger.info("merging " + otherObjectSet + " into " + mergedObjectSet);
+                    mergedObjectSet.addAll(otherObjectSet);
+                }
+            }
+
+            mergedObjectSets.add(mergedObjectSet);  // re-adding identical merged sets has no effect
+        }
+
+        objectSets.clear();
+        objectSets.addAll(mergedObjectSets);
     }
 
     /**

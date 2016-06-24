@@ -21,12 +21,9 @@ public class TestStatements {
         // setting up the pipeline
         Properties props = new Properties();
 //        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, gender, ner, parse, depparse, subjectobject, sentiment, sentimenttargets");  // long pipeline
-        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, depparse, subjectobject");  // short pipeline
-        props.setProperty("customAnnotatorClass.subjectobject", "statements.StatementAnnotator");
-        props.setProperty("customAnnotatorClass.sentimenttargets", "sentiment.SentimentTargetsAnnotator");
+        props.setProperty("annotators", "tokenize, ssplit, pos, depparse, statements");  // short pipeline
+        props.setProperty("customAnnotatorClass.statements", "statements.StatementAnnotator");
         props.put("ner.model", "edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz");
-//        props.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");  // fast, more memory usage
-        props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");  // slow, less memory usage
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
 //        String example = "The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
@@ -45,6 +42,9 @@ public class TestStatements {
 //        "Don't worry too much. Sometimes there's no smog for a whole week, sometime's it lasts for a whole week and you'll just stay mostly indoors and use masks when outside. You'll get used to it.";
 //        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
 //        String example = "He really doesn't love singing out loud.";
+
+        // TODO: first sentence fucks up now that conjunctions for verbs are found using common governor
+        String example = "She hates and loves to fly.";
 //        String example = "She hates flying and he loves it.";
 
         // No longer fucks up
@@ -57,8 +57,6 @@ public class TestStatements {
 
 //        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable. Here's our solution:";
 
-//        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
-//        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
 
         // no longer fucks this up! yay
 //        String example = "He and she speaks and yells the words and sentences to her or him.";
@@ -76,12 +74,20 @@ public class TestStatements {
 //        String example = "He doesn't like doing anything.";
 
 
+        // STILL NEED TO BE FIXED
+//        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
+//        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
+
+
+
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
 //        String example = "Anyway, just make your own rule and stick to it.";
+//        String example = "We also got two Xiaomi air purifiers that work quite well.";  // TODO: should be limiting components to a single subject, verb, etc.
+
 
         // FIXED (SOMEWHAT)
 //        String example = "Here's our solution: Use an air quality app.";  // TODO: allow to decide specifity of noun compounds, i.e. "the" or "an"
-        String example =    "We have found that it is quite manageable.";  // TODO: when recomposing a full statement, "that" is now missing
+//        String example =    "We have found that it is quite manageable.";  // TODO: when recomposing a full statement, "that" is now missing
 
 
 

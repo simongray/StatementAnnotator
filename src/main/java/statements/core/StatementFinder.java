@@ -46,19 +46,23 @@ public class StatementFinder {
         Set<Statement> statements = new HashSet<>();
 
         logger.info("components for linking: " + components);
+        logger.info("based on dependencies: " + graph.typedDependencies());
 
         // find the direct child-parent relationships between components
         // this mapping is used to create sets of linked components which can be turned into statements
         Map<AbstractComponent, AbstractComponent> componentMapping = getComponentMapping(components, graph);
+        logger.info("component mapping: " + componentMapping);
 
         // discover inter-statement relationships
         // this mapping is used to compose statements together if they're connected
         Map<AbstractComponent, AbstractComponent> statementMapping = getStatementMapping(componentMapping, graph);
+        logger.info("statement mapping: " + statementMapping);
 
         // remove component relationships found in the inter-statement mapping
         // these components will be replaced by links to separate statements
         for (AbstractComponent component : statementMapping.keySet()) {
             componentMapping.remove(component);
+            logger.info("removed " + component + " from component mapping, available in statement mapping");
         }
 
         // remove connections between identical component types
@@ -77,10 +81,10 @@ public class StatementFinder {
 
         // merge any component sets that intersect
         // TODO: figure out whether this is really necessary
-        Set<Set<AbstractComponent>> mergedComponentSets = merge(componentSets);
+        StatementUtils.merge(componentSets);
 
         // create statements from component sets
-        for (Set<AbstractComponent> componentSet : mergedComponentSets) {
+        for (Set<AbstractComponent> componentSet : componentSets) {
             logger.info("linked statement from components: " + componentSet);
             Statement statement = new Statement(componentSet);
             statements.add(statement);
@@ -89,9 +93,6 @@ public class StatementFinder {
         // attach dependent clauses to the main statements (and remove as independent statements)
         attachNestedStatements(statementMapping, statements);
 
-        logger.info("component mapping: " + componentMapping);
-        logger.info("based on dependencies: " + graph.typedDependencies());
-        logger.info("links between statements: " + statementMapping);
         logger.info("final statements: " + statements);
 
         return statements;
@@ -188,6 +189,7 @@ public class StatementFinder {
             IndexedWord childPrimary = child.getPrimary();
             IndexedWord parentPrimary = parent.getPrimary();
 
+            // TODO: this throws nullpointerexception sometimes, pretty serious
             if (parentPrimary != null && childPrimary != null && graph.reln(parentPrimary, childPrimary).getShortName().equals(Relations.CCOMP)) {
                 statementMapping.put(child, parent);
             }
@@ -230,31 +232,6 @@ public class StatementFinder {
         }
 
         return linkedComponents;
-    }
-
-    /**
-     * Merge component sets that intersect.
-     *
-     * @param linkedComponents
-     * @return
-     */
-    private static Set<Set<AbstractComponent>> merge(Set<Set<AbstractComponent>> linkedComponents) {
-        Set<Set<AbstractComponent>> mergedComponentSets = new HashSet<>();
-
-        for (Set<AbstractComponent> componentSet : linkedComponents) {
-            Set<AbstractComponent> mergedComponentSet = new HashSet<>(componentSet);
-
-            for (Set<AbstractComponent> otherComponentSet : linkedComponents) {
-                if (!mergedComponentSet.equals(otherComponentSet) && StatementUtils.intersects(mergedComponentSet, otherComponentSet)) {
-                    logger.info("merging " + otherComponentSet + " into " + mergedComponentSet);
-                    mergedComponentSet.addAll(otherComponentSet);
-                }
-            }
-
-            mergedComponentSets.add(mergedComponentSet);  // re-adding identical merged sets has no effect
-        }
-
-        return mergedComponentSets;
     }
 
     /**

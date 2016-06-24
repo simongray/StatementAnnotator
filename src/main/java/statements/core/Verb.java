@@ -16,6 +16,8 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     public Verb(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         super(primary, secondary, graph);
 
+        // TODO: verbs find conjunctions by way of common governor, not conj relations!
+
         // find markers (only relevant for COP)
         markerMap = StatementUtils.makeRelationsMap(entries, Relations.MARK, graph);
     }

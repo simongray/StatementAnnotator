@@ -54,13 +54,29 @@ public class VerbFinder {
         // remove verbs that act as objects
         simpleVerbs.removeAll(xcompVerbs);
 
+        logger.info("simple verbs: " + simpleVerbs);
 
         // create normal subject mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> verbMapping = StatementUtils.makeRelationsMap(simpleVerbs, Relations.CONJ, graph);
+        Collection<Set<IndexedWord>> conjunctVerbs = StatementUtils.findJointlyGoverned(simpleVerbs, Relations.NSUBJ, graph);
+        logger.info("conjunct verbs: " + conjunctVerbs);
 
         // build complete verbs from mappings
-        for (IndexedWord primarySubject : verbMapping.keySet()) {
-            verbs.add(new Verb(primarySubject, verbMapping.get(primarySubject), graph));
+        for (Set<IndexedWord> conjunctVerbSet : conjunctVerbs) {
+            IndexedWord primary = null;
+
+            // treat lowest indexed word as primary
+            for (IndexedWord word : conjunctVerbSet) {
+                if (primary == null || primary.index() < word.index()) {
+                    primary = word;
+                }
+            }
+
+            logger.info("found new verb with " + conjunctVerbSet.size() + " entries, primary: " + primary);
+
+            // use rest of set as secondary words
+            conjunctVerbSet.remove(primary);
+
+            verbs.add(new Verb(primary, conjunctVerbSet, graph));
         }
 
         logger.info("verbs found: " + verbs);
