@@ -23,7 +23,6 @@ public class TestStatements {
 //        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, gender, ner, parse, depparse, subjectobject, sentiment, sentimenttargets");  // long pipeline
         props.setProperty("annotators", "tokenize, ssplit, pos, depparse, statements");  // short pipeline
         props.setProperty("customAnnotatorClass.statements", "statements.StatementAnnotator");
-        props.put("ner.model", "edu/stanford/nlp/models/ner/english.conll.4class.distsim.crf.ser.gz");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
 //        String example = "The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
@@ -73,18 +72,25 @@ public class TestStatements {
         // STILL NEED TO BE FIXED
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
-        String example = "Chronically stressed people often have trouble sleeping and establishing a practice goes a long way to reduce stress";
+        String example = "Establishing a practice goes a long way to reduce stress.";  // TODO: csubj is not handled, complex dirobj not handled
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
 //        String example = "Anyway, just make your own rule and stick to it.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";  // TODO: should be limiting components to a single subject, verb, etc.
+//        String example = "Chronically stressed people often have trouble sleeping and establishing a practice goes a long way to reduce stress.";
 
 
         // FIXED (SOMEWHAT)
 //        String example = "Here's our solution: Use an air quality app.";  // TODO: allow to decide specifity of noun compounds, i.e. "the" or "an"
 //        String example =    "We have found that it is quite manageable.";  // TODO: when recomposing a full statement, "that" is now missing
 //        String example = "She hates and loves to fly. She hates flying and he loves it.";
+//        String example = "Chronically stressed people often have trouble sleeping.";  // it's weird, but sort of correctt
+        /*  |_ statement: {Chronically stressed people often have trouble sleeping}
+            |_ component: [{Subject: trouble}, {Verb: sleeping}]
+            |_ component: {Verb: often have}
+            |_ component: {Subject: Chronically stressed people}
+        */
 
 
 

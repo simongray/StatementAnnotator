@@ -23,6 +23,7 @@ public class StatementFinder {
      */
     public static Set<Statement> find(CoreMap sentence) {
         SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
+        graph.prettyPrint();  // TODO: remove when done debugging
 
         // find statement components
         Set<AbstractComponent> components = new HashSet<>();
