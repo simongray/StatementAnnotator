@@ -12,11 +12,14 @@ import java.util.Set;
  */
 public class Verb extends AbstractComponent implements Resembling<Verb> {
     private final Map<IndexedWord, Set<IndexedWord>> markerMap;
+    private final Map<IndexedWord, Set<IndexedWord>> ccMap;
 
     public Verb(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         super(primary, secondary, graph);
 
         // TODO: verbs find conjunctions by way of common governor, not conj relations!
+        // find markers (only relevant for COP)
+        ccMap = StatementUtils.makeRelationsMap(entries, Relations.CC, graph);
 
         // find markers (only relevant for COP)
         markerMap = StatementUtils.makeRelationsMap(entries, Relations.MARK, graph);
@@ -46,7 +49,7 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     }
 
     /**
-     * Markers for all contained verbs.
+     * Markers for all contained entries.
      *
      * @return copulas
      */
@@ -56,6 +59,19 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
             markers.addAll(markerSet);  // TODO: needs to search though descendants too
         }
         return markers;
+    }
+
+    /**
+     * CC for all contained entries.
+     *
+     * @return
+     */
+    public Set<IndexedWord> getCC() {
+        Set<IndexedWord> cc = new HashSet<>();
+        for (Set<IndexedWord> ccSet : ccMap.values()) {
+            cc.addAll(ccSet);  // TODO: needs to search though descendants too
+        }
+        return cc;
     }
 
     /**

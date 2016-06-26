@@ -61,6 +61,19 @@ public class StatementUtils {
     }
 
     /**
+     * Include certain words with a list of words.
+     *
+     * @param desired words to remove
+     * @param allWords words to remove from
+     * @return remaining words
+     */
+    public static Set<IndexedWord> with(Set<IndexedWord> desired, Set<IndexedWord> allWords) {
+        Set<IndexedWord> words = new HashSet<>(allWords);
+        words.addAll(desired);
+        return words;
+    }
+
+    /**
      * Whether or not a word token is shortened.
      *
      * @param word the word to check
@@ -122,8 +135,10 @@ public class StatementUtils {
      */
     public static Set<IndexedWord> findSpecificParents(String relation, IndexedWord word, SemanticGraph graph) {
         Set<IndexedWord> specificParents = new HashSet<>();
+        Set<IndexedWord> parents = graph.getParents(word);
+        logger.info("parents for " + word + ": " + parents);
 
-        for (IndexedWord parent : graph.getParents(word)) {
+        for (IndexedWord parent : parents) {
             logger.info("checking parent for " + word + ": " + parent);
             logger.info("relation name: " + graph.reln(parent, word).getShortName());
             if (graph.reln(parent, word).getShortName().equals(relation)) {
@@ -179,7 +194,7 @@ public class StatementUtils {
         // retrieve the relevant parent nodes based on the relation
         // store word as child of each parent in parent-child mapping
         for (IndexedWord word : words) {
-            Set<IndexedWord> specificParents = findSpecificParents(relation, word, graph);
+            Set<IndexedWord> specificParents = findSpecificDescendants(relation, word, graph);
             logger.info("specific parents for " + word + " with relation " + relation + ": " + specificParents);
 
             for (IndexedWord parent : specificParents) {

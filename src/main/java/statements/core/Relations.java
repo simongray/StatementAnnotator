@@ -40,7 +40,6 @@ public class Relations {
          */
         IGNORED_RELATIONS.add(Relations.DEP);  // ignoring all unknown dependencies
         IGNORED_RELATIONS.add(Relations.PUNCT);  // ignoring all punctuation (can still be accessed for recomposing as text)
-        IGNORED_RELATIONS.add(Relations.MARK);  // ignoring all markers for dependent clauses ("that", "whether", etc.)
         IGNORED_SUBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_VERB_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_DIRECT_OBJECT_RELATIONS.addAll(IGNORED_RELATIONS);

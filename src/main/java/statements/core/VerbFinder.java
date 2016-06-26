@@ -56,7 +56,9 @@ public class VerbFinder {
 
         logger.info("simple verbs: " + simpleVerbs);
 
-        // create normal subject mapping based on relations
+        // find jointly governed verbs (= verb conjunctions)
+        // (in the graph, verbs can be connected in a conj relation even if they are not sharing the same subject,
+        // so verb conjunctions, unlike the other components, need to be found using this method)
         Collection<Set<IndexedWord>> conjunctVerbs = StatementUtils.findJointlyGoverned(simpleVerbs, Relations.NSUBJ, graph);
         logger.info("conjunct verbs: " + conjunctVerbs);
 
@@ -64,7 +66,7 @@ public class VerbFinder {
         for (Set<IndexedWord> conjunctVerbSet : conjunctVerbs) {
             IndexedWord primary = null;
 
-            // treat lowest indexed word as primary
+            // treat lowest indexed word as primary entry
             for (IndexedWord word : conjunctVerbSet) {
                 if (primary == null || primary.index() < word.index()) {
                     primary = word;
@@ -73,7 +75,7 @@ public class VerbFinder {
 
             logger.info("found new verb with " + conjunctVerbSet.size() + " entries, primary: " + primary);
 
-            // use rest of set as secondary words
+            // use rest of set as secondary entries
             conjunctVerbSet.remove(primary);
 
             verbs.add(new Verb(primary, conjunctVerbSet, graph));
