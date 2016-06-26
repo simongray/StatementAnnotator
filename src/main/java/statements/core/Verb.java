@@ -17,12 +17,35 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     public Verb(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         super(primary, secondary, graph);
 
-        // TODO: verbs find conjunctions by way of common governor, not conj relations!
-        // find markers (only relevant for COP)
         ccMap = StatementUtils.makeRelationsMap(entries, Relations.CC, graph);
+
+        // in some special cases (e.g. with verb conjunctions) it is necessary to add the other compounds back in
+        // the reason this is only performed when count > 1 (apart from saving resources)
+        // is that verbs with cc relations that are NOT in verb conjunctions, would display as "loves and" or "says or"
+        if (count() > 1) {
+            for (Set<IndexedWord> compound : getCompounds()) {
+                complete.addAll(compound);
+            }
+
+            // as well as the missing markers for those compounds (CC is ignored for compounds)
+            for (Set<IndexedWord> cc : ccMap.values()) {
+                complete.addAll(cc);
+            }
+        }
 
         // find markers (only relevant for COP)
         markerMap = StatementUtils.makeRelationsMap(entries, Relations.MARK, graph);
+    }
+
+    @Override
+    public Set<IndexedWord> getComplete() {
+        // this is done in order to prevent silly cases where the verb is in a subject conjunction
+        // i.e. "she loves it and he hates it" should not return "loves and" as the complete verb for "she loves it"
+        if (count() == 1) {
+            return StatementUtils.without(getCC(), complete);
+        } else {
+            return complete;
+        }
     }
 
     /**
@@ -56,20 +79,21 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     public Set<IndexedWord> getMarkers() {
         Set<IndexedWord> markers = new HashSet<>();
         for (Set<IndexedWord> markerSet : markerMap.values()) {
-            markers.addAll(markerSet);  // TODO: needs to search though descendants too
+            markers.addAll(markerSet);
         }
         return markers;
     }
 
+
     /**
      * CC for all contained entries.
      *
-     * @return
+     * @return cc
      */
     public Set<IndexedWord> getCC() {
         Set<IndexedWord> cc = new HashSet<>();
         for (Set<IndexedWord> ccSet : ccMap.values()) {
-            cc.addAll(ccSet);  // TODO: needs to search though descendants too
+            cc.addAll(ccSet);
         }
         return cc;
     }

@@ -189,25 +189,25 @@ public class StatementUtils {
      * @return
      */
     public static Set<Set<IndexedWord>> findJointlyGoverned(Set<IndexedWord> words, String relation, SemanticGraph graph) {
-        Map<IndexedWord, Set<IndexedWord>> parentMapping = new HashMap<>();
+        Map<IndexedWord, Set<IndexedWord>> childMapping = new HashMap<>();
 
-        // retrieve the relevant parent nodes based on the relation
-        // store word as child of each parent in parent-child mapping
+        // retrieve the relevant child nodes based on the relation
+        // store word as child of each parent in child-parents mapping
         for (IndexedWord word : words) {
-            Set<IndexedWord> specificParents = findSpecificDescendants(relation, word, graph);
-            logger.info("specific parents for " + word + " with relation " + relation + ": " + specificParents);
+            Set<IndexedWord> specificChildren = findSpecificDescendants(relation, word, graph);
+            logger.info("specific children for " + word + " with relation " + relation + ": " + specificChildren);
 
-            for (IndexedWord parent : specificParents) {
-                Set<IndexedWord> children = parentMapping.getOrDefault(parent, new HashSet<>());
-                children.add(word);
-                parentMapping.put(parent, children);
+            for (IndexedWord child : specificChildren) {
+                Set<IndexedWord> parents = childMapping.getOrDefault(child, new HashSet<>());
+                parents.add(word);
+                childMapping.put(child, parents);
             }
         }
 
-        logger.info("parent mapping: " + parentMapping);
+        logger.info("child mapping: " + childMapping);
 
         Set<Set<IndexedWord>> jointlyGoverned = new HashSet<>();
-        for (Set<IndexedWord> jointlyGovernedSet : parentMapping.values()) {
+        for (Set<IndexedWord> jointlyGovernedSet : childMapping.values()) {
             jointlyGoverned.add(jointlyGovernedSet);
         }
 

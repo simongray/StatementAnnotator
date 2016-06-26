@@ -44,7 +44,7 @@ public class TestStatements {
 //        String example = "He really doesn't love singing out loud.";
 
         // TODO: first sentence fucks up now that conjunctions for verbs are found using common governor
-        String example = "She hates and loves to fly.";
+        String example = "She hates and loves to fly. She hates flying and he loves it.";
 //        String example = "She hates flying and he loves it.";
 
         // No longer fucks up

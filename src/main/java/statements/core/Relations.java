@@ -59,7 +59,7 @@ public class Relations {
         IGNORED_VERB_RELATIONS.add(Relations.XCOMP);
         IGNORED_VERB_RELATIONS.add(Relations.CCOMP);
         IGNORED_VERB_RELATIONS.add(Relations.CONJ);  // conjunct verbs are found using common governor, not conj relation!
-        IGNORED_VERB_RELATIONS.add(Relations.CC);  // for leftover "and" or "or" created by ignoring conj relation
+        IGNORED_VERB_RELATIONS.add(Relations.CC);  // conjunct verbs are found using common governor, not conj relation!
         // TODO: figure out whether this needs to be adjusted in light of verb troubles
 
         /**
