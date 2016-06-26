@@ -25,6 +25,7 @@ public class DirectObjectFinder {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> dobjObjects = new HashSet<>();
         Set<IndexedWord> xcompObjects = new HashSet<>();
+        Set<IndexedWord> csubjVerbs = new HashSet<>();  // for verbs that act as subjects
         Set<IndexedWord> copObjects = new HashSet<>();
         Set<DirectObject> directObjects = new HashSet<>();
 
@@ -35,6 +36,9 @@ public class DirectObjectFinder {
             }
             if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
                 xcompObjects.add(dependency.dep());
+            }
+            if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
+                csubjVerbs.add(dependency.dep());
             }
             if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
                 if (hasCopula(dependency.gov(), graph)) {
@@ -61,6 +65,9 @@ public class DirectObjectFinder {
 
         // remove dobj objects if part of V+O construction
         dobjObjects.removeAll(voContstructionObjects);
+
+        // remove dobj objects part of subjects
+        dobjObjects.removeAll(csubjVerbs);
 
         // create direct object mapping based on relations
         Map<IndexedWord, Set<IndexedWord>> dobjObjectMapping = StatementUtils.makeRelationsMap(dobjObjects, Relations.CONJ, graph);

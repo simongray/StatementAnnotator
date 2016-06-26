@@ -33,6 +33,7 @@ public class VerbFinder {
         Set<IndexedWord> simpleVerbs = new HashSet<>();
         Set<IndexedWord> adjectives = new HashSet<>();
         Set<IndexedWord> xcompVerbs = new HashSet<>();  // for verbs that act as objects of another verb
+        Set<IndexedWord> csubjVerbs = new HashSet<>();  // for verbs that act as subjects
         Set<Verb> verbs = new HashSet<>();
 
         // find candidate verbs and adjectives from relations
@@ -46,6 +47,9 @@ public class VerbFinder {
             if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
                 xcompVerbs.add(dependency.dep());
             }
+            if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
+                csubjVerbs.add(dependency.dep());
+            }
         }
 
         // remove adjectives from candidate verbs
@@ -53,6 +57,9 @@ public class VerbFinder {
 
         // remove verbs that act as objects
         simpleVerbs.removeAll(xcompVerbs);
+
+        // remove verbs that act as subjects
+        simpleVerbs.removeAll(csubjVerbs);
 
         logger.info("simple verbs: " + simpleVerbs);
 

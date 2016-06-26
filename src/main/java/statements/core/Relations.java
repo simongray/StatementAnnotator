@@ -55,6 +55,7 @@ public class Relations {
          */
         IGNORED_VERB_RELATIONS.add(Relations.NSUBJ);
         IGNORED_VERB_RELATIONS.add(Relations.NSUBJPASS);
+        IGNORED_VERB_RELATIONS.add(Relations.CSUBJ);
         IGNORED_VERB_RELATIONS.add(Relations.DOBJ);
         IGNORED_VERB_RELATIONS.add(Relations.NMOD);
         IGNORED_VERB_RELATIONS.add(Relations.XCOMP);
