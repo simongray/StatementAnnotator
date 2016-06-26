@@ -24,6 +24,7 @@ public class SubjectFinder {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> simpleSubjects = new HashSet<>();
         Set<IndexedWord> simplePassiveSubjects = new HashSet<>();
+        Set<IndexedWord> simpleClausalSubjects = new HashSet<>();
         Set<Subject> subjects = new HashSet<>();
 
         // find simple subjects from relations
@@ -34,6 +35,9 @@ public class SubjectFinder {
             if (dependency.reln().getShortName().equals(Relations.NSUBJPASS)) {
                 simplePassiveSubjects.add(dependency.dep());
             }
+            if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
+                simpleClausalSubjects.add(dependency.dep());
+            }
         }
 
         // create normal subject mapping based on relations
@@ -42,11 +46,17 @@ public class SubjectFinder {
         // create passive subject mapping based on relations
         Map<IndexedWord, Set<IndexedWord>> passiveSubjectMapping = StatementUtils.makeRelationsMap(simplePassiveSubjects, Relations.CONJ, graph);
 
+        // create clausal subject mapping based on relations
+        Map<IndexedWord, Set<IndexedWord>> clausalSubjectMapping = StatementUtils.makeRelationsMap(simpleClausalSubjects, Relations.CONJ, graph);
+
         // build complete subjects from mappings
         for (IndexedWord primarySubject : subjectMapping.keySet()) {
             subjects.add(new Subject(primarySubject, subjectMapping.get(primarySubject), graph));
         }
         for (IndexedWord primarySubject : passiveSubjectMapping.keySet()) {
+            subjects.add(new Subject(primarySubject, passiveSubjectMapping.get(primarySubject), graph));
+        }
+        for (IndexedWord primarySubject : clausalSubjectMapping.keySet()) {
             subjects.add(new Subject(primarySubject, passiveSubjectMapping.get(primarySubject), graph));
         }
 

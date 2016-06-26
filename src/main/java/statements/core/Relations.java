@@ -13,6 +13,7 @@ public class Relations {
     public static final String DEP = "dep";  // unknown dependency
     public static final String NSUBJ = "nsubj";  // for subjects
     public static final String NSUBJPASS = "nsubjpass";  // for passives
+    public static final String CSUBJ = "csubj";   // for clausal subjects
     public static final String DOBJ = "dobj";  // direct objects (or verbs acting in their place)
     public static final String COP= "cop";  // copula, ex: in "they're pretty" the "'re" would be copula
     public static final String XCOMP = "xcomp";  // e.g "she <verb>s to <verb>" or "she <verb>ed <verb>ing"
