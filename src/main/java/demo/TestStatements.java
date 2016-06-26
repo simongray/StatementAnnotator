@@ -43,10 +43,6 @@ public class TestStatements {
 //        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
 //        String example = "He really doesn't love singing out loud.";
 
-        // TODO: first sentence fucks up now that conjunctions for verbs are found using common governor
-        String example = "She hates and loves to fly. She hates flying and he loves it.";
-//        String example = "She hates flying and he loves it.";
-
         // No longer fucks up
 //        String example = "Sally and Mads in particular don't like doing anything. Sally and Mads don't like doing anything in particular.";
 
@@ -77,7 +73,7 @@ public class TestStatements {
         // STILL NEED TO BE FIXED
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
-
+        String example = "Chronically stressed people often have trouble sleeping and establishing a practice goes a long way to reduce stress";
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
@@ -88,6 +84,8 @@ public class TestStatements {
         // FIXED (SOMEWHAT)
 //        String example = "Here's our solution: Use an air quality app.";  // TODO: allow to decide specifity of noun compounds, i.e. "the" or "an"
 //        String example =    "We have found that it is quite manageable.";  // TODO: when recomposing a full statement, "that" is now missing
+//        String example = "She hates and loves to fly. She hates flying and he loves it.";
+
 
 
 
