@@ -24,6 +24,7 @@ public class Relations {
     public static final String NEG = "neg";  // negations such as "not" or "never"
     public static final String PUNCT = "punct";  // punctuation like ","
     public static final String MARK = "mark";  // for markers, e.g. "whether"
+    public static final String ACL = "acl";  // clausal modifiers of nouns, e.g. "a way" --acl--> "to reduce stress"
 
     public static final Set<String> IGNORED_RELATIONS = new HashSet<>();
     public static final Set<String> IGNORED_VERB_RELATIONS = new HashSet<>();
