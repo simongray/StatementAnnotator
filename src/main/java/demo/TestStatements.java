@@ -25,7 +25,6 @@ public class TestStatements {
         props.setProperty("customAnnotatorClass.statements", "statements.StatementAnnotator");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
-//        String example = "The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
 //        String example = "The amazing Henry doesn't like doing anything in particular.";
 //        String example = "Hey, cool! Very cool, in fact. Henry, Louis the Dragon and Sally Bates don't like doing anything in particular.";
 //        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";
@@ -48,10 +47,7 @@ public class TestStatements {
 //        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";
 //        String example = "She's having to make do. She speaks and shouts. The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
-//        String example =    "I don't care whether she likes me.";
-//        String example =    "I don't care whether she likes me.";
 //        String example =    "I think she's mad. I don't care whether she likes me. She says that they should go. I don't care whether or not they come.";
-//        String example = "He doesn't like doing anything.";
 
 
         // STILL NEED TO BE FIXED
@@ -78,8 +74,10 @@ public class TestStatements {
         // (for example below: identical result - technically incorrect since they're slightly semantically different, but definitely a useful simplication)
 //        String example = "Sally and Mads in particular don't like doing anything. Sally and Mads don't like doing anything in particular.";
 //        String example =    "Here's our solution:";
-        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable.";  // TODO: first part not recognised as statement, since it lacks subject
-
+//        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable.";  // TODO: first part not recognised as statement, since it lacks subject
+//        String example =    "I don't care whether she likes me.";
+//        String example = "He doesn't like doing anything.";
+        String example = "The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
 
 
 

@@ -50,7 +50,7 @@ public class Relations {
         /**
          * Relations that are ignored when constructing subjects.
          */
-        IGNORED_SUBJECT_RELATIONS.add(Relations.NMOD);
+//        IGNORED_SUBJECT_RELATIONS.add(Relations.NMOD);  // TODO: line remove entirely?
 
         /**
          * Relations that are ignored when constructing verbs.
@@ -64,7 +64,6 @@ public class Relations {
         IGNORED_VERB_RELATIONS.add(Relations.CCOMP);
         IGNORED_VERB_RELATIONS.add(Relations.CONJ);  // conjunct verbs are found using common governor, not conj relation!
         IGNORED_VERB_RELATIONS.add(Relations.CC);  // conjunct verbs are found using common governor, not conj relation!
-        // TODO: figure out whether this needs to be adjusted in light of verb troubles
 
         /**
          * Relations that are ignored when constructing direct objects.
