@@ -68,7 +68,7 @@ public class DirectObjectFinder {
         // remove dobj objects part of clausal verb subjects (through csubj relation)
         for (IndexedWord csubjVerb : csubjVerbs) {
             for (IndexedWord obj : dobjMapping.keySet()) {
-                if (dobjMapping.get(obj) == csubjVerb) dobjMapping.remove(obj);
+                if (dobjMapping.get(obj) == csubjVerb) dobjMapping.remove(obj);  // TODO: potential concurrency issue
             }
         }
 
