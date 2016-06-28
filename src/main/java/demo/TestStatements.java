@@ -25,11 +25,6 @@ public class TestStatements {
         props.setProperty("customAnnotatorClass.statements", "statements.StatementAnnotator");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
-//        String example = "The amazing Henry doesn't like doing anything in particular.";
-//        String example = "Hey, cool! Very cool, in fact. Henry, Louis the Dragon and Sally Bates don't like doing anything in particular.";
-//        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";
-
-//        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament."; // TODO: this one is still tough
 //        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament... \n" +
 //        "I'm sure you meant the EU as a whole and not the European Parliament specifically, just thought it was funny that a Brit would complain about this when the UK voting system is one of the absolute worst in the world at representing the will of the people + your other house consists of a bunch of noble people.";
 //        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable. Here's our solution: " +
@@ -39,7 +34,6 @@ public class TestStatements {
 //        "Before you go, familiarise yourself with the air quality in your own area so you have a means of comparison. If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too. I sure was (I come from Copenhagen, Denmark). Of course, Western cities usually don't have those crazy smog days. " +
 //        "Don't worry too much. Sometimes there's no smog for a whole week, sometime's it lasts for a whole week and you'll just stay mostly indoors and use masks when outside. You'll get used to it.";
 //        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
-//        String example = "He really doesn't love singing out loud.";
 
 
         // TODO: the sentence "Hates and loves it." - doesn't separate into two statements, however doubtful if it is possible to do in a non-hackish way
@@ -53,14 +47,17 @@ public class TestStatements {
         // STILL NEED TO BE FIXED
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
-        // TODO: "for anyone" is found as direct object, but not linked to any other component
-        String example = "Sally and Mads in particular don't like doing anything for anyone.";
+        // TODO: desired "we" "also got" "two xiaomi air purifirs that work quite well"
+        String example = "We also got two Xiaomi air purifiers that work quite well";
+
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
 //        String example = "Anyway, just make your own rule and stick to it.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";  // TODO: should be limiting components to a single subject, verb, etc.
 //        String example = "Chronically stressed people often have trouble sleeping and establishing a practice goes a long way to reduce stress.";
+        // TODO: "for anyone" is found as direct object, but not linked to any other component
+//        String example = "Sally and Mads in particular don't like doing anything for anyone.";
 
 
         // FIXED (SOMEWHAT)
@@ -78,6 +75,12 @@ public class TestStatements {
 //        String example =    "I don't care whether she likes me.";
 //        String example = "He doesn't like doing anything.";
 //        String example = "The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
+//        String example = "He really doesn't love singing out loud.";
+//        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";  // TODO: missing comma in string version
+//        String example = "Hey, cool! Very cool, in fact.";  // no statements, as expected
+//        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament.";
+
+
 
 
 
