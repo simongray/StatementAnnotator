@@ -53,8 +53,8 @@ public class TestStatements {
         // STILL NEED TO BE FIXED
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
-        // TODO: doesn't catch the final "for anyone", instead "in particular" is treated as indirect object
-//        String example = "Sally and Mads in particular don't like doing anything for anyone.";
+        // TODO: "for anyone" is found as direct object, but not linked to any other component
+        String example = "Sally and Mads in particular don't like doing anything for anyone.";
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
@@ -77,7 +77,7 @@ public class TestStatements {
 //        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable.";  // TODO: first part not recognised as statement, since it lacks subject
 //        String example =    "I don't care whether she likes me.";
 //        String example = "He doesn't like doing anything.";
-        String example = "The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
+//        String example = "The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
 
 
 
