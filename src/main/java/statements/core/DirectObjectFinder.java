@@ -32,7 +32,7 @@ public class DirectObjectFinder {
         // find simple objects from relations
         for (TypedDependency dependency : dependencies) {
             if (dependency.reln().getShortName().equals(Relations.DOBJ)) {
-                dobjMapping.put(dependency.gov(), dependency.dep());
+                dobjMapping.put(dependency.dep(), dependency.gov());
             }
             if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
                 xcompObjects.add(dependency.dep());
@@ -55,24 +55,25 @@ public class DirectObjectFinder {
         // find possible xcomp+dobj (V+O constructions)
         Set<IndexedWord> voContstructionObjects = new HashSet<>();
 
-        // TODO: review this stanza
+        // TODO: review this stanza (an possibly its relation to the one below)
         for (IndexedWord xcompObject : xcompObjects) {
-            for (IndexedWord dobjGovernor : dobjMapping.keySet()) {
-                IndexedWord dobjObject = dobjMapping.get(dobjGovernor);
+            for (IndexedWord dobjObject : dobjMapping.keySet()) {
                 GrammaticalRelation relation = graph.reln(xcompObject, dobjObject);
                 if (relation != null && relation.getShortName().equals(Relations.DOBJ)) {
-                    dobjMapping.remove(dobjGovernor);
+                    dobjMapping.remove(dobjObject);
                 }
             }
         }
 
         // remove dobj objects part of clausal verb subjects (through csubj relation)
         for (IndexedWord csubjVerb : csubjVerbs) {
-            dobjMapping.remove(csubjVerb);
+            for (IndexedWord obj : dobjMapping.keySet()) {
+                if (dobjMapping.get(obj) == csubjVerb) dobjMapping.remove(obj);
+            }
         }
 
         // create direct object mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> dobjObjectMapping = StatementUtils.makeRelationsMap(dobjMapping.values(), Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> dobjObjectMapping = StatementUtils.makeRelationsMap(dobjMapping.keySet(), Relations.CONJ, graph);
 
         // create xcomp object mapping based on relations
         Map<IndexedWord, Set<IndexedWord>> xcompObjectMapping = StatementUtils.makeRelationsMap(xcompObjects, Relations.CONJ, graph);

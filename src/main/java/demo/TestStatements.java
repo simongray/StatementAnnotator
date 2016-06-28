@@ -45,16 +45,9 @@ public class TestStatements {
         // No longer fucks up
 //        String example = "Sally and Mads in particular don't like doing anything. Sally and Mads don't like doing anything in particular.";
 
-        // TODO: doesn't catch the final "for anyone", instead "in particular" is treated as indirect object
-//        String example = "Sally and Mads in particular don't like doing anything for anyone.";
-
 //        String example = "They don't like doing anything in particular and neither does she.";
 
 //        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable. Here's our solution:";
-
-
-        // no longer fucks this up! yay
-//        String example = "He and she speaks and yells the words and sentences to her or him.";
 
 
 
@@ -72,7 +65,8 @@ public class TestStatements {
         // STILL NEED TO BE FIXED
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
-        String example = "Establishing a practice goes a long way to reduce stress.";  // TODO: csubj is not handled, complex dirobj not handled
+        // TODO: doesn't catch the final "for anyone", instead "in particular" is treated as indirect object
+//        String example = "Sally and Mads in particular don't like doing anything for anyone.";
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
@@ -85,14 +79,9 @@ public class TestStatements {
 //        String example = "Here's our solution: Use an air quality app.";  // TODO: allow to decide specifity of noun compounds, i.e. "the" or "an"
 //        String example =    "We have found that it is quite manageable.";  // TODO: when recomposing a full statement, "that" is now missing
 //        String example = "She hates and loves to fly. She hates flying and he loves it.";
-//        String example = "Chronically stressed people often have trouble sleeping.";  // it's weird, but sort of correctt
-        /*  |_ statement: {Chronically stressed people often have trouble sleeping}
-            |_ component: [{Subject: trouble}, {Verb: sleeping}]
-            |_ component: {Verb: often have}
-            |_ component: {Subject: Chronically stressed people}
-        */
-
-
+//        String example = "Establishing a practice goes a long way to reduce stress.";
+//        String example = "Chronically stressed people often have trouble sleeping.";  // it's kinda weird though, i.e. component: [{Subject: trouble}, {Verb: sleeping}]
+        String example = "He and she speaks and yells the words and sentences to her or him.";
 
 
         Annotation annotation = new Annotation(example);
