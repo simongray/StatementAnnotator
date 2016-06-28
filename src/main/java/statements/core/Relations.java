@@ -23,7 +23,7 @@ public class Relations {
     public static final String CC = "cc";  // the "and", "or", etc. itself
     public static final String NEG = "neg";  // negations such as "not" or "never"
     public static final String PUNCT = "punct";  // punctuation like ","
-    public static final String MARK = "mark";  // for markers, e.g. "whether"
+    public static final String MARK = "mark";  // for markers, e.g. "whether" or "that"
     public static final String ACL = "acl";  // clausal modifiers of nouns, e.g. "a way" --acl--> "to reduce stress"
 
     public static final Set<String> IGNORED_RELATIONS = new HashSet<>();
@@ -42,6 +42,7 @@ public class Relations {
          */
         IGNORED_RELATIONS.add(Relations.DEP);  // ignoring all unknown dependencies
         IGNORED_RELATIONS.add(Relations.PUNCT);  // ignoring all punctuation (can still be accessed for recomposing as text)
+        IGNORED_RELATIONS.add(Relations.MARK);  // ignoring all markers  // TODO: check if this has any repercussions
         IGNORED_SUBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_VERB_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_DIRECT_OBJECT_RELATIONS.addAll(IGNORED_RELATIONS);

@@ -42,12 +42,7 @@ public class TestStatements {
 //        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
 //        String example = "He really doesn't love singing out loud.";
 
-        // No longer fucks up
-//        String example = "Sally and Mads in particular don't like doing anything. Sally and Mads don't like doing anything in particular.";
-
-//        String example = "They don't like doing anything in particular and neither does she.";
-
-//        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable. Here's our solution:";
+        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable.";
 
 
 
@@ -81,7 +76,12 @@ public class TestStatements {
 //        String example = "She hates and loves to fly. She hates flying and he loves it.";
 //        String example = "Establishing a practice goes a long way to reduce stress.";
 //        String example = "Chronically stressed people often have trouble sleeping.";  // it's kinda weird though, i.e. component: [{Subject: trouble}, {Verb: sleeping}]
-        String example = "He and she speaks and yells the words and sentences to her or him.";
+//        String example = "He and she speaks and yells the words and sentences to her or him.";
+//        String example = "They don't like doing anything in particular and neither does she.";  // TODO: consider whether dep(neither-10, does-11) should result in a negation of verb
+        // (for example below: identical result - technically incorrect since they're slightly semantically different, but definitely a useful simplication)
+//        String example = "Sally and Mads in particular don't like doing anything. Sally and Mads don't like doing anything in particular.";
+//        String example =    "Here's our solution:";
+
 
 
         Annotation annotation = new Annotation(example);

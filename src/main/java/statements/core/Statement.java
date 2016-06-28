@@ -106,7 +106,12 @@ public class Statement implements StatementComponent, Resembling<Statement> {
         Set<IndexedWord> complete = new HashSet<>();
 
         for (StatementComponent component : getComponents()) {
-            complete.addAll(component.getComplete());
+            // in case of pure components, getWords() is used as it includes ignored words
+            if (component instanceof AbstractComponent) {
+               complete.addAll(((AbstractComponent) component).getWords());
+            } else {
+                complete.addAll(component.getComplete());
+            }
         }
 
         return complete;
@@ -140,7 +145,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
 
     /**
      * Link this statement to a child statement (e.g. a dependent clause).
-     * TODO: evaluat whether this is the optimal way of doings things
+     * TODO: evaluate whether this is the optimal way of doings things
      *
      * @param childStatement
      */

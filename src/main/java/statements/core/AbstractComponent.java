@@ -17,6 +17,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> secondary;
     protected final Set<IndexedWord> entries;
     protected final Set<IndexedWord> complete;
+    protected final Set<IndexedWord> words;
     protected final Set<Set<IndexedWord>> compounds;
     protected final Map<IndexedWord, Set<IndexedWord>> negationMapping;
     private final Map<IndexedWord, Set<IndexedWord>> punctuationMapping;
@@ -27,6 +28,13 @@ public abstract class AbstractComponent implements StatementComponent {
         this.primary = primary;
         this.secondary = secondary == null? new HashSet<>() : secondary;
         this.complete = StatementUtils.findCompoundComponents(primary, graph, getIgnoredRelations());
+
+        // find ALL of the words of this component, to be used for recomposing into statement without missing words
+        // only follows non-component specific ignored relations (e.g. dep, punct, mark)
+        // this is done in order to not cross into the relations of other components
+        Set<String> componentSpecificIgnoredRelations = getIgnoredRelations();
+        componentSpecificIgnoredRelations.removeAll(Relations.IGNORED_RELATIONS);
+        this.words = StatementUtils.findCompoundComponents(primary, graph, componentSpecificIgnoredRelations);
 
         // store primary word + secondary word(s) together for simple retrieval
         this.entries = new HashSet<>();
@@ -113,6 +121,17 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
+     * The negations for all entries.
+     *
+     * @return negations
+     */
+    public Set<IndexedWord> getNegations() {
+        Set<IndexedWord> negations = new HashSet<>();
+        for (Set<IndexedWord> negationSet : negationMapping.values()) negations.addAll(negationSet);
+        return negations;
+    }
+
+    /**
      * The punctuation for a specific entry
      *
      * @param entry the entry to get the punctuation for
@@ -124,6 +143,17 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
+     * The punctuation for all entries.
+     *
+     * @return punctuation
+     */
+    public Set<IndexedWord> getPunctuation() {
+        Set<IndexedWord> punctuation = new HashSet<>();
+        for (Set<IndexedWord> punctuationSet : punctuationMapping.values()) punctuation.addAll(punctuationSet);
+        return punctuation;
+    }
+
+    /**
      * The markers for a specific entry
      *
      * @param entry the entry to get the markers for
@@ -132,6 +162,27 @@ public abstract class AbstractComponent implements StatementComponent {
     public Set<IndexedWord> getMarkers(IndexedWord entry) throws MissingEntryException {
         if (!markerMapping.containsKey(entry)) throw new MissingEntryException(entry + " is not a part of this component");
         return new HashSet<>(markerMapping.get(entry));
+    }
+
+    /**
+     * All markers for every entry.
+     *
+     * @return markers
+     */
+    public Set<IndexedWord> getMarkers() {
+        Set<IndexedWord> markers = new HashSet<>();
+        for (Set<IndexedWord> markerSet : markerMapping.values()) markers.addAll(markerSet);
+        return markers;
+    }
+
+    /**
+     * All of the words (including ignored ones) for this component.
+     * Useful for recomposing into full statements.
+     *
+     * @return
+     */
+    public Set<IndexedWord> getWords() {
+        return words;
     }
 
     /**
