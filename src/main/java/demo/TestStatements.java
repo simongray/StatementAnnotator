@@ -42,9 +42,6 @@ public class TestStatements {
 //        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
 //        String example = "He really doesn't love singing out loud.";
 
-        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable.";
-
-
 
         // TODO: the sentence "Hates and loves it." - doesn't separate into two statements, however doubtful if it is possible to do in a non-hackish way
 //        String example = "Bought some 3M 95N-rated face masks for smoggy days.\n";
@@ -81,6 +78,8 @@ public class TestStatements {
         // (for example below: identical result - technically incorrect since they're slightly semantically different, but definitely a useful simplication)
 //        String example = "Sally and Mads in particular don't like doing anything. Sally and Mads don't like doing anything in particular.";
 //        String example =    "Here's our solution:";
+        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable.";  // TODO: first part not recognised as statement, since it lacks subject
+
 
 
 
