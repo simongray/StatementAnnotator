@@ -160,7 +160,7 @@ public class StatementUtils {
      * @param graph the graph to search in
      * @return relations map
      */
-    public static Map<IndexedWord, Set<IndexedWord>> makeRelationsMap(Set<IndexedWord> words, String relation, SemanticGraph graph) {
+    public static Map<IndexedWord, Set<IndexedWord>> makeRelationsMap(Collection<IndexedWord> words, String relation, SemanticGraph graph) {
         Map<IndexedWord, Set<IndexedWord>> relationsMap = new HashMap<>();
         Set<IndexedWord> allChildren = new HashSet<>();
 

@@ -23,7 +23,7 @@ public class DirectObjectFinder {
      */
     public static Set<DirectObject> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
-        Set<IndexedWord> dobjObjects = new HashSet<>();
+        Map<IndexedWord, IndexedWord> dobjMapping = new HashMap<>();
         Set<IndexedWord> xcompObjects = new HashSet<>();
         Set<IndexedWord> csubjVerbs = new HashSet<>();  // for verbs that act as subjects
         Set<IndexedWord> copObjects = new HashSet<>();
@@ -32,7 +32,7 @@ public class DirectObjectFinder {
         // find simple objects from relations
         for (TypedDependency dependency : dependencies) {
             if (dependency.reln().getShortName().equals(Relations.DOBJ)) {
-                dobjObjects.add(dependency.dep());
+                dobjMapping.put(dependency.gov(), dependency.dep());
             }
             if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
                 xcompObjects.add(dependency.dep());
@@ -47,30 +47,32 @@ public class DirectObjectFinder {
             }
         }
 
-        logger.info("dobj objects found: " + dobjObjects);
+        logger.info("dobj objects mapping: " + dobjMapping);
         logger.info("xcomp objects found: " + xcompObjects);
         logger.info("cop objects found: " + copObjects);
+        logger.info("csubj objects found: " + csubjVerbs);
 
         // find possible xcomp+dobj (V+O constructions)
         Set<IndexedWord> voContstructionObjects = new HashSet<>();
 
+        // TODO: review this stanza
         for (IndexedWord xcompObject : xcompObjects) {
-            for (IndexedWord dobjObject : dobjObjects) {
+            for (IndexedWord dobjGovernor : dobjMapping.keySet()) {
+                IndexedWord dobjObject = dobjMapping.get(dobjGovernor);
                 GrammaticalRelation relation = graph.reln(xcompObject, dobjObject);
                 if (relation != null && relation.getShortName().equals(Relations.DOBJ)) {
-                    voContstructionObjects.add(dobjObject);
+                    dobjMapping.remove(dobjGovernor);
                 }
             }
         }
 
-        // remove dobj objects if part of V+O construction
-        dobjObjects.removeAll(voContstructionObjects);
-
-        // remove dobj objects part of subjects
-        dobjObjects.removeAll(csubjVerbs);
+        // remove dobj objects part of clausal verb subjects (through csubj relation)
+        for (IndexedWord csubjVerb : csubjVerbs) {
+            dobjMapping.remove(csubjVerb);
+        }
 
         // create direct object mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> dobjObjectMapping = StatementUtils.makeRelationsMap(dobjObjects, Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> dobjObjectMapping = StatementUtils.makeRelationsMap(dobjMapping.values(), Relations.CONJ, graph);
 
         // create xcomp object mapping based on relations
         Map<IndexedWord, Set<IndexedWord>> xcompObjectMapping = StatementUtils.makeRelationsMap(xcompObjects, Relations.CONJ, graph);
