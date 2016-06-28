@@ -11,7 +11,6 @@ import java.util.Set;
  * The complete primary of a natural language statement.
  */
 public class Verb extends AbstractComponent implements Resembling<Verb> {
-    private final Map<IndexedWord, Set<IndexedWord>> markerMap;
     private final Map<IndexedWord, Set<IndexedWord>> ccMap;
 
     public Verb(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
@@ -32,9 +31,6 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
                 complete.addAll(cc);
             }
         }
-
-        // find markers (only relevant for COP)
-        markerMap = StatementUtils.makeRelationsMap(entries, Relations.MARK, graph);
     }
 
     @Override
@@ -70,20 +66,6 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     public String getString() {
         return StatementUtils.join(StatementUtils.without(getMarkers(), complete));
     }
-
-    /**
-     * Markers for all contained entries.
-     *
-     * @return copulas
-     */
-    public Set<IndexedWord> getMarkers() {
-        Set<IndexedWord> markers = new HashSet<>();
-        for (Set<IndexedWord> markerSet : markerMap.values()) {
-            markers.addAll(markerSet);
-        }
-        return markers;
-    }
-
 
     /**
      * CC for all contained entries.
