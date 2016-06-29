@@ -27,17 +27,10 @@ public abstract class AbstractComponent implements StatementComponent {
     public AbstractComponent(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         this.primary = primary;
         this.secondary = secondary == null? new HashSet<>() : secondary;
-        this.complete = StatementUtils.findCompoundComponents(primary, graph, getIgnoredRelations(), getOwnedScopes());
-
-        // find ALL of the words of this component, to be used for recomposing into statement without missing words
-        // only follows non-component specific ignored relations (e.g. dep, punct, mark)
-        // this is done in order to not cross into the relations of other components
-        Set<String> componentSpecificIgnoredRelations = getIgnoredRelations();
-        componentSpecificIgnoredRelations.removeAll(Relations.IGNORED_RELATIONS);
-        this.words = StatementUtils.findCompoundComponents(primary, graph, componentSpecificIgnoredRelations, getOwnedScopes());
+        complete = StatementUtils.findCompoundComponents(primary, graph, getIgnoredRelations(), getOwnedScopes());
 
         // store primary word + secondary word(s) together for simple retrieval
-        this.entries = new HashSet<>();
+        entries = new HashSet<>();
         entries.add(primary);
         for (IndexedWord word : this.secondary) {
             entries.add(word);
@@ -57,6 +50,17 @@ public abstract class AbstractComponent implements StatementComponent {
 
         // find markers for each entry
         markerMapping = StatementUtils.makeRelationsMap(entries, Relations.MARK, graph);
+
+        // find ALL of the words of this component, to be used for recomposing into statement without missing words
+        // only follows non-component specific ignored relations (e.g. dep, punct, mark)
+        // this is done in order to not cross into the relations of other components
+        Set<String> componentSpecificIgnoredRelations = getIgnoredRelations();
+        componentSpecificIgnoredRelations.removeAll(Relations.IGNORED_RELATIONS);
+        words = StatementUtils.findCompoundComponents(primary, graph, componentSpecificIgnoredRelations, getOwnedScopes());
+        words.addAll(getNegations());
+        words.addAll(getMarkers());
+        words.addAll(getPunctuation());
+        System.out.println(getMarkers());
     }
 
     /**

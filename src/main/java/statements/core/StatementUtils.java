@@ -142,13 +142,12 @@ public class StatementUtils {
          * @param graph the graph of the sentence
          * @return specific descendants
          */
-    // TODO: rename to children, in line with findSpecificParents()
     public static Set<IndexedWord> findSpecificDescendants(String relation, IndexedWord word, SemanticGraph graph) {
         Set<IndexedWord> specificDescendants = new HashSet<>();
 
         for (IndexedWord child : graph.getChildren(word)) {
             if (graph.reln(word, child).getShortName().equals(relation)) {
-                specificDescendants.add(child);
+                specificDescendants.addAll(findCompoundComponents(child, graph));
             }
         }
 
