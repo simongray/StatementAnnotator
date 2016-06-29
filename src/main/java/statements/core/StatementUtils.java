@@ -135,13 +135,13 @@ public class StatementUtils {
     }
 
 
-        /**
-         * Recursively finds specific descendants of a word.
-         *
-         * @param word the word that serves as an entry point
-         * @param graph the graph of the sentence
-         * @return specific descendants
-         */
+    /**
+     * Recursively finds specific descendants of a word.
+     *
+     * @param word the word that serves as an entry point
+     * @param graph the graph of the sentence
+     * @return specific descendants
+     */
     public static Set<IndexedWord> findSpecificDescendants(String relation, IndexedWord word, SemanticGraph graph) {
         Set<IndexedWord> specificDescendants = new HashSet<>();
 
@@ -155,22 +155,70 @@ public class StatementUtils {
     }
 
     /**
-     * Create a relations map of parent-children based on a specific type of relation.
+     * Recursively finds specific children of a word.
+     * This differs from findSpecificDescendants() in that it only adds direct children.
+     * It is useful for finding entries for a component, e.g. all of the subjects in a conjunction.
+     *
+     * @param word the word that serves as an entry point
+     * @param graph the graph of the sentence
+     * @return specific descendants
+     */
+    public static Set<IndexedWord> findSpecificChildren(String relation, IndexedWord word, SemanticGraph graph) {
+        Set<IndexedWord> specificChildren = new HashSet<>();
+
+        for (IndexedWord child : graph.getChildren(word)) {
+            if (graph.reln(word, child).getShortName().equals(relation)) {
+                specificChildren.add(child);
+            }
+        }
+
+        return specificChildren;
+    }
+
+    /**
+     * Create a map of parent-descendants (recursively found) based on a specific type of relation.
      * Useful for isolating words such as negations, markers, copulas, etc.
-     * Also useful for separating conjunctions in subjects or objects (but not verbs, see: findJointlyGoverned).
      *
      * @param words the entries to find relations for
      * @param relation the relation type
      * @param graph the graph to search in
      * @return relations map
      */
-    public static Map<IndexedWord, Set<IndexedWord>> makeRelationsMap(Collection<IndexedWord> words, String relation, SemanticGraph graph) {
+    public static Map<IndexedWord, Set<IndexedWord>> makeDescendantMap(Collection<IndexedWord> words, String relation, SemanticGraph graph) {
         Map<IndexedWord, Set<IndexedWord>> relationsMap = new HashMap<>();
         Set<IndexedWord> allChildren = new HashSet<>();
 
         // map children to parents
         for (IndexedWord word : words) {
             Set<IndexedWord> children = StatementUtils.findSpecificDescendants(relation, word, graph);
+            relationsMap.put(word, children);
+            allChildren.addAll(children);
+        }
+
+        // children cannot also be parents in this simple relations map
+        for (IndexedWord child : allChildren) {
+            relationsMap.remove(child);
+        }
+
+        return relationsMap;
+    }
+
+    /**
+     * Create a map of direct parent-children relations based on a specific type of relation.
+     * Useful for finding conjunctions for subjects or objects (but not verbs, see: findJointlyGoverned).
+     *
+     * @param words the entries to find relations for
+     * @param relation the relation type
+     * @param graph the graph to search in
+     * @return relations map
+     */
+    public static Map<IndexedWord, Set<IndexedWord>> makeChildMap(Collection<IndexedWord> words, String relation, SemanticGraph graph) {
+        Map<IndexedWord, Set<IndexedWord>> relationsMap = new HashMap<>();
+        Set<IndexedWord> allChildren = new HashSet<>();
+
+        // map children to parents
+        for (IndexedWord word : words) {
+            Set<IndexedWord> children = StatementUtils.findSpecificChildren(relation, word, graph);
             relationsMap.put(word, children);
             allChildren.addAll(children);
         }

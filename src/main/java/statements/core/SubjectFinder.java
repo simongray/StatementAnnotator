@@ -45,13 +45,13 @@ public class SubjectFinder extends AbstractFinder<Subject> {
         }
 
         // create normal subject mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> subjectMapping = StatementUtils.makeRelationsMap(simpleSubjects, Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> subjectMapping = StatementUtils.makeChildMap(simpleSubjects, Relations.CONJ, graph);
 
         // create passive subject mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> passiveSubjectMapping = StatementUtils.makeRelationsMap(simplePassiveSubjects, Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> passiveSubjectMapping = StatementUtils.makeChildMap(simplePassiveSubjects, Relations.CONJ, graph);
 
         // create clausal subject mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> clausalSubjectMapping = StatementUtils.makeRelationsMap(simpleClausalSubjects, Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> clausalSubjectMapping = StatementUtils.makeChildMap(simpleClausalSubjects, Relations.CONJ, graph);
 
         // build complete subjects from mappings
         for (IndexedWord primarySubject : subjectMapping.keySet()) {

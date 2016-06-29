@@ -77,13 +77,13 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
         }
 
         // create direct object mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> dobjObjectMapping = StatementUtils.makeRelationsMap(dobjMapping.keySet(), Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> dobjObjectMapping = StatementUtils.makeChildMap(dobjMapping.keySet(), Relations.CONJ, graph);
 
         // create xcomp object mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> xcompObjectMapping = StatementUtils.makeRelationsMap(xcompObjects, Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> xcompObjectMapping = StatementUtils.makeChildMap(xcompObjects, Relations.CONJ, graph);
 
         // create copula object mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> copObjectMapping = StatementUtils.makeRelationsMap(copObjects, Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> copObjectMapping = StatementUtils.makeChildMap(copObjects, Relations.CONJ, graph);
 
         // build complete objects from mappings
         for (IndexedWord object : dobjObjectMapping.keySet()) {

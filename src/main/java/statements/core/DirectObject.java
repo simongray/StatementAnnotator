@@ -21,7 +21,7 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
         this.type = type;
 
         // find copulas (only relevant for COP)
-        copulaMapping = StatementUtils.makeRelationsMap(entries, Relations.COP, graph);
+        copulaMapping = StatementUtils.makeDescendantMap(entries, Relations.COP, graph);
     }
 
     /**

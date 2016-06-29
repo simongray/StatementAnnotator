@@ -55,7 +55,7 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
         }
 
         // create indirect object mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> nmodObjectMapping = StatementUtils.makeRelationsMap(nmodMapping.keySet(), Relations.CONJ, graph);
+        Map<IndexedWord, Set<IndexedWord>> nmodObjectMapping = StatementUtils.makeChildMap(nmodMapping.keySet(), Relations.CONJ, graph);
 
         // build complete objects from mapping
         for (IndexedWord object : nmodObjectMapping.keySet()) {

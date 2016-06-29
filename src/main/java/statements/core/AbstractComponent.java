@@ -43,13 +43,13 @@ public abstract class AbstractComponent implements StatementComponent {
         }
 
         // find negations for each entry
-        negationMapping = StatementUtils.makeRelationsMap(entries, Relations.NEG, graph);
+        negationMapping = StatementUtils.makeDescendantMap(entries, Relations.NEG, graph);
 
         // find punctuation for each entry
-        punctuationMapping = StatementUtils.makeRelationsMap(entries, Relations.PUNCT, graph);
+        punctuationMapping = StatementUtils.makeDescendantMap(entries, Relations.PUNCT, graph);
 
         // find markers for each entry
-        markerMapping = StatementUtils.makeRelationsMap(entries, Relations.MARK, graph);
+        markerMapping = StatementUtils.makeDescendantMap(entries, Relations.MARK, graph);
 
         // find ALL of the words of this component, to be used for recomposing into statement without missing words
         // only follows non-component specific ignored relations (e.g. dep, punct, mark)

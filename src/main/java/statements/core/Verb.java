@@ -16,7 +16,7 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     public Verb(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         super(primary, secondary, graph);
 
-        ccMap = StatementUtils.makeRelationsMap(entries, Relations.CC, graph);
+        ccMap = StatementUtils.makeDescendantMap(entries, Relations.CC, graph);
 
         // in some special cases (e.g. with verb conjunctions) it is necessary to add the other compounds back in
         // the reason this is only performed when count > 1 (apart from saving resources)
