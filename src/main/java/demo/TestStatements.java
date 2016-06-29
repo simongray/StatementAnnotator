@@ -47,8 +47,6 @@ public class TestStatements {
         // STILL NEED TO BE FIXED
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
-        // TODO: desired "we" "also got" "two xiaomi air purifirs that work quite well"
-        String example = "We also got two Xiaomi air purifiers that work quite well";  // TODO: "that" is not included in statement text
 
 
 
@@ -57,7 +55,7 @@ public class TestStatements {
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";  // TODO: should be limiting components to a single subject, verb, etc.
 //        String example = "Chronically stressed people often have trouble sleeping and establishing a practice goes a long way to reduce stress.";
         // TODO: "for anyone" is found as direct object, but not linked to any other component
-//        String example = "Sally and Mads in particular don't like doing anything for anyone.";
+        String example = "Sally and Mads in particular don't like doing anything for anyone.";
 
 
         // FIXED (SOMEWHAT)
@@ -79,6 +77,7 @@ public class TestStatements {
 //        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";  // TODO: missing comma in string version
 //        String example = "Hey, cool! Very cool, in fact.";  // no statements, as expected
 //        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament.";
+//        String example = "We also got two Xiaomi air purifiers that work quite well";
 
 
 
