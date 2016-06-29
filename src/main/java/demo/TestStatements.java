@@ -42,8 +42,8 @@ public class TestStatements {
 //        String example = "She's having to make do. She speaks and shouts. The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
 
         // STILL NEED TO BE FIXED
-//        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
-//        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
+        // TODO: no separation of statements here, seems like I need to deal with the advcl relation here
+        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
 
 
 
@@ -76,7 +76,8 @@ public class TestStatements {
 //        String example = "Sally and Mads in particular don't like doing anything for anyone.";
 //        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
 //        String example =    "I think she's mad. I don't care whether she likes me. She says that they should go.";
-        String example =    "I don't care whether or not they come.";
+//        String example =    "I don't care whether or not they come.";
+//        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
 
 
 
