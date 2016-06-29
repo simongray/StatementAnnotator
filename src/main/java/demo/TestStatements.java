@@ -54,8 +54,6 @@ public class TestStatements {
 //        String example = "Anyway, just make your own rule and stick to it.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";  // TODO: should be limiting components to a single subject, verb, etc.
 //        String example = "Chronically stressed people often have trouble sleeping and establishing a practice goes a long way to reduce stress.";
-        // TODO: "for anyone" is found as direct object, but not linked to any other component
-        String example = "Sally and Mads in particular don't like doing anything for anyone.";
 
 
         // FIXED (SOMEWHAT)
@@ -70,7 +68,7 @@ public class TestStatements {
 //        String example = "Sally and Mads in particular don't like doing anything. Sally and Mads don't like doing anything in particular.";
 //        String example =    "Here's our solution:";
 //        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable.";  // TODO: first part not recognised as statement, since it lacks subject
-//        String example =    "I don't care whether she likes me.";
+        String example =    "I don't care whether she likes me.";
 //        String example = "He doesn't like doing anything.";
 //        String example = "The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
 //        String example = "He really doesn't love singing out loud.";
@@ -78,6 +76,7 @@ public class TestStatements {
 //        String example = "Hey, cool! Very cool, in fact.";  // no statements, as expected
 //        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well";
+//        String example = "Sally and Mads in particular don't like doing anything for anyone.";
 
 
 

@@ -3,6 +3,7 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
+import edu.stanford.nlp.trees.GrammaticalRelation;
 import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,20 +124,18 @@ public class StatementFinder {
      * Checks every entry of both components, not just the primary word.
      * Useful when linking components together, especially in case a primary word is not part of the relation.
      *
-     * @param component
-     * @param otherComponent
-     * @param graph
+     * @param component child component
+     * @param otherComponent parent component
+     * @param graph dependency graph of sentence
      * @return whether the component is a child or not
      */
     private static boolean isChild(AbstractComponent component, AbstractComponent otherComponent, SemanticGraph graph) {
         if (component == otherComponent) return false;
 
-        // check if component is a child of otherComponent
-        for (IndexedWord childEntry : component.getEntries()) {
-            Set<IndexedWord> parents = graph.getParents(childEntry);
-            if (StatementUtils.intersects(parents, otherComponent.getEntries())) {
-                return true;
-            }
+        IndexedWord primary = component.getPrimary();  // TODO: also check other entries, maybe even other words?
+
+        for (IndexedWord word : otherComponent.getWords()) {  // TODO: efficient enough?
+            if (graph.reln(word, primary) != null) return true;
         }
 
         return false;
@@ -194,9 +193,10 @@ public class StatementFinder {
             IndexedWord childPrimary = child.getPrimary();
             IndexedWord parentPrimary = parent.getPrimary();
 
-            // TODO: this throws nullpointerexception sometimes, pretty serious
-            if (parentPrimary != null && childPrimary != null && graph.reln(parentPrimary, childPrimary).getShortName().equals(Relations.CCOMP)) {
-                statementMapping.put(child, parent);
+            // TODO: can this be made less convoluted?
+            if (parentPrimary != null && childPrimary != null) {
+                GrammaticalRelation relation = graph.reln(parentPrimary, childPrimary);
+                if (relation != null && relation.getShortName().equals(Relations.CCOMP)) statementMapping.put(child, parent);
             }
         }
 
