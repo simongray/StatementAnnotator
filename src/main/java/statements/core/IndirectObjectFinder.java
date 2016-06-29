@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Finds indirect objects in sentences.
  */
-public class IndirectObjectFinder {
+public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
     private static final Logger logger = LoggerFactory.getLogger(IndirectObjectFinder.class);
 
     /**
@@ -20,20 +20,21 @@ public class IndirectObjectFinder {
      * @param graph the dependency graph of a sentence
      * @return indirect objects
      */
-    public static Set<IndirectObject> find(SemanticGraph graph) {
+    public Set<IndirectObject> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Map<IndexedWord, IndexedWord> nmodMapping = new HashMap<>();
         Set<IndexedWord> subjects = new HashSet<>();
         Set<IndexedWord> subjectRelated = new HashSet<>();
         Set<IndirectObject> indirectObjects = new HashSet<>();
+        Set<IndexedWord> ignoredWords = getIgnoredWords(graph);
 
         // find simple objects from relations
         for (TypedDependency dependency : dependencies) {
             if (dependency.reln().getShortName().equals(Relations.NMOD)) {
-                nmodMapping.put(dependency.dep(), dependency.gov());
+                if (!ignoredWords.contains(dependency.dep())) nmodMapping.put(dependency.dep(), dependency.gov());
             }
             if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
-                subjects.add(dependency.dep());
+                if (!ignoredWords.contains(dependency.dep())) subjects.add(dependency.dep());
             }
         }
 

@@ -17,6 +17,7 @@ public class StatementFinder {
     private static SubjectFinder subjectFinder = new SubjectFinder();
     private static VerbFinder verbFinder = new VerbFinder();
     private static DirectObjectFinder directObjectFinder = new DirectObjectFinder();
+    private static IndirectObjectFinder indirectObjectFinder = new IndirectObjectFinder();
 
     /**
      * Find statements in a sentence.
@@ -33,7 +34,7 @@ public class StatementFinder {
         components.addAll(subjectFinder.find(graph));
         components.addAll(verbFinder.find(graph));
         components.addAll(directObjectFinder.find(graph));
-        components.addAll(IndirectObjectFinder.find(graph));
+        components.addAll(indirectObjectFinder.find(graph));
 
         // link components to produce statements
         return link(graph, components);
