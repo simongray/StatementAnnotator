@@ -26,7 +26,9 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
         Set<IndexedWord> subjects = new HashSet<>();
         Set<IndexedWord> subjectRelated = new HashSet<>();
         Set<IndirectObject> indirectObjects = new HashSet<>();
+
         Set<IndexedWord> ignoredWords = getIgnoredWords(graph);
+        logger.info("ignored words: " + ignoredWords);
 
         // find simple objects from relations
         for (TypedDependency dependency : dependencies) {

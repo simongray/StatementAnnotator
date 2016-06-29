@@ -37,7 +37,9 @@ public class VerbFinder extends AbstractFinder<Verb> {
         Set<IndexedWord> csubjVerbs = new HashSet<>();  // for verbs that act as subjects
         Set<IndexedWord> aclVerbs = new HashSet<>();  // for verbs that are used to describe nouns
         Set<Verb> verbs = new HashSet<>();
+
         Set<IndexedWord> ignoredWords = getIgnoredWords(graph);
+        logger.info("ignored words: " + ignoredWords);
 
         // find candidate verbs and adjectives from relations
         for (TypedDependency dependency : dependencies) {

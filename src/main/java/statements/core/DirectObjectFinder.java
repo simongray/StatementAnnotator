@@ -29,7 +29,9 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
         Set<IndexedWord> csubjVerbs = new HashSet<>();  // for verbs that act as subjects
         Set<IndexedWord> copObjects = new HashSet<>();
         Set<DirectObject> directObjects = new HashSet<>();
+
         Set<IndexedWord> ignoredWords = getIgnoredWords(graph);
+        logger.info("ignored words: " + ignoredWords);
 
         // find simple objects from relations
         for (TypedDependency dependency : dependencies) {

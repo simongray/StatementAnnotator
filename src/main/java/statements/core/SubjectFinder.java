@@ -27,8 +27,8 @@ public class SubjectFinder extends AbstractFinder<Subject> {
         Set<IndexedWord> simplePassiveSubjects = new HashSet<>();
         Set<IndexedWord> simpleClausalSubjects = new HashSet<>();
         Set<Subject> subjects = new HashSet<>();
-        Set<IndexedWord> ignoredWords = getIgnoredWords(graph);
 
+        Set<IndexedWord> ignoredWords = getIgnoredWords(graph);
         logger.info("ignored words: " + ignoredWords);
 
         // find simple subjects from relations
