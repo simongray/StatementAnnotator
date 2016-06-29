@@ -46,8 +46,7 @@ public abstract class AbstractComponent implements StatementComponent {
         negationMapping = StatementUtils.makeChildMap(entries, Relations.NEG, graph);
 
         // find punctuation for each entry
-        // TODO: is makeChildMap() good enough?
-        punctuationMapping = StatementUtils.makeDescendantMap(entries, Relations.PUNCT, graph);
+        punctuationMapping = StatementUtils.makeChildMap(entries, Relations.PUNCT, graph);
 
         // find markers for each entry
         markerMapping = StatementUtils.makeDescendantMap(entries, Relations.MARK, graph);
