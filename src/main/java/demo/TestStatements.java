@@ -48,7 +48,7 @@ public class TestStatements {
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
         // TODO: desired "we" "also got" "two xiaomi air purifirs that work quite well"
-        String example = "We also got two Xiaomi air purifiers that work quite well";
+        String example = "We also got two Xiaomi air purifiers that work quite well";  // TODO: "that" is not included in statement text
 
 
 

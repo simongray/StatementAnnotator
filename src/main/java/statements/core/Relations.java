@@ -25,6 +25,7 @@ public class Relations {
     public static final String PUNCT = "punct";  // punctuation like ","
     public static final String MARK = "mark";  // for markers, e.g. "whether" or "that"
     public static final String ACL = "acl";  // clausal modifiers of nouns, e.g. "a way" --acl--> "to reduce stress"
+    public static final String ACL_RELCL = "acl:relcl";  // a subtype of acl
 
     public static final Set<String> IGNORED_SCOPES = new HashSet<>();
 
@@ -42,7 +43,8 @@ public class Relations {
         /**
          * Relations whose dependant + children (= scope) cannot be used to find components in.
          */
-        IGNORED_SCOPES.add(Relations.ACL);  // this scope describes a noun
+        IGNORED_SCOPES.add(Relations.ACL);  // scope for description of a noun
+        IGNORED_SCOPES.add(Relations.ACL_RELCL);
 
         /**
          * Relations that are ignored when constructing ANY component.

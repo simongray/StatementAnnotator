@@ -14,6 +14,7 @@ import java.util.*;
  */
 public class StatementFinder {
     private static final Logger logger = LoggerFactory.getLogger(StatementFinder.class);
+    private static SubjectFinder subjectFinder = new SubjectFinder();
 
     /**
      * Find statements in a sentence.
@@ -27,7 +28,7 @@ public class StatementFinder {
 
         // find statement components
         Set<AbstractComponent> components = new HashSet<>();
-        components.addAll(SubjectFinder.find(graph));
+        components.addAll(subjectFinder.find(graph));
         components.addAll(VerbFinder.find(graph));
         components.addAll(DirectObjectFinder.find(graph));
         components.addAll(IndirectObjectFinder.find(graph));
