@@ -155,30 +155,6 @@ public class StatementUtils {
     }
 
     /**
-     * Recursively finds specific parents for a word.
-     *
-     * @param word the word that serves as an entry point
-     * @param graph the graph of the sentence
-     * @return specific descendants
-     */
-    public static Set<IndexedWord> findSpecificParents(String relation, IndexedWord word, SemanticGraph graph) {
-        Set<IndexedWord> specificParents = new HashSet<>();
-        Set<IndexedWord> parents = graph.getParents(word);
-        logger.info("parents for " + word + ": " + parents);
-
-        for (IndexedWord parent : parents) {
-            logger.info("checking parent for " + word + ": " + parent);
-            logger.info("relation name: " + graph.reln(parent, word).getShortName());
-            if (graph.reln(parent, word).getShortName().equals(relation)) {
-                specificParents.add(parent);
-                logger.info(parent + " was related to " + word + " by " + relation);
-            }
-        }
-
-        return specificParents;
-    }
-
-    /**
      * Create a relations map of parent-children based on a specific type of relation.
      * Useful for isolating words such as negations, markers, copulas, etc.
      * Also useful for separating conjunctions in subjects or objects (but not verbs, see: findJointlyGoverned).
