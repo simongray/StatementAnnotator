@@ -22,10 +22,6 @@ public class Statement implements StatementComponent, Resembling<Statement> {
 
      */
     public Statement(Set<AbstractComponent> pureComponents) {
-        init(pureComponents);
-    }
-
-    private void init(Set<AbstractComponent> pureComponents) {
         for (StatementComponent component : pureComponents) {
             if (component instanceof Subject) {
                 subject = (Subject) component;
