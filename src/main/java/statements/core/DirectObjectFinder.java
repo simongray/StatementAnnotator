@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * Finds direct objects in sentences.
  */
-public class DirectObjectFinder {
+public class DirectObjectFinder extends AbstractFinder<DirectObject> {
     private static final Logger logger = LoggerFactory.getLogger(DirectObjectFinder.class);
 
     /**
@@ -21,28 +21,30 @@ public class DirectObjectFinder {
      * @param graph the dependency graph of a sentence
      * @return direct objects
      */
-    public static Set<DirectObject> find(SemanticGraph graph) {
+    @Override
+    public Set<DirectObject> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Map<IndexedWord, IndexedWord> dobjMapping = new HashMap<>();
         Set<IndexedWord> xcompObjects = new HashSet<>();
         Set<IndexedWord> csubjVerbs = new HashSet<>();  // for verbs that act as subjects
         Set<IndexedWord> copObjects = new HashSet<>();
         Set<DirectObject> directObjects = new HashSet<>();
+        Set<IndexedWord> ignoredWords = getIgnoredWords(graph);
 
         // find simple objects from relations
         for (TypedDependency dependency : dependencies) {
             if (dependency.reln().getShortName().equals(Relations.DOBJ)) {
-                dobjMapping.put(dependency.dep(), dependency.gov());
+                if (!ignoredWords.contains(dependency.dep())) dobjMapping.put(dependency.dep(), dependency.gov());
             }
             if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
-                xcompObjects.add(dependency.dep());
+                if (!ignoredWords.contains(dependency.dep())) xcompObjects.add(dependency.dep());
             }
             if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
-                csubjVerbs.add(dependency.dep());
+                if (!ignoredWords.contains(dependency.dep())) csubjVerbs.add(dependency.dep());
             }
             if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
                 if (hasCopula(dependency.gov(), graph)) {
-                    copObjects.add(dependency.gov());
+                    if (!ignoredWords.contains(dependency.dep())) copObjects.add(dependency.gov());
                 }
             }
         }
