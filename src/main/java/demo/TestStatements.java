@@ -44,6 +44,7 @@ public class TestStatements {
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
         // TODO: statement text is currently displayed as: [{She shouts}]
 //        String example = "She speaks and shouts.";
+        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";  // TODO: count = 6!!!
 
 
 
@@ -56,7 +57,7 @@ public class TestStatements {
 
         // FIXED (SOMEWHAT)
 //        String example = "Here's our solution: Use an air quality app.";  // TODO: allow to decide specifity of noun compounds, i.e. "the" or "an"
-        String example =    "We have found that it is quite manageable.";
+//        String example =    "We have found that it is quite manageable.";
 //        String example = "She hates and loves to fly. She hates flying and he loves it.";
 //        String example = "Establishing a practice goes a long way to reduce stress.";
 //        String example = "Chronically stressed people often have trouble sleeping.";  // it's kinda weird though, i.e. component: [{Subject: trouble}, {Verb: sleeping}]
@@ -70,7 +71,6 @@ public class TestStatements {
 //        String example = "He doesn't like doing anything.";
 //        String example = "The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
 //        String example = "He really doesn't love singing out loud.";
-//        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";  // TODO: missing comma in string version
 //        String example = "Hey, cool! Very cool, in fact.";  // no statements, as expected
 //        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well";

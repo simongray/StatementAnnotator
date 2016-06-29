@@ -50,7 +50,6 @@ public class Relations {
          * Relations that are ignored when constructing ANY component.
          */
         IGNORED_RELATIONS.add(Relations.DEP);  // ignoring all unknown dependencies
-        IGNORED_RELATIONS.add(Relations.PUNCT);  // ignoring all punctuation (can still be accessed for recomposing as text)
         IGNORED_RELATIONS.add(Relations.MARK);  // ignoring all markers  // TODO: check if this has any repercussions
         IGNORED_SUBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_VERB_RELATIONS.addAll(IGNORED_RELATIONS);
@@ -83,8 +82,9 @@ public class Relations {
         /**
          * Relations that are ignored when determining ANY compound boundaries.
          */
-        IGNORED_COMPOUND_RELATIONS.add(Relations.CONJ);   // ignoring all links to conjunct verbs, nouns, etc.
-        IGNORED_COMPOUND_RELATIONS.add(Relations.CC);     // ignoring all conjunction words (like "and", "or", etc.)
+        IGNORED_COMPOUND_RELATIONS.add(Relations.CONJ);  // ignoring all links to conjunct verbs, nouns, etc.
+        IGNORED_COMPOUND_RELATIONS.add(Relations.CC);  // ignoring all conjunction words (like "and", "or", etc.)
+        IGNORED_COMPOUND_RELATIONS.add(Relations.PUNCT);  // ignoring all punctuation (can still be accessed for recomposing as text)
 
         /**
          * Relations that are ignored when determining subject compound boundaries.
