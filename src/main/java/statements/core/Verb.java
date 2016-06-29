@@ -18,6 +18,7 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
 
         ccMap = StatementUtils.makeDescendantMap(entries, Relations.CC, graph);
 
+        // TODO: review and revise this stanza + the one in getComplete()
         // in some special cases (e.g. with verb conjunctions) it is necessary to add the other compounds back in
         // the reason this is only performed when count > 1 (apart from saving resources)
         // is that verbs with cc relations that are NOT in verb conjunctions, would display as "loves and" or "says or"
