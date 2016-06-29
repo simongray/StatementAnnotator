@@ -43,7 +43,7 @@ public class TestStatements {
         // TODO: no separation of statements here, seems like I need to deal with the advcl relation here
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
         // TODO: statement text is currently displayed as: [{She shouts}]
-        String example = "She speaks and shouts.";
+//        String example = "She speaks and shouts.";
 
 
 
@@ -56,7 +56,7 @@ public class TestStatements {
 
         // FIXED (SOMEWHAT)
 //        String example = "Here's our solution: Use an air quality app.";  // TODO: allow to decide specifity of noun compounds, i.e. "the" or "an"
-//        String example =    "We have found that it is quite manageable.";  // TODO: when recomposing a full statement, "that" is now missing
+        String example =    "We have found that it is quite manageable.";
 //        String example = "She hates and loves to fly. She hates flying and he loves it.";
 //        String example = "Establishing a practice goes a long way to reduce stress.";
 //        String example = "Chronically stressed people often have trouble sleeping.";  // it's kinda weird though, i.e. component: [{Subject: trouble}, {Verb: sleeping}]
