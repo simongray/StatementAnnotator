@@ -38,12 +38,13 @@ public class TestStatements {
         // TODO: the sentence "Hates and loves it." - doesn't separate into two statements, however doubtful if it is possible to do in a non-hackish way
 //        String example = "Bought some 3M 95N-rated face masks for smoggy days.\n";
 //        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
-//        String example = "We also got two Xiaomi air purifiers that work quite well.";
-//        String example = "She's having to make do. She speaks and shouts. The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
 
         // STILL NEED TO BE FIXED
         // TODO: no separation of statements here, seems like I need to deal with the advcl relation here
-        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
+//        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
+        // TODO: statement text is currently displayed as: [{She shouts}]
+        String example = "She speaks and shouts.";
+
 
 
 
