@@ -60,7 +60,6 @@ public abstract class AbstractComponent implements StatementComponent {
         words.addAll(getNegations());
         words.addAll(getMarkers());
         words.addAll(getPunctuation());
-        System.out.println(getMarkers());
     }
 
     /**
