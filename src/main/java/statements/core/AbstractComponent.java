@@ -27,14 +27,14 @@ public abstract class AbstractComponent implements StatementComponent {
     public AbstractComponent(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         this.primary = primary;
         this.secondary = secondary == null? new HashSet<>() : secondary;
-        this.complete = StatementUtils.findCompoundComponents(primary, graph, getIgnoredRelations());
+        this.complete = StatementUtils.findCompoundComponents(primary, graph, getIgnoredRelations(), getOwnedScopes());
 
         // find ALL of the words of this component, to be used for recomposing into statement without missing words
         // only follows non-component specific ignored relations (e.g. dep, punct, mark)
         // this is done in order to not cross into the relations of other components
         Set<String> componentSpecificIgnoredRelations = getIgnoredRelations();
         componentSpecificIgnoredRelations.removeAll(Relations.IGNORED_RELATIONS);
-        this.words = StatementUtils.findCompoundComponents(primary, graph, componentSpecificIgnoredRelations);
+        this.words = StatementUtils.findCompoundComponents(primary, graph, componentSpecificIgnoredRelations, getOwnedScopes());
 
         // store primary word + secondary word(s) together for simple retrieval
         this.entries = new HashSet<>();
@@ -46,7 +46,7 @@ public abstract class AbstractComponent implements StatementComponent {
         // recursively discover all compounds
         compounds = new HashSet<>();
         for (IndexedWord word : entries) {
-            compounds.add(StatementUtils.findCompoundComponents(word, graph, getIgnoredCompoundRelations()));
+            compounds.add(StatementUtils.findCompoundComponents(word, graph, getIgnoredCompoundRelations(), getOwnedScopes()));
         }
 
         // find negations for each entry
@@ -57,6 +57,13 @@ public abstract class AbstractComponent implements StatementComponent {
 
         // find markers for each entry
         markerMapping = StatementUtils.makeRelationsMap(entries, Relations.MARK, graph);
+    }
+
+    /**
+     * Describes relations whose entire set of descendants is to be accepted, regardless of ignored relations.
+     */
+    protected Set<String> getOwnedScopes() {
+        return Relations.IGNORED_SCOPES;
     }
 
     /**
