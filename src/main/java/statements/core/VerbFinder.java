@@ -55,7 +55,7 @@ public class VerbFinder extends AbstractFinder<Verb> {
             }
             if (dependency.reln().getShortName().equals(Relations.ACL)) {
                 if (!ignoredWords.contains(dependency.dep())) aclVerbs.add(dependency.dep());
-            }
+            }  // TODO: safe to remove?
         }
 
         // remove adjectives from candidate verbs
@@ -68,7 +68,7 @@ public class VerbFinder extends AbstractFinder<Verb> {
         simpleVerbs.removeAll(csubjVerbs);
 
         // remove verbs that are used to describe nouns
-        simpleVerbs.removeAll(aclVerbs);
+        simpleVerbs.removeAll(aclVerbs);  // TODO: safe to remove?
 
         logger.info("simple verbs: " + simpleVerbs);
 
