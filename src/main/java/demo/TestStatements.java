@@ -33,7 +33,6 @@ public class TestStatements {
 //        "We also got two Xiaomi air purifiers that work quite well. They are smartphone-connected and always on, except when we're out during weekdays. The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers. " +
 //        "Before you go, familiarise yourself with the air quality in your own area so you have a means of comparison. If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too. I sure was (I come from Copenhagen, Denmark). Of course, Western cities usually don't have those crazy smog days. " +
 //        "Don't worry too much. Sometimes there's no smog for a whole week, sometime's it lasts for a whole week and you'll just stay mostly indoors and use masks when outside. You'll get used to it.";
-//        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
 
 
         // TODO: the sentence "Hates and loves it." - doesn't separate into two statements, however doubtful if it is possible to do in a non-hackish way
@@ -41,12 +40,12 @@ public class TestStatements {
 //        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";
 //        String example = "She's having to make do. She speaks and shouts. The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
-//        String example =    "I think she's mad. I don't care whether she likes me. She says that they should go. I don't care whether or not they come.";
-
 
         // STILL NEED TO BE FIXED
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
+        // TODO: not displaying "not" in full statement
+        String example =    "I don't care whether or not they come.";
 
 
 
@@ -68,7 +67,7 @@ public class TestStatements {
 //        String example = "Sally and Mads in particular don't like doing anything. Sally and Mads don't like doing anything in particular.";
 //        String example =    "Here's our solution:";
 //        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable.";  // TODO: first part not recognised as statement, since it lacks subject
-        String example =    "I don't care whether she likes me.";
+//        String example =    "I don't care whether she likes me.";
 //        String example = "He doesn't like doing anything.";
 //        String example = "The amazing and furious Henry Larsson of Sweden doesn't like doing anything in particular.";
 //        String example = "He really doesn't love singing out loud.";
@@ -77,6 +76,9 @@ public class TestStatements {
 //        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well";
 //        String example = "Sally and Mads in particular don't like doing anything for anyone.";
+//        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
+//        String example =    "I think she's mad. I don't care whether she likes me. She says that they should go.";
+
 
 
 
