@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * Finds verbs in sentences.
  */
-public class VerbFinder {
+public class VerbFinder extends AbstractFinder<Verb> {
     private static final Logger logger = LoggerFactory.getLogger(VerbFinder.class);
 
     private static final Set<String> VERB_RELATIONS = new HashSet<>();
@@ -28,7 +28,8 @@ public class VerbFinder {
      * @param graph the dependency graph of a sentence
      * @return verbs
      */
-    public static Set<Verb> find(SemanticGraph graph) {
+    @Override
+    public Set<Verb> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> simpleVerbs = new HashSet<>();
         Set<IndexedWord> adjectives = new HashSet<>();
@@ -36,23 +37,24 @@ public class VerbFinder {
         Set<IndexedWord> csubjVerbs = new HashSet<>();  // for verbs that act as subjects
         Set<IndexedWord> aclVerbs = new HashSet<>();  // for verbs that are used to describe nouns
         Set<Verb> verbs = new HashSet<>();
+        Set<IndexedWord> ignoredWords = getIgnoredWords(graph);
 
         // find candidate verbs and adjectives from relations
         for (TypedDependency dependency : dependencies) {
             if (VERB_RELATIONS.contains(dependency.reln().getShortName())) {
-                simpleVerbs.add(dependency.gov());
+                if (!ignoredWords.contains(dependency.dep())) simpleVerbs.add(dependency.gov());
             }
             if (dependency.reln().getShortName().equals(Relations.COP)) {
-                adjectives.add(dependency.gov());
+                if (!ignoredWords.contains(dependency.dep())) adjectives.add(dependency.gov());
             }
             if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
-                xcompVerbs.add(dependency.dep());
+                if (!ignoredWords.contains(dependency.dep())) xcompVerbs.add(dependency.dep());
             }
             if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
-                csubjVerbs.add(dependency.dep());
+                if (!ignoredWords.contains(dependency.dep())) csubjVerbs.add(dependency.dep());
             }
             if (dependency.reln().getShortName().equals(Relations.ACL)) {
-                aclVerbs.add(dependency.dep());
+                if (!ignoredWords.contains(dependency.dep())) aclVerbs.add(dependency.dep());
             }
         }
 
