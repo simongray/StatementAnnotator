@@ -84,7 +84,7 @@ public class StatementUtils {
     }
 
     /**
-     * Recursively finds the components of a compound (ex: subject, object, etc.).
+     * Recursively finds the words of a compound (ex: subject, object, etc.).
      *
      * @param parent the word that serves as an entry point
      * @param graph the graph of the sentence
@@ -92,7 +92,7 @@ public class StatementUtils {
      * @param ownedScopes relations + descendants of that relation that will be added regardless of ignored relations
      * @return compound components
      */
-    public static Set<IndexedWord> findCompoundComponents(IndexedWord parent, SemanticGraph graph, Set<String> ignoredRelations, Set<String> ownedScopes) {
+    public static Set<IndexedWord> findCompound(IndexedWord parent, SemanticGraph graph, Set<String> ignoredRelations, Set<String> ownedScopes) {
         Set<IndexedWord> compoundComponents = new HashSet<>();
         compoundComponents.add(parent);
 
@@ -102,9 +102,9 @@ public class StatementUtils {
             // when encountering an owned scope, then that scope is added in full
             // in other cases, relations are added when they do not appear in the set of ignoredRelations
             if (ownedScopes != null && ownedScopes.contains(relation.getShortName())) {
-                compoundComponents.addAll(findCompoundComponents(child, graph));
+                compoundComponents.addAll(findCompound(child, graph));
             } else if (ignoredRelations == null || !ignoredRelations.contains(relation.getShortName())) {
-                compoundComponents.addAll(findCompoundComponents(child, graph, ignoredRelations));
+                compoundComponents.addAll(findCompound(child, graph, ignoredRelations));
             }
         }
 
@@ -112,26 +112,26 @@ public class StatementUtils {
     }
 
     /**
-     * Recursively finds the components of a compound (ex: subject, object, etc.).
+     * Recursively finds the words of a compound (ex: subject, object, etc.).
      *
      * @param parent the word that serves as an entry point
      * @param graph the graph of the sentence
      * @param ignoredRelations relation types that shouldn't be followed or included
      * @return compound components
      */
-    public static Set<IndexedWord> findCompoundComponents(IndexedWord parent, SemanticGraph graph, Set<String> ignoredRelations) {
-        return findCompoundComponents(parent, graph, ignoredRelations, null);
+    public static Set<IndexedWord> findCompound(IndexedWord parent, SemanticGraph graph, Set<String> ignoredRelations) {
+        return findCompound(parent, graph, ignoredRelations, null);
     }
 
     /**
-     * Recursively finds the components of a compound (ex: subject, object, etc.).
+     * Recursively finds the words of a compound (ex: subject, object, etc.).
      *
      * @param parent the word that serves as an entry point
      * @param graph the graph of the sentence
      * @return compound components
      */
-    public static Set<IndexedWord> findCompoundComponents(IndexedWord parent, SemanticGraph graph) {
-        return findCompoundComponents(parent, graph, null, null);
+    public static Set<IndexedWord> findCompound(IndexedWord parent, SemanticGraph graph) {
+        return findCompound(parent, graph, null, null);
     }
 
 
@@ -147,7 +147,7 @@ public class StatementUtils {
 
         for (IndexedWord child : graph.getChildren(word)) {
             if (graph.reln(word, child).getShortName().equals(relation)) {
-                specificDescendants.addAll(findCompoundComponents(child, graph));
+                specificDescendants.addAll(findCompound(child, graph));
             }
         }
 

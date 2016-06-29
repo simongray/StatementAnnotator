@@ -49,7 +49,7 @@ public abstract class AbstractFinder<T extends AbstractComponent> {
 
         // use the entry words to find the scope compounds
         for (IndexedWord scopeEntry : scopeEntries) {
-            ignoredWords.addAll(StatementUtils.findCompoundComponents(scopeEntry, graph, null));
+            ignoredWords.addAll(StatementUtils.findCompound(scopeEntry, graph));
         }
 
         return ignoredWords;

@@ -27,7 +27,7 @@ public abstract class AbstractComponent implements StatementComponent {
     public AbstractComponent(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         this.primary = primary;
         this.secondary = secondary == null? new HashSet<>() : secondary;
-        complete = StatementUtils.findCompoundComponents(primary, graph, getIgnoredRelations(), getOwnedScopes());
+        complete = StatementUtils.findCompound(primary, graph, getIgnoredRelations(), getOwnedScopes());
 
         // store primary word + secondary word(s) together for simple retrieval
         entries = new HashSet<>();
@@ -39,7 +39,7 @@ public abstract class AbstractComponent implements StatementComponent {
         // recursively discover all compounds
         compounds = new HashSet<>();
         for (IndexedWord word : entries) {
-            compounds.add(StatementUtils.findCompoundComponents(word, graph, getIgnoredCompoundRelations(), getOwnedScopes()));
+            compounds.add(StatementUtils.findCompound(word, graph, getIgnoredCompoundRelations(), getOwnedScopes()));
         }
 
         // find negations for each entry
@@ -56,7 +56,7 @@ public abstract class AbstractComponent implements StatementComponent {
         // this is done in order to not cross into the relations of other components
         Set<String> componentSpecificIgnoredRelations = getIgnoredRelations();
         componentSpecificIgnoredRelations.removeAll(Relations.IGNORED_RELATIONS);
-        words = StatementUtils.findCompoundComponents(primary, graph, componentSpecificIgnoredRelations, getOwnedScopes());
+        words = StatementUtils.findCompound(primary, graph, componentSpecificIgnoredRelations, getOwnedScopes());
         words.addAll(getNegations());
         words.addAll(getMarkers());
         words.addAll(getPunctuation());
