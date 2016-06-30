@@ -44,6 +44,8 @@ public class TestStatements {
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
         // TODO: statement text is currently displayed as: [{She shouts}]
 //        String example = "She speaks and shouts.";
+//        String example = "just thought it was funny that a Brit would complain about this when the UK voting system is one of the absolute worst in the world at representing the will of the people + your other house consists of a bunch of noble people.";
+
 
 
 
@@ -52,6 +54,7 @@ public class TestStatements {
 //        String example = "Anyway, just make your own rule and stick to it.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";  // TODO: should be limiting components to a single subject, verb, etc.
 //        String example = "Chronically stressed people often have trouble sleeping and establishing a practice goes a long way to reduce stress.";
+        String example = "I'm sure you meant the EU as a whole and not the European Parliament specifically";  // specifically should modify to "meant", not "sure"
 
 
         // FIXED (SOMEWHAT)
@@ -78,7 +81,7 @@ public class TestStatements {
 //        String example =    "I think she's mad. I don't care whether she likes me. She says that they should go.";
 //        String example =    "I don't care whether or not they come.";
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
-        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";
+//        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";
 
 
 

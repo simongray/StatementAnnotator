@@ -51,10 +51,11 @@ public abstract class AbstractComponent implements StatementComponent {
         // find markers for each entry
         markerMapping = StatementUtils.makeDescendantMap(entries, Relations.MARK, graph);
 
+        // TODO: find simpler and less resource intensive way of doing this
         // find ALL of the words of this component, to be used for recomposing into statement without missing words
         // only follows non-component specific ignored relations (e.g. dep, punct, mark)
         // this is done in order to not cross into the relations of other components
-        Set<String> componentSpecificIgnoredRelations = getIgnoredRelations();
+        Set<String> componentSpecificIgnoredRelations = new HashSet<>(getIgnoredRelations());
         componentSpecificIgnoredRelations.removeAll(Relations.IGNORED_RELATIONS);
         words = StatementUtils.findCompound(primary, graph, componentSpecificIgnoredRelations, getOwnedScopes());
         words.addAll(getNegations());

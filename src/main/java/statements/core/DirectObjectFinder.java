@@ -96,6 +96,9 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
             directObjects.add(new DirectObject(object, copObjectMapping.get(object), DirectObject.Type.COP, graph));
         }
 
+        logger.info("dobjObjectMapping: " + dobjObjectMapping);
+        logger.info("xcompObjectMapping: " + xcompObjectMapping);
+        logger.info("copObjectMapping: " + copObjectMapping);
         logger.info("direct objects found: " + directObjects);
 
         return directObjects;

@@ -50,7 +50,8 @@ public class Relations {
          * Relations that are ignored when constructing ANY component.
          */
         IGNORED_RELATIONS.add(Relations.DEP);  // ignoring all unknown dependencies
-        IGNORED_RELATIONS.add(Relations.MARK);  // ignoring all markers  // TODO: check if this has any repercussions
+        IGNORED_RELATIONS.add(Relations.MARK);  // ignoring all markers
+        IGNORED_RELATIONS.add(Relations.CCOMP);  // moved from IGNORED_VERB_RELATIONS  // TODO: check if this has any repercussions
         IGNORED_SUBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_VERB_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_DIRECT_OBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
@@ -69,7 +70,6 @@ public class Relations {
         IGNORED_VERB_RELATIONS.add(Relations.DOBJ);
         IGNORED_VERB_RELATIONS.add(Relations.NMOD);
         IGNORED_VERB_RELATIONS.add(Relations.XCOMP);
-        IGNORED_VERB_RELATIONS.add(Relations.CCOMP);
         IGNORED_VERB_RELATIONS.add(Relations.CONJ);  // conjunct verbs are found using common governor, not conj relation!
         IGNORED_VERB_RELATIONS.add(Relations.CC);  // conjunct verbs are found using common governor, not conj relation!
 
