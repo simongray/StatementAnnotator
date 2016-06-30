@@ -7,6 +7,7 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 import statements.annotations.StatementsAnnotation;
+import statements.core.AbstractComponent;
 import statements.core.Statement;
 import statements.core.StatementComponent;
 import statements.core.StatementUtils;
@@ -80,8 +81,8 @@ public class TestStatements {
 //        String example =    "I think she's mad. I don't care whether she likes me. She says that they should go.";
 //        String example =    "I don't care whether or not they come.";
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
-//        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";
-        String example = "She speaks and shouts.";
+        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";
+//        String example = "She speaks and shouts.";
 
 
 
@@ -98,6 +99,17 @@ public class TestStatements {
             System.out.println(sentence);
             StatementUtils.printStatements(statements);
             System.out.println(statements);
+
+            for (Statement statement : statements) {
+                for (StatementComponent statementComponent : statement.getComponents()) {
+                    if (statementComponent instanceof AbstractComponent) {
+                        AbstractComponent component = (AbstractComponent) statementComponent;
+                        System.out.println("entries: " + component.getEntries());
+                        System.out.println("small compounds: " + component.getSmallCompounds());
+                        System.out.println("compounds: " + component.getCompounds());
+                    }
+                }
+            }
         }
     }
 }

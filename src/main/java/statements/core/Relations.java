@@ -26,8 +26,11 @@ public class Relations {
     public static final String MARK = "mark";  // for markers, e.g. "whether" or "that"
     public static final String ACL = "acl";  // clausal modifiers of nouns, e.g. "a way" --acl--> "to reduce stress"
     public static final String ACL_RELCL = "acl:relcl";  // a subtype of acl
+    public static final String COMPOUND = "compound";  // e.g. "European" + "Parliament"
 
     public static final Set<String> IGNORED_SCOPES = new HashSet<>();
+
+    public static final Set<String> SMALL_COMPOUND_SCOPE = new HashSet<>();
 
     public static final Set<String> IGNORED_RELATIONS = new HashSet<>();
     public static final Set<String> IGNORED_VERB_RELATIONS = new HashSet<>();
@@ -40,6 +43,11 @@ public class Relations {
     public static final Set<String> IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS = new HashSet<>();
 
     static {
+        /**
+         * The smallest scope for compounds.
+         */
+        SMALL_COMPOUND_SCOPE.add(COMPOUND);
+
         /**
          * Relations whose dependant + children (= scope) cannot be used to find components in.
          */

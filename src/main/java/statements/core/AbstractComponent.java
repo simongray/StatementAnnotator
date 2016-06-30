@@ -19,6 +19,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> complete;
     protected final Set<IndexedWord> words;
     protected final Set<Set<IndexedWord>> compounds;
+    protected final Set<Set<IndexedWord>> smallCompounds;
     protected final Map<IndexedWord, Set<IndexedWord>> negationMapping;
     private final Map<IndexedWord, Set<IndexedWord>> punctuationMapping;
     private final Map<IndexedWord, Set<IndexedWord>> markerMapping;
@@ -38,8 +39,10 @@ public abstract class AbstractComponent implements StatementComponent {
 
         // recursively discover all compounds
         compounds = new HashSet<>();
+        smallCompounds = new HashSet<>();
         for (IndexedWord word : entries) {
             compounds.add(StatementUtils.findCompound(word, graph, getIgnoredCompoundRelations(), getOwnedScopes()));
+            smallCompounds.add(StatementUtils.findLimitedCompound(word, graph, getSmallCompoundScope()));
         }
 
         // find negations for each entry
@@ -61,6 +64,13 @@ public abstract class AbstractComponent implements StatementComponent {
         words.addAll(getNegations());
         words.addAll(getMarkers());
         words.addAll(getPunctuation());
+    }
+
+    /**
+     * Describes relations whose entire set of descendants is to be accepted, regardless of ignored relations.
+     */
+    protected Set<String> getSmallCompoundScope() {
+        return Relations.SMALL_COMPOUND_SCOPE;
     }
 
     /**
@@ -118,6 +128,16 @@ public abstract class AbstractComponent implements StatementComponent {
      */
     public Set<Set<IndexedWord>> getCompounds() {
         return compounds;
+    }
+
+
+    /**
+     * The compounds of the complete component.
+     *
+     * @return compounds
+     */
+    public Set<Set<IndexedWord>> getSmallCompounds() {
+        return smallCompounds;
     }
 
     /**
