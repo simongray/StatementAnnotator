@@ -32,6 +32,8 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
                 complete.addAll(cc);
             }
         }
+
+        words.addAll(complete);  // needed since verb conjunctions are different from other components
     }
 
     @Override
