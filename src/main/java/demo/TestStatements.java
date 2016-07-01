@@ -42,7 +42,14 @@ public class TestStatements {
 //        String example = "The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.";
 
         // STILL NEED TO BE FIXED
+        // TODO: the two different nmods that are related to the same verb should be a conjunction?
 //        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
+        // TODO: in this case, the indirect object does not even respect a normal conjunction
+//        String example = "I keep one in my bag and on my head at all times.";
+//        String example = "I keep them in my bag and on my head";
+        // TODO: this is a case of an "extended" indirect object that might also be considered for a conjunction
+        String example = "They live in a house in Copenhagen.";
+
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
@@ -87,7 +94,7 @@ public class TestStatements {
 //        String example = "Sometimes there's no smog for a whole week, sometimes it lasts for a whole week and you'll just stay mostly indoors and use masks when outside.";  // an example of parataxis
 //        String example = "Before you go, familiarise yourself with the air quality in your own area so you have a means of comparison.";
 //        String example = "They are smartphone-connected and always on, except when we're out during weekdays.";
-        String example = "That's not the way he sees it.";
+//        String example = "That's not the way he sees it.";
 
 
 

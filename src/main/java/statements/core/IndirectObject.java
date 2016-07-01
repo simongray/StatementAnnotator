@@ -15,6 +15,21 @@ public class IndirectObject extends AbstractComponent implements Resembling<Indi
     }
 
     /**
+     * Describes which relations are ignored when producing the complete indirect object.
+     */
+    protected Set<String> getIgnoredRelations() {
+        return Relations.IGNORED_INDIRECT_OBJECT_RELATIONS;
+    }
+
+    /**
+     * Describes which relations are ignored when producing compound indirect objects.
+     */
+    protected Set<String> getIgnoredCompoundRelations() {
+        return Relations.IGNORED_INDIRECT_OBJECT_COMPOUND_RELATIONS;
+    }
+
+
+    /**
      * The resemblance of another indirect object to this indirect object.
      *
      * @param otherObject object to be compared with

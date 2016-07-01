@@ -48,14 +48,14 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
     }
 
     /**
-     * Describes which relations are ignored when producing the complete subject.
+     * Describes which relations are ignored when producing the complete verb.
      */
     protected Set<String> getIgnoredRelations() {
         return Relations.IGNORED_VERB_RELATIONS;
     }
 
     /**
-     * Describes which relations are ignored when producing compound subjects.
+     * Describes which relations are ignored when producing compound verbs.
      */
     protected Set<String> getIgnoredCompoundRelations() {
         return Relations.IGNORED_VERB_COMPOUND_RELATIONS;

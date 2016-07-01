@@ -42,11 +42,13 @@ public class Relations {
     public static final Set<String> IGNORED_VERB_RELATIONS = new HashSet<>();
     public static final Set<String> IGNORED_SUBJECT_RELATIONS = new HashSet<>();
     public static final Set<String> IGNORED_DIRECT_OBJECT_RELATIONS = new HashSet<>();
+    public static final Set<String> IGNORED_INDIRECT_OBJECT_RELATIONS = new HashSet<>();
 
     public static final Set<String> IGNORED_COMPOUND_RELATIONS = new HashSet<>();
     public static final Set<String> IGNORED_VERB_COMPOUND_RELATIONS = new HashSet<>();
     public static final Set<String> IGNORED_SUBJECT_COMPOUND_RELATIONS = new HashSet<>();
     public static final Set<String> IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS = new HashSet<>();
+    public static final Set<String> IGNORED_INDIRECT_OBJECT_COMPOUND_RELATIONS = new HashSet<>();
 
     static {
         /**
@@ -76,6 +78,7 @@ public class Relations {
         IGNORED_SUBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_VERB_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_DIRECT_OBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
+        IGNORED_INDIRECT_OBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
 
         /**
          * Relations that are ignored when constructing subjects.
@@ -102,6 +105,11 @@ public class Relations {
         IGNORED_DIRECT_OBJECT_RELATIONS.add(Relations.NMOD);
 
         /**
+         * Relations that are ignored when constructing indirect objects.
+         */
+        IGNORED_INDIRECT_OBJECT_RELATIONS.add(Relations.NMOD);
+
+        /**
          * Relations that are ignored when determining ANY compound boundaries.
          */
         IGNORED_COMPOUND_RELATIONS.add(Relations.CONJ);  // ignoring all links to conjunct verbs, nouns, etc.
@@ -125,5 +133,11 @@ public class Relations {
          */
         IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS.addAll(IGNORED_DIRECT_OBJECT_RELATIONS);
         IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS.addAll(IGNORED_COMPOUND_RELATIONS);
+
+        /**
+         * Relations that are ignored when determining direct object compound boundaries.
+         */
+        IGNORED_INDIRECT_OBJECT_COMPOUND_RELATIONS.addAll(IGNORED_INDIRECT_OBJECT_RELATIONS);
+        IGNORED_INDIRECT_OBJECT_COMPOUND_RELATIONS.addAll(IGNORED_COMPOUND_RELATIONS);
     }
 }

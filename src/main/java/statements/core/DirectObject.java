@@ -25,14 +25,14 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
     }
 
     /**
-     * Describes which relations are ignored when producing the complete subject.
+     * Describes which relations are ignored when producing the complete direct object.
      */
     protected Set<String> getIgnoredRelations() {
         return Relations.IGNORED_DIRECT_OBJECT_RELATIONS;
     }
 
     /**
-     * Describes which relations are ignored when producing compound subjects.
+     * Describes which relations are ignored when producing compound direct objects.
      */
     protected Set<String> getIgnoredCompoundRelations() {
         return Relations.IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS;
