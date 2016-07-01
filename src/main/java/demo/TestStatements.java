@@ -43,7 +43,7 @@ public class TestStatements {
 
         // STILL NEED TO BE FIXED
         // TODO: the cc (= "and") is not preserved in the indirect object text since it is related to the verb
-//        String example = "I keep them in my bag and on my head";
+        String example = "I keep them in my bag and on my head";
 
 
 
@@ -54,7 +54,7 @@ public class TestStatements {
 //        String example = "I'm sure you meant the EU as a whole and not the European Parliament specifically";  // specifically should modify to "meant", not "sure"
 //        String example = "Bought some 3M 95N-rated face masks for smoggy days.\n";
         // TODO: in this case, the indirect object does not even respect a normal conjunction
-        String example = "I keep one in my bag and on my head at all times.";
+//        String example = "I keep one in my bag and on my head at all times.";
 
 
         // FIXED (SOMEWHAT)
