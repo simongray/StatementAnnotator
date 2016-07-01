@@ -64,7 +64,7 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
             for (IndexedWord dobjObject : dobjMapping.keySet()) {
                 GrammaticalRelation relation = graph.reln(xcompObject, dobjObject);
                 if (relation != null && relation.getShortName().equals(Relations.DOBJ)) {
-                    dobjMapping.remove(dobjObject);
+                    dobjMapping.remove(dobjObject);  // TODO: potential concurrency issue
                 }
             }
         }
