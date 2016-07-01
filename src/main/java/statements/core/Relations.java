@@ -27,6 +27,7 @@ public class Relations {
     public static final String ACL = "acl";  // clausal modifiers of nouns, e.g. "a way" --acl--> "to reduce stress"
     public static final String ACL_RELCL = "acl:relcl";  // a subtype of acl
     public static final String COMPOUND = "compound";  // e.g. "European" + "Parliament"
+    public static final String ADVCL = "advcl";  // modifies a verb or adjective with additional description
 
     public static final Set<String> IGNORED_SCOPES = new HashSet<>();
 
@@ -53,6 +54,7 @@ public class Relations {
          */
         IGNORED_SCOPES.add(Relations.ACL);  // scope for description of a noun
         IGNORED_SCOPES.add(Relations.ACL_RELCL);
+        IGNORED_SCOPES.add(Relations.ADVCL);  // scope for description of a verb/adjective
 
         /**
          * Relations that are ignored when constructing ANY component.
