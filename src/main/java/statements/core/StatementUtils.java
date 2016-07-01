@@ -251,23 +251,23 @@ public class StatementUtils {
      * Create sets of words that are linked by a common governor (= parent) in a specific relation.
      * Useful for finding conjunct verbs, for example, using the nsubj relation.
      *
-     * @param words
+     * @param entries
      * @param relation
      * @param graph
      * @return
      */
-    public static Set<Set<IndexedWord>> findJointlyGoverned(Set<IndexedWord> words, String relation, SemanticGraph graph) {
+    public static Set<Set<IndexedWord>> findJointlyGoverned(Set<IndexedWord> entries, String relation, SemanticGraph graph) {
         Map<IndexedWord, Set<IndexedWord>> childMapping = new HashMap<>();
 
         // retrieve the relevant child nodes based on the relation
         // store word as child of each parent in child-parents mapping
-        for (IndexedWord word : words) {
-            Set<IndexedWord> specificChildren = findSpecificDescendants(relation, word, graph);
-            logger.info("specific children for " + word + " with relation " + relation + ": " + specificChildren);
+        for (IndexedWord entry : entries) {
+            Set<IndexedWord> specificChildren = findSpecificDescendants(relation, entry, graph);
+            logger.info("specific children for " + entry + " with relation " + relation + ": " + specificChildren);
 
             for (IndexedWord child : specificChildren) {
                 Set<IndexedWord> parents = childMapping.getOrDefault(child, new HashSet<>());
-                parents.add(word);
+                parents.add(entry);
                 childMapping.put(child, parents);
             }
         }
@@ -282,9 +282,9 @@ public class StatementUtils {
         // make sure that each word is also separately represented as a set
         // if they are jointly governed, then they will be merged anyway
         // this ensures that all words survive the merge process
-        for (IndexedWord word : words) {
+        for (IndexedWord entry : entries) {
             Set<IndexedWord> singleWordSet = new HashSet<>();
-            singleWordSet.add(word);
+            singleWordSet.add(entry);
             jointlyGoverned.add(singleWordSet);
         }
 
