@@ -56,9 +56,31 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
             nmodMapping.remove(obj);
         }
 
+        // find jointly governed indirect objects
+        // TODO: make into a utility method instead?
+        Set<Set<IndexedWord>> jointlyGoverned = new HashSet<>();
+        for (IndexedWord entry : nmodMapping.keySet()) {
+            IndexedWord parent = nmodMapping.get(entry);
+
+            for (IndexedWord otherEntry : nmodMapping.keySet()) {
+                IndexedWord otherParent = nmodMapping.get(entry);
+
+                if (parent == otherParent) {
+                    Set<IndexedWord> entrySet = new HashSet<>();
+                    entrySet.add(entry);
+                    entrySet.add(otherEntry);
+                    jointlyGoverned.add(entrySet);
+                }
+            }
+        }
+        StatementUtils.merge(jointlyGoverned);
+        logger.info("jointly governed: " + jointlyGoverned);
 
         // find sequences (ex: "in a chair in a house in Copenhagen")
         Set<Set<IndexedWord>> sequences = StatementUtils.findSequences(nmodMapping.keySet(), Relations.NMOD, graph);
+        logger.info("sequences: " + sequences);
+
+        sequences.addAll(jointlyGoverned);
 
         // build complete objects from sequences
         for (Set<IndexedWord> sequence : sequences) {
@@ -88,7 +110,6 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
 //            indirectObjects.add(new IndirectObject(object, nmodObjectMapping.get(object), graph));
 //        }
 //        logger.info("nmodObjectMapping: " + nmodObjectMapping);
-        logger.info("sequences: " + sequences);
         logger.info("nmodMapping: " + nmodMapping);
         logger.info("indirect objects found: " + indirectObjects);
 
