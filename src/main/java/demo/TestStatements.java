@@ -86,7 +86,8 @@ public class TestStatements {
 //        String example = "You'll get used to it.";
 //        String example = "Sometimes there's no smog for a whole week, sometimes it lasts for a whole week and you'll just stay mostly indoors and use masks when outside.";  // an example of parataxis
 //        String example = "Before you go, familiarise yourself with the air quality in your own area so you have a means of comparison.";
-        String example = "They are smartphone-connected and always on, except when we're out during weekdays.";
+//        String example = "They are smartphone-connected and always on, except when we're out during weekdays.";
+        String example = "That's not the way he sees it.";
 
 
 
@@ -102,20 +103,19 @@ public class TestStatements {
             Set<Statement> statements = sentence.get(StatementsAnnotation.class);
             System.out.println(sentence);
             StatementUtils.printStatements(statements);
-            System.out.println(statements);
 
-            if (statements != null) {
-                for (Statement statement : statements) {
-                    for (StatementComponent statementComponent : statement.getComponents()) {
-                        if (statementComponent instanceof AbstractComponent) {
-                            AbstractComponent component = (AbstractComponent) statementComponent;
-                            System.out.println("entries: " + component.getEntries());
-                            System.out.println("small compounds: " + component.getSmallCompounds());
-                            System.out.println("compounds: " + component.getCompounds());
-                        }
-                    }
-                }
-            }
+//            if (statements != null) {
+//                for (Statement statement : statements) {
+//                    for (StatementComponent statementComponent : statement.getComponents()) {
+//                        if (statementComponent instanceof AbstractComponent) {
+//                            AbstractComponent component = (AbstractComponent) statementComponent;
+//                            System.out.println("entries: " + component.getEntries());
+//                            System.out.println("small compounds: " + component.getSmallCompounds());
+//                            System.out.println("compounds: " + component.getCompounds());
+//                        }
+//                    }
+//                }
+//            }
         }
     }
 }

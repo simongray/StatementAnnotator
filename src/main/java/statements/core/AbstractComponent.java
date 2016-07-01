@@ -24,6 +24,7 @@ public abstract class AbstractComponent implements StatementComponent {
     private final Map<IndexedWord, Set<IndexedWord>> punctuationMapping;
     private final Map<IndexedWord, Set<IndexedWord>> markerMapping;
     private final Map<IndexedWord, Set<IndexedWord>> adverbialClauseMapping;
+    private final Map<IndexedWord, Set<IndexedWord>> nounClauseMapping;
 
     // TODO: remove secondary requirement from constructor, find dynamically instead
     public AbstractComponent(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
@@ -57,6 +58,12 @@ public abstract class AbstractComponent implements StatementComponent {
 
         // find clauses for each entry
         adverbialClauseMapping = StatementUtils.makeDescendantMap(entries, Relations.ADVCL, graph);
+        nounClauseMapping = StatementUtils.makeDescendantMap(entries, Relations.ACL, graph);
+        Map<IndexedWord, Set<IndexedWord>> aclRelclMapping = StatementUtils.makeDescendantMap(entries, Relations.ACL_RELCL, graph);
+        for (IndexedWord word : aclRelclMapping.keySet()) {
+            Set<IndexedWord> clause = nounClauseMapping.getOrDefault(word, new HashSet<>());
+            clause.addAll(aclRelclMapping.get(word));
+        }
 
         // TODO: find simpler and less resource intensive way of doing this
         // find ALL of the words of this component, to be used for recomposing into statement without missing words
@@ -228,8 +235,31 @@ public abstract class AbstractComponent implements StatementComponent {
      */
     public Set<IndexedWord> getAdverbialClauses() {
         Set<IndexedWord> adverbialClauses = new HashSet<>();
-        for (Set<IndexedWord> markerSet : adverbialClauseMapping.values()) adverbialClauses.addAll(markerSet);
+        for (Set<IndexedWord> clauseSet : adverbialClauseMapping.values()) adverbialClauses.addAll(clauseSet);
         return adverbialClauses;
+    }
+
+    /**
+     * The noun clauses for a specific entry.
+     *
+     * @param entry the entry to get the noun clauses for
+     * @return noun clauses for the entry
+     */
+    public Set<IndexedWord> getNounClauses(IndexedWord entry) throws MissingEntryException {
+        if (!nounClauseMapping.containsKey(entry)) throw new MissingEntryException(entry + " is not a part of this component");
+        return new HashSet<>(nounClauseMapping.get(entry));
+    }
+
+
+    /**
+     * All noun clauses for every entry.
+     *
+     * @return noun clauses
+     */
+    public Set<IndexedWord> getNounClauses() {
+        Set<IndexedWord> nounClauses = new HashSet<>();
+        for (Set<IndexedWord> clauseSet : nounClauseMapping.values()) nounClauses.addAll(clauseSet);
+        return nounClauses;
     }
 
     /**
@@ -240,6 +270,7 @@ public abstract class AbstractComponent implements StatementComponent {
     public Set<IndexedWord> getClauses() {
         Set<IndexedWord> clauses = new HashSet<>();
         clauses.addAll(getAdverbialClauses());
+        clauses.addAll(getNounClauses());
         return clauses;
     }
 
@@ -294,9 +325,9 @@ public abstract class AbstractComponent implements StatementComponent {
     @Override
     public String toString() {
         return "{" +
-            getClass().getSimpleName() + ": " + getString() +
-            (count() > 1? ", count: " + count() : "") +
-            (!getClauses().isEmpty()? ", clauses: " + StatementUtils.join(getClauses()) : "")
+            getClass().getSimpleName() + ": \"" + getString() + "\"" +
+            (count() > 1? ", entries: " + count() : "") +  // TODO: better name than entry?
+            (!getClauses().isEmpty()? ", clause: \"" + StatementUtils.join(getClauses()) + "\"" : "")
         + "}";
     }
 }

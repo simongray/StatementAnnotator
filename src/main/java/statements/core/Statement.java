@@ -124,9 +124,23 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     }
 
 
+    /**
+     * The number of components in the statement.
+     *
+     * @return size
+     */
+    public int count() {
+        return getComponents().size();
+    }
+
+
     @Override
     public String toString() {
-        return "{" + StatementUtils.join(getComplete()) + "}";
+        return "{"
+            + getClass().getSimpleName() +
+            ": \"" + StatementUtils.join(getComplete()) + "\"" +
+            (count() > 1? ", components: " + count() : "") +
+        "}";
     }
 
     /**
