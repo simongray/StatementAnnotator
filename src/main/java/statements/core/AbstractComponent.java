@@ -17,7 +17,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> secondary;
     protected final Set<IndexedWord> entries;
     protected final Set<IndexedWord> complete;
-    protected final Set<IndexedWord> words;
+    protected final Set<IndexedWord> words;  // used to make sure re-composed statements have access to all words
     protected final Set<Set<IndexedWord>> compounds;
     protected final Set<Set<IndexedWord>> smallCompounds;
     protected final Map<IndexedWord, Set<IndexedWord>> negationMapping;
