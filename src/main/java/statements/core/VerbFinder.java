@@ -80,14 +80,14 @@ public class VerbFinder extends AbstractFinder<Verb> {
         Collection<Set<IndexedWord>> conjunctVerbs = StatementUtils.findJointlyGoverned(simpleVerbs, Relations.NSUBJ, graph);
         logger.info("conjunct verbs: " + conjunctVerbs);
 
-        // build complete verbs from mappings
+        // build complete verbs from conjunct verb sets
         for (Set<IndexedWord> conjunctVerbSet : conjunctVerbs) {
             IndexedWord primary = null;
 
             // treat lowest indexed word as primary entry
-            for (IndexedWord word : conjunctVerbSet) {
-                if (primary == null || primary.index() < word.index()) {
-                    primary = word;
+            for (IndexedWord entry : conjunctVerbSet) {
+                if (primary == null || primary.index() > entry.index()) {
+                    primary = entry;
                 }
             }
 
