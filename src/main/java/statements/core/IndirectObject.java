@@ -12,6 +12,20 @@ public class IndirectObject extends AbstractComponent implements Resembling<Indi
 
     public IndirectObject(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
         super(primary, secondary, graph);
+
+        // COPY-PASTED FROM VERB CLASS
+        // temporary hotfix, needed because sequences of indirect objects are now treated as conjunctions
+        // TODO: review and revise this stanza
+        // in some special cases (e.g. with verb conjunctions) it is necessary to add the other compounds back in
+        // the reason this is only performed when count > 1 (apart from saving resources)
+        // is that verbs with cc relations that are NOT in verb conjunctions, would display as "loves and" or "says or"
+        if (count() > 1) {
+            for (Set<IndexedWord> compound : getCompounds()) {
+                complete.addAll(compound);
+            }
+        }
+
+        words.addAll(complete);  // needed since verb conjunctions are different from other components
     }
 
     /**

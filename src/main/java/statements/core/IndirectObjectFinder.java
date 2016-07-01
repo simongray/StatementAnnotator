@@ -30,7 +30,9 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
         Set<IndexedWord> ignoredWords = getIgnoredWords(graph);
         logger.info("ignored words: " + ignoredWords);
 
-        // find simple objects from relations
+        // find simple indirect objects from relations
+        // NOTE: the reason for the mapping in nmodMapping is so that the cases described in the stanza below can be filtered
+        // the key set of the map are the real nmod entries!
         for (TypedDependency dependency : dependencies) {
             if (dependency.reln().getShortName().equals(Relations.NMOD)) {
                 if (!ignoredWords.contains(dependency.dep())) nmodMapping.put(dependency.dep(), dependency.gov());
@@ -54,14 +56,40 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
             nmodMapping.remove(obj);
         }
 
-        // create indirect object mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> nmodObjectMapping = StatementUtils.makeChildMap(nmodMapping.keySet(), Relations.CONJ, graph);
 
-        // build complete objects from mapping
-        for (IndexedWord object : nmodObjectMapping.keySet()) {
-            indirectObjects.add(new IndirectObject(object, nmodObjectMapping.get(object), graph));
+        // find sequences (ex: "in a chair in a house in Copenhagen")
+        Set<Set<IndexedWord>> sequences = StatementUtils.findSequences(nmodMapping.keySet(), Relations.NMOD, graph);
+
+        // build complete objects from sequences
+        for (Set<IndexedWord> sequence : sequences) {
+            IndexedWord primary = null;
+
+            // treat lowest indexed word as primary entry
+            for (IndexedWord entry : sequence) {
+                if (primary == null || primary.index() > entry.index()) {
+                    primary = entry;
+                }
+            }
+
+            logger.info("found new indirect object with " + sequence.size() + " entries, primary: " + primary);
+
+            // use rest of set as secondary entries
+            sequence.remove(primary);
+
+            indirectObjects.add(new IndirectObject(primary, sequence, graph));
         }
 
+        // TODO: also do conj?
+//        // create indirect object mapping based on relations
+//        Map<IndexedWord, Set<IndexedWord>> nmodObjectMapping = StatementUtils.makeChildMap(nmodMapping.keySet(), Relations.CONJ, graph);
+//
+//        // build complete objects from mapping
+//        for (IndexedWord object : nmodObjectMapping.keySet()) {
+//            indirectObjects.add(new IndirectObject(object, nmodObjectMapping.get(object), graph));
+//        }
+//        logger.info("nmodObjectMapping: " + nmodObjectMapping);
+        logger.info("sequences: " + sequences);
+        logger.info("nmodMapping: " + nmodMapping);
         logger.info("indirect objects found: " + indirectObjects);
 
         return indirectObjects;

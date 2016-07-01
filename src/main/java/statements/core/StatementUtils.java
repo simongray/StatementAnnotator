@@ -294,6 +294,40 @@ public class StatementUtils {
         return jointlyGoverned;
     }
 
+
+    /**
+     * Create sets of words that are linked into a sequence using the same relation.
+     * Useful for finding sequences of indirect objects (ex: "<-nmod- {in a house} <-nmod- {in Copenhagen}")
+     *
+     * @param entries
+     * @param relation
+     * @param graph
+     * @return
+     */
+    public static Set<Set<IndexedWord>> findSequences(Set<IndexedWord> entries, String relation, SemanticGraph graph) {
+        Set<Set<IndexedWord>> sequences = new HashSet<>();
+
+        for (IndexedWord entry : entries) {
+            for (IndexedWord otherEntry : entries) {
+                if (entry != otherEntry) {
+                    GrammaticalRelation grammaticalRelation = graph.reln(entry, otherEntry);
+
+                    // add any two entries connected by the stated relation to the set of sequences
+                    if (grammaticalRelation != null && grammaticalRelation.getShortName().equals(relation)) {
+                        Set<IndexedWord> sequence = new HashSet<>();
+                        sequence.add(entry);
+                        sequence.add(otherEntry);
+                        sequences.add(sequence);
+                    }
+                }
+            }
+        }
+
+        merge(sequences);
+
+        return sequences;
+    }
+
     /**
      * Reduce a variable amount of Resemblance objects to the lowest common denominator.
      *
