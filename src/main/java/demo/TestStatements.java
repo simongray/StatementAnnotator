@@ -42,13 +42,11 @@ public class TestStatements {
 //        String example = "The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.";
 
         // STILL NEED TO BE FIXED
-        // TODO: the two different nmods that are related to the same verb should be a conjunction?
-//        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
         // TODO: in this case, the indirect object does not even respect a normal conjunction
 //        String example = "I keep one in my bag and on my head at all times.";
 
         // TODO: the cc (= "and") is not preserved in the indirect object text since it is related to the verb
-        String example = "I keep them in my bag and on my head";
+//        String example = "I keep them in my bag and on my head";
 
 
 
@@ -96,6 +94,7 @@ public class TestStatements {
 //        String example = "They are smartphone-connected and always on, except when we're out during weekdays.";
 //        String example = "That's not the way he sees it.";
 //        String example = "They live in a house in Copenhagen.";  // sequence indirect object
+        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
 
 
 

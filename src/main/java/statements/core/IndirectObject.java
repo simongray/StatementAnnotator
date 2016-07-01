@@ -25,6 +25,10 @@ public class IndirectObject extends AbstractComponent implements Resembling<Indi
             }
         }
 
+        // TODO: remove when done debugging
+        System.out.println(getCompounds());
+        System.out.println(getComplete());
+
         words.addAll(complete);  // needed since verb conjunctions are different from other components
     }
 
