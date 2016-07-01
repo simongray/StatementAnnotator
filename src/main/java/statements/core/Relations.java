@@ -8,6 +8,9 @@ import java.util.Set;
  *
  * The various ignore lists are used to determine the exact boundaries of components in the dependency graph,
  * as well as the boundaries of the compounds within the components.
+ *
+ * The relations here are based on SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class
+ * and the default Universal Dependencies English model (edu/stanford/nlp/models/parser/nndep/english_UD.gz).
  */
 public class Relations {
     public static final String DEP = "dep";  // unknown dependency
@@ -28,6 +31,7 @@ public class Relations {
     public static final String ACL_RELCL = "acl:relcl";  // a subtype of acl
     public static final String COMPOUND = "compound";  // e.g. "European" + "Parliament"
     public static final String ADVCL = "advcl";  // modifies a verb or adjective with additional description
+    public static final String PARATAXIS = "parataxis";  // ex: "sometimes <X>, sometimes <Y>"
 
     public static final Set<String> IGNORED_SCOPES = new HashSet<>();
 
@@ -82,6 +86,7 @@ public class Relations {
         IGNORED_VERB_RELATIONS.add(Relations.XCOMP);
         IGNORED_VERB_RELATIONS.add(Relations.CONJ);  // conjunct verbs are found using common governor, not conj relation!
         IGNORED_VERB_RELATIONS.add(Relations.CC);  // conjunct verbs are found using common governor, not conj relation!
+        IGNORED_VERB_RELATIONS.add(Relations.PARATAXIS);
 
         /**
          * Relations that are ignored when constructing direct objects.

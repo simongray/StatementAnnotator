@@ -40,6 +40,7 @@ public class TestStatements {
 //        String example = "Bought some 3M 95N-rated face masks for smoggy days.\n";
 //        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
 
+
         // STILL NEED TO BE FIXED
 
 
@@ -80,7 +81,10 @@ public class TestStatements {
 //        String example = "She speaks and shouts.";
 //        String example = "Of course, Western cities usually don't have those crazy smog days.";  // TODO: there's a comma before the verb
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
-        String example = "just thought it was funny that a Brit would complain about this when the UK voting system is one of the absolute worst in the world at representing the will of the people + your other house consists of a bunch of noble people.";  // TODO: hilariously long verb
+//        String example = "just thought it was funny that a Brit would complain about this when the UK voting system is one of the absolute worst in the world at representing the will of the people + your other house consists of a bunch of noble people.";  // TODO: hilariously long verb
+//        String example = "Don't worry too much.";
+//        String example = "You'll get used to it.";
+        String example = "Sometimes there's no smog for a whole week, sometimes it lasts for a whole week and you'll just stay mostly indoors and use masks when outside.";  // an example of parataxis
 
 
 
@@ -98,13 +102,15 @@ public class TestStatements {
             StatementUtils.printStatements(statements);
             System.out.println(statements);
 
-            for (Statement statement : statements) {
-                for (StatementComponent statementComponent : statement.getComponents()) {
-                    if (statementComponent instanceof AbstractComponent) {
-                        AbstractComponent component = (AbstractComponent) statementComponent;
-                        System.out.println("entries: " + component.getEntries());
-                        System.out.println("small compounds: " + component.getSmallCompounds());
-                        System.out.println("compounds: " + component.getCompounds());
+            if (statements != null) {
+                for (Statement statement : statements) {
+                    for (StatementComponent statementComponent : statement.getComponents()) {
+                        if (statementComponent instanceof AbstractComponent) {
+                            AbstractComponent component = (AbstractComponent) statementComponent;
+                            System.out.println("entries: " + component.getEntries());
+                            System.out.println("small compounds: " + component.getSmallCompounds());
+                            System.out.println("compounds: " + component.getCompounds());
+                        }
                     }
                 }
             }
