@@ -68,6 +68,7 @@ public class Relations {
         IGNORED_RELATIONS.add(Relations.DEP);  // ignoring all unknown dependencies
         IGNORED_RELATIONS.add(Relations.MARK);  // ignoring all markers
         IGNORED_RELATIONS.add(Relations.CCOMP);  // moved from IGNORED_VERB_RELATIONS  // TODO: check if this has any repercussions
+        IGNORED_RELATIONS.add(Relations.ADVCL);  // ignoring adverbial clauses (still accessible through component)
         IGNORED_SUBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_VERB_RELATIONS.addAll(IGNORED_RELATIONS);
         IGNORED_DIRECT_OBJECT_RELATIONS.addAll(IGNORED_RELATIONS);

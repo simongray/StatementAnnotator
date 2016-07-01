@@ -100,10 +100,12 @@ public class StatementUtils {
 
             // when encountering an owned scope, then that scope is added in full
             // in other cases, relations are added when they do not appear in the set of ignoredRelations
-            if (ownedScopes != null && ownedScopes.contains(relation.getShortName())) {
-                compoundComponents.addAll(findCompound(child, graph));
-            } else if (ignoredRelations == null || !ignoredRelations.contains(relation.getShortName())) {
-                compoundComponents.addAll(findCompound(child, graph, null, ignoredRelations));
+            if (ignoredRelations == null || !ignoredRelations.contains(relation.getShortName())) {
+                if (ownedScopes != null && ownedScopes.contains(relation.getShortName())) {
+                    compoundComponents.addAll(findCompound(child, graph));
+                } else {
+                    compoundComponents.addAll(findCompound(child, graph, null, ignoredRelations));
+                }
             }
         }
 

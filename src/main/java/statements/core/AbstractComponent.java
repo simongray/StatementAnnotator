@@ -23,6 +23,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Map<IndexedWord, Set<IndexedWord>> negationMapping;
     private final Map<IndexedWord, Set<IndexedWord>> punctuationMapping;
     private final Map<IndexedWord, Set<IndexedWord>> markerMapping;
+    private final Map<IndexedWord, Set<IndexedWord>> adverbialClauseMapping;
 
     // TODO: remove secondary requirement from constructor, find dynamically instead
     public AbstractComponent(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
@@ -53,6 +54,9 @@ public abstract class AbstractComponent implements StatementComponent {
 
         // find markers for each entry
         markerMapping = StatementUtils.makeDescendantMap(entries, Relations.MARK, graph);
+
+        // find clauses for each entry
+        adverbialClauseMapping = StatementUtils.makeDescendantMap(entries, Relations.ADVCL, graph);
 
         // TODO: find simpler and less resource intensive way of doing this
         // find ALL of the words of this component, to be used for recomposing into statement without missing words
@@ -207,6 +211,39 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
+     * The adverbial clauses for a specific entry
+     *
+     * @param entry the entry to get the adverbial clauses for
+     * @return adverbial clauses for the entry
+     */
+    public Set<IndexedWord> getAdverbialClauses(IndexedWord entry) throws MissingEntryException {
+        if (!adverbialClauseMapping.containsKey(entry)) throw new MissingEntryException(entry + " is not a part of this component");
+        return new HashSet<>(adverbialClauseMapping.get(entry));
+    }
+
+    /**
+     * All adverbial clauses for every entry.
+     *
+     * @return adverbial clauses
+     */
+    public Set<IndexedWord> getAdverbialClauses() {
+        Set<IndexedWord> adverbialClauses = new HashSet<>();
+        for (Set<IndexedWord> markerSet : adverbialClauseMapping.values()) adverbialClauses.addAll(markerSet);
+        return adverbialClauses;
+    }
+
+    /**
+     * All clauses (of all kinds) for every entry.
+     *
+     * @return clauses
+     */
+    public Set<IndexedWord> getClauses() {
+        Set<IndexedWord> clauses = new HashSet<>();
+        clauses.addAll(getAdverbialClauses());
+        return clauses;
+    }
+
+    /**
      * All of the words (including ignored ones) for this component.
      * Useful for recomposing into full statements.
      *
@@ -256,6 +293,10 @@ public abstract class AbstractComponent implements StatementComponent {
 
     @Override
     public String toString() {
-        return "{" + getClass().getSimpleName() + ": " + getString() + (count() > 1? ", count: " + count() : "") + "}";
+        return "{" +
+            getClass().getSimpleName() + ": " + getString() +
+            (count() > 1? ", count: " + count() : "") +
+            (!getClauses().isEmpty()? ", clauses: " + StatementUtils.join(getClauses()) : "")
+        + "}";
     }
 }
