@@ -263,6 +263,8 @@ public class StatementUtils {
         // store word as child of each parent in child-parents mapping
         for (IndexedWord entry : entries) {
             Set<IndexedWord> specificChildren = findSpecificDescendants(relation, entry, graph);
+
+            // TODO: revise this in the light of the fact that indirect objects cannot be found in this way (since they are not in a parent-child relationship)
             logger.info("specific children for " + entry + " with relation " + relation + ": " + specificChildren);
 
             for (IndexedWord child : specificChildren) {
