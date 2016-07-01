@@ -32,6 +32,7 @@ public class Relations {
     public static final String COMPOUND = "compound";  // e.g. "European" + "Parliament"
     public static final String ADVCL = "advcl";  // modifies a verb or adjective with additional description
     public static final String PARATAXIS = "parataxis";  // ex: "sometimes <X>, sometimes <Y>"
+    public static final String ADVMOD = "advmod";  // ex: the "always" in "always on"
 
     public static final Set<String> IGNORED_SCOPES = new HashSet<>();
 
@@ -52,6 +53,7 @@ public class Relations {
          * The smallest scope for compounds.
          */
         SMALL_COMPOUND_SCOPE.add(COMPOUND);
+        SMALL_COMPOUND_SCOPE.add(ADVMOD);  // TODO: consider whether it should be part of larger compound scope
 
         /**
          * Relations whose dependant + children (= scope) cannot be used to find components in.
