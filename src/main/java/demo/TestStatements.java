@@ -41,9 +41,6 @@ public class TestStatements {
 //        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
 
         // STILL NEED TO BE FIXED
-        // TODO: statement text is currently displayed as: [{She shouts}]
-//        String example = "just thought it was funny that a Brit would complain about this when the UK voting system is one of the absolute worst in the world at representing the will of the people + your other house consists of a bunch of noble people.";
-
 
 
 
@@ -82,7 +79,8 @@ public class TestStatements {
 //        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";
 //        String example = "She speaks and shouts.";
 //        String example = "Of course, Western cities usually don't have those crazy smog days.";  // TODO: there's a comma before the verb
-        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
+//        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
+        String example = "just thought it was funny that a Brit would complain about this when the UK voting system is one of the absolute worst in the world at representing the will of the people + your other house consists of a bunch of noble people.";  // TODO: hilariously long verb
 
 
 
