@@ -54,8 +54,8 @@ public class TestStatements {
                 |_ component: {Verb: "have found"}
                 |_ component: {Subject: "we"}*/
 
-        // TODO: double DirectObjects
-//        String example = "The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.";
+        // TODO: double DirectObjects, seems to related to XCOMP
+        String example = "The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.";
         /*
         The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.
           |_ statement: {Statement: "The app allows you to check the latest PM2 .5 index inside your flat and automate the purifiers", components: 5}
@@ -137,7 +137,7 @@ public class TestStatements {
 //        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
 //        String example = "I recently moved here with my girlfriend and we have found that it is quite manageable.";
         // TODO: should the two statements be linked?
-        String example = "Here's our solution: Use an air quality app.";
+//        String example = "Here's our solution: Use an air quality app.";
         /*
         Here's our solution: Use an air quality app.
           |_ statement: {Statement: "Use an air quality app", components: 2}

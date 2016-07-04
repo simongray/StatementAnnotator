@@ -52,12 +52,20 @@ public class Relations {
 
     public static final Set<String> IGNORED_INTER_COMPONENT_RELATIONS = new HashSet<>();
 
+    public static final Set<String> NESTED_STATEMENT_SCOPES = new HashSet<>();
+
     static {
         /**
          * The smallest scope for compounds.
          */
         SMALL_COMPOUND_SCOPE.add(COMPOUND);
         SMALL_COMPOUND_SCOPE.add(ADVMOD);  // TODO: consider whether it should be part of larger compound scope
+
+        /**
+         * Nested statement scopes.
+         */
+        NESTED_STATEMENT_SCOPES.add(CCOMP);
+        NESTED_STATEMENT_SCOPES.add(XCOMP);
 
         /**
          * Relations whose dependant + children (= scope) cannot be used to find components in.
@@ -74,6 +82,7 @@ public class Relations {
         IGNORED_RELATIONS.add(Relations.DEP);  // ignoring all unknown dependencies
         IGNORED_RELATIONS.add(Relations.MARK);  // ignoring all markers
         IGNORED_RELATIONS.add(Relations.CCOMP);  // moved from IGNORED_VERB_RELATIONS  // TODO: check if this has any repercussions
+        IGNORED_RELATIONS.add(Relations.XCOMP);  // moved from IGNORED_VERB_RELATIONS  // TODO: check if this has any repercussions
         IGNORED_RELATIONS.add(Relations.ADVCL);  // ignoring adverbial clauses (still accessible through component)
         IGNORED_RELATIONS.add(Relations.ACL);
         IGNORED_RELATIONS.add(Relations.ACL_RELCL);
@@ -95,7 +104,6 @@ public class Relations {
         IGNORED_VERB_RELATIONS.add(Relations.CSUBJ);
         IGNORED_VERB_RELATIONS.add(Relations.DOBJ);
         IGNORED_VERB_RELATIONS.add(Relations.NMOD);
-        IGNORED_VERB_RELATIONS.add(Relations.XCOMP);
         IGNORED_VERB_RELATIONS.add(Relations.CONJ);  // conjunct verbs are found using common governor, not conj relation!
         IGNORED_VERB_RELATIONS.add(Relations.CC);  // conjunct verbs are found using common governor, not conj relation!
         IGNORED_VERB_RELATIONS.add(Relations.PARATAXIS);

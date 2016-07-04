@@ -33,7 +33,6 @@ public class VerbFinder extends AbstractFinder<Verb> {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> simpleVerbs = new HashSet<>();
         Set<IndexedWord> adjectives = new HashSet<>();
-        Set<IndexedWord> xcompVerbs = new HashSet<>();  // for verbs that act as objects of another verb
         Set<IndexedWord> csubjVerbs = new HashSet<>();  // for verbs that act as subjects
         Set<IndexedWord> aclVerbs = new HashSet<>();  // for verbs that are used to describe nouns
         Set<Verb> verbs = new HashSet<>();
@@ -49,9 +48,6 @@ public class VerbFinder extends AbstractFinder<Verb> {
             if (dependency.reln().getShortName().equals(Relations.COP)) {
                 if (!ignoredWords.contains(dependency.dep())) adjectives.add(dependency.gov());
             }
-            if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
-                if (!ignoredWords.contains(dependency.dep())) xcompVerbs.add(dependency.dep());
-            }
             if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
                 if (!ignoredWords.contains(dependency.dep())) csubjVerbs.add(dependency.dep());
             }
@@ -62,9 +58,6 @@ public class VerbFinder extends AbstractFinder<Verb> {
 
         // remove adjectives from candidate verbs
         simpleVerbs.removeAll(adjectives);
-
-        // remove verbs that act as objects
-        simpleVerbs.removeAll(xcompVerbs);
 
         // remove verbs that act as subjects
         simpleVerbs.removeAll(csubjVerbs);

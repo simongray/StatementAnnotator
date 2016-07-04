@@ -198,7 +198,7 @@ public class StatementFinder {
                 GrammaticalRelation relation = graph.reln(parentPrimary, childPrimary);
 
                 // TODO: is there more general way that is not just checking for CCOMP or DEP relations?
-                if (relation != null && relation.getShortName().equals(Relations.CCOMP)) statementMapping.put(child, parent);
+                if (relation != null && Relations.NESTED_STATEMENT_SCOPES.contains(relation.getShortName())) statementMapping.put(child, parent);
             }
         }
 
