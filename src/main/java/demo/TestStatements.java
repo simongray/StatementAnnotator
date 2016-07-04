@@ -45,7 +45,8 @@ public class TestStatements {
         // TODO: the cc (= "and") is not preserved in the indirect object text since it is related to the verb
 //        String example = "I keep them in my bag and on my head";
 
-        // TODO: double subjects, missing a lot of information
+        // TODO: issue #42, double subjects, missing first statement, second statement nor correct, caused by lack of "I" before "recently"
+        // NOTE: inserting an "I" as the first word of the sentence gives correct output (two correct statements)
 //        String example = "Recently moved here with my girlfriend and we have found that it is quite manageable.";
         /*Recently moved here with my girlfriend and we have found that it is quite manageable.
             |_ statement: {Statement: "we have found that it is quite manageable", components: 3}
@@ -87,7 +88,7 @@ public class TestStatements {
          */
 
         // TODO: double subjects, confusion caused by parentheses)
-        String example = " sure was (I come from Copenhagen, Denmark).";
+//        String example = "I sure was (I come from Copenhagen, Denmark) :)";
         /*
         I sure was (I come from Copenhagen, Denmark).
           |_ statement: {Statement: "I sure was -LRB- I come from Copenhagen, Denmark -RRB-", components: 4}
@@ -144,6 +145,7 @@ public class TestStatements {
 //        String example = "That's not the way he sees it.";
 //        String example = "They live in a house in Copenhagen.";  // sequence indirect object
 //        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
+//        String example = "I recently moved here with my girlfriend and we have found that it is quite manageable.";
 
 
 
