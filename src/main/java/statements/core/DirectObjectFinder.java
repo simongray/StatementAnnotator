@@ -58,13 +58,13 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
 
         // find possible xcomp+dobj (V+O constructions)
         Set<IndexedWord> voContstructionObjects = new HashSet<>();
+        Set<IndexedWord> objectsToRemove = new HashSet<>();
 
-        // TODO: review this stanza (an possibly its relation to the one below)
         for (IndexedWord xcompObject : xcompObjects) {
             for (IndexedWord dobjObject : dobjMapping.keySet()) {
                 GrammaticalRelation relation = graph.reln(xcompObject, dobjObject);
                 if (relation != null && relation.getShortName().equals(Relations.DOBJ)) {
-                    dobjMapping.remove(dobjObject);  // TODO: potential concurrency issue
+                    objectsToRemove.add(dobjObject);
                 }
             }
         }
@@ -72,8 +72,15 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
         // remove dobj objects part of clausal verb subjects (through csubj relation)
         for (IndexedWord csubjVerb : csubjVerbs) {
             for (IndexedWord obj : dobjMapping.keySet()) {
-                if (dobjMapping.get(obj) == csubjVerb) dobjMapping.remove(obj);  // TODO: potential concurrency issue
+                if (dobjMapping.get(obj) == csubjVerb) {
+                    objectsToRemove.add(obj);
+                }
             }
+        }
+
+        // remove the objects that don't qualify
+        for (IndexedWord object : objectsToRemove) {
+            dobjMapping.remove(object);
         }
 
         // create direct object mapping based on relations
