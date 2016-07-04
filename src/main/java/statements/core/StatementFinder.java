@@ -61,6 +61,7 @@ public class StatementFinder {
 
         // discover inter-statement relationships
         // this mapping is used to compose statements together if they're connected
+        // TODO: currently just checking for CCOMP relations, it really is not that clever
         Map<AbstractComponent, AbstractComponent> statementMapping = getStatementMapping(componentMapping, graph);
         logger.info("statement mapping: " + statementMapping);
 
@@ -193,9 +194,10 @@ public class StatementFinder {
             IndexedWord childPrimary = child.getPrimary();
             IndexedWord parentPrimary = parent.getPrimary();
 
-            // TODO: can this be made less convoluted?
             if (parentPrimary != null && childPrimary != null) {
                 GrammaticalRelation relation = graph.reln(parentPrimary, childPrimary);
+
+                // TODO: is there more general way that is not just checking for CCOMP or DEP relations?
                 if (relation != null && relation.getShortName().equals(Relations.CCOMP)) statementMapping.put(child, parent);
             }
         }
