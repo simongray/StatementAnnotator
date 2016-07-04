@@ -28,11 +28,11 @@ public class TestStatements {
 
 //        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament... \n" +
 //        "I'm sure you meant the EU as a whole and not the European Parliament specifically, just thought it was funny that a Brit would complain about this when the UK voting system is one of the absolute worst in the world at representing the will of the people + your other house consists of a bunch of noble people.";
-        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable. Here's our solution: " +
-        "Use an air quality app. We use the one for http://aqicn.org/city/beijing/. I just have a widget on my Android phone that says the current AQI from the nearest measuring station. Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+. Anyway, just make your own rule and stick to it. " +
-        "Bought some 3M 95N-rated face masks for smoggy days. Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes. You can get some nice re-usable masks where you can change the filter too. " +
-        "They are smartphone-connected and always on, except when we're out during weekdays. The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers. " +
-        "If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too. I sure was (I come from Copenhagen, Denmark). ";
+//        String example =    "Recently moved here with my girlfriend and we have found that it is quite manageable. Here's our solution: " +
+//        "Use an air quality app. We use the one for http://aqicn.org/city/beijing/. I just have a widget on my Android phone that says the current AQI from the nearest measuring station. Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+. Anyway, just make your own rule and stick to it. " +
+//        "Bought some 3M 95N-rated face masks for smoggy days. Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes. You can get some nice re-usable masks where you can change the filter too. " +
+//        "They are smartphone-connected and always on, except when we're out during weekdays. The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers. " +
+//        "If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too. I sure was (I come from Copenhagen, Denmark). ";
 
 
 
@@ -45,7 +45,57 @@ public class TestStatements {
         // TODO: the cc (= "and") is not preserved in the indirect object text since it is related to the verb
 //        String example = "I keep them in my bag and on my head";
 
+        // TODO: double subjects, missing a lot of information
+//        String example = "Recently moved here with my girlfriend and we have found that it is quite manageable.";
+        /*Recently moved here with my girlfriend and we have found that it is quite manageable.
+            |_ statement: {Statement: "we have found that it is quite manageable", components: 3}
+                |_ component: {Subject: "it"}
+                |_ component: {Verb: "have found"}
+                |_ component: {Subject: "we"}*/
 
+        // TODO: missing verb in DirectObject construction
+//        String example = "Here's our solution: Use an air quality app.";
+        /*
+        Here's our solution: Use an air quality app.
+          |_ statement: {Statement: "Here's our solution : Use an air quality app", components: 3}
+             |_ component: {DirectObject: "an air quality app"}
+             |_ component: {Subject: "our solution"}
+             |_ component: {Verb: "Here's :"}
+         */
+
+        // TODO: double DirectObjects
+//        String example = "The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.";
+        /*
+        The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.
+          |_ statement: {Statement: "The app allows you to check the latest PM2 .5 index inside your flat and automate the purifiers", components: 5}
+             |_ component: {Verb: "allows"}
+             |_ component: {IndirectObject: "inside your flat"}
+             |_ component: {Subject: "The app"}
+             |_ component: {DirectObject: "check the latest PM2 .5 index and automate the purifiers", entries: 2}
+             |_ component: {DirectObject: "you"}
+         */
+
+        // TODO: multiple issues
+//        String example = "If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too.";
+        /*
+        If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too.
+          |_ statement: {Statement: "If you live in a city -LRB- e.g. Copenhagen -RRB- you might be surprised that some days it can actually be quite polluted in Western cities too", components: 4}
+             |_ component: {IndirectObject: "in a city -LRB- e.g. Copenhagen -RRB-"}
+             |_ component: {DirectObject: "that"}
+             |_ component: {Subject: "you"}
+             |_ component: {Verb: "might be surprised", clause: "If you live"}
+         */
+
+        // TODO: double subjects, confusion caused by parentheses)
+        String example = " sure was (I come from Copenhagen, Denmark).";
+        /*
+        I sure was (I come from Copenhagen, Denmark).
+          |_ statement: {Statement: "I sure was -LRB- I come from Copenhagen, Denmark -RRB-", components: 4}
+             |_ component: {Subject: "I"}
+             |_ component: {IndirectObject: "from Copenhagen, Denmark"}
+             |_ component: {Verb: "sure"}
+             |_ component: {Subject: "I"}
+         */
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
 //        String example = "Anyway, just make your own rule and stick to it.";
