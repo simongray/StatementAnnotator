@@ -50,6 +50,8 @@ public class Relations {
     public static final Set<String> IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS = new HashSet<>();
     public static final Set<String> IGNORED_INDIRECT_OBJECT_COMPOUND_RELATIONS = new HashSet<>();
 
+    public static final Set<String> IGNORED_INTER_COMPONENT_RELATIONS = new HashSet<>();
+
     static {
         /**
          * The smallest scope for compounds.
@@ -139,5 +141,12 @@ public class Relations {
          */
         IGNORED_INDIRECT_OBJECT_COMPOUND_RELATIONS.addAll(IGNORED_INDIRECT_OBJECT_RELATIONS);
         IGNORED_INDIRECT_OBJECT_COMPOUND_RELATIONS.addAll(IGNORED_COMPOUND_RELATIONS);
+
+        /**
+         * Relations that are ignored when linking components in a statement.
+         *
+         * TODO: rethink this, it's retarded to re-add them after removing them
+         */
+        IGNORED_INTER_COMPONENT_RELATIONS.add(Relations.DEP);  // following unknown dependencies generally gives weird results
     }
 }

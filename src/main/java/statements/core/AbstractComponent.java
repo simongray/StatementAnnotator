@@ -71,6 +71,7 @@ public abstract class AbstractComponent implements StatementComponent {
         // this is done in order to not cross into the relations of other components
         Set<String> componentSpecificIgnoredRelations = new HashSet<>(getIgnoredRelations());
         componentSpecificIgnoredRelations.removeAll(Relations.IGNORED_RELATIONS);
+        componentSpecificIgnoredRelations.addAll(Relations.IGNORED_INTER_COMPONENT_RELATIONS); // TODO: this is a retarded way of unignoring stuff
         words = StatementUtils.findCompound(primary, graph, componentSpecificIgnoredRelations, getOwnedScopes());
         words.addAll(getNegations());
         words.addAll(getMarkers());

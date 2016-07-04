@@ -55,7 +55,7 @@ public class TestStatements {
                 |_ component: {Subject: "we"}*/
 
         // TODO: missing verb in DirectObject construction
-//        String example = "Here's our solution: Use an air quality app.";
+        String example = "Here's our solution: Use an air quality app.";
         /*
         Here's our solution: Use an air quality app.
           |_ statement: {Statement: "Here's our solution : Use an air quality app", components: 3}
@@ -162,18 +162,19 @@ public class TestStatements {
             System.out.println(sentence);
             StatementUtils.printStatements(statements);
 
-//            if (statements != null) {
-//                for (Statement statement : statements) {
-//                    for (StatementComponent statementComponent : statement.getComponents()) {
-//                        if (statementComponent instanceof AbstractComponent) {
-//                            AbstractComponent component = (AbstractComponent) statementComponent;
-//                            System.out.println("entries: " + component.getEntries());
-//                            System.out.println("small compounds: " + component.getSmallCompounds());
-//                            System.out.println("compounds: " + component.getCompounds());
-//                        }
-//                    }
-//                }
-//            }
+            if (statements != null) {
+                for (Statement statement : statements) {
+                    for (StatementComponent statementComponent : statement.getComponents()) {
+                        if (statementComponent instanceof AbstractComponent) {
+                            AbstractComponent component = (AbstractComponent) statementComponent;
+                            System.out.println("entries: " + component.getEntries());
+                            System.out.println("small compounds: " + component.getSmallCompounds());
+                            System.out.println("compounds: " + component.getCompounds());
+                            System.out.println("words: " + component.getWords());
+                        }
+                    }
+                }
+            }
         }
     }
 }
