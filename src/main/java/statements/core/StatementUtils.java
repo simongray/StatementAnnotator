@@ -3,6 +3,7 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.trees.GrammaticalRelation;
+import edu.stanford.nlp.trees.TypedDependency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -248,52 +249,55 @@ public class StatementUtils {
     }
 
     /**
-     * Create sets of words that are linked by a common governor (= parent) in a specific relation.
-     * Useful for finding conjunct verbs, for example, using the nsubj relation.
+     * Find entries with shared governance of a word in some specific relation.
+     * Useful for finding verb conjunctions.
      *
      * @param entries
      * @param relation
      * @param graph
      * @return
      */
-    public static Set<Set<IndexedWord>> findJointlyGoverned(Set<IndexedWord> entries, String relation, SemanticGraph graph) {
-        Map<IndexedWord, Set<IndexedWord>> childMapping = new HashMap<>();
+    public static Map<IndexedWord, Set<IndexedWord>> findSharedGovernance(Set<IndexedWord> entries, String relation, SemanticGraph graph) {
+        Map<IndexedWord, Set<IndexedWord>> siblingMapping = new HashMap<>();
 
-        // retrieve the relevant child nodes based on the relation
-        // store word as child of each parent in child-parents mapping
-        for (IndexedWord entry : entries) {
-            Set<IndexedWord> specificChildren = findSpecificDescendants(relation, entry, graph);
-
-            // TODO: revise this in the light of the fact that indirect objects cannot be found in this way (since they are not in a parent-child relationship)
-            logger.info("specific children for " + entry + " with relation " + relation + ": " + specificChildren);
-
-            for (IndexedWord child : specificChildren) {
-                Set<IndexedWord> parents = childMapping.getOrDefault(child, new HashSet<>());
-                parents.add(entry);
-                childMapping.put(child, parents);
+        // map parents to their shared child
+        for (TypedDependency dependency : graph.typedDependencies()) {
+            if (dependency.reln().getShortName().equals(relation)) {
+                if (entries.contains(dependency.gov())) {
+                    Set<IndexedWord> siblings = siblingMapping.getOrDefault(dependency.dep(), new HashSet<>());
+                    siblings.add(dependency.gov());
+                    siblingMapping.put(dependency.dep(), siblings);
+                }
             }
         }
 
-        logger.info("child mapping: " + childMapping);
+        return siblingMapping;
+    }
 
-        Set<Set<IndexedWord>> jointlyGoverned = new HashSet<>();
-        for (Set<IndexedWord> jointlyGovernedSet : childMapping.values()) {
-            jointlyGoverned.add(jointlyGovernedSet);
+    /**
+     * Find entries with shared dependence on a word in some specific relation.
+     * Useful for finding verb conjunctions.
+     *
+     * @param entries
+     * @param relation
+     * @param graph
+     * @return
+     */
+    public static Map<IndexedWord, Set<IndexedWord>> findSharedDependence(Set<IndexedWord> entries, String relation, SemanticGraph graph) {
+        Map<IndexedWord, Set<IndexedWord>> siblingMapping = new HashMap<>();
+
+        // map siblings to their shared parent
+        for (TypedDependency dependency : graph.typedDependencies()) {
+            if (dependency.reln().getShortName().equals(relation)) {
+                if (entries.contains(dependency.dep())) {
+                    Set<IndexedWord> siblings = siblingMapping.getOrDefault(dependency.gov(), new HashSet<>());
+                    siblings.add(dependency.dep());
+                    siblingMapping.put(dependency.gov(), siblings);
+                }
+            }
         }
 
-        // make sure that each word is also separately represented as a set
-        // if they are jointly governed, then they will be merged anyway
-        // this ensures that all words survive the merge process
-        for (IndexedWord entry : entries) {
-            Set<IndexedWord> singleWordSet = new HashSet<>();
-            singleWordSet.add(entry);
-            jointlyGoverned.add(singleWordSet);
-        }
-
-        // merge the words together into sets when they share parents
-        merge(jointlyGoverned);
-
-        return jointlyGoverned;
+        return siblingMapping;
     }
 
 

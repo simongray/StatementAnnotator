@@ -70,26 +70,37 @@ public class VerbFinder extends AbstractFinder<Verb> {
         // find jointly governed verbs (= verb conjunctions)
         // (in the graph, verbs can be connected in a conj relation even if they are not sharing the same subject,
         // so verb conjunctions, unlike the other components, need to be found using this method)
-        Collection<Set<IndexedWord>> conjunctVerbs = StatementUtils.findJointlyGoverned(simpleVerbs, Relations.NSUBJ, graph);
-        logger.info("conjunct verbs: " + conjunctVerbs);
+        Map<IndexedWord, Set<IndexedWord>> xcompConjunctions = StatementUtils.findSharedDependence(simpleVerbs, Relations.XCOMP, graph);
+        logger.info("xcompConjunctions: " + xcompConjunctions);
+
+        Map<IndexedWord, Set<IndexedWord>> ccompConjunctions = StatementUtils.findSharedDependence(simpleVerbs, Relations.CCOMP, graph);
+        logger.info("ccompConjunctions: " + ccompConjunctions);
+
+        Map<IndexedWord, Set<IndexedWord>> nsubjConjunctions = StatementUtils.findSharedGovernance(simpleVerbs, Relations.NSUBJ, graph);
+        logger.info("nsubjConjunctions: " + nsubjConjunctions);
+
+        Set<Set<IndexedWord>> verbConjunctions = new HashSet<>();
+        verbConjunctions.addAll(xcompConjunctions.values());
+        verbConjunctions.addAll(ccompConjunctions.values());
+        verbConjunctions.addAll(nsubjConjunctions.values());
 
         // build complete verbs from conjunct verb sets
-        for (Set<IndexedWord> conjunctVerbSet : conjunctVerbs) {
+        for (Set<IndexedWord> verbConjunction : verbConjunctions) {
             IndexedWord primary = null;
 
             // treat lowest indexed word as primary entry
-            for (IndexedWord entry : conjunctVerbSet) {
-                if (primary == null || primary.index() > entry.index()) {
+            for (IndexedWord entry : verbConjunction) {
+                if (primary == null || entry.index() < primary.index()) {
                     primary = entry;
                 }
             }
 
-            logger.info("found new verb with " + conjunctVerbSet.size() + " entries, primary: " + primary);
+            logger.info("found new verb with " + verbConjunction.size() + " entries, primary: " + primary);
 
             // use rest of set as secondary entries
-            conjunctVerbSet.remove(primary);
+            verbConjunction.remove(primary);
 
-            verbs.add(new Verb(primary, conjunctVerbSet, graph));
+            verbs.add(new Verb(primary, verbConjunction, graph));
         }
 
         logger.info("verbs found: " + verbs);
