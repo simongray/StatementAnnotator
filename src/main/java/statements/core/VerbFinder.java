@@ -15,11 +15,15 @@ import java.util.*;
 public class VerbFinder extends AbstractFinder<Verb> {
     private static final Logger logger = LoggerFactory.getLogger(VerbFinder.class);
 
-    private static final Set<String> VERB_RELATIONS = new HashSet<>();
+    private static final Set<String> OUTGOING_RELATIONS = new HashSet<>();
+    private static final Set<String> INCOMING_RELATIONS = new HashSet<>();
     static {
-        VERB_RELATIONS.add(Relations.NSUBJ);
-        VERB_RELATIONS.add(Relations.NSUBJPASS);
-        VERB_RELATIONS.add(Relations.DOBJ);
+        OUTGOING_RELATIONS.add(Relations.NSUBJ);
+        OUTGOING_RELATIONS.add(Relations.NSUBJPASS);
+        OUTGOING_RELATIONS.add(Relations.DOBJ);
+
+        INCOMING_RELATIONS.add(Relations.XCOMP);
+        INCOMING_RELATIONS.add(Relations.CCOMP);  // TODO: untested
     }
 
     /**
@@ -42,8 +46,11 @@ public class VerbFinder extends AbstractFinder<Verb> {
 
         // find candidate verbs and adjectives from relations
         for (TypedDependency dependency : dependencies) {
-            if (VERB_RELATIONS.contains(dependency.reln().getShortName())) {
+            if (OUTGOING_RELATIONS.contains(dependency.reln().getShortName())) {
                 if (!ignoredWords.contains(dependency.dep())) simpleVerbs.add(dependency.gov());
+            }
+            if (INCOMING_RELATIONS.contains(dependency.reln().getShortName())) {
+                if (!ignoredWords.contains(dependency.gov())) simpleVerbs.add(dependency.dep());
             }
             if (dependency.reln().getShortName().equals(Relations.COP)) {
                 if (!ignoredWords.contains(dependency.dep())) adjectives.add(dependency.gov());
@@ -53,7 +60,7 @@ public class VerbFinder extends AbstractFinder<Verb> {
             }
             if (dependency.reln().getShortName().equals(Relations.ACL)) {
                 if (!ignoredWords.contains(dependency.dep())) aclVerbs.add(dependency.dep());
-            }  // TODO: safe to remove?
+            }
         }
 
         // remove adjectives from candidate verbs
@@ -67,40 +74,10 @@ public class VerbFinder extends AbstractFinder<Verb> {
 
         logger.info("simple verbs: " + simpleVerbs);
 
-        // find jointly governed verbs (= verb conjunctions)
-        // (in the graph, verbs can be connected in a conj relation even if they are not sharing the same subject,
-        // so verb conjunctions, unlike the other components, need to be found using this method)
-        Map<IndexedWord, Set<IndexedWord>> xcompConjunctions = StatementUtils.findSharedDependence(simpleVerbs, Relations.XCOMP, graph);
-        logger.info("xcompConjunctions: " + xcompConjunctions);
-
-        Map<IndexedWord, Set<IndexedWord>> ccompConjunctions = StatementUtils.findSharedDependence(simpleVerbs, Relations.CCOMP, graph);
-        logger.info("ccompConjunctions: " + ccompConjunctions);
-
-        Map<IndexedWord, Set<IndexedWord>> nsubjConjunctions = StatementUtils.findSharedGovernance(simpleVerbs, Relations.NSUBJ, graph);
-        logger.info("nsubjConjunctions: " + nsubjConjunctions);
-
-        Set<Set<IndexedWord>> verbConjunctions = new HashSet<>();
-        verbConjunctions.addAll(xcompConjunctions.values());
-        verbConjunctions.addAll(ccompConjunctions.values());
-        verbConjunctions.addAll(nsubjConjunctions.values());
 
         // build complete verbs from conjunct verb sets
-        for (Set<IndexedWord> verbConjunction : verbConjunctions) {
-            IndexedWord primary = null;
-
-            // treat lowest indexed word as primary entry
-            for (IndexedWord entry : verbConjunction) {
-                if (primary == null || entry.index() < primary.index()) {
-                    primary = entry;
-                }
-            }
-
-            logger.info("found new verb with " + verbConjunction.size() + " entries, primary: " + primary);
-
-            // use rest of set as secondary entries
-            verbConjunction.remove(primary);
-
-            verbs.add(new Verb(primary, verbConjunction, graph));
+        for (IndexedWord simpleVerb : simpleVerbs) {
+            verbs.add(new Verb(simpleVerb, graph));
         }
 
         logger.info("verbs found: " + verbs);

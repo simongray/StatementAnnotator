@@ -13,8 +13,8 @@ import java.util.Set;
 public class Verb extends AbstractComponent implements Resembling<Verb> {
     private final Map<IndexedWord, Set<IndexedWord>> ccMap;
 
-    public Verb(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
-        super(primary, secondary, graph);
+    public Verb(IndexedWord primary, SemanticGraph graph) {
+        super(primary, null, graph);
 
         ccMap = StatementUtils.makeDescendantMap(entries, Relations.CC, graph);
 
