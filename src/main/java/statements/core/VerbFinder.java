@@ -23,7 +23,6 @@ public class VerbFinder extends AbstractFinder<Verb> {
         OUTGOING_RELATIONS.add(Relations.DOBJ);
 
         INCOMING_RELATIONS.add(Relations.XCOMP);
-        INCOMING_RELATIONS.add(Relations.CCOMP);  // TODO: untested
     }
 
     /**
@@ -36,6 +35,7 @@ public class VerbFinder extends AbstractFinder<Verb> {
     public Set<Verb> find(SemanticGraph graph) {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> simpleVerbs = new HashSet<>();
+        Set<IndexedWord> copVerbs = new HashSet<>();
         Set<IndexedWord> adjectives = new HashSet<>();
         Set<IndexedWord> csubjVerbs = new HashSet<>();  // for verbs that act as subjects
         Set<IndexedWord> aclVerbs = new HashSet<>();  // for verbs that are used to describe nouns
@@ -52,12 +52,22 @@ public class VerbFinder extends AbstractFinder<Verb> {
             if (INCOMING_RELATIONS.contains(dependency.reln().getShortName())) {
                 if (!ignoredWords.contains(dependency.gov())) simpleVerbs.add(dependency.dep());
             }
+
+            // make sure that adjectives are removed from the list of verbs
+            // in the very same move, cop relation verbs (is, be, 's, 'm, etc.) are found
             if (dependency.reln().getShortName().equals(Relations.COP)) {
-                if (!ignoredWords.contains(dependency.dep())) adjectives.add(dependency.gov());
+                if (!ignoredWords.contains(dependency.dep())) {
+                    adjectives.add(dependency.gov());
+                    copVerbs.add(dependency.dep());
+                }
             }
+
+            // TODO: safe to remove?
             if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
                 if (!ignoredWords.contains(dependency.dep())) csubjVerbs.add(dependency.dep());
             }
+
+            // TODO: safe to remove?
             if (dependency.reln().getShortName().equals(Relations.ACL)) {
                 if (!ignoredWords.contains(dependency.dep())) aclVerbs.add(dependency.dep());
             }
@@ -67,19 +77,17 @@ public class VerbFinder extends AbstractFinder<Verb> {
         simpleVerbs.removeAll(adjectives);
 
         // remove verbs that act as subjects
-        simpleVerbs.removeAll(csubjVerbs);
+        simpleVerbs.removeAll(csubjVerbs); // TODO: safe to remove?
 
         // remove verbs that are used to describe nouns
         simpleVerbs.removeAll(aclVerbs);  // TODO: safe to remove?
 
-        logger.info("simple verbs: " + simpleVerbs);
+        // add the cop relation verbs in
+        simpleVerbs.addAll(copVerbs);
 
-
-        // build complete verbs from conjunct verb sets
         for (IndexedWord simpleVerb : simpleVerbs) {
             verbs.add(new Verb(simpleVerb, graph));
         }
-
         logger.info("verbs found: " + verbs);
 
         return verbs;
