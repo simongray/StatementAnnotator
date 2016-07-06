@@ -120,7 +120,7 @@ public class Relations {
         /**
          * Relations that are ignored when constructing indirect objects.
          */
-        IGNORED_INDIRECT_OBJECT_RELATIONS.add(Relations.NMOD);
+        IGNORED_INDIRECT_OBJECT_RELATIONS.add(Relations.NMOD);  // TODO: revise with sequences?
 
         /**
          * Relations that are ignored when determining ANY compound boundaries.

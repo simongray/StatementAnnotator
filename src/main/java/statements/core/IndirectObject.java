@@ -9,9 +9,9 @@ import java.util.Set;
  * The complete indirect object of a natural language statement.
  */
 public class IndirectObject extends AbstractComponent implements Resembling<IndirectObject> {
-
-    public IndirectObject(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
-        super(primary, secondary, graph);
+    
+    public IndirectObject(IndexedWord primary, SemanticGraph graph) {
+        super(primary, null, graph);
 
         // COPY-PASTED FROM VERB CLASS
         // temporary hotfix, needed because sequences of indirect objects are now treated as conjunctions

@@ -56,31 +56,31 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
             nmodMapping.remove(obj);
         }
 
-        // find jointly governed indirect objects
-        // TODO: make into a utility method instead?
-        Set<Set<IndexedWord>> jointlyGoverned = new HashSet<>();
-        for (IndexedWord entry : nmodMapping.keySet()) {
-            IndexedWord parent = nmodMapping.get(entry);
-
-            for (IndexedWord otherEntry : nmodMapping.keySet()) {
-                IndexedWord otherParent = nmodMapping.get(entry);
-
-                if (parent == otherParent) {
-                    Set<IndexedWord> entrySet = new HashSet<>();
-                    entrySet.add(entry);
-                    entrySet.add(otherEntry);
-                    jointlyGoverned.add(entrySet);
-                }
-            }
-        }
-        StatementUtils.merge(jointlyGoverned);
-        logger.info("jointly governed: " + jointlyGoverned);
-
         // find sequences (ex: "in a chair in a house in Copenhagen")
         Set<Set<IndexedWord>> sequences = StatementUtils.findSequences(nmodMapping.keySet(), Relations.NMOD, graph);
         logger.info("sequences: " + sequences);
 
-        sequences.addAll(jointlyGoverned);
+        Set<IndexedWord> entries = new HashSet<>();
+
+        // find out which indirect objects are already part of sequences
+        for (IndexedWord entry : nmodMapping.keySet()) {
+            boolean notInSequence = true;
+
+            for (Set<IndexedWord> sequence : sequences) {
+                if (sequence.contains(entry)) {
+                    notInSequence = false;
+                    break;
+                }
+            }
+
+            if (notInSequence) entries.add(entry);
+        }
+
+        // build complete objects from single entries
+        for (IndexedWord entry : entries) {
+            indirectObjects.add(new IndirectObject(entry, graph));
+            logger.info("new indirect object, primary: " + entry);
+        }
 
         // build complete objects from sequences
         for (Set<IndexedWord> sequence : sequences) {
@@ -93,23 +93,11 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
                 }
             }
 
-            logger.info("found new indirect object with " + sequence.size() + " entries, primary: " + primary);
+            logger.info("new indirect object with " + sequence.size() + " entries, primary: " + primary);
 
-            // use rest of set as secondary entries
-            sequence.remove(primary);
-
-            indirectObjects.add(new IndirectObject(primary, sequence, graph));
+            indirectObjects.add(new IndirectObject(primary, graph));
         }
 
-        // TODO: also do conj?
-//        // create indirect object mapping based on relations
-//        Map<IndexedWord, Set<IndexedWord>> nmodObjectMapping = StatementUtils.makeChildMap(nmodMapping.keySet(), Relations.CONJ, graph);
-//
-//        // build complete objects from mapping
-//        for (IndexedWord object : nmodObjectMapping.keySet()) {
-//            indirectObjects.add(new IndirectObject(object, nmodObjectMapping.get(object), graph));
-//        }
-//        logger.info("nmodObjectMapping: " + nmodObjectMapping);
         logger.info("nmodMapping: " + nmodMapping);
         logger.info("indirect objects found: " + indirectObjects);
 
