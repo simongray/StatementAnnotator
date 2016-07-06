@@ -36,11 +36,7 @@ public class TestStatements {
         // TODO: the sentence "Hates and loves it." - doesn't separate into two statements, however doubtful if it is possible to do in a non-hackish way
 
 
-//        String example = "The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.";
-
         // STILL NEED TO BE FIXED
-        // TODO: the cc (= "and") is not preserved in the indirect object text since it is related to the verb
-//        String example = "I keep them in my bag and on my head";
 
         // TODO: issue #42, double subjects, missing first statement, second statement nor correct, caused by lack of "I" before "recently"
         // NOTE: inserting an "I" as the first word of the sentence gives correct output (two correct statements)
@@ -55,7 +51,8 @@ public class TestStatements {
 
 
         // TODO: issue #48 - not splitting statements with double subjects
-        String example = "The app and the house are a big deal.";
+//        String example = "The app and the house are a big deal.";
+        String example = "I keep them in my bag and on my head";
 
 
 
