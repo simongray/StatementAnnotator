@@ -34,16 +34,23 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
 
         // find simple objects from relations
         for (TypedDependency dependency : dependencies) {
+            // mapping from object to verb, defined by the dobj relation
             if (dependency.reln().getShortName().equals(Relations.DOBJ)) {
                 if (!ignoredWords.contains(dependency.dep())) dobjMapping.put(dependency.dep(), dependency.gov());
             }
-            if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
-                if (!ignoredWords.contains(dependency.dep())) csubjVerbs.add(dependency.dep());
-            }
+
+            // direct objects defined by the cop relation
+            // when a is the governor in both an nsubj and a cop relation, then it's a direct object
             if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
                 if (hasCopula(dependency.gov(), graph)) {
                     if (!ignoredWords.contains(dependency.dep())) copObjects.add(dependency.gov());
                 }
+            }
+
+            // TODO: remove entirely, replace with general csubj solution for all finders
+            // will be removed further down
+            if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
+                if (!ignoredWords.contains(dependency.dep())) csubjVerbs.add(dependency.dep());
             }
         }
 
