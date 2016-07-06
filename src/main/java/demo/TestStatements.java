@@ -161,6 +161,7 @@ public class TestStatements {
 //        String example = "The app allows you to smile and wave.";
 //        String example = "It's a big deal.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";
+        // TODO: still need to display entire text in statement (currently missing clauses: "to reduce stress")
         String example = "Establishing a practice goes a long way to reduce stress.";  // csubj verb example
 
 
