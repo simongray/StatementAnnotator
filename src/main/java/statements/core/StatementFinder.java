@@ -76,29 +76,6 @@ public class StatementFinder {
         // the remaining components may be considered components of the root statement
         components.removeAll(nestedComponents);
 
-        logger.info("root components: " + components);
-
-        for (AbstractComponent component : components) {
-            for (AbstractComponent otherComponent : components) {
-                if (component.parentOf(otherComponent)) {
-                    logger.info(component + " is connected to " + otherComponent);
-                } else {
-                    logger.info(component + " is NOT connected to " + otherComponent);
-                }
-            }
-        }
-        for (Set<AbstractComponent> nComponents : nestedComponentMapping.values()) {
-            for (AbstractComponent component : nComponents) {
-                for (AbstractComponent otherComponent : nComponents) {
-                    if (component.parentOf(otherComponent)) {
-                        logger.info(component + " is connected to " + otherComponent);
-                    } else {
-                        logger.info(component + " is NOT connected to " + otherComponent);
-                    }
-                }
-            }
-        }
-
         // TODO: just use set from beginning, skip mapping
         Set<Set<AbstractComponent>> componentSets = new HashSet<>();
         componentSets.add(components);
