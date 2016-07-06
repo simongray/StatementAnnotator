@@ -52,24 +52,30 @@ public class TestStatements {
 
         // TODO: issue #48 - not splitting statements with double subjects
 //        String example = "The app and the house are a big deal.";
-        String example = "I keep them in my bag and on my head";
+//        String example = "I keep them in my bag and on my head";
+
+
+        // TODO: not working properly
+        String example = "She cried and yelled at him.";
+        /*
+        [cried/VBD
+          nsubj>She/PRP
+          cc>and/CC
+          conj:and>[yelled/VBD nsubj>She/PRP nmod:at>[him/PRP case>at/IN]]
+          punct>./.]
+        She cried and yelled at him.
+          |_ statement: {Statement: "She cried yelled at him", components: 5}
+             |_ component: {Subject: "She"}
+             |_ component: [{Subject: "She"}, {IndirectObject: "at him"}, {Verb: "yelled"}]
+             |_ component: {Verb: "cried"}
+             |_ component: {Verb: "yelled"}
+             |_ component: {IndirectObject: "at him"}
+         */
 
 
 
 
 //        String example = "She lives in a house in a lake outside of Copenhagen.";  // TODO: still not completely satisfied
-//        String example = "It's a big deal.";
-//        String example = "The app allows you to smile and wave.";
-//        String example = "She cried and yelled at him.";
-        /*
-        The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.
-          |_ statement: {Statement: "The app allows you to check the latest PM2 .5 index inside your flat and automate the purifiers", components: 5}
-             |_ component: {Verb: "allows"}
-             |_ component: {IndirectObject: "inside your flat"}
-             |_ component: {Subject: "The app"}
-             |_ component: {DirectObject: "check the latest PM2 .5 index and automate the purifiers", entries: 2}
-             |_ component: {DirectObject: "you"}
-         */
 
         // TODO: multiple issues
 //        String example = "If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too.";
@@ -153,6 +159,8 @@ public class TestStatements {
              |_ component: {Subject: "our solution"}
          */
 //        String example = "The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.";
+//        String example = "The app allows you to smile and wave.";
+//        String example = "It's a big deal.";
 
 
 
