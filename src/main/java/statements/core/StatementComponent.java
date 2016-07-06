@@ -15,7 +15,7 @@ public interface StatementComponent {
     String getLabel();
 
     /**
-     * Is this component the parent of to another component?
+     * Is this component the parent of another component?
      *
      * @param otherComponent the other component
      * @return true if parent
