@@ -51,8 +51,6 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
         logger.info("cop objects found: " + copObjects);
         logger.info("csubj objects found: " + csubjVerbs);
 
-        // find possible xcomp+dobj (V+O constructions)
-        Set<IndexedWord> voContstructionObjects = new HashSet<>();
         Set<IndexedWord> objectsToRemove = new HashSet<>();
 
         // remove dobj objects part of clausal verb subjects (through csubj relation)
