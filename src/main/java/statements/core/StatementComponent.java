@@ -21,7 +21,7 @@ public interface StatementComponent {
         if (this.equals(otherComponent)) {
             return false;
         } else {
-            return StatementUtils.intersects(getComplete(), otherComponent.getOutgoing()) || StatementUtils.intersects(getComplete(), otherComponent.getOutgoing());
+            return StatementUtils.intersects(getComplete(), otherComponent.getOutgoing()) || StatementUtils.intersects(getOutgoing(), otherComponent.getComplete());
         }
     }
 }
