@@ -56,7 +56,7 @@ public class TestStatements {
 
 
         // TODO: not working properly
-        String example = "She cried and yelled at him.";
+//        String example = "She cried and yelled at him.";
         /*
         [cried/VBD
           nsubj>She/PRP
@@ -99,9 +99,14 @@ public class TestStatements {
              |_ component: {Subject: "I"}
          */
 
+
+        // TODO: double statements for some strange reason
+        String example = "Establishing a practice goes a long way to reduce stress.";
+
+
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
 //        String example = "Anyway, just make your own rule and stick to it.";
-//        String example = "We also got two Xiaomi air purifiers that work quite well.";  // TODO: should be limiting components to a single subject, verb, etc.
+        // TODO: this one is really bad
 //        String example = "Chronically stressed people often have trouble sleeping and establishing a practice goes a long way to reduce stress.";
 //        String example = "I'm sure you meant the EU as a whole and not the European Parliament specifically";  // specifically should modify to "meant", not "sure"
 //        String example = "Bought some 3M 95N-rated face masks for smoggy days.\n";
@@ -113,7 +118,6 @@ public class TestStatements {
 //        String example = "Here's our solution: Use an air quality app.";  // TODO: allow to decide specifity of noun compounds, i.e. "the" or "an"
 //        String example =    "We have found that it is quite manageable.";
 //        String example = "She hates and loves to fly. She hates flying and he loves it.";
-//        String example = "Establishing a practice goes a long way to reduce stress.";
 //        String example = "Chronically stressed people often have trouble sleeping.";  // it's kinda weird though, i.e. component: [{Subject: trouble}, {Verb: sleeping}]
 //        String example = "He and she speaks and yells the compound and sentences to her or him.";
 //        String example = "They don't like doing anything in particular and neither does she.";  // TODO: consider whether dep(neither-10, does-11) should result in a negation of verb
@@ -161,6 +165,7 @@ public class TestStatements {
 //        String example = "The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.";
 //        String example = "The app allows you to smile and wave.";
 //        String example = "It's a big deal.";
+//        String example = "We also got two Xiaomi air purifiers that work quite well.";
 
 
 
