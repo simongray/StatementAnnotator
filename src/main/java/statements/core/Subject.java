@@ -10,8 +10,8 @@ import java.util.Set;
  * The complete subject of a natural language statement.
  */
 public class Subject extends AbstractComponent implements Resembling<Subject> {
-    public Subject(IndexedWord primary, Set<IndexedWord> secondary, SemanticGraph graph) {
-        super(primary, secondary, graph);
+    public Subject(IndexedWord primary, SemanticGraph graph) {
+        super(primary, null, graph);
     }
 
     /**

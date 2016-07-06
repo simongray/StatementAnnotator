@@ -44,24 +44,14 @@ public class SubjectFinder extends AbstractFinder<Subject> {
             }
         }
 
-        // create normal subject mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> subjectMapping = StatementUtils.makeChildMap(simpleSubjects, Relations.CONJ, graph);
+        Set<IndexedWord> entries = new HashSet<>();
+        entries.addAll(simpleSubjects);
+        entries.addAll(simplePassiveSubjects);
+        entries.addAll(simpleClausalSubjects);
 
-        // create passive subject mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> passiveSubjectMapping = StatementUtils.makeChildMap(simplePassiveSubjects, Relations.CONJ, graph);
-
-        // create clausal subject mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> clausalSubjectMapping = StatementUtils.makeChildMap(simpleClausalSubjects, Relations.CONJ, graph);
-
-        // build complete subjects from mappings
-        for (IndexedWord primarySubject : subjectMapping.keySet()) {
-            subjects.add(new Subject(primarySubject, subjectMapping.get(primarySubject), graph));
-        }
-        for (IndexedWord primarySubject : passiveSubjectMapping.keySet()) {
-            subjects.add(new Subject(primarySubject, passiveSubjectMapping.get(primarySubject), graph));
-        }
-        for (IndexedWord primarySubject : clausalSubjectMapping.keySet()) {
-            subjects.add(new Subject(primarySubject, passiveSubjectMapping.get(primarySubject), graph));
+        // build complete subjects
+        for (IndexedWord entry : entries) {
+            subjects.add(new Subject(entry, graph));
         }
 
         logger.info("subjects found: " + subjects);

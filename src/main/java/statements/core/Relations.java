@@ -79,6 +79,8 @@ public class Relations {
         /**
          * Relations that are ignored when constructing ANY component.
          */
+        IGNORED_RELATIONS.add(Relations.CONJ);
+        IGNORED_RELATIONS.add(Relations.CC);
         IGNORED_RELATIONS.add(Relations.DEP);  // ignoring all unknown dependencies
         IGNORED_RELATIONS.add(Relations.MARK);  // ignoring all markers
         IGNORED_RELATIONS.add(Relations.CCOMP);  // moved from IGNORED_VERB_RELATIONS  // TODO: check if this has any repercussions
@@ -113,6 +115,7 @@ public class Relations {
          */
         IGNORED_DIRECT_OBJECT_RELATIONS.add(Relations.NSUBJ);
         IGNORED_DIRECT_OBJECT_RELATIONS.add(Relations.NMOD);
+        IGNORED_DIRECT_OBJECT_RELATIONS.add(Relations.COP);  // to avoid including cop verbs with cop objects
 
         /**
          * Relations that are ignored when constructing indirect objects.
