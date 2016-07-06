@@ -153,11 +153,11 @@ public class Statement implements StatementComponent, Resembling<Statement> {
 
     @Override
     public String toString() {
-        return "{"
-            + getClass().getSimpleName() +
+        return "{" +
+            ((getLabel() != null)? getLabel() + "/": "") +
+            getClass().getSimpleName() +
             ": \"" + StatementUtils.join(getCompound()) + "\"" +
             (count() > 1? ", components: " + count() : "") +
-            ((getLabel() != null)? ", label: \"" + getLabel() + "\"" : "") +
         "}";
     }
 
@@ -191,10 +191,14 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     public String getLabel() {
         String label = null;
 
-        // TODO: make this more intelligent, don't just choose the first component label it can find
         for (StatementComponent component : getComponents()) {
-            if (component.getLabel() != null) {
-                label = component.getLabel();
+            String componentLabel = component.getLabel();
+
+            // find component label combinations that trigger relevant statement labels
+            if (componentLabel != null) {
+                if (componentLabel.equals(Labels.CSUBJVERB)) {
+                    label = Labels.SUBJECT;
+                }
             }
         }
 
