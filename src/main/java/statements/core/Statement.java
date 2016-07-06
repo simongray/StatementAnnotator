@@ -87,13 +87,13 @@ public class Statement implements StatementComponent, Resembling<Statement> {
      * Outgoing (= governing) words.
      * Useful for establishing whether this statement is connected to another component.
      *
-     * @return outgoing words
+     * @return governors words
      */
-    public Set<IndexedWord> getOutgoing() {
+    public Set<IndexedWord> getGovernors() {
         // lazy-loading
         if (outgoing == null) {
             for (StatementComponent component : getComponents()) {
-                outgoing.addAll(component.getOutgoing());
+                outgoing.addAll(component.getGovernors());
             }
         }
 

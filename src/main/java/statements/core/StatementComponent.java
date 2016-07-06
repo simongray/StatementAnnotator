@@ -9,7 +9,7 @@ import java.util.Set;
  */
 public interface StatementComponent {
     Set<IndexedWord> getComplete();
-    Set<IndexedWord> getOutgoing();
+    Set<IndexedWord> getGovernors();
 
     /**
      * Is this component connected to another component?
@@ -21,7 +21,7 @@ public interface StatementComponent {
         if (this.equals(otherComponent)) {
             return false;
         } else {
-            return StatementUtils.intersects(getComplete(), otherComponent.getOutgoing()) || StatementUtils.intersects(getOutgoing(), otherComponent.getComplete());
+            return StatementUtils.intersects(getComplete(), otherComponent.getGovernors()) || StatementUtils.intersects(getGovernors(), otherComponent.getComplete());
         }
     }
 }

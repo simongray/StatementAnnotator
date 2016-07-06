@@ -36,6 +36,8 @@ public class Relations {
 
     public static final Set<String> IGNORED_SCOPES = new HashSet<>();
 
+    public static final Set<String> IGNORED_OUTGOING_RELATIONS = new HashSet<>();
+
     public static final Set<String> SMALL_COMPOUND_SCOPE = new HashSet<>();
 
     public static final Set<String> IGNORED_RELATIONS = new HashSet<>();
@@ -55,6 +57,13 @@ public class Relations {
     public static final Set<String> NESTED_STATEMENT_SCOPES = new HashSet<>();
 
     static {
+        IGNORED_OUTGOING_RELATIONS.add(CONJ);
+
+
+
+
+        // TODO: rework everything below this point
+
         /**
          * The smallest scope for compounds.
          */

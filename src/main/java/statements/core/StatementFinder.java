@@ -79,6 +79,27 @@ public class StatementFinder {
 
         logger.info("root components: " + components);
 
+        for (AbstractComponent component : components) {
+            for (AbstractComponent otherComponent : components) {
+                if (component.connectedTo(otherComponent)) {
+                    logger.info(component + " is connected to " + otherComponent);
+                } else {
+                    logger.info(component + " is NOT connected to " + otherComponent);
+                }
+            }
+        }
+        for (Set<AbstractComponent> nComponents : nestedComponentMapping.values()) {
+            for (AbstractComponent component : nComponents) {
+                for (AbstractComponent otherComponent : nComponents) {
+                    if (component.connectedTo(otherComponent)) {
+                        logger.info(component + " is connected to " + otherComponent);
+                    } else {
+                        logger.info(component + " is NOT connected to " + otherComponent);
+                    }
+                }
+            }
+        }
+
 
 
 

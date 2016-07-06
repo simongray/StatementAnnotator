@@ -3,6 +3,7 @@ package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.semgraph.SemanticGraphEdge;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,7 +15,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final IndexedWord primary;
     protected final Set<IndexedWord> complete;
     protected final Set<IndexedWord> words;  // used to make sure re-composed statements have access to all words
-    protected final Set<IndexedWord> outgoing;
+    protected final Set<IndexedWord> governors;
     protected final Set<IndexedWord> negations;
     protected final Set<IndexedWord> punctuation;
     protected final Set<IndexedWord> markers;
@@ -25,8 +26,15 @@ public abstract class AbstractComponent implements StatementComponent {
         this.primary = primary;
         complete = StatementUtils.findCompound(primary, graph, getIgnoredRelations(), getOwnedScopes());
 
-        // find outgoing
-        outgoing = graph.getParents(primary);
+        // find governors
+        governors = new HashSet<>();
+        for (SemanticGraphEdge edge : graph.incomingEdgeList(primary)) {
+            // it is important to leave out certain governors relations
+            // (e.g. the conj relation, since multiple of the same component type should not be connecting)
+            if (!Relations.IGNORED_OUTGOING_RELATIONS.contains(edge.getRelation().getShortName())) {
+                governors.add(edge.getGovernor());
+            }
+        }
 
         // find negations
         negations = StatementUtils.findSpecificChildren(Relations.NEG, primary, graph);
@@ -41,6 +49,9 @@ public abstract class AbstractComponent implements StatementComponent {
         adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, primary, graph);
         nounClauses = StatementUtils.findSpecificDescendants(Relations.ACL, primary, graph);
         nounClauses.addAll(StatementUtils.findSpecificDescendants(Relations.ACL_RELCL, primary, graph));
+
+        System.out.println(this + " has governors: " + governors);
+
 
         // TODO: find simpler and less resource intensive way of doing this
         // find ALL of the words of this component, to be used for recomposing into statement without missing words
@@ -159,10 +170,10 @@ public abstract class AbstractComponent implements StatementComponent {
      * Outgoing (= governing) words.
      * Useful for establishing whether this statement component is connected to another component.
      *
-     * @return outgoing words
+     * @return governors words
      */
-    public Set<IndexedWord> getOutgoing() {
-        return outgoing;
+    public Set<IndexedWord> getGovernors() {
+        return governors;
     }
 
     /**
