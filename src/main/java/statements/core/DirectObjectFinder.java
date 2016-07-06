@@ -76,22 +76,15 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
             dobjMapping.remove(object);
         }
 
-        // create direct object mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> dobjObjectMapping = StatementUtils.makeChildMap(dobjMapping.keySet(), Relations.CONJ, graph);
+        Set<IndexedWord> entries = new HashSet<>();
+        entries.addAll(dobjMapping.keySet());
+        entries.addAll(copObjects);
 
-        // create copula object mapping based on relations
-        Map<IndexedWord, Set<IndexedWord>> copObjectMapping = StatementUtils.makeChildMap(copObjects, Relations.CONJ, graph);
-
-        // build complete objects from mappings
-        for (IndexedWord object : dobjObjectMapping.keySet()) {
-            directObjects.add(new DirectObject(object, dobjObjectMapping.get(object), DirectObject.Type.DOBJ, graph));
-        }
-        for (IndexedWord object : copObjectMapping.keySet()) {
-            directObjects.add(new DirectObject(object, copObjectMapping.get(object), DirectObject.Type.COP, graph));
+        // build complete objects
+        for (IndexedWord object : entries) {
+            directObjects.add(new DirectObject(object, graph));
         }
 
-        logger.info("dobjObjectMapping: " + dobjObjectMapping);
-        logger.info("copObjectMapping: " + copObjectMapping);
         logger.info("direct objects found: " + directObjects);
 
         return directObjects;

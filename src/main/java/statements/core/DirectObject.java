@@ -12,16 +12,8 @@ import java.util.Set;
  * The complete direct object of a natural language statement.
  */
 public class DirectObject extends AbstractComponent implements Resembling<DirectObject> {
-    private Type type;
-    private final Map<IndexedWord, Set<IndexedWord>> copulaMapping;  // only applicable to copula objects
-
-    // TODO: shouldn't be necessary to set type manually
-    public DirectObject(IndexedWord primary, Set<IndexedWord> secondary, Type type, SemanticGraph graph) {
-        super(primary, secondary, graph);
-        this.type = type;
-
-        // find copulas (only relevant for COP)
-        copulaMapping = StatementUtils.makeDescendantMap(entries, Relations.COP, graph);
+    public DirectObject(IndexedWord primary, SemanticGraph graph) {
+        super(primary, null, graph);
     }
 
     /**
@@ -39,48 +31,6 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
     }
 
     /**
-     * The string of the complete indirect object.
-     *
-     * @return the longest string possible
-     */
-    public String getString() {
-        return StatementUtils.join(StatementUtils.without(getCopulas(), complete));
-    }
-
-    /**
-     * Whether this direct object has a copula.
-     *
-     * @return true if has
-     */
-    public Type getType() {
-        return type;
-    }  // TODO: is it relevant?
-
-    /**
-     * The copula(s) for a specific contained entry.
-     *
-     * @param entry simple direct entry
-     * @return copulas
-     */
-    public Set<IndexedWord> getCopulas(IndexedWord entry) throws MissingEntryException {
-        if (!copulaMapping.containsKey(entry)) throw new MissingEntryException(entry + " is not a part of this component");
-        return new HashSet<>(copulaMapping.get(entry));
-    }
-
-    /**
-     * Copulas for all contained objects.
-     *
-     * @return copulas
-     */
-    public Set<IndexedWord> getCopulas() {
-        Set<IndexedWord> copulas = new HashSet<>();
-        for (Set<IndexedWord> copulaSet : copulaMapping.values()) {
-            copulas.addAll(copulaSet);
-        }
-        return copulas;
-    }
-
-    /**
      * The resemblance of another direct object to this direct object.
      *
      * @param otherObject direct object to be compared with
@@ -89,14 +39,5 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
     @Override
     public Resemblance resemble(DirectObject otherObject) {
         return null;  // TODO
-    }
-
-    /**
-     * Different kinds of direct objects.
-     */
-    public enum Type {
-        DOBJ,
-        XCOMP,
-        COP
     }
 }
