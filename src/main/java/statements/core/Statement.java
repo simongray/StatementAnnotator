@@ -15,6 +15,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     private IndirectObject indirectObject;
     private Statement childStatement;
     private Set<AbstractComponent> pureComponents;
+    private Set<IndexedWord> outgoing;
 
     /**
      * Initialised by setting statement components as parameters. Params can be left null if the component type is N/A.
@@ -83,6 +84,23 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     }
 
     /**
+     * Outgoing (= governing) words.
+     * Useful for establishing whether this statement is connected to another component.
+     *
+     * @return outgoing words
+     */
+    public Set<IndexedWord> getOutgoing() {
+        // lazy-loading
+        if (outgoing == null) {
+            for (StatementComponent component : getComponents()) {
+                outgoing.addAll(component.getOutgoing());
+            }
+        }
+
+        return outgoing;
+    }
+
+    /**
      * All components making up the statement (including any nested statement).
      *
      * @return components
@@ -111,11 +129,6 @@ public class Statement implements StatementComponent, Resembling<Statement> {
         }
 
         return complete;
-    }
-
-    @Override
-    public boolean connectedTo(StatementComponent otherComponent) {
-        return false;  // TODO: implement this based on method in AbstractComponent
     }
 
     /**

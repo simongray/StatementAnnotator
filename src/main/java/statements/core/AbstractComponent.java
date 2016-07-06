@@ -14,6 +14,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final IndexedWord primary;
     protected final Set<IndexedWord> complete;
     protected final Set<IndexedWord> words;  // used to make sure re-composed statements have access to all words
+    protected final Set<IndexedWord> outgoing;
     protected final Set<IndexedWord> negations;
     protected final Set<IndexedWord> punctuation;
     protected final Set<IndexedWord> markers;
@@ -24,14 +25,17 @@ public abstract class AbstractComponent implements StatementComponent {
         this.primary = primary;
         complete = StatementUtils.findCompound(primary, graph, getIgnoredRelations(), getOwnedScopes());
 
+        // find outgoing
+        outgoing = graph.getParents(primary);
+
         // find negations
-        negations = StatementUtils.findSpecificChildren(Relations.NEG, primary, graph);;
+        negations = StatementUtils.findSpecificChildren(Relations.NEG, primary, graph);
 
         // find punctuation
-        punctuation = StatementUtils.findSpecificChildren(Relations.PUNCT, primary, graph);;
+        punctuation = StatementUtils.findSpecificChildren(Relations.PUNCT, primary, graph);
 
         // find markers
-        markers = StatementUtils.findSpecificChildren(Relations.MARK, primary, graph);;
+        markers = StatementUtils.findSpecificChildren(Relations.MARK, primary, graph);
 
         // find clauses
         adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, primary, graph);
@@ -152,6 +156,16 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
+     * Outgoing (= governing) words.
+     * Useful for establishing whether this statement component is connected to another component.
+     *
+     * @return outgoing words
+     */
+    public Set<IndexedWord> getOutgoing() {
+        return outgoing;
+    }
+
+    /**
      * Whether the component is negated.
      *
      * @return true if negated
@@ -176,10 +190,6 @@ public abstract class AbstractComponent implements StatementComponent {
      */
     public int size() {
         return getComplete().size();
-    }
-
-    public boolean connectedTo(StatementComponent otherComponent) {
-        return false;
     }
 
     @Override

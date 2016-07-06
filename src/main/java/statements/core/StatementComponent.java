@@ -9,5 +9,19 @@ import java.util.Set;
  */
 public interface StatementComponent {
     Set<IndexedWord> getComplete();
-    boolean connectedTo(StatementComponent otherComponent);
+    Set<IndexedWord> getOutgoing();
+
+    /**
+     * Is this component connected to another component?
+     *
+     * @param otherComponent the other component
+     * @return true if connected
+     */
+    default boolean connectedTo(StatementComponent otherComponent) {
+        if (this.equals(otherComponent)) {
+            return false;
+        } else {
+            return StatementUtils.intersects(getComplete(), otherComponent.getOutgoing()) || StatementUtils.intersects(getComplete(), otherComponent.getOutgoing());
+        }
+    }
 }
