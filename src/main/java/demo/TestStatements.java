@@ -51,9 +51,15 @@ public class TestStatements {
                 |_ component: {Verb: "have found"}
                 |_ component: {Subject: "we"}*/
 
-        // TODO: double DirectObjects, seems to related to XCOMP
-        String example = "The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.";
-//        String example = "The app and the house are a big deal.";
+
+
+
+        // TODO: issue #48 - not splitting statements with double subjects
+        String example = "The app and the house are a big deal.";
+
+
+
+
 //        String example = "She lives in a house in a lake outside of Copenhagen.";  // TODO: still not completely satisfied
 //        String example = "It's a big deal.";
 //        String example = "The app allows you to smile and wave.";
@@ -149,7 +155,7 @@ public class TestStatements {
              |_ component: {Verb: "Here's :"}
              |_ component: {Subject: "our solution"}
          */
-
+//        String example = "The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.";
 
 
 
