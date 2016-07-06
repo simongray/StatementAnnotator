@@ -75,6 +75,7 @@ public class Relations {
          */
         NESTED_STATEMENT_SCOPES.add(CCOMP);
         NESTED_STATEMENT_SCOPES.add(XCOMP);
+        NESTED_STATEMENT_SCOPES.add(CSUBJ);  // TODO: use this for special type of Statement (SubjectStatement) which also evaluates to a Subject
 
         /**
          * Relations whose dependant + children (= scope) cannot be used to find components in.

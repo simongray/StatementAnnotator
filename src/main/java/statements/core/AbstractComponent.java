@@ -31,6 +31,8 @@ public abstract class AbstractComponent implements StatementComponent {
      */
     protected final Set<IndexedWord> governors;
 
+    protected final String label;
+
     protected final Set<IndexedWord> negations;
     protected final Set<IndexedWord> punctuation;
     protected final Set<IndexedWord> markers;
@@ -38,6 +40,10 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> nounClauses;
 
     public AbstractComponent(IndexedWord primary, SemanticGraph graph) {
+       this(primary, graph, null);
+    }
+
+    public AbstractComponent(IndexedWord primary, SemanticGraph graph, String label) {
         this.primary = primary;
         compound = StatementUtils.findCompound(primary, graph, getIgnoredRelations(), getOwnedScopes());
 
@@ -58,6 +64,8 @@ public abstract class AbstractComponent implements StatementComponent {
                 governors.add(edge.getGovernor());
             }
         }
+
+        this.label = label;
     }
 
     /**
@@ -177,11 +185,25 @@ public abstract class AbstractComponent implements StatementComponent {
         return StatementUtils.join(getCompound());
     }
 
+    /**
+     * The label of component.
+     * In most cases, components don't have a label, but in some cases they can be useful.
+     * Component labels can be used to label their containing statements.
+     * Labeling containing statements can provide information
+     * on, for example, how an embedded statement fits into its parent statement.
+     *
+     * @return label
+     */
+    public String getLabel() {
+        return label;
+    }
+
     @Override
     public String toString() {
         return "{" +
             getClass().getSimpleName() + ": \"" + getString() + "\"" +
-            (!getClauses().isEmpty()? ", clause: \"" + StatementUtils.join(getClauses()) + "\"" : "")
-        + "}";
+            (!getClauses().isEmpty()? ", clause: \"" + StatementUtils.join(getClauses()) + "\"" : "") +
+            ((getLabel() != null)? ", label: \"" + getLabel() + "\"" : "") +
+        "}";
     }
 }

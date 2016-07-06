@@ -14,6 +14,10 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
         super(primary, graph);
     }
 
+    public Verb(IndexedWord primary, SemanticGraph graph, String label) {
+        super(primary, graph, label);
+    }
+
     /**
      * Describes which relations are ignored when producing the complete verb.
      */

@@ -108,6 +108,7 @@ public class StatementFinder {
 
         // build statements from the connected component sets
         for (Set<AbstractComponent> connectedComponentSet : connectedComponentSets) {
+
             unconnectedStatements.add(new Statement(connectedComponentSet));
         }
 

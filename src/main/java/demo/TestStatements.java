@@ -99,11 +99,6 @@ public class TestStatements {
              |_ component: {Subject: "I"}
          */
 
-
-        // TODO: double statements for some strange reason
-        String example = "Establishing a practice goes a long way to reduce stress.";
-
-
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
 //        String example = "Anyway, just make your own rule and stick to it.";
         // TODO: this one is really bad
@@ -166,7 +161,7 @@ public class TestStatements {
 //        String example = "The app allows you to smile and wave.";
 //        String example = "It's a big deal.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";
-
+        String example = "Establishing a practice goes a long way to reduce stress.";  // csubj verb example
 
 
 

@@ -12,6 +12,7 @@ import java.util.Set;
 public interface StatementComponent {
     Set<IndexedWord> getCompound();
     Set<IndexedWord> getGovernors();
+    String getLabel();
 
     /**
      * Is this component the parent of to another component?

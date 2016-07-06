@@ -81,8 +81,9 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
         entries.addAll(copObjects);
 
         // build complete objects
-        for (IndexedWord object : entries) {
-            directObjects.add(new DirectObject(object, graph));
+        for (IndexedWord entry : entries) {
+            logger.info("creating new direct object based on: " + entry);
+            directObjects.add(new DirectObject(entry, graph));
         }
 
         logger.info("direct objects found: " + directObjects);

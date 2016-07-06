@@ -25,7 +25,6 @@ public class SubjectFinder extends AbstractFinder<Subject> {
         Collection<TypedDependency> dependencies = graph.typedDependencies();
         Set<IndexedWord> simpleSubjects = new HashSet<>();
         Set<IndexedWord> simplePassiveSubjects = new HashSet<>();
-        Set<IndexedWord> simpleClausalSubjects = new HashSet<>();
         Set<Subject> subjects = new HashSet<>();
 
         Set<IndexedWord> ignoredWords = getIgnoredWords(graph);
@@ -39,15 +38,11 @@ public class SubjectFinder extends AbstractFinder<Subject> {
             if (dependency.reln().getShortName().equals(Relations.NSUBJPASS)) {
                 if (!ignoredWords.contains(dependency.dep())) simplePassiveSubjects.add(dependency.dep());
             }
-            if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
-                if (!ignoredWords.contains(dependency.dep())) simpleClausalSubjects.add(dependency.dep());
-            }
         }
 
         Set<IndexedWord> entries = new HashSet<>();
         entries.addAll(simpleSubjects);
         entries.addAll(simplePassiveSubjects);
-        entries.addAll(simpleClausalSubjects);
 
         // build complete subjects
         for (IndexedWord entry : entries) {

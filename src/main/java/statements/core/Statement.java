@@ -13,11 +13,15 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     private Verb verb;
     private DirectObject directObject;
     private IndirectObject indirectObject;
-    private Statement childStatement;
+    private Statement embeddedStatement;
     private Set<AbstractComponent> pureComponents;
     private Set<IndexedWord> governors;
 
-    public void init(Set<AbstractComponent> pureComponents) {
+    public Statement(Set<AbstractComponent> pureComponents) {
+        this(pureComponents, null);
+    }
+
+    public Statement(Set<AbstractComponent> pureComponents, Statement embeddedStatement) {
         for (StatementComponent component : pureComponents) {
             if (component instanceof Subject) {
                 subject = (Subject) component;
@@ -30,15 +34,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
             }
         }
         this.pureComponents = pureComponents;
-    }
-
-    public Statement(Set<AbstractComponent> pureComponents) {
-        init(pureComponents);
-    }
-
-    public Statement(Set<AbstractComponent> pureComponents, Statement embeddedStatement) {
-        init(pureComponents);
-        childStatement = embeddedStatement;
+        this.embeddedStatement = embeddedStatement;
     }
 
     /**
@@ -115,7 +111,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
      */
     public Set<StatementComponent> getComponents() {
         Set<StatementComponent> components = new HashSet<>(pureComponents);
-        if (childStatement != null) components.add(childStatement);
+        if (embeddedStatement != null) components.add(embeddedStatement);
         return components;
     }
 
@@ -161,6 +157,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
             + getClass().getSimpleName() +
             ": \"" + StatementUtils.join(getCompound()) + "\"" +
             (count() > 1? ", components: " + count() : "") +
+            ((getLabel() != null)? ", label: \"" + getLabel() + "\"" : "") +
         "}";
     }
 
@@ -181,6 +178,27 @@ public class Statement implements StatementComponent, Resembling<Statement> {
      */
     public Statement embed(Statement childStatement) {
         return new Statement(pureComponents, childStatement);
+    }
+
+
+    /**
+     * The label of a statement.
+     * In most cases, statements don't have a label, but in some cases they can be useful.
+     * Statement labels can be useful for knowing how to an embedded statement should be treated inside its parent.
+     *
+     * @return label
+     */
+    public String getLabel() {
+        String label = null;
+
+        // TODO: make this more intelligent, don't just choose the first component label it can find
+        for (StatementComponent component : getComponents()) {
+            if (component.getLabel() != null) {
+                label = component.getLabel();
+            }
+        }
+
+        return label;
     }
 
     /**

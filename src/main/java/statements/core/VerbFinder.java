@@ -53,6 +53,11 @@ public class VerbFinder extends AbstractFinder<Verb> {
                 if (!ignoredWords.contains(dependency.gov())) simpleVerbs.add(dependency.dep());
             }
 
+            // find verbs acting as subjects in a sentence through a clause
+            if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
+                if (!ignoredWords.contains(dependency.gov())) csubjVerbs.add(dependency.dep());  // TODO: contains(gov or dep)?
+            }
+
             // make sure that adjectives are removed from the list of verbs
             // in the very same move, cop relation verbs (is, be, 's, 'm, etc.) are found
             if (dependency.reln().getShortName().equals(Relations.COP)) {
@@ -60,11 +65,6 @@ public class VerbFinder extends AbstractFinder<Verb> {
                     adjectives.add(dependency.gov());
                     copVerbs.add(dependency.dep());
                 }
-            }
-
-            // TODO: safe to remove?
-            if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
-                if (!ignoredWords.contains(dependency.dep())) csubjVerbs.add(dependency.dep());
             }
 
             // TODO: safe to remove?
@@ -87,6 +87,13 @@ public class VerbFinder extends AbstractFinder<Verb> {
 
         for (IndexedWord simpleVerb : simpleVerbs) {
             verbs.add(new Verb(simpleVerb, graph));
+        }
+
+        // take care to label this type of verb
+        // this is done in order to be able to label statements, i.e. a csubj verb statement
+        // knowing a statement is a csubj verb statement, means it can be treated as a replacement for Subject
+        for (IndexedWord csubjVerb : csubjVerbs) {
+            verbs.add(new Verb(csubjVerb, graph, Labels.CSUBJVERB));
         }
         logger.info("verbs found: " + verbs);
 

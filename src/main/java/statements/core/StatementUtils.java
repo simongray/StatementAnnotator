@@ -413,7 +413,8 @@ public class StatementUtils {
                 for (StatementComponent component : statement.getComponents()) {
                     String prefix = i < statements.size() - 1? "  |  |_ " : "     |_ ";
                     if (component instanceof Statement) {
-                        System.out.println(indent + prefix + "component: " + ((Statement) component).getComponents());  // TODO: make pretty with indent and stuff
+                        System.out.println(indent + prefix + "component: " + component);
+                        System.out.println(indent + "        " + "           " + ((Statement) component).getComponents());
                     } else {
                         System.out.println(indent + prefix + "component: " + component);
                     }
