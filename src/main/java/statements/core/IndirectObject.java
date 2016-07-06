@@ -12,9 +12,6 @@ public class IndirectObject extends AbstractComponent implements Resembling<Indi
 
     public IndirectObject(IndexedWord primary, SemanticGraph graph) {
         super(primary, graph);
-
-        // TODO: remove?
-        words.addAll(complete);  // needed since verb conjunctions are different from other components
     }
 
     /**

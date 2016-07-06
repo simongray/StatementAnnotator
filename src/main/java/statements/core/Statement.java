@@ -91,7 +91,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
      * Outgoing (= governing) words.
      * Useful for establishing whether this statement is connected to another component.
      *
-     * @return governors words
+     * @return governors
      */
     public Set<IndexedWord> getGovernors() {
         if (governors == null) {
@@ -103,7 +103,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
 
         // remove internal governors from other components
         // otherwise, a statement can be the parent of itself
-        governors.removeAll(getComplete());
+        governors.removeAll(getCompound());
 
         return governors;
     }
@@ -122,13 +122,13 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     /**
      * Every word of the statement.
      *
-     * @return words
+     * @return compound
      */
-    public Set<IndexedWord> getComplete() {
+    public Set<IndexedWord> getCompound() {
         Set<IndexedWord> complete = new HashSet<>();
 
         for (StatementComponent component : getComponents()) {
-            complete.addAll(component.getComplete());
+            complete.addAll(component.getCompound());
         }
 
         return complete;
@@ -141,7 +141,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
      * @return size
      */
     public int size() {
-        return getComplete().size();
+        return getCompound().size();
     }
 
 
@@ -159,7 +159,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     public String toString() {
         return "{"
             + getClass().getSimpleName() +
-            ": \"" + StatementUtils.join(getComplete()) + "\"" +
+            ": \"" + StatementUtils.join(getCompound()) + "\"" +
             (count() > 1? ", components: " + count() : "") +
         "}";
     }

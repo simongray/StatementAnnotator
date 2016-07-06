@@ -12,9 +12,6 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
 
     public Verb(IndexedWord primary, SemanticGraph graph) {
         super(primary, graph);
-
-        // TODO: remove?
-        words.addAll(complete);  // needed since verb conjunctions are different from other components
     }
 
     /**
@@ -22,15 +19,6 @@ public class Verb extends AbstractComponent implements Resembling<Verb> {
      */
     protected Set<String> getIgnoredRelations() {
         return Relations.IGNORED_VERB_RELATIONS;
-    }
-
-    /**
-     * The string of the complete verb.
-     *
-     * @return the longest string possible
-     */
-    public String getString() {
-        return StatementUtils.join(StatementUtils.without(getMarkers(), complete));
     }
 
     /**

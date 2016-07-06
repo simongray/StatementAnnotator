@@ -10,10 +10,8 @@ import java.util.Set;
  * Allows for linking of Subject, Verb, DirectObject, and IndirectObject.
  */
 public interface StatementComponent {
-
-    Set<IndexedWord> getComplete();
+    Set<IndexedWord> getCompound();
     Set<IndexedWord> getGovernors();
-
 
     /**
      * Is this component the parent of to another component?
@@ -23,7 +21,7 @@ public interface StatementComponent {
      */
     default boolean parentOf(StatementComponent otherComponent) {
         Logger logger = LoggerFactory.getLogger(StatementComponent.class);
-        if (StatementUtils.intersects(getComplete(), otherComponent.getGovernors())) logger.info(getComplete() + " : " + otherComponent.getGovernors());
-        return StatementUtils.intersects(getComplete(), otherComponent.getGovernors());
+        if (StatementUtils.intersects(getCompound(), otherComponent.getGovernors())) logger.info(getCompound() + " : " + otherComponent.getGovernors());
+        return StatementUtils.intersects(getCompound(), otherComponent.getGovernors());
     }
 }

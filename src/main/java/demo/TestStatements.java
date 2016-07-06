@@ -1,15 +1,12 @@
 package demo;
 
 
-import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 import statements.annotations.StatementsAnnotation;
-import statements.core.AbstractComponent;
 import statements.core.Statement;
-import statements.core.StatementComponent;
 import statements.core.StatementUtils;
 
 import java.util.List;
@@ -109,7 +106,7 @@ public class TestStatements {
 //        String example = "She hates and loves to fly. She hates flying and he loves it.";
 //        String example = "Establishing a practice goes a long way to reduce stress.";
 //        String example = "Chronically stressed people often have trouble sleeping.";  // it's kinda weird though, i.e. component: [{Subject: trouble}, {Verb: sleeping}]
-//        String example = "He and she speaks and yells the words and sentences to her or him.";
+//        String example = "He and she speaks and yells the compound and sentences to her or him.";
 //        String example = "They don't like doing anything in particular and neither does she.";  // TODO: consider whether dep(neither-10, does-11) should result in a negation of verb
         // (for example below: identical result - technically incorrect since they're slightly semantically different, but definitely a useful simplication)
 //        String example = "Sally and Mads in particular don't like doing anything. Sally and Mads don't like doing anything in particular.";
@@ -167,17 +164,6 @@ public class TestStatements {
             Set<Statement> statements = sentence.get(StatementsAnnotation.class);
             System.out.println(sentence);
             StatementUtils.printStatements(statements);
-
-            if (statements != null) {
-                for (Statement statement : statements) {
-                    for (StatementComponent statementComponent : statement.getComponents()) {
-                        if (statementComponent instanceof AbstractComponent) {
-                            AbstractComponent component = (AbstractComponent) statementComponent;
-                            System.out.println("words: " + component.getWords());
-                        }
-                    }
-                }
-            }
         }
     }
 }

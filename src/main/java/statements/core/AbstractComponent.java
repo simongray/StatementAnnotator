@@ -12,10 +12,25 @@ import java.util.Set;
  * A component of a natural language statement.
  */
 public abstract class AbstractComponent implements StatementComponent {
+    /**
+     * The primary word of the component.
+     * Used as the entry point for the rest of the compound.
+     */
     protected final IndexedWord primary;
-    protected final Set<IndexedWord> complete;
-    protected final Set<IndexedWord> words;  // used to make sure re-composed statements have access to all words
+
+    /**
+     * The main compound derived from the outgoing connections of the primary word.
+     * Represents the entire component, although it does not include specific parts
+     * - such as negations - that are found separately.
+     */
+    protected final Set<IndexedWord> compound;
+
+    /**
+     * The incoming connections of the primary word, i.e. its governors.
+     * Used to find connections between different components.
+     */
     protected final Set<IndexedWord> governors;
+
     protected final Set<IndexedWord> negations;
     protected final Set<IndexedWord> punctuation;
     protected final Set<IndexedWord> markers;
@@ -24,46 +39,32 @@ public abstract class AbstractComponent implements StatementComponent {
 
     public AbstractComponent(IndexedWord primary, SemanticGraph graph) {
         this.primary = primary;
-        complete = StatementUtils.findCompound(primary, graph, getIgnoredRelations(), getOwnedScopes());
+        compound = StatementUtils.findCompound(primary, graph, getIgnoredRelations(), getOwnedScopes());
 
-        // find governors
+        // relevant parts of the component that have been separated out from the compound
+        negations = StatementUtils.findSpecificChildren(Relations.NEG, primary, graph);
+        punctuation = StatementUtils.findSpecificChildren(Relations.PUNCT, primary, graph);
+        markers = StatementUtils.findSpecificChildren(Relations.MARK, primary, graph);
+        adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, primary, graph);
+        nounClauses = StatementUtils.findSpecificDescendants(Relations.ACL, primary, graph);
+        nounClauses.addAll(StatementUtils.findSpecificDescendants(Relations.ACL_RELCL, primary, graph));
+
+        // the governors/parents of the component
         governors = new HashSet<>();
         for (SemanticGraphEdge edge : graph.incomingEdgeList(primary)) {
-            // it is important to leave out certain governors relations
+            // it is important to leave out certain governor relations
             // (e.g. the conj relation, since multiple of the same component type should not be connecting)
             if (!Relations.IGNORED_OUTGOING_RELATIONS.contains(edge.getRelation().getShortName())) {
                 governors.add(edge.getGovernor());
             }
         }
+    }
 
-        // find negations
-        negations = StatementUtils.findSpecificChildren(Relations.NEG, primary, graph);
-
-        // find punctuation
-        punctuation = StatementUtils.findSpecificChildren(Relations.PUNCT, primary, graph);
-
-        // find markers
-        markers = StatementUtils.findSpecificChildren(Relations.MARK, primary, graph);
-
-        // find clauses
-        adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, primary, graph);
-        nounClauses = StatementUtils.findSpecificDescendants(Relations.ACL, primary, graph);
-        nounClauses.addAll(StatementUtils.findSpecificDescendants(Relations.ACL_RELCL, primary, graph));
-
-        System.out.println(this + " has governors: " + governors);
-
-
-        // TODO: find simpler and less resource intensive way of doing this
-        // find ALL of the words of this component, to be used for recomposing into statement without missing words
-        // only follows non-component specific ignored relations (e.g. dep, punct, mark)
-        // this is done in order to not cross into the relations of other components
-        Set<String> componentSpecificIgnoredRelations = new HashSet<>(getIgnoredRelations());
-        componentSpecificIgnoredRelations.removeAll(Relations.IGNORED_RELATIONS);
-        componentSpecificIgnoredRelations.addAll(Relations.IGNORED_INTER_COMPONENT_RELATIONS); // TODO: this is a retarded way of unignoring stuff
-        words = StatementUtils.findCompound(primary, graph, componentSpecificIgnoredRelations, getOwnedScopes());
-        words.addAll(getNegations());
-        words.addAll(getMarkers());
-        words.addAll(getPunctuation());
+    /**
+     * Describes which relations are ignored when producing the compound.
+     */
+    protected Set<String> getIgnoredRelations() {
+        return Relations.IGNORED_RELATIONS;
     }
 
     /**
@@ -74,14 +75,7 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
-     * Describes which relations are ignored when producing the complete subject.
-     */
-    protected Set<String> getIgnoredRelations() {
-        return Relations.IGNORED_RELATIONS;
-    }
-
-    /**
-     * The primary word contained within the complete component.
+     * The primary word contained within the compound component.
      *
      * @return primary word
      */
@@ -90,14 +84,13 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
-     * Every word of the complete component.
+     * Every word of the component.
      *
-     * @return complete component
+     * @return compound
      */
-    public Set<IndexedWord> getComplete() {
-        return complete;
+    public Set<IndexedWord> getCompound() {
+        return compound;
     }
-
 
     /**
      * The negations.
@@ -157,20 +150,10 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
-     * All of the words (including ignored ones) for this component.
-     * Useful for recomposing into full statements.
-     *
-     * @return
-     */
-    public Set<IndexedWord> getWords() {
-        return words;
-    }
-
-    /**
-     * Outgoing (= governing) words.
+     * Outgoing (= governing) compound.
      * Useful for establishing whether this statement component is connected to another component.
      *
-     * @return governors words
+     * @return governors
      */
     public Set<IndexedWord> getGovernors() {
         return governors;
@@ -186,21 +169,12 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
-     * The string of the complete component.
+     * The compound as a string.
      *
      * @return the longest string possible
      */
     protected String getString() {
-        return StatementUtils.join(getComplete());
-    }
-
-    /**
-     * The amount of words contained within the complete component.
-     *
-     * @return word count
-     */
-    public int size() {
-        return getComplete().size();
+        return StatementUtils.join(getCompound());
     }
 
     @Override
