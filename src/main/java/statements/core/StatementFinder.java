@@ -50,7 +50,7 @@ public class StatementFinder {
      * @return statements
      */
     private static Set<Statement> link(SemanticGraph graph, Set<AbstractComponent> components) {
-        Set<Statement> statements = new HashSet<>();
+        Set<Statement> unconnectedStatements = new HashSet<>();
 
         logger.info("components for linking: " + components);
         logger.info("based on dependencies: " + graph.typedDependencies());
@@ -81,7 +81,7 @@ public class StatementFinder {
 
         for (AbstractComponent component : components) {
             for (AbstractComponent otherComponent : components) {
-                if (component.connectedTo(otherComponent)) {
+                if (component.parentOf(otherComponent)) {
                     logger.info(component + " is connected to " + otherComponent);
                 } else {
                     logger.info(component + " is NOT connected to " + otherComponent);
@@ -91,7 +91,7 @@ public class StatementFinder {
         for (Set<AbstractComponent> nComponents : nestedComponentMapping.values()) {
             for (AbstractComponent component : nComponents) {
                 for (AbstractComponent otherComponent : nComponents) {
-                    if (component.connectedTo(otherComponent)) {
+                    if (component.parentOf(otherComponent)) {
                         logger.info(component + " is connected to " + otherComponent);
                     } else {
                         logger.info(component + " is NOT connected to " + otherComponent);
@@ -100,67 +100,59 @@ public class StatementFinder {
             }
         }
 
+        // TODO: just use set from beginning, skip mapping
+        Set<Set<AbstractComponent>> componentSets = new HashSet<>();
+        componentSets.add(components);
+        for (Set<AbstractComponent> componentSet : nestedComponentMapping.values()) {
+            componentSets.add(componentSet);
+        }
 
+        Set<Set<AbstractComponent>> connectedComponentSets = new HashSet<>();
 
+        // discover links between components for each set of components
+        // the components sets are separated into either nested statement levels or the root level
+        for (Set<AbstractComponent> componentSet : componentSets) {
+            for (AbstractComponent component : componentSet) {
+                Set<AbstractComponent> connectedComponents = new HashSet<>();
+                connectedComponents.add(component);
 
+                for (AbstractComponent otherComponent : componentSet) {
+                    if (component.parentOf(otherComponent)) {
+                        connectedComponents.add(otherComponent);
+                    }
+                }
 
+                connectedComponentSets.add(connectedComponents);
+            }
+        }
 
+        // merge all of the connected component sets in order to remove duplicates
+        StatementUtils.merge(connectedComponentSets);
+        logger.info("connectedComponentSets: " + connectedComponentSets);
 
+        // build statements from the connected component sets
+        for (Set<AbstractComponent> connectedComponentSet : connectedComponentSets) {
+            unconnectedStatements.add(new Statement(connectedComponentSet));
+        }
 
+        Set<Statement> modifiedStatements = new HashSet<>();
+        Set<Statement> statements = new HashSet<>();
 
-//
-//        // find the direct child-parent relationships between components
-//        // this mapping is used to create sets of linked components which can be turned into statements
-//        Map<AbstractComponent, AbstractComponent> componentMapping = getComponentMapping(components, graph);
-//        logger.info("component mapping: " + componentMapping);
-//
-//
-//
-//
-//
-//
-//
-//        // discover inter-statement relationships
-//        // this mapping is used to compose statements together if they're connected
-//        Map<AbstractComponent, AbstractComponent> statementMapping = getStatementMapping(componentMapping, graph);
-//        logger.info("statement mapping: " + statementMapping);
-//
-//        // remove component relationships found in the inter-statement mapping
-//        // these components will be replaced by links to separate statements
-//        for (AbstractComponent component : statementMapping.keySet()) {
-//            componentMapping.remove(component);
-//            logger.info("removed " + component + " from component mapping, available in statement mapping");
-//        }
-//
-//        // remove connections between identical component types
-//        // TODO: this mainly a debugging step, figure out whether to keep it
-//        for (AbstractComponent component : components) {
-//            AbstractComponent parent = componentMapping.getOrDefault(component, null);
-//
-//            if (isSameType(component, parent)) {
-//                logger.info("removing identical component type relation: " + component);
-//                componentMapping.remove(component);
-//            }
-//        }
-//
-//        // create sets of components by following all dependencies
-//        Set<Set<AbstractComponent>> componentSets = findLinks(componentMapping);
-//
-//        // merge any component sets that intersect
-//        // TODO: figure out whether this is really necessary
-//        StatementUtils.merge(componentSets);
-//
-//        // create statements from component sets
-//        for (Set<AbstractComponent> componentSet : componentSets) {
-//            logger.info("linked statement from components: " + componentSet);
-//            Statement statement = new Statement(componentSet);
-//            statements.add(statement);
-//        }
-//
-//        // attach dependent clauses to the main statements (and remove as independent statements)
-//        attachNestedStatements(statementMapping, statements);
-//
-//        logger.info("final statements: " + statements);
+        // discover links between unconnected statements and embed nested statements
+        for (Statement statement : unconnectedStatements) {
+            for (Statement otherStatement : unconnectedStatements) {
+                if (statement.parentOf(otherStatement)) {
+                    logger.info(statement + " embeds " + otherStatement);
+                    modifiedStatements.add(statement);
+                    modifiedStatements.add(otherStatement);
+                    statements.add(statement.embed(otherStatement));
+                }
+            }
+        }
+
+        // remove the modified statements and add remaining to final list
+        unconnectedStatements.removeAll(modifiedStatements);
+        statements.addAll(unconnectedStatements);
 
         return statements;
     }
@@ -388,7 +380,7 @@ public class StatementFinder {
             // compose into parent statements
             if (parent != null && child != null) {
                 logger.info("nesting " + child + " within " + parent);
-                parent.addChild(child);
+                parent.embed(child);
                 statements.remove(child);
                 logger.info("components of parent: "+parent.getComponents());
             }

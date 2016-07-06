@@ -15,14 +15,9 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     private IndirectObject indirectObject;
     private Statement childStatement;
     private Set<AbstractComponent> pureComponents;
-    private Set<IndexedWord> outgoing;
+    private Set<IndexedWord> governors;
 
-    /**
-     * Initialised by setting statement components as parameters. Params can be left null if the component type is N/A.
-     * Initialisation should not be performed manually, but by using StatementFinder to build Statement objects.
-
-     */
-    public Statement(Set<AbstractComponent> pureComponents) {
+    public void init(Set<AbstractComponent> pureComponents) {
         for (StatementComponent component : pureComponents) {
             if (component instanceof Subject) {
                 subject = (Subject) component;
@@ -35,6 +30,15 @@ public class Statement implements StatementComponent, Resembling<Statement> {
             }
         }
         this.pureComponents = pureComponents;
+    }
+
+    public Statement(Set<AbstractComponent> pureComponents) {
+        init(pureComponents);
+    }
+
+    public Statement(Set<AbstractComponent> pureComponents, Statement embeddedStatement) {
+        init(pureComponents);
+        childStatement = embeddedStatement;
     }
 
     /**
@@ -90,14 +94,18 @@ public class Statement implements StatementComponent, Resembling<Statement> {
      * @return governors words
      */
     public Set<IndexedWord> getGovernors() {
-        // lazy-loading
-        if (outgoing == null) {
+        if (governors == null) {
+            governors = new HashSet<>();
             for (StatementComponent component : getComponents()) {
-                outgoing.addAll(component.getGovernors());
+                governors.addAll(component.getGovernors());
             }
         }
 
-        return outgoing;
+        // remove internal governors from other components
+        // otherwise, a statement can be the parent of itself
+        governors.removeAll(getComplete());
+
+        return governors;
     }
 
     /**
@@ -120,12 +128,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
         Set<IndexedWord> complete = new HashSet<>();
 
         for (StatementComponent component : getComponents()) {
-            // in case of pure components, getWords() is used as it includes ignored words
-            if (component instanceof AbstractComponent) {
-               complete.addAll(((AbstractComponent) component).getWords());
-            } else {
-                complete.addAll(component.getComplete());
-            }
+            complete.addAll(component.getComplete());
         }
 
         return complete;
@@ -173,12 +176,11 @@ public class Statement implements StatementComponent, Resembling<Statement> {
 
     /**
      * Link this statement to a child statement (e.g. a dependent clause).
-     * TODO: evaluate whether this is the optimal way of doings things
      *
      * @param childStatement
      */
-    public void addChild(Statement childStatement) {
-        this.childStatement = childStatement;
+    public Statement embed(Statement childStatement) {
+        return new Statement(pureComponents, childStatement);
     }
 
     /**
