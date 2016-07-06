@@ -323,6 +323,10 @@ public abstract class AbstractComponent implements StatementComponent {
         return getComplete().size();
     }
 
+    public boolean connectedTo(StatementComponent otherComponent) {
+        return false;
+    }
+
     @Override
     public String toString() {
         return "{" +

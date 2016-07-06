@@ -9,4 +9,5 @@ import java.util.Set;
  */
 public interface StatementComponent {
     Set<IndexedWord> getComplete();
+    boolean connectedTo(StatementComponent otherComponent);
 }
