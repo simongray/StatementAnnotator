@@ -56,6 +56,11 @@ public class TestStatements {
 
         // TODO: double DirectObjects, seems to related to XCOMP
         String example = "The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.";
+//        String example = "The app and the house are a big deal.";
+//        String example = "She lives in a house in a lake outside of Copenhagen.";  // TODO: still not completely satisfied
+//        String example = "It's a big deal.";
+//        String example = "The app allows you to smile and wave.";
+//        String example = "She cried and yelled at him.";
         /*
         The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.
           |_ statement: {Statement: "The app allows you to check the latest PM2 .5 index inside your flat and automate the purifiers", components: 5}
@@ -168,9 +173,6 @@ public class TestStatements {
                     for (StatementComponent statementComponent : statement.getComponents()) {
                         if (statementComponent instanceof AbstractComponent) {
                             AbstractComponent component = (AbstractComponent) statementComponent;
-                            System.out.println("entries: " + component.getEntries());
-                            System.out.println("small compounds: " + component.getSmallCompounds());
-                            System.out.println("compounds: " + component.getCompounds());
                             System.out.println("words: " + component.getWords());
                         }
                     }

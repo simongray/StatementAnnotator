@@ -2,10 +2,7 @@ package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
-import statements.core.exceptions.MissingEntryException;
 
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -13,7 +10,7 @@ import java.util.Set;
  */
 public class DirectObject extends AbstractComponent implements Resembling<DirectObject> {
     public DirectObject(IndexedWord primary, SemanticGraph graph) {
-        super(primary, null, graph);
+        super(primary, graph);
     }
 
     /**
@@ -21,13 +18,6 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
      */
     protected Set<String> getIgnoredRelations() {
         return Relations.IGNORED_DIRECT_OBJECT_RELATIONS;
-    }
-
-    /**
-     * Describes which relations are ignored when producing compound direct objects.
-     */
-    protected Set<String> getIgnoredCompoundRelations() {
-        return Relations.IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS;
     }
 
     /**

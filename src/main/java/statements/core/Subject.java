@@ -11,7 +11,7 @@ import java.util.Set;
  */
 public class Subject extends AbstractComponent implements Resembling<Subject> {
     public Subject(IndexedWord primary, SemanticGraph graph) {
-        super(primary, null, graph);
+        super(primary, graph);
     }
 
     /**
@@ -19,13 +19,6 @@ public class Subject extends AbstractComponent implements Resembling<Subject> {
      */
     protected Set<String> getIgnoredRelations() {
         return Relations.IGNORED_SUBJECT_RELATIONS;
-    }
-
-    /**
-     * Describes which relations are ignored when producing compound subjects.
-     */
-    protected Set<String> getIgnoredCompoundRelations() {
-        return Relations.IGNORED_SUBJECT_COMPOUND_RELATIONS;
     }
 
     /**

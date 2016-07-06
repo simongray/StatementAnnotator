@@ -113,6 +113,11 @@ public class Statement implements StatementComponent, Resembling<Statement> {
         return complete;
     }
 
+    @Override
+    public boolean connectedTo(StatementComponent otherComponent) {
+        return false;  // TODO: implement this based on method in AbstractComponent
+    }
+
     /**
      * The size of the statement (number of tokens).
      * Useful for sorting statements.

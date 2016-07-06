@@ -4,6 +4,7 @@ import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
 import edu.stanford.nlp.trees.GrammaticalRelation;
+import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,55 +55,154 @@ public class StatementFinder {
         logger.info("components for linking: " + components);
         logger.info("based on dependencies: " + graph.typedDependencies());
 
-        // find the direct child-parent relationships between components
-        // this mapping is used to create sets of linked components which can be turned into statements
-        Map<AbstractComponent, AbstractComponent> componentMapping = getComponentMapping(components, graph);
-        logger.info("component mapping: " + componentMapping);
+        Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping = findNestedStatementMapping(Relations.NESTED_STATEMENT_SCOPES, graph);
+        Map<IndexedWord, Set<AbstractComponent>> nestedComponentMapping = new HashMap<>();
+        Set<AbstractComponent> nestedComponents = new HashSet<>();
+        logger.info("nested statement mapping: " + nestedStatementMapping);
 
-        // discover inter-statement relationships
-        // this mapping is used to compose statements together if they're connected
-        // TODO: currently just checking for CCOMP relations, it really is not that clever
-        Map<AbstractComponent, AbstractComponent> statementMapping = getStatementMapping(componentMapping, graph);
-        logger.info("statement mapping: " + statementMapping);
-
-        // remove component relationships found in the inter-statement mapping
-        // these components will be replaced by links to separate statements
-        for (AbstractComponent component : statementMapping.keySet()) {
-            componentMapping.remove(component);
-            logger.info("removed " + component + " from component mapping, available in statement mapping");
-        }
-
-        // remove connections between identical component types
-        // TODO: this mainly a debugging step, figure out whether to keep it
+        // map components into root statement and nested statements based on their primary entry
         for (AbstractComponent component : components) {
-            AbstractComponent parent = componentMapping.getOrDefault(component, null);
-
-            if (isSameType(component, parent)) {
-                logger.info("removing identical component type relation: " + component);
-                componentMapping.remove(component);
+            for (IndexedWord statementEntry : nestedStatementMapping.keySet()) {
+                Set<IndexedWord> statementWords = nestedStatementMapping.get(statementEntry);
+                if (statementWords.contains(component.getPrimary())) {
+                    Set<AbstractComponent> statementComponents = nestedComponentMapping.getOrDefault(statementEntry, new HashSet<>());
+                    statementComponents.add(component);
+                    nestedComponentMapping.put(statementEntry, statementComponents);
+                    nestedComponents.add(component);  // keeping track of components not in root
+                    logger.info("non-root component: " + component);
+                }
             }
         }
 
-        // create sets of components by following all dependencies
-        Set<Set<AbstractComponent>> componentSets = findLinks(componentMapping);
+        // the remaining components may be considered components of the root statement
+        components.removeAll(nestedComponents);
 
-        // merge any component sets that intersect
-        // TODO: figure out whether this is really necessary
-        StatementUtils.merge(componentSets);
+        logger.info("root components: " + components);
 
-        // create statements from component sets
-        for (Set<AbstractComponent> componentSet : componentSets) {
-            logger.info("linked statement from components: " + componentSet);
-            Statement statement = new Statement(componentSet);
-            statements.add(statement);
-        }
 
-        // attach dependent clauses to the main statements (and remove as independent statements)
-        attachNestedStatements(statementMapping, statements);
 
-        logger.info("final statements: " + statements);
+
+
+
+
+
+
+//
+//        // find the direct child-parent relationships between components
+//        // this mapping is used to create sets of linked components which can be turned into statements
+//        Map<AbstractComponent, AbstractComponent> componentMapping = getComponentMapping(components, graph);
+//        logger.info("component mapping: " + componentMapping);
+//
+//
+//
+//
+//
+//
+//
+//        // discover inter-statement relationships
+//        // this mapping is used to compose statements together if they're connected
+//        Map<AbstractComponent, AbstractComponent> statementMapping = getStatementMapping(componentMapping, graph);
+//        logger.info("statement mapping: " + statementMapping);
+//
+//        // remove component relationships found in the inter-statement mapping
+//        // these components will be replaced by links to separate statements
+//        for (AbstractComponent component : statementMapping.keySet()) {
+//            componentMapping.remove(component);
+//            logger.info("removed " + component + " from component mapping, available in statement mapping");
+//        }
+//
+//        // remove connections between identical component types
+//        // TODO: this mainly a debugging step, figure out whether to keep it
+//        for (AbstractComponent component : components) {
+//            AbstractComponent parent = componentMapping.getOrDefault(component, null);
+//
+//            if (isSameType(component, parent)) {
+//                logger.info("removing identical component type relation: " + component);
+//                componentMapping.remove(component);
+//            }
+//        }
+//
+//        // create sets of components by following all dependencies
+//        Set<Set<AbstractComponent>> componentSets = findLinks(componentMapping);
+//
+//        // merge any component sets that intersect
+//        // TODO: figure out whether this is really necessary
+//        StatementUtils.merge(componentSets);
+//
+//        // create statements from component sets
+//        for (Set<AbstractComponent> componentSet : componentSets) {
+//            logger.info("linked statement from components: " + componentSet);
+//            Statement statement = new Statement(componentSet);
+//            statements.add(statement);
+//        }
+//
+//        // attach dependent clauses to the main statements (and remove as independent statements)
+//        attachNestedStatements(statementMapping, statements);
+//
+//        logger.info("final statements: " + statements);
 
         return statements;
+    }
+
+    private static Map<IndexedWord, Set<IndexedWord>> findNestedStatementMapping(Set<String> nestedStatementScopes, SemanticGraph graph) {
+        Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping = new HashMap<>();
+
+        // which words are entry points for nested statements?
+        // use these to find the exact scope of the statements
+        for (TypedDependency dependency : graph.typedDependencies()) {
+            if (Relations.NESTED_STATEMENT_SCOPES.contains(dependency.reln().getShortName())) {
+                nestedStatementMapping.put(
+                        dependency.dep(),
+                        StatementUtils.findCompound(dependency.dep(), graph, Relations.NESTED_STATEMENT_SCOPES, null)
+                );
+            }
+        }
+
+        logger.info("nested statement mapping before changes: " + nestedStatementMapping);
+
+        Set<IndexedWord> fullyContainedScopes = new HashSet<>();
+        Map<IndexedWord, Set<IndexedWord>> mappingChanges = new HashMap<>();
+
+        // remove fully intersecting scopes from mapping
+        // if slightly intersecting, remove the relevant words as part of the super scope
+        // this is done in order to get perfectly separated scopes
+        for (IndexedWord entry : nestedStatementMapping.keySet()) {
+            Set<IndexedWord> statementScope = nestedStatementMapping.get(entry);
+
+            for (IndexedWord otherEntry : nestedStatementMapping.keySet()) {
+                if (!entry.equals(otherEntry)) {
+                    Set<IndexedWord> otherStatementScope = new HashSet<>(nestedStatementMapping.get(otherEntry));
+
+                    if (StatementUtils.intersects(statementScope, otherStatementScope)) {
+                        if (statementScope.containsAll(otherStatementScope)) {
+                            logger.info("removing fully contained scope: " + otherStatementScope);
+                            fullyContainedScopes.add(otherEntry);
+                        } else {
+                            if (!otherStatementScope.containsAll(statementScope)) {
+                                statementScope.removeAll(otherStatementScope);
+                                mappingChanges.put(entry, statementScope);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // apply removals
+        for (IndexedWord entry : fullyContainedScopes) {
+            nestedStatementMapping.remove(entry);
+            mappingChanges.remove(entry);
+        }
+
+        logger.info("applying changes to statement mapping: " + mappingChanges);
+
+        // apply the changes from mappingChanges
+        for (IndexedWord entry : mappingChanges.keySet()) {
+            Set<IndexedWord> newStatementScope = nestedStatementMapping.get(entry);
+            nestedStatementMapping.put(entry, newStatementScope);
+        }
+
+        return nestedStatementMapping;
     }
 
     /**
