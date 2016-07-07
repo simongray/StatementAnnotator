@@ -49,7 +49,7 @@ public class TestStatements {
 
 
         // TODO: contains a mystery embedded sentence
-        String example = "She cried and yelled at him.";
+//        String example = "She cried and yelled at him.";
         /*
         [cried/VBD
           nsubj>She/PRP
@@ -100,6 +100,9 @@ public class TestStatements {
 //        String example = "Bought some 3M 95N-rated face masks for smoggy days.\n";
         // TODO: in this case, the indirect object does not even respect a normal conjunction
 //        String example = "I keep one in my bag and on my head at all times.";
+        // TODO: second indirect object is not found, problem is that nmod:on is replaced by conj(keep,head) in this example
+        String example = "Her and I keep them in my bag and on my head";
+
 
 
         // FIXED (SOMEWHAT)
