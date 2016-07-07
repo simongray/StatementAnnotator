@@ -16,13 +16,10 @@ public class VerbFinder extends AbstractFinder<Verb> {
     private static final Logger logger = LoggerFactory.getLogger(VerbFinder.class);
 
     private static final Set<String> OUTGOING_RELATIONS = new HashSet<>();
-    private static final Set<String> INCOMING_RELATIONS = new HashSet<>();
     static {
         OUTGOING_RELATIONS.add(Relations.NSUBJ);
         OUTGOING_RELATIONS.add(Relations.NSUBJPASS);
         OUTGOING_RELATIONS.add(Relations.DOBJ);
-
-        INCOMING_RELATIONS.add(Relations.XCOMP);
     }
 
     /**
@@ -38,6 +35,7 @@ public class VerbFinder extends AbstractFinder<Verb> {
         Set<IndexedWord> copVerbs = new HashSet<>();
         Set<IndexedWord> adjectives = new HashSet<>();
         Set<IndexedWord> csubjVerbs = new HashSet<>();  // for verbs that act as subjects
+        Set<IndexedWord> xcompVerbs = new HashSet<>();  // for verbs that act as subjects
         Set<IndexedWord> aclVerbs = new HashSet<>();  // for verbs that are used to describe nouns
         Set<Verb> verbs = new HashSet<>();
 
@@ -49,13 +47,15 @@ public class VerbFinder extends AbstractFinder<Verb> {
             if (OUTGOING_RELATIONS.contains(dependency.reln().getShortName())) {
                 if (!ignoredWords.contains(dependency.dep())) simpleVerbs.add(dependency.gov());
             }
-            if (INCOMING_RELATIONS.contains(dependency.reln().getShortName())) {
-                if (!ignoredWords.contains(dependency.gov())) simpleVerbs.add(dependency.dep());
-            }
 
             // find verbs acting as subjects in a sentence through a clause
             if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
                 if (!ignoredWords.contains(dependency.gov())) csubjVerbs.add(dependency.dep());  // TODO: contains(gov or dep)?
+            }
+
+            // find verbs acting as direct objects in a sentence through a clause
+            if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
+                if (!ignoredWords.contains(dependency.gov())) xcompVerbs.add(dependency.dep());  // TODO: contains(gov or dep)?
             }
 
             // make sure that adjectives are removed from the list of verbs
@@ -76,6 +76,9 @@ public class VerbFinder extends AbstractFinder<Verb> {
         // remove adjectives from candidate verbs
         simpleVerbs.removeAll(adjectives);
 
+        // remove verbs that are already in xcompverbs
+        simpleVerbs.removeAll(xcompVerbs);
+
         // remove verbs that act as subjects
         simpleVerbs.removeAll(csubjVerbs); // TODO: safe to remove?
 
@@ -94,6 +97,13 @@ public class VerbFinder extends AbstractFinder<Verb> {
         // knowing a statement is a csubj verb statement, means it can be treated as a replacement for Subject
         for (IndexedWord csubjVerb : csubjVerbs) {
             verbs.add(new Verb(csubjVerb, graph, Labels.CSUBJVERB));
+        }
+
+        // take care to label this type of verb
+        // this is done in order to be able to label statements, i.e. a csubj verb statement
+        // knowing a statement is a csubj verb statement, means it can be treated as a replacement for Subject
+        for (IndexedWord xcompVerb : xcompVerbs) {
+            verbs.add(new Verb(xcompVerb, graph, Labels.XCOMPVERB));
         }
         logger.info("verbs found: " + verbs);
 

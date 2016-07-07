@@ -296,6 +296,8 @@ public class Statement implements StatementComponent, Resembling<Statement> {
             if (componentLabel != null) {
                 if (componentLabel.equals(Labels.CSUBJVERB)) {
                     label = Labels.SUBJECT;
+                } else if (componentLabel.equals(Labels.XCOMPVERB)) {
+                    label = Labels.DIRECT_OBJECT;
                 }
             }
         }
