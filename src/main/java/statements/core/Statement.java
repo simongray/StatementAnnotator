@@ -17,8 +17,61 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     private Set<AbstractComponent> pureComponents;
     private Set<IndexedWord> governors;
 
-    public Statement(Set<AbstractComponent> pureComponents) {
-        this(pureComponents, null);
+//    public Statement(Set<AbstractComponent> pureComponents) {
+//        this(pureComponents, null);
+//    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof Statement) {
+            Statement otherStatement = (Statement) object;
+            Set<StatementComponent> otherComponents = otherStatement.getComponents();
+            Statement otherEmeddedStatement = otherStatement.getEmbeddedStatement();
+            boolean sameEmbeddedStatement = getEmbeddedStatement() != null? getEmbeddedStatement().equals(otherEmeddedStatement) : otherEmeddedStatement == null;
+            return otherComponents.equals(getComponents()) && sameEmbeddedStatement;
+        }
+
+        return false;
+    }
+
+    public Statement getEmbeddedStatement() {
+        return embeddedStatement;
+    }
+
+    public Statement(Set<StatementComponent> components) {
+        pureComponents = new HashSet<>();  // TODO: do away with pure components entirely
+        embeddedStatement = null;
+
+        for (StatementComponent component : components) {
+            add(component);
+        }
+    }
+
+    private void add(StatementComponent component) {
+        if (component instanceof AbstractComponent) {
+            AbstractComponent abstractComponent = (AbstractComponent) component;
+
+            if (!pureComponents.contains(abstractComponent)) {
+                if (abstractComponent instanceof Subject) {
+                    subject = (Subject) abstractComponent;
+                } else if (abstractComponent instanceof Verb) {
+                    verb = (Verb) abstractComponent;
+                } else if (abstractComponent instanceof DirectObject) {
+                    directObject = (DirectObject) abstractComponent;
+                } else if (abstractComponent instanceof IndirectObject) {
+                    indirectObject = (IndirectObject) abstractComponent;
+                }
+                pureComponents.add(abstractComponent);
+            }
+        } else if (component instanceof Statement) {
+            Statement statement = (Statement) component;
+
+            for (StatementComponent containedComponent : statement.getComponents()) {
+                add(containedComponent);
+            }
+        } else {
+            // TODO: throw exception?
+        }
     }
 
     public Statement(Set<AbstractComponent> pureComponents, Statement embeddedStatement) {
@@ -187,11 +240,33 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     /**
      * Whether this statement includes a specific component.
      *
-     * @param component component to search for
+     * @param otherComponent component to search for
      * @return true if contains component
      */
-    public boolean contains(StatementComponent component) {
-        return getComponents().contains(component);
+    public boolean contains(StatementComponent otherComponent) {
+        if (otherComponent instanceof Statement) {
+            if (getEmbeddedStatement() != null) {
+                return getEmbeddedStatement().equals(otherComponent);
+            }
+        } else {
+            return getComponents().contains(otherComponent);
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether this statement includes a set of components.
+     *
+     * @param otherComponents components to check
+     * @return true if contains component
+     */
+    public boolean contains(Set<StatementComponent> otherComponents) {
+        for (StatementComponent component : otherComponents) {
+            if (!contains(component)) return false;
+        }
+
+        return true;
     }
 
     /**

@@ -77,64 +77,84 @@ public class StatementFinder {
         components.removeAll(nestedComponents);
 
         // TODO: just use set from beginning, skip mapping
-        Set<Set<AbstractComponent>> componentSets = new HashSet<>();
-        componentSets.add(components);
+        Set<Set<AbstractComponent>> componentsByNestingLevel = new HashSet<>();
+        componentsByNestingLevel.add(components);
         for (Set<AbstractComponent> componentSet : nestedComponentMapping.values()) {
-            componentSets.add(componentSet);
+            componentsByNestingLevel.add(componentSet);
         }
 
-        Set<Set<AbstractComponent>> connectedComponentSets = new HashSet<>();
+        logger.info("componentsByNestingLevel: " + componentsByNestingLevel);
 
-        // discover links between components for each set of components
-        // the components sets are separated into either nested statement levels or the root level
-        for (Set<AbstractComponent> componentSet : componentSets) {
-            for (AbstractComponent component : componentSet) {
-                Set<AbstractComponent> connectedComponents = new HashSet<>();
-                connectedComponents.add(component);
 
-                for (AbstractComponent otherComponent : componentSet) {
-                    if (component.parentOf(otherComponent)) {
-                        connectedComponents.add(otherComponent);
-                    }
-                }
-
-                connectedComponentSets.add(connectedComponents);
-            }
-        }
-
-        // merge all of the connected component sets in order to remove duplicates
-        StatementUtils.merge(connectedComponentSets);
-        logger.info("connectedComponentSets: " + connectedComponentSets);
-        Set<Set<AbstractComponent>> splitComponentSets = new HashSet<>();
-
-        // split in case of duplicate roles in the component sets (e.g. multiple Subject components)
-        for (Set<AbstractComponent> connectedComponentSet : connectedComponentSets) {
-            splitComponentSets.addAll(split(connectedComponentSet, getDuplicateComponentClasses(connectedComponentSet)));
-        }
-
-        // build statements from the connected component sets
-        for (Set<AbstractComponent> splitComponentSet : splitComponentSets) {
-            unconnectedStatements.add(new Statement(splitComponentSet));
-        }
-
-        Set<Statement> modifiedStatements = new HashSet<>();
+        Set<Set<StatementComponent>> connectedComponentSets = new HashSet<>();
         Set<Statement> statements = new HashSet<>();
 
-        // discover links between unconnected statements and embed nested statements
-        for (Statement statement : unconnectedStatements) {
-            for (Statement otherStatement : unconnectedStatements) {
-                if (statement.parentOf(otherStatement)) {
-                    logger.info(statement + " embeds " + otherStatement);
-                    modifiedStatements.add(statement);
-                    modifiedStatements.add(otherStatement);
-                    statements.add(statement.embed(otherStatement));
-                }
-            }
+
+        for (Set<AbstractComponent> componentLevel : componentsByNestingLevel) {
+            Set<StatementComponent> statementComponents = new HashSet<>(componentLevel);  // STUPID JAVA!!
+            connectedComponentSets.add(connect(statementComponents));
         }
 
-        // remove the modified statements and add remaining to final list
-        unconnectedStatements.removeAll(modifiedStatements);
-        statements.addAll(unconnectedStatements);
+        logger.info("connectedComponentSets: " + connectedComponentSets);
+
+
+
+
+//
+//        // discover links between components for each set of components
+//        // the components sets are separated into either nested statement levels or the root level
+//        for (Set<AbstractComponent> componentLevel : componentsByNestingLevel) {
+//            for (AbstractComponent component : componentLevel) {
+//                Set<AbstractComponent> connectedComponents = new HashSet<>();
+//                connectedComponents.add(component);
+//
+//                for (AbstractComponent otherComponent : componentLevel) {
+//                    if (component.parentOf(otherComponent)) {
+//                        logger.info(component + " is the parent of " + otherComponent);
+//                        connectedComponents.add(otherComponent);
+//                    }
+//                }
+//
+//                logger.info("added connected component set: " + connectedComponents);
+//                connectedComponentSets.add(connectedComponents);
+//            }
+//        }
+//
+//        logger.info("connectedComponentSets: " + connectedComponentSets);
+//
+//        // merge all of the connected component sets in order to remove duplicates
+//        StatementUtils.merge(connectedComponentSets);
+//        logger.info("merged connectedComponentSets: " + connectedComponentSets);
+//
+//        Set<Set<AbstractComponent>> splitComponentSets = new HashSet<>();
+//
+//        // split in case of duplicate roles in the component sets (e.g. multiple Subject components)
+//        for (Set<AbstractComponent> connectedComponentSet : connectedComponentSets) {
+//            splitComponentSets.addAll(split(connectedComponentSet, getDuplicateComponentClasses(connectedComponentSet)));
+//        }
+//
+//        // build statements from the connected component sets
+//        for (Set<AbstractComponent> splitComponentSet : splitComponentSets) {
+//            unconnectedStatements.add(new Statement(splitComponentSet));
+//        }
+//
+//        Set<Statement> modifiedStatements = new HashSet<>();
+//
+//        // discover links between unconnected statements and embed nested statements
+//        for (Statement statement : unconnectedStatements) {
+//            for (Statement otherStatement : unconnectedStatements) {
+//                if (statement.parentOf(otherStatement)) {
+//                    logger.info(statement + " embeds " + otherStatement);
+//                    modifiedStatements.add(statement);
+//                    modifiedStatements.add(otherStatement);
+//                    statements.add(statement.embed(otherStatement));
+//                }
+//            }
+//        }
+//
+//        // remove the modified statements and add remaining to final list
+//        unconnectedStatements.removeAll(modifiedStatements);
+//        statements.addAll(unconnectedStatements);
 
         return statements;
     }
@@ -294,5 +314,61 @@ public class StatementFinder {
         }
 
         return splitComponentSets;
+    }
+
+    private static Set<StatementComponent> connect(Set<StatementComponent> components) {
+        Set<StatementComponent> connectedComponents = new HashSet<>();
+        logger.info("connecting components: " + components);
+
+        for (StatementComponent component : components) {
+            // all connections to this component are containd in this set (including the component itself)
+            Set<StatementComponent> connections = new HashSet<>();
+            connections.add(component);
+            boolean representedElsewhere = false;
+
+            // check against all the other components
+            // if a component is fully contained within another, then there is no reason to keep it
+            // if a component is the parent of another component, then they are merged
+            for (StatementComponent otherComponent : components) {
+                if (!component.equals(otherComponent)) {
+                    if (component.parentOf(otherComponent)) {
+                        connections.add(otherComponent);
+                        logger.info(component + " is the parent of " + otherComponent);
+                    } else if (otherComponent.contains(component)) {
+                        representedElsewhere = true;
+                        logger.info(component + " is contained by " + otherComponent);
+                    } else if (component instanceof Statement && otherComponent instanceof Statement) {
+                        if (((Statement) otherComponent).contains(((Statement) component).getComponents())) {
+                            representedElsewhere = true;
+                            logger.info(component + " is contained by " + otherComponent);
+                        }
+                    }
+                }
+            }
+
+            // in case the component had any connections, these are used to construct a new Statement
+            // otherwise the component is preserved as it is (unless it was completely contained)
+            if (!representedElsewhere) {
+                if (connections.size() > 1) {
+                    logger.info("made new statement from components: " + connections);
+                    Statement newStatement = new Statement(connections);
+                    logger.info("new statement: " + newStatement);
+                    connectedComponents.add(newStatement);
+                } else {
+                    logger.info("preserving component: " + component);
+                    connectedComponents.add(component);
+                }
+            } else {
+                logger.info("not preserving component: " + component);
+            }
+        }
+
+        // recursively call connect(...) until there are no further changes
+        if (!connectedComponents.equals(components)) {
+            logger.info("making recursive to connect components: " + connectedComponents);
+            connectedComponents = connect(connectedComponents);
+        }
+
+        return connectedComponents;
     }
 }

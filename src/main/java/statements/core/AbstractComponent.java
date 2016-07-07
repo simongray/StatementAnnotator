@@ -219,6 +219,11 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     @Override
+    public boolean contains(StatementComponent otherComponent) {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "{" +
             getClass().getSimpleName() + ": \"" + getString() + "\"" +

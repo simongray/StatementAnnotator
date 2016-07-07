@@ -67,6 +67,9 @@ public class TestStatements {
 
 
 
+                String example = "I sing songs and write words in English.";
+
+
 
 //        String example = "She lives in a house in a lake outside of Copenhagen.";  // TODO: still not completely satisfied
 
@@ -101,7 +104,7 @@ public class TestStatements {
         // TODO: in this case, the indirect object does not even respect a normal conjunction
 //        String example = "I keep one in my bag and on my head at all times.";
         // TODO: second indirect object is not found, problem is that nmod:on is replaced by conj(keep,head) in this example
-        String example = "Her and I keep them in my bag and on my head";
+//        String example = "Her and I keep them in my bag and on my head";
 
 
 
