@@ -38,7 +38,7 @@ public class TestStatements {
 
         // STILL NEED TO BE FIXED
 
-        // TODO: issue #42, double subjects, missing first statement, second statement nor correct, caused by lack of "I" before "recently"
+        // TODO: issue #42, missing first statement, caused by lack of "I" before "recently"
         // NOTE: inserting an "I" as the first word of the sentence gives correct output (two correct statements)
 //        String example = "Recently moved here with my girlfriend and we have found that it is quite manageable.";
         /*Recently moved here with my girlfriend and we have found that it is quite manageable.
@@ -48,26 +48,12 @@ public class TestStatements {
                 |_ component: {Subject: "we"}*/
 
 
-        // TODO: contains a mystery embedded sentence
-//        String example = "She cried and yelled at him.";
-        /*
-        [cried/VBD
-          nsubj>She/PRP
-          cc>and/CC
-          conj:and>[yelled/VBD nsubj>She/PRP nmod:at>[him/PRP case>at/IN]]
-          punct>./.]
-        She cried and yelled at him.
-          |_ statement: {Statement: "She cried yelled at him", components: 5}
-             |_ component: {Subject: "She"}
-             |_ component: [{Subject: "She"}, {IndirectObject: "at him"}, {Verb: "yelled"}]
-             |_ component: {Verb: "cried"}
-             |_ component: {Verb: "yelled"}
-             |_ component: {IndirectObject: "at him"}
-         */
-
+        // TODO: conjunctions and missing components
         // TODO: "in particular" is only added to statement with Sally
-        String example = "Sally and Mads in particular don't like doing anything for anyone.";
-
+//        String example = "Sally and Mads in particular don't like doing anything for anyone.";
+//        String example = "She cried and yelled at him.";
+        // TODO: the always on is not included for some reason
+//        String example = "They are smartphone-connected and always on, except when we're out during weekdays.";
 
 
 
@@ -97,6 +83,10 @@ public class TestStatements {
              |_ component: {Verb: "sure"}
              |_ component: {Subject: "I"}
          */
+
+
+
+
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
 //        String example = "Anyway, just make your own rule and stick to it.";
@@ -133,7 +123,7 @@ public class TestStatements {
 //        String example =    "I think she's mad. I don't care whether she likes me. She says that they should go.";
 //        String example =    "I don't care whether or not they come.";
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
-//        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";
+        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";
 //        String example = "She speaks and shouts.";
 //        String example = "Of course, Western cities usually don't have those crazy smog days.";  // TODO: there's a comma before the verb
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
@@ -142,7 +132,6 @@ public class TestStatements {
 //        String example = "You'll get used to it.";
 //        String example = "Sometimes there's no smog for a whole week, sometimes it lasts for a whole week and you'll just stay mostly indoors and use masks when outside.";  // an example of parataxis
 //        String example = "Before you go, familiarise yourself with the air quality in your own area so you have a means of comparison.";
-//        String example = "They are smartphone-connected and always on, except when we're out during weekdays.";
 //        String example = "That's not the way he sees it.";
 //        String example = "They live in a house in Copenhagen.";  // sequence indirect object
 //        String example = "Just keep one in my bag at all times as the wind can direction and smoggify the nicest days in a couple of hours sometimes.";
