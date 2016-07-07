@@ -109,7 +109,7 @@ public class StatementFinder {
 
         // split in case of duplicate roles in the component sets (e.g. multiple Subject components)
         for (Set<AbstractComponent> connectedComponentSet : connectedComponentSets) {
-            splitComponentSets.addAll(split(connectedComponentSet, getDuplicateComponents(connectedComponentSet)));
+            splitComponentSets.addAll(split(connectedComponentSet, getDuplicateComponentClasses(connectedComponentSet)));
         }
 
         // build statements from the connected component sets
@@ -200,7 +200,15 @@ public class StatementFinder {
         return nestedStatementMapping;
     }
 
-    private static Set<Class> getDuplicateComponents(Set<AbstractComponent> components) {
+    /**
+     * Duplicate component classes found within a set of components.
+     * Useful for determining where to split a set of components into multiple sets.
+     * Used by the split method.
+     *
+     * @param components the components to split into multiple sets
+     * @return duplicate component classes
+     */
+    private static Set<Class> getDuplicateComponentClasses(Set<AbstractComponent> components) {
         int subjects = 0;
         int verbs = 0;
         int directObjects = 0;
@@ -235,34 +243,52 @@ public class StatementFinder {
         return duplicateComponents;
     }
 
-    // TODO: stupid method name
+    /**
+     * Recursively split a set of components based on duplicate roles filled out by the components.
+     * For example, component sets with duplicate subjects are split into separate sets of components
+     * with exactly one subject - each of the duplicates - in them.
+     *
+     * @param components the components to split into multiple sets
+     * @param duplicateClasses the duplicate classes that determine the split
+     * @return sets of components without duplicate role components
+     */
     private static Set<Set<AbstractComponent>> split(Set<AbstractComponent> components, Set<Class> duplicateClasses) {
         Set<Set<AbstractComponent>> splitComponentSets = new HashSet<>();
+        Set<Class> remainingDuplicateClasses = new HashSet<>(duplicateClasses);
 
         if (duplicateClasses.isEmpty()) {
             splitComponentSets.add(components);
             return splitComponentSets;
         } else {
-            // recursive calls for each duplicate component
+            // with each level of recursion one component class is no longer needed
+            // remaining duplicate classes will be handled further down the recursive stack
             for (Class componentClass : duplicateClasses) {
-                // component class is not needed with the next level of recursion
-                Set<Class> newDuplicateClasses = new HashSet<>(duplicateClasses);
-                newDuplicateClasses.remove(componentClass);
+                remainingDuplicateClasses.remove(componentClass);
                 Set<AbstractComponent> duplicateComponents = new HashSet<>();
 
+                // find duplicate components of the particular class
                 for (AbstractComponent component : components) {
                     if (component.getClass().equals(componentClass)) {
-                        logger.info(component + " is of the duplicate class: " + componentClass);
                         duplicateComponents.add(component);
                     }
                 }
 
+                // make recursive calls for further splits using the remaining duplicate component classes
                 for (AbstractComponent duplicateComponent : duplicateComponents) {
                     Set<AbstractComponent> newComponentSet = new HashSet<>(components);
                     newComponentSet.removeAll(duplicateComponents);  // remove all duplicates first
                     newComponentSet.add(duplicateComponent);  // then re-add this particular duplicate
-                    logger.info("recursive call to split based on components: " + newComponentSet);
-                    splitComponentSets.addAll(split(newComponentSet, newDuplicateClasses));
+                    logger.info(duplicateComponent + " is of the duplicate class: " + duplicateComponent.getClass().getSimpleName());
+
+                    // only actually perform the recursive call if there's a point (= remaining duplicates)
+                    // otherwise just add them directly
+                    if (remainingDuplicateClasses.isEmpty()) {
+                        logger.info("no more splits to perform, adding final component set: " + newComponentSet);
+                        splitComponentSets.add(newComponentSet);
+                    } else {
+                        logger.info("recursive call to split based on duplicate components: " + remainingDuplicateClasses);
+                        splitComponentSets.addAll(split(newComponentSet, remainingDuplicateClasses));
+                    }
                 }
             }
         }
