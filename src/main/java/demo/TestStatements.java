@@ -48,15 +48,8 @@ public class TestStatements {
                 |_ component: {Subject: "we"}*/
 
 
-
-
-        // TODO: issue #48 - not splitting statements with double subjects
-//        String example = "The app and the house are a big deal.";
-//        String example = "I keep them in my bag and on my head";
-
-
-        // TODO: not working properly
-//        String example = "She cried and yelled at him.";
+        // TODO: contains a mystery embedded sentence
+        String example = "She cried and yelled at him.";
         /*
         [cried/VBD
           nsubj>She/PRP
@@ -163,7 +156,7 @@ public class TestStatements {
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";
 //        String example = "Establishing a practice goes a long way to reduce stress.";  // csubj verb example
 //        String example = "The app and the house are a big deal.";
-        String example = "I keep them in my bag and on my head";
+//        String example = "I keep them in my bag and on my head";
 
 
 
