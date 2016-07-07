@@ -122,10 +122,13 @@ public class TestStatements {
 //        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
 //        String example =    "I think she's mad. I don't care whether she likes me. She says that they should go.";
 //        String example =    "I don't care whether or not they come.";
-//        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
+        // TODO: issue #51
+        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
 
         // TODO: find out what is happening here ->  [main] INFO statements.core.StatementFinder - splitting {DirectObject/Statement: "doing anything in particular", components: 3} based on duplicates: []
-        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";  // xcomp verb example
+//        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";  // xcomp verb example
+
+
 //        String example = "She speaks and shouts.";
 //        String example = "Of course, Western cities usually don't have those crazy smog days.";  // TODO: there's a comma before the verb
 //        String example = "Our house rule is to use masks when it's 200+, although my girlfriend often does it from 150+.";
