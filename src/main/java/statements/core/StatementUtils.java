@@ -451,23 +451,50 @@ public class StatementUtils {
      * @return
      */
     public static <T> void merge(Collection<Set<T>> objectSets) {
-        Collection<Set<T>> mergedObjectSets = new HashSet<>();
+        Collection<Set<T>> mergedObjectSets = new HashSet<>(objectSets);
+        logger.info("call to merge the following sets: " + objectSets);
 
+
+        // TODO: this is not really working as it should, finish the new (commented out) approach
         for (Set<T> objectSet : objectSets) {
+//            for (Set<T> otherObjectSet : objectSets) {
+//                if (!objectSet.equals(otherObjectSet) && intersects(objectSet, otherObjectSet)) {
+//                    Set<T> mergedObjectSet = new HashSet<>(objectSet);
+//                    mergedObjectSet.addAll(otherObjectSet);
+//                    logger.info("merging " + objectSet + " and " + otherObjectSet);
+//                    logger.info("resulting set: " + mergedObjectSet);
+//
+//                    // remove the old unmerged sets
+//                    mergedObjectSets.remove(objectSet);
+//                    mergedObjectSets.remove(otherObjectSet);
+//
+//                    // add the new merged set
+//                    mergedObjectSets.add(mergedObjectSet);
+//
+//                    // recursively call the method, this time with the new merged set included
+//                    merge(mergedObjectSets);
+//
+//                    // no reason to continue as recursion takes care of further merging
+//                    objectSets.clear();
+//                    objectSets.addAll(mergedObjectSets);
+//                    return;
+//                }
+//            }
+
+            // TODO: remove this old method
             Set<T> mergedObjectSet = new HashSet<>(objectSet);
 
             for (Set<T> otherObjectSet : objectSets) {
                 if (!mergedObjectSet.equals(otherObjectSet) && intersects(mergedObjectSet, otherObjectSet)) {
                     logger.info("merging " + otherObjectSet + " into " + mergedObjectSet);
+                    mergedObjectSet.addAll(objectSet);
                     mergedObjectSet.addAll(otherObjectSet);
                 }
             }
 
+            logger.info("added new merged set: " + mergedObjectSet);
             mergedObjectSets.add(mergedObjectSet);  // re-adding identical merged sets has no effect
         }
-
-        objectSets.clear();
-        objectSets.addAll(mergedObjectSets);
     }
 
     /**
