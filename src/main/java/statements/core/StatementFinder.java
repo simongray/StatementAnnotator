@@ -49,8 +49,6 @@ public class StatementFinder {
      * @return statements
      */
     private static Set<Statement> link(SemanticGraph graph, Set<AbstractComponent> components) {
-        Set<Statement> unconnectedStatements = new HashSet<>();
-
         logger.info("components for linking: " + components);
         logger.info("based on dependencies: " + graph.typedDependencies());
 
@@ -84,77 +82,61 @@ public class StatementFinder {
         }
 
         logger.info("componentsByNestingLevel: " + componentsByNestingLevel);
-
-
         Set<Set<StatementComponent>> connectedComponentSets = new HashSet<>();
-        Set<Statement> statements = new HashSet<>();
 
-
+        // connect components by nesting level
+        // (avoid individual nested statement components being accidentally incorporated into their parent statements)
         for (Set<AbstractComponent> componentLevel : componentsByNestingLevel) {
             Set<StatementComponent> statementComponents = new HashSet<>(componentLevel);  // STUPID JAVA!!
             connectedComponentSets.add(connect(statementComponents));
         }
 
         logger.info("connectedComponentSets: " + connectedComponentSets);
+        Set<Statement> unsplitStatements = new HashSet<>();
+        Set<StatementComponent> leftoverComponents = new HashSet<>();
 
+        // partition into full statements and leftover components (for debugging)
+        for (Set<StatementComponent> componentSet : connectedComponentSets) {
+            for (StatementComponent component : componentSet) {
+                if (component instanceof Statement) {
+                    unsplitStatements.add((Statement) component);
+                } else {
+                    leftoverComponents.add(component);
+                }
+            }
+        }
 
+        logger.info("unsplitStatements: " + unsplitStatements);
+        logger.info("leftoverComponents: " + leftoverComponents);
+        Set<Statement> splitStatements = new HashSet<>();
 
+        // TODO: is splitting even necessary? what if everything is handled in connect(...)?
+        // split in case of duplicate roles in the component sets (e.g. multiple Subject components)
+        for (Statement statement : unsplitStatements) {
+            splitStatements.addAll(split(statement, getDuplicateComponentClasses(statement)));
+        }
 
-//
-//        // discover links between components for each set of components
-//        // the components sets are separated into either nested statement levels or the root level
-//        for (Set<AbstractComponent> componentLevel : componentsByNestingLevel) {
-//            for (AbstractComponent component : componentLevel) {
-//                Set<AbstractComponent> connectedComponents = new HashSet<>();
-//                connectedComponents.add(component);
-//
-//                for (AbstractComponent otherComponent : componentLevel) {
-//                    if (component.parentOf(otherComponent)) {
-//                        logger.info(component + " is the parent of " + otherComponent);
-//                        connectedComponents.add(otherComponent);
-//                    }
-//                }
-//
-//                logger.info("added connected component set: " + connectedComponents);
-//                connectedComponentSets.add(connectedComponents);
-//            }
-//        }
-//
-//        logger.info("connectedComponentSets: " + connectedComponentSets);
-//
-//        // merge all of the connected component sets in order to remove duplicates
-//        StatementUtils.merge(connectedComponentSets);
-//        logger.info("merged connectedComponentSets: " + connectedComponentSets);
-//
-//        Set<Set<AbstractComponent>> splitComponentSets = new HashSet<>();
-//
-//        // split in case of duplicate roles in the component sets (e.g. multiple Subject components)
-//        for (Set<AbstractComponent> connectedComponentSet : connectedComponentSets) {
-//            splitComponentSets.addAll(split(connectedComponentSet, getDuplicateComponentClasses(connectedComponentSet)));
-//        }
-//
-//        // build statements from the connected component sets
-//        for (Set<AbstractComponent> splitComponentSet : splitComponentSets) {
-//            unconnectedStatements.add(new Statement(splitComponentSet));
-//        }
-//
-//        Set<Statement> modifiedStatements = new HashSet<>();
-//
-//        // discover links between unconnected statements and embed nested statements
-//        for (Statement statement : unconnectedStatements) {
-//            for (Statement otherStatement : unconnectedStatements) {
-//                if (statement.parentOf(otherStatement)) {
-//                    logger.info(statement + " embeds " + otherStatement);
-//                    modifiedStatements.add(statement);
-//                    modifiedStatements.add(otherStatement);
-//                    statements.add(statement.embed(otherStatement));
-//                }
-//            }
-//        }
-//
-//        // remove the modified statements and add remaining to final list
-//        unconnectedStatements.removeAll(modifiedStatements);
-//        statements.addAll(unconnectedStatements);
+        logger.info("splitStatements: " + splitStatements);
+        Set<Statement> modifiedStatements = new HashSet<>();
+        Set<Statement> statements = new HashSet<>();
+
+        // TODO: perform this step before splitting?
+        // discover links between unconnected statements and embed nested statements
+        for (Statement statement : splitStatements) {
+            for (Statement otherStatement : splitStatements) {
+                if (statement.parentOf(otherStatement)) {
+                    logger.info(statement + " embeds " + otherStatement);
+                    modifiedStatements.add(statement);
+                    modifiedStatements.add(otherStatement);
+                    statements.add(statement.embed(otherStatement));
+                }
+            }
+        }
+
+        // remove the modified statements and add remaining to final list
+        logger.info("modifiedStatements: " + modifiedStatements);
+        splitStatements.removeAll(modifiedStatements);
+        statements.addAll(splitStatements);
 
         return statements;
     }
@@ -221,20 +203,20 @@ public class StatementFinder {
     }
 
     /**
-     * Duplicate component classes found within a set of components.
+     * Duplicate component classes found within a set of components from a statement.
      * Useful for determining where to split a set of components into multiple sets.
      * Used by the split method.
      *
-     * @param components the components to split into multiple sets
+     * @param statement
      * @return duplicate component classes
      */
-    private static Set<Class> getDuplicateComponentClasses(Set<AbstractComponent> components) {
+    private static Set<Class> getDuplicateComponentClasses(Statement statement) {
         int subjects = 0;
         int verbs = 0;
         int directObjects = 0;
         int indirectObjects = 0;
 
-        for (AbstractComponent component : components) {
+        for (StatementComponent component : statement.getComponents()) {
             if (component instanceof Subject) {
                 subjects++;
             } else if (component instanceof Verb) {
@@ -268,34 +250,36 @@ public class StatementFinder {
      * For example, component sets with duplicate subjects are split into separate sets of components
      * with exactly one subject - each of the duplicates - in them.
      *
-     * @param components the components to split into multiple sets
+     * @param statement the statement to split into multiple statements
      * @param duplicateClasses the duplicate classes that determine the split
      * @return sets of components without duplicate role components
      */
-    private static Set<Set<AbstractComponent>> split(Set<AbstractComponent> components, Set<Class> duplicateClasses) {
-        Set<Set<AbstractComponent>> splitComponentSets = new HashSet<>();
+    private static Set<Statement> split(Statement statement, Set<Class> duplicateClasses) {
+        Set<Statement> splitStatements = new HashSet<>();
         Set<Class> remainingDuplicateClasses = new HashSet<>(duplicateClasses);
+        logger.info("splitting " + statement + " based on duplicates: " + duplicateClasses);
 
         if (duplicateClasses.isEmpty()) {
-            splitComponentSets.add(components);
-            return splitComponentSets;
+            splitStatements.add(statement);
+            return splitStatements;
         } else {
             // with each level of recursion one component class is no longer needed
             // remaining duplicate classes will be handled further down the recursive stack
             for (Class componentClass : duplicateClasses) {
                 remainingDuplicateClasses.remove(componentClass);
-                Set<AbstractComponent> duplicateComponents = new HashSet<>();
+                Set<StatementComponent> duplicateComponents = new HashSet<>();
+                Set<StatementComponent> components = statement.getComponents();
 
                 // find duplicate components of the particular class
-                for (AbstractComponent component : components) {
+                for (StatementComponent component : components) {
                     if (component.getClass().equals(componentClass)) {
                         duplicateComponents.add(component);
                     }
                 }
 
                 // make recursive calls for further splits using the remaining duplicate component classes
-                for (AbstractComponent duplicateComponent : duplicateComponents) {
-                    Set<AbstractComponent> newComponentSet = new HashSet<>(components);
+                for (StatementComponent duplicateComponent : duplicateComponents) {
+                    Set<StatementComponent> newComponentSet = new HashSet<>(components);
                     newComponentSet.removeAll(duplicateComponents);  // remove all duplicates first
                     newComponentSet.add(duplicateComponent);  // then re-add this particular duplicate
                     logger.info(duplicateComponent + " is of the duplicate class: " + duplicateComponent.getClass().getSimpleName());
@@ -303,22 +287,27 @@ public class StatementFinder {
                     // only actually perform the recursive call if there's a point (= remaining duplicates)
                     // otherwise just add them directly
                     if (remainingDuplicateClasses.isEmpty()) {
-                        logger.info("no more splits to perform, adding final component set: " + newComponentSet);
-                        splitComponentSets.add(newComponentSet);
+                        splitStatements.add(new Statement(newComponentSet));
                     } else {
                         logger.info("recursive call to split based on duplicate components: " + remainingDuplicateClasses);
-                        splitComponentSets.addAll(split(newComponentSet, remainingDuplicateClasses));
+                        splitStatements.addAll(split(new Statement(newComponentSet), remainingDuplicateClasses));
                     }
                 }
             }
         }
 
-        return splitComponentSets;
+        return splitStatements;
     }
 
+    /**
+     * Connect components based on their parent-child relations.
+     *
+     * @param components the components to connect
+     * @return Statements consisting of connected components + leftover unconnected AbstractComponents
+     */
     private static Set<StatementComponent> connect(Set<StatementComponent> components) {
         Set<StatementComponent> connectedComponents = new HashSet<>();
-        logger.info("connecting components: " + components);
+        logger.info("recursively connecting components: " + components);
 
         for (StatementComponent component : components) {
             // all connections to this component are containd in this set (including the component itself)
@@ -365,8 +354,9 @@ public class StatementFinder {
 
         // recursively call connect(...) until there are no further changes
         if (!connectedComponents.equals(components)) {
-            logger.info("making recursive to connect components: " + connectedComponents);
             connectedComponents = connect(connectedComponents);
+        } else {
+            logger.info("done connecting components");
         }
 
         return connectedComponents;
