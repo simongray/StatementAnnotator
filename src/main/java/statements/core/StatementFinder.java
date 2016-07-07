@@ -105,11 +105,16 @@ public class StatementFinder {
         // merge all of the connected component sets in order to remove duplicates
         StatementUtils.merge(connectedComponentSets);
         logger.info("connectedComponentSets: " + connectedComponentSets);
+        Set<Set<AbstractComponent>> splitComponentSets = new HashSet<>();
+
+        // split in case of duplicate roles in the component sets (e.g. multiple Subject components)
+        for (Set<AbstractComponent> connectedComponentSet : connectedComponentSets) {
+            splitComponentSets.addAll(split(connectedComponentSet, getDuplicateComponents(connectedComponentSet)));
+        }
 
         // build statements from the connected component sets
-        for (Set<AbstractComponent> connectedComponentSet : connectedComponentSets) {
-
-            unconnectedStatements.add(new Statement(connectedComponentSet));
+        for (Set<AbstractComponent> splitComponentSet : splitComponentSets) {
+            unconnectedStatements.add(new Statement(splitComponentSet));
         }
 
         Set<Statement> modifiedStatements = new HashSet<>();
@@ -193,5 +198,75 @@ public class StatementFinder {
         }
 
         return nestedStatementMapping;
+    }
+
+    private static Set<Class> getDuplicateComponents(Set<AbstractComponent> components) {
+        int subjects = 0;
+        int verbs = 0;
+        int directObjects = 0;
+        int indirectObjects = 0;
+
+        for (AbstractComponent component : components) {
+            if (component instanceof Subject) {
+                subjects++;
+            } else if (component instanceof Verb) {
+                verbs++;
+            } else if (component instanceof DirectObject) {
+                directObjects++;
+            } else if (component instanceof IndirectObject) {
+                indirectObjects++;
+            }
+        }
+
+        Set<Class> duplicateComponents = new HashSet<>();
+        if (subjects > 1) {
+            duplicateComponents.add(Subject.class);
+        }
+        if (verbs > 1) {
+            duplicateComponents.add(Verb.class);
+        }
+        if (directObjects > 1) {
+            duplicateComponents.add(DirectObject.class);
+        }
+        if (indirectObjects > 1) {
+            duplicateComponents.add(IndirectObject.class);
+        }
+
+        return duplicateComponents;
+    }
+
+    // TODO: stupid method name
+    private static Set<Set<AbstractComponent>> split(Set<AbstractComponent> components, Set<Class> duplicateClasses) {
+        Set<Set<AbstractComponent>> splitComponentSets = new HashSet<>();
+
+        if (duplicateClasses.isEmpty()) {
+            splitComponentSets.add(components);
+            return splitComponentSets;
+        } else {
+            // recursive calls for each duplicate component
+            for (Class componentClass : duplicateClasses) {
+                // component class is not needed with the next level of recursion
+                Set<Class> newDuplicateClasses = new HashSet<>(duplicateClasses);
+                newDuplicateClasses.remove(componentClass);
+                Set<AbstractComponent> duplicateComponents = new HashSet<>();
+
+                for (AbstractComponent component : components) {
+                    if (component.getClass().equals(componentClass)) {
+                        logger.info(component + " is of the duplicate class: " + componentClass);
+                        duplicateComponents.add(component);
+                    }
+                }
+
+                for (AbstractComponent duplicateComponent : duplicateComponents) {
+                    Set<AbstractComponent> newComponentSet = new HashSet<>(components);
+                    newComponentSet.removeAll(duplicateComponents);  // remove all duplicates first
+                    newComponentSet.add(duplicateComponent);  // then re-add this particular duplicate
+                    logger.info("recursive call to split based on components: " + newComponentSet);
+                    splitComponentSets.addAll(split(newComponentSet, newDuplicateClasses));
+                }
+            }
+        }
+
+        return splitComponentSets;
     }
 }
