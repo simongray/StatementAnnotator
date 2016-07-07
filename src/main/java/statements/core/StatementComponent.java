@@ -23,7 +23,6 @@ public interface StatementComponent {
      */
     default boolean parentOf(StatementComponent otherComponent) {
         Logger logger = LoggerFactory.getLogger(StatementComponent.class);
-        if (StatementUtils.intersects(getCompound(), otherComponent.getGovernors())) logger.info(getCompound() + " : " + otherComponent.getGovernors());
         return StatementUtils.intersects(getCompound(), otherComponent.getGovernors());
     }
 }
