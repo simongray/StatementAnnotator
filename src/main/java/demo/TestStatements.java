@@ -65,6 +65,10 @@ public class TestStatements {
              |_ component: {IndirectObject: "at him"}
          */
 
+        // TODO: "in particular" is only added to statement with Sally
+        String example = "Sally and Mads in particular don't like doing anything for anyone.";
+
+
 
 
 
@@ -125,7 +129,6 @@ public class TestStatements {
 //        String example = "Hey, cool! Very cool, in fact.";  // no statements, as expected
 //        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well";
-//        String example = "Sally and Mads in particular don't like doing anything for anyone.";
 //        String example = "They aren't pretty. She's having to make do. He really doesn't love singing out loud.";
 //        String example =    "I think she's mad. I don't care whether she likes me. She says that they should go.";
 //        String example =    "I don't care whether or not they come.";
@@ -160,7 +163,7 @@ public class TestStatements {
 //        String example = "It's a big deal.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";
 //        String example = "Establishing a practice goes a long way to reduce stress.";  // csubj verb example
-        String example = "The app and the house are a big deal.";
+//        String example = "The app and the house are a big deal.";
 //        String example = "I keep them in my bag and on my head";
 //        String example = "I sing songs and write words in English.";
 
