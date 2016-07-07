@@ -24,6 +24,7 @@ public abstract class AbstractComponent implements StatementComponent {
      * - such as negations - that are found separately.
      */
     protected final Set<IndexedWord> compound;
+    protected final Set<IndexedWord> remaining;
 
     /**
      * The incoming connections of the primary word, i.e. its governors.
@@ -54,6 +55,16 @@ public abstract class AbstractComponent implements StatementComponent {
         adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, primary, graph);
         nounClauses = StatementUtils.findSpecificDescendants(Relations.ACL, primary, graph);
         nounClauses.addAll(StatementUtils.findSpecificDescendants(Relations.ACL_RELCL, primary, graph));
+
+        // the stuff that doesn't go into the compound
+        // used by containing statements to reproduce the statement text
+        remaining = new HashSet<>();
+        remaining.addAll(negations);
+        remaining.addAll(punctuation);
+        remaining.addAll(markers);
+        remaining.addAll(adverbialClauses);
+        remaining.addAll(nounClauses);
+
 
         // the governors/parents of the component
         governors = new HashSet<>();
@@ -92,12 +103,21 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
-     * Every word of the component.
+     * Every main word of the component.
      *
      * @return compound
      */
     public Set<IndexedWord> getCompound() {
         return compound;
+    }
+
+    /**
+     * The remaining words of the component.
+     *
+     * @return compound
+     */
+    public Set<IndexedWord> getRemaining() {  // TODO: rename
+        return remaining;
     }
 
     /**

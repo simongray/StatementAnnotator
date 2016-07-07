@@ -131,6 +131,29 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     }
 
     /**
+     * Every remaining word of the statement.  // TODO: revise
+     *
+     * @return compound
+     */
+    public Set<IndexedWord> getRemaining() {
+        Set<IndexedWord> complete = new HashSet<>();
+
+        for (StatementComponent component : getComponents()) {
+            complete.addAll(component.getRemaining());
+        }
+
+        return complete;
+    }
+
+    public Set<IndexedWord> getWords() {
+        Set<IndexedWord> complete = new HashSet<>();
+        complete.addAll(getCompound());
+        complete.addAll(getRemaining());
+
+        return complete;
+    }
+
+    /**
      * The size of the statement (number of tokens).
      * Useful for sorting statements.
      *
@@ -156,7 +179,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
         return "{" +
             ((getLabel() != null)? getLabel() + "/": "") +
             getClass().getSimpleName() +
-            ": \"" + StatementUtils.join(getCompound()) + "\"" +
+            ": \"" + StatementUtils.join(getWords()) + "\"" +
             (count() > 1? ", components: " + count() : "") +
         "}";
     }
