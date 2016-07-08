@@ -12,8 +12,16 @@ import java.util.*;
 /**
  * Finds verbs in sentences.
  */
-public class VerbFinder extends AbstractFinder<Verb> {
+public class VerbFinder extends AbstractFinder2<Verb> {
     private static final Logger logger = LoggerFactory.getLogger(VerbFinder.class);
+
+    Set<IndexedWord> simpleVerbs;
+    Set<IndexedWord> copVerbs;
+    Set<IndexedWord> adjectives;
+    Set<IndexedWord> csubjVerbs;  // for verbs that act as subjects
+    Set<IndexedWord> xcompVerbs;  // for verbs that act as subjects
+    Set<IndexedWord> aclVerbs;// for verbs that are used to describe nouns
+    Set<Verb> verbs;
 
     private static final Set<String> OUTGOING_RELATIONS = new HashSet<>();
     static {
@@ -22,65 +30,59 @@ public class VerbFinder extends AbstractFinder<Verb> {
         OUTGOING_RELATIONS.add(Relations.DOBJ);
     }
 
-    /**
-     * The verbs that are found in a sentence.
-     *
-     * @param graph the dependency graph of a sentence
-     * @return verbs
-     */
     @Override
-    public Set<Verb> find(SemanticGraph graph) {
-        Collection<TypedDependency> dependencies = graph.typedDependencies();
-        Set<IndexedWord> simpleVerbs = new HashSet<>();
-        Set<IndexedWord> copVerbs = new HashSet<>();
-        Set<IndexedWord> adjectives = new HashSet<>();
-        Set<IndexedWord> csubjVerbs = new HashSet<>();  // for verbs that act as subjects
-        Set<IndexedWord> xcompVerbs = new HashSet<>();  // for verbs that act as subjects
-        Set<IndexedWord> aclVerbs = new HashSet<>();  // for verbs that are used to describe nouns
-        Map<IndexedWord, IndexedWord> conjunctions = new HashMap<>();  // dep-to-gov
-        Set<Verb> verbs = new HashSet<>();
+    protected void init(SemanticGraph graph) {
+        super.init(graph);  // always start with call to super class method
 
-        Set<IndexedWord> ignoredWords = getIgnoredWords(graph);
+        simpleVerbs = new HashSet<>();
+        copVerbs = new HashSet<>();
+        adjectives = new HashSet<>();
+        csubjVerbs = new HashSet<>();
+        xcompVerbs = new HashSet<>();
+        aclVerbs = new HashSet<>();
+        verbs = new HashSet<>();
+
         logger.info("ignored words: " + ignoredWords);
+    }
 
-        // find candidate verbs and adjectives from relations
-        for (TypedDependency dependency : dependencies) {
-            if (OUTGOING_RELATIONS.contains(dependency.reln().getShortName())) {
-                if (!ignoredWords.contains(dependency.dep())) simpleVerbs.add(dependency.gov());
-            }
+    @Override
+    protected void check(TypedDependency dependency) {
+        super.check(dependency);  // always start with call to super class method
 
-            // find verbs acting as subjects in a sentence through a clause
-            if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
-                if (!ignoredWords.contains(dependency.gov())) csubjVerbs.add(dependency.dep());  // TODO: contains(gov or dep)?
-            }
+        if (OUTGOING_RELATIONS.contains(dependency.reln().getShortName())) {
+            if (!ignoredWords.contains(dependency.dep())) simpleVerbs.add(dependency.gov());
+        }
 
-            // find verbs acting as direct objects in a sentence through a clause
-            if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
-                if (!ignoredWords.contains(dependency.gov())) xcompVerbs.add(dependency.dep());  // TODO: contains(gov or dep)?
-            }
+        // find verbs acting as subjects in a sentence through a clause
+        if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
+            if (!ignoredWords.contains(dependency.gov())) csubjVerbs.add(dependency.dep());  // TODO: contains(gov or dep)?
+        }
 
-            // find conjunction
-            if (dependency.reln().getShortName().equals(Relations.CONJ)) {
-                if (!ignoredWords.contains(dependency.gov())) {
-                    conjunctions.put(dependency.dep(), dependency.gov());
-                }
-            }
+        // find verbs acting as direct objects in a sentence through a clause
+        if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
+            if (!ignoredWords.contains(dependency.gov())) xcompVerbs.add(dependency.dep());  // TODO: contains(gov or dep)?
+        }
 
-            // make sure that adjectives are removed from the list of verbs
-            // in the very same move, cop relation verbs (is, be, 's, 'm, etc.) are found
-            if (dependency.reln().getShortName().equals(Relations.COP)) {
-                if (!ignoredWords.contains(dependency.dep())) {
-                    adjectives.add(dependency.gov());
-                    copVerbs.add(dependency.dep());
-                }
-            }
+        // find conjunction
+        findConjunctions(dependency);
 
-            // TODO: safe to remove?
-            if (dependency.reln().getShortName().equals(Relations.ACL)) {
-                if (!ignoredWords.contains(dependency.dep())) aclVerbs.add(dependency.dep());
+        // make sure that adjectives are removed from the list of verbs
+        // in the very same move, cop relation verbs (is, be, 's, 'm, etc.) are found
+        if (dependency.reln().getShortName().equals(Relations.COP)) {
+            if (!ignoredWords.contains(dependency.dep())) {
+                adjectives.add(dependency.gov());
+                copVerbs.add(dependency.dep());
             }
         }
 
+        // TODO: safe to remove?
+        if (dependency.reln().getShortName().equals(Relations.ACL)) {
+            if (!ignoredWords.contains(dependency.dep())) aclVerbs.add(dependency.dep());
+        }
+    }
+
+    @Override
+    protected Set<Verb> get(SemanticGraph graph) {
         // remove adjectives from candidate verbs
         simpleVerbs.removeAll(adjectives);
 
