@@ -59,7 +59,7 @@ public class VerbFinder extends AbstractFinder<Verb> {
                 if (!ignoredWords.contains(dependency.gov())) xcompVerbs.add(dependency.dep());  // TODO: contains(gov or dep)?
             }
 
-            // find conjunctions
+            // find conjunction
             if (dependency.reln().getShortName().equals(Relations.CONJ)) {
                 if (!ignoredWords.contains(dependency.gov())) {
                     conjunctions.put(dependency.dep(), dependency.gov());
@@ -140,7 +140,7 @@ public class VerbFinder extends AbstractFinder<Verb> {
             verbs.add(new Verb(xcompVerb, graph, labels));
         }
         logger.info("verbs found: " + verbs);
-        logger.info("conjunctions found: " + conjunctions);
+        logger.info("conjunction found: " + conjunctions);
 
         return verbs;
     }

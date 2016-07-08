@@ -222,7 +222,7 @@ public class StatementUtils {
 
     /**
      * Create a map of direct parent-children relations based on a specific type of relation.
-     * Useful for finding conjunctions for subjects or objects (but not verbs, see: findJointlyGoverned).
+     * Useful for finding conjunction for subjects or objects (but not verbs, see: findJointlyGoverned).
      *
      * @param words the entries to find relations for
      * @param relation the relation type
@@ -250,7 +250,7 @@ public class StatementUtils {
 
     /**
      * Find entries with shared governance of a word in some specific relation.
-     * Useful for finding verb conjunctions.
+     * Useful for finding verb conjunction.
      *
      * @param entries
      * @param relation
@@ -276,7 +276,7 @@ public class StatementUtils {
 
     /**
      * Find entries with shared dependence on a word in some specific relation.
-     * Useful for finding verb conjunctions.
+     * Useful for finding verb conjunction.
      *
      * @param entries
      * @param relation

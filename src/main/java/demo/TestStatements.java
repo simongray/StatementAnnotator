@@ -48,7 +48,7 @@ public class TestStatements {
                 |_ component: {Subject: "we"}*/
 
 
-        // TODO: conjunctions and missing components
+        // TODO: conjunction and missing components
         // TODO: "in particular" is only added to statement with Sally
 //        String example = "Sally and Mads in particular don't like doing anything for anyone.";
         // TODO: the always on is not included for some reason

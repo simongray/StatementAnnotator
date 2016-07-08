@@ -32,6 +32,14 @@ public abstract class AbstractComponent implements StatementComponent {
      */
     protected final Set<IndexedWord> governors;
 
+    /**
+     * Conjunctions (= sibling components).
+     */
+    protected final Set<IndexedWord> conjunction;
+
+    /**
+     * Labels are useful to document certain special behaviour of a component.
+     */
     protected final Set<String> labels;
 
     protected final Set<IndexedWord> negations;
@@ -41,7 +49,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> nounClauses;
 
     public AbstractComponent(IndexedWord primary, SemanticGraph graph) {
-       this(primary, graph, null);
+       this(primary, graph, new HashSet<>());
     }
 
     public AbstractComponent(IndexedWord primary, SemanticGraph graph, Set<String> labels) {
@@ -67,6 +75,7 @@ public abstract class AbstractComponent implements StatementComponent {
 
 
         // the governors/parents of the component
+        // some relations are ignored, e.g. the conj relation which is not treated as governor since it defines siblings
         governors = new HashSet<>();
         for (SemanticGraphEdge edge : graph.incomingEdgeList(primary)) {
             // it is important to leave out certain governor relations
@@ -75,6 +84,9 @@ public abstract class AbstractComponent implements StatementComponent {
                 governors.add(edge.getGovernor());
             }
         }
+
+        // conjunction are used to loosely "link" separate statements
+        conjunction = StatementUtils.findSpecificChildren(Relations.CONJ, primary, graph);
 
         this.labels = labels;
     }
@@ -187,6 +199,16 @@ public abstract class AbstractComponent implements StatementComponent {
         return governors;
     }
 
+
+    /**
+     * Conjunctions.
+     *
+     * @return conjunction
+     */
+    public Set<IndexedWord> getConjunction() {
+        return conjunction;
+    }
+
     /**
      * Whether the component is negated.
      *
@@ -225,10 +247,16 @@ public abstract class AbstractComponent implements StatementComponent {
 
     @Override
     public String toString() {
+        Set<String> conjunctions = new HashSet<>();
+        for (IndexedWord word : getConjunction()) {
+            conjunctions.add(word.word());
+        }
+
         return "{" +
             getClass().getSimpleName() + ": \"" + getString() + "\"" +
             (!getClauses().isEmpty()? ", clause: \"" + StatementUtils.join(getClauses()) + "\"" : "") +
-            ((getLabels() != null)? ", labels: \"" + String.join(", ", getLabels()) + "\"" : "") +
+            (!getLabels().isEmpty()? ", labels: \"" + String.join(", ", getLabels()) + "\"" : "") +
+            (!conjunctions.isEmpty()? ", conjunction: \"" + String.join(", ", conjunctions) + "\"" : "") +
         "}";
     }
 }
