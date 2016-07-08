@@ -10,10 +10,6 @@ import java.util.Set;
  */
 public class Verb extends AbstractComponent implements Resembling<Verb> {
 
-    public Verb(IndexedWord primary, SemanticGraph graph) {
-        super(primary, graph);
-    }
-
     public Verb(IndexedWord primary, SemanticGraph graph, Set<String> labels) {
         super(primary, graph, labels);
     }
