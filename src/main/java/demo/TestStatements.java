@@ -91,7 +91,7 @@ public class TestStatements {
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
 //        String example = "Anyway, just make your own rule and stick to it.";
         // TODO: this one is really bad
-//        String example = "Chronically stressed people often have trouble sleeping and establishing a practice goes a long way to reduce stress.";
+        String example = "Chronically stressed people often have trouble sleeping and establishing a practice goes a long way to reduce stress.";
 //        String example = "I'm sure you meant the EU as a whole and not the European Parliament specifically";  // specifically should modify to "meant", not "sure"
 //        String example = "Bought some 3M 95N-rated face masks for smoggy days.\n";
         // TODO: in this case, the indirect object does not even respect a normal conjunction
@@ -123,9 +123,8 @@ public class TestStatements {
 //        String example =    "I think she's mad. I don't care whether she likes me. She says that they should go.";
 //        String example =    "I don't care whether or not they come.";
         // TODO: issue #51
-        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
+//        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
 
-        // TODO: find out what is happening here ->  [main] INFO statements.core.StatementFinder - splitting {DirectObject/Statement: "doing anything in particular", components: 3} based on duplicates: []
 //        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";  // xcomp verb example
 
 

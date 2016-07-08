@@ -11,7 +11,7 @@ public interface StatementComponent {
     Set<IndexedWord> getCompound();
     Set<IndexedWord> getRemaining();  // TODO: rename and find a stronger purpose than just getting clauses into the statement text
     Set<IndexedWord> getGovernors();
-    String getLabel();
+    Set<String> getLabels();
     boolean contains(StatementComponent otherComponent);  // TODO: do or do not?
 
     /**

@@ -32,7 +32,7 @@ public abstract class AbstractComponent implements StatementComponent {
      */
     protected final Set<IndexedWord> governors;
 
-    protected final String label;
+    protected final Set<String> labels;
 
     protected final Set<IndexedWord> negations;
     protected final Set<IndexedWord> punctuation;
@@ -44,7 +44,7 @@ public abstract class AbstractComponent implements StatementComponent {
        this(primary, graph, null);
     }
 
-    public AbstractComponent(IndexedWord primary, SemanticGraph graph, String label) {
+    public AbstractComponent(IndexedWord primary, SemanticGraph graph, Set<String> labels) {
         this.primary = primary;
         compound = StatementUtils.findCompound(primary, graph, getIgnoredRelations(), getOwnedScopes());
 
@@ -76,7 +76,7 @@ public abstract class AbstractComponent implements StatementComponent {
             }
         }
 
-        this.label = label;
+        this.labels = labels;
     }
 
     /**
@@ -206,7 +206,7 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
-     * The label of component.
+     * The labels of component.
      * In most cases, components don't have a label, but in some cases they can be useful.
      * Component labels can be used to label their containing statements.
      * Labeling containing statements can provide information
@@ -214,8 +214,8 @@ public abstract class AbstractComponent implements StatementComponent {
      *
      * @return label
      */
-    public String getLabel() {
-        return label;
+    public Set<String> getLabels() {
+        return labels;
     }
 
     @Override
@@ -228,7 +228,7 @@ public abstract class AbstractComponent implements StatementComponent {
         return "{" +
             getClass().getSimpleName() + ": \"" + getString() + "\"" +
             (!getClauses().isEmpty()? ", clause: \"" + StatementUtils.join(getClauses()) + "\"" : "") +
-            ((getLabel() != null)? ", label: \"" + getLabel() + "\"" : "") +
+            ((getLabels() != null)? ", labels: \"" + String.join(", ", getLabels()) + "\"" : "") +
         "}";
     }
 }

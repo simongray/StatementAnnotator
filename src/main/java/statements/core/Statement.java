@@ -230,7 +230,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     @Override
     public String toString() {
         return "{" +
-            ((getLabel() != null)? getLabel() + "/": "") +
+            (getLabels().isEmpty()? "" : String.join("/", getLabels()) + "/") +
             getClass().getSimpleName() +
             ": \"" + StatementUtils.join(getWords()) + "\"" +
             (count() > 1? ", components: " + count() : "") +
@@ -280,29 +280,29 @@ public class Statement implements StatementComponent, Resembling<Statement> {
 
 
     /**
-     * The label of a statement.
+     * The labels of a statement.
      * In most cases, statements don't have a label, but in some cases they can be useful.
      * Statement labels can be useful for knowing how to an embedded statement should be treated inside its parent.
      *
      * @return label
      */
-    public String getLabel() {
-        String label = null;
+    public Set<String> getLabels() {
+        Set<String> labels = new HashSet<>();
 
         for (StatementComponent component : getComponents()) {
-            String componentLabel = component.getLabel();
+            Set<String> componentLabels = component.getLabels();
 
             // find component label combinations that trigger relevant statement labels
-            if (componentLabel != null) {
-                if (componentLabel.equals(Labels.CSUBJVERB)) {
-                    label = Labels.SUBJECT;
-                } else if (componentLabel.equals(Labels.XCOMPVERB)) {
-                    label = Labels.DIRECT_OBJECT;
+            if (componentLabels != null) {
+                if (componentLabels.contains(Labels.CSUBJVERB)) {
+                    labels.add(Labels.SUBJECT);
+                } else if (componentLabels.contains(Labels.XCOMPVERB)) {
+                    labels.add(Labels.DIRECT_OBJECT);
                 }
             }
         }
 
-        return label;
+        return labels;
     }
 
     /**
