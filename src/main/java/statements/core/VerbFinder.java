@@ -100,9 +100,9 @@ public class VerbFinder extends AbstractFinder<Verb> {
             Set<String> labels = new HashSet<>();
 
             if (conjunctions.keySet().contains(simpleVerb)) {
-                labels.add(Labels.CONJCHILD);
+                labels.add(Labels.CONJ_CHILD_VERB);
             } else if (conjunctions.values().contains(simpleVerb)) {
-                labels.add(Labels.CONJPARENT);
+                labels.add(Labels.CONJ_PARENT_VERB);
             }
 
             verbs.add(new Verb(simpleVerb, graph, labels));
@@ -113,12 +113,12 @@ public class VerbFinder extends AbstractFinder<Verb> {
         // knowing a statement is a csubj verb statement, means it can be treated as a replacement for Subject
         for (IndexedWord csubjVerb : csubjVerbs) {
             Set<String> labels = new HashSet<>();
-            labels.add(Labels.CSUBJVERB);
+            labels.add(Labels.CSUBJ_VERB);
 
             if (conjunctions.keySet().contains(csubjVerb)) {
-                labels.add(Labels.CONJCHILD);
+                labels.add(Labels.CONJ_CHILD_VERB);
             } else if (conjunctions.values().contains(csubjVerb)) {
-                labels.add(Labels.CONJPARENT);
+                labels.add(Labels.CONJ_PARENT_VERB);
             }
 
             verbs.add(new Verb(csubjVerb, graph, labels));
@@ -129,12 +129,12 @@ public class VerbFinder extends AbstractFinder<Verb> {
         // knowing a statement is a csubj verb statement, means it can be treated as a replacement for Subject
         for (IndexedWord xcompVerb : xcompVerbs) {
             Set<String> labels = new HashSet<>();
-            labels.add(Labels.XCOMPVERB);
+            labels.add(Labels.XCOMP_VERB);
 
             if (conjunctions.keySet().contains(xcompVerb)) {
-                labels.add(Labels.CONJCHILD);
+                labels.add(Labels.CONJ_CHILD_VERB);
             } else if (conjunctions.values().contains(xcompVerb)) {
-                labels.add(Labels.CONJPARENT);
+                labels.add(Labels.CONJ_PARENT_VERB);
             }
 
             verbs.add(new Verb(xcompVerb, graph, labels));

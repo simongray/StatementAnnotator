@@ -112,6 +112,9 @@ public class TestStatements {
 //        String example = "I keep one in my bag and on my head at all times.";
         // TODO: second indirect object is not found, problem is that nmod:on is replaced by conj(keep,head) in this example
 //        String example = "Her and I keep them in my bag and on my head";
+        // TODO: doesn't recognise "her" as dobj
+//        String example = "She hated him and her.";
+
 
 
 
@@ -176,8 +179,10 @@ public class TestStatements {
 //        String example = "She cried and yelled at him.";  // not attaching "at him" to "cried, which good enough
 //        String example = "She yelled at him and cried.";
 //        String example = "She yelled at him and cried at her.";
-//        String example = "She shot and killed him.";
-        String example = "He pointed at her and spoke.";
+        String example = "She shot and killed him.";
+//        String example = "He pointed at her and spoke.";
+//        String example = "She hated him and he hated her.";
+//        String example = "She hated her and Lis.";
 
 
 

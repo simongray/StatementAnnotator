@@ -87,6 +87,7 @@ public abstract class AbstractComponent implements StatementComponent {
 
         // conjunction are used to loosely "link" separate statements
         conjunction = StatementUtils.findSpecificChildren(Relations.CONJ, primary, graph);
+        conjunction.addAll(StatementUtils.findSpecificParents(Relations.CONJ, primary, graph));
 
         this.labels = labels;
     }

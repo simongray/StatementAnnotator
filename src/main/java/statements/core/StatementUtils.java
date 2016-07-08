@@ -178,7 +178,7 @@ public class StatementUtils {
      *
      * @param word the word that serves as an entry point
      * @param graph the graph of the sentence
-     * @return specific descendants
+     * @return specific children
      */
     public static Set<IndexedWord> findSpecificChildren(String relation, IndexedWord word, SemanticGraph graph) {
         Set<IndexedWord> specificChildren = new HashSet<>();
@@ -190,6 +190,26 @@ public class StatementUtils {
         }
 
         return specificChildren;
+    }
+
+    /**
+     * Recursively finds specific parents of a word.
+     * Useful for finding conjunction governors.
+     *
+     * @param word the word that serves as an entry point
+     * @param graph the graph of the sentence
+     * @return specific parents
+     */
+    public static Set<IndexedWord> findSpecificParents(String relation, IndexedWord word, SemanticGraph graph) {
+        Set<IndexedWord> specificParents = new HashSet<>();
+
+        for (IndexedWord parent : graph.getParents(word)) {
+            if (graph.reln(parent, word).getShortName().equals(relation)) {
+                specificParents.add(parent);
+            }
+        }
+
+        return specificParents;
     }
 
     /**

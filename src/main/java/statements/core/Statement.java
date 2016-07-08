@@ -294,9 +294,9 @@ public class Statement implements StatementComponent, Resembling<Statement> {
 
             // find component label combinations that trigger relevant statement labels
             if (componentLabels != null) {
-                if (componentLabels.contains(Labels.CSUBJVERB)) {
+                if (componentLabels.contains(Labels.CSUBJ_VERB)) {
                     labels.add(Labels.SUBJECT);
-                } else if (componentLabels.contains(Labels.XCOMPVERB)) {
+                } else if (componentLabels.contains(Labels.XCOMP_VERB)) {
                     labels.add(Labels.DIRECT_OBJECT);
                 }
             }
