@@ -15,23 +15,32 @@ public abstract class AbstractFinder2<T extends AbstractComponent> {
 
     /**
      * Find statement components based on the dependency graph of a sentence.
+     * Note: cannot be overridden in subclasses. Instead, implement the init(...), check(...), and get(...) methods.
      *
      * @param graph the dependency graph of a sentence
      * @return statement components
      */
     public final Set<T> find(SemanticGraph graph) {
+        // initialise the fields to a neutral state
         init(graph);
 
-        // note: the checking method in this loop should be overridden by subclasses
+        // find relevant connections
         for (TypedDependency dependency : dependencies) {
             check(dependency);
         }
 
+        // produce components based on the connections
         components = get(graph);
 
         return components;
     }
 
+    /**
+     * Initialise the fields of the finder prior to starting the finding process.
+     * Should be overridden by subclasses.
+     *
+     * @param graph
+     */
     protected void init(SemanticGraph graph) {
         ignoredWords = getIgnoredWords(graph);
         dependencies = graph.typedDependencies();
@@ -47,6 +56,13 @@ public abstract class AbstractFinder2<T extends AbstractComponent> {
         findConjunctions(dependency);
     }
 
+    /**
+     * The components produced by this finder.
+     * Needs to be implemented by each finder separately.
+     *
+     * @param graph
+     * @return
+     */
     protected abstract Set<T> get(SemanticGraph graph);
 
     /**
