@@ -51,7 +51,6 @@ public class TestStatements {
         // TODO: conjunctions and missing components
         // TODO: "in particular" is only added to statement with Sally
 //        String example = "Sally and Mads in particular don't like doing anything for anyone.";
-//        String example = "She cried and yelled at him.";
         // TODO: the always on is not included for some reason
 //        String example = "They are smartphone-connected and always on, except when we're out during weekdays.";
 
@@ -86,12 +85,27 @@ public class TestStatements {
 
 
 
+        // TODO: weird fuckup
+//        String example = "She spoke to and hugged him.";
+        /*
+        She spoke to and hugged him.
+          |_ statement: {Statement: "She spoke to and hugged him", components: 3}
+          |  |_ component: {Subject: "She"}
+          |  |_ component: {IndirectObject: "to and hugged him"}
+          |  |_ component: {Verb: "spoke", labels: "conjchild"}
+          |_ statement: {Statement: "She spoke to and hugged him", components: 3}
+             |_ component: {Subject: "She"}
+             |_ component: {IndirectObject: "to and hugged him"}
+             |_ component: {Verb: "spoke", labels: "conjparent"}
+         */
+
+
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
 //        String example = "Anyway, just make your own rule and stick to it.";
         // TODO: this one is really bad
-        String example = "Chronically stressed people often have trouble sleeping and establishing a practice goes a long way to reduce stress.";
+//        String example = "Chronically stressed people often have trouble sleeping and establishing a practice goes a long way to reduce stress.";
 //        String example = "I'm sure you meant the EU as a whole and not the European Parliament specifically";  // specifically should modify to "meant", not "sure"
 //        String example = "Bought some 3M 95N-rated face masks for smoggy days.\n";
         // TODO: in this case, the indirect object does not even respect a normal conjunction
@@ -159,6 +173,11 @@ public class TestStatements {
 //        String example = "The app and the house are a big deal.";
 //        String example = "I keep them in my bag and on my head";
 //        String example = "I sing songs and write words in English.";
+//        String example = "She cried and yelled at him.";  // not attaching "at him" to "cried, which good enough
+//        String example = "She yelled at him and cried.";
+//        String example = "She yelled at him and cried at her.";
+//        String example = "She shot and killed him.";
+        String example = "He pointed at her and spoke.";
 
 
 

@@ -5,6 +5,8 @@ public class Labels {
     // component labels
     public static final String CSUBJVERB = "csubjverb";  // clausal subject Verb found using the csubj relation
     public static final String XCOMPVERB = "xcompverb";
+    public static final String CONJPARENT = "conjparent";
+    public static final String CONJCHILD = "conjchild";
 
     // statement labels
     // these labels are more simple than the component labels

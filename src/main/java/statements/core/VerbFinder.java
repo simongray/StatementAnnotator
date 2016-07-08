@@ -97,7 +97,15 @@ public class VerbFinder extends AbstractFinder<Verb> {
         simpleVerbs.addAll(copVerbs);
 
         for (IndexedWord simpleVerb : simpleVerbs) {
-            verbs.add(new Verb(simpleVerb, graph));
+            Set<String> labels = new HashSet<>();
+
+            if (conjunctions.keySet().contains(simpleVerb)) {
+                labels.add(Labels.CONJCHILD);
+            } else if (conjunctions.values().contains(simpleVerb)) {
+                labels.add(Labels.CONJPARENT);
+            }
+
+            verbs.add(new Verb(simpleVerb, graph, labels));
         }
 
         // take care to label this type of verb
@@ -106,6 +114,13 @@ public class VerbFinder extends AbstractFinder<Verb> {
         for (IndexedWord csubjVerb : csubjVerbs) {
             Set<String> labels = new HashSet<>();
             labels.add(Labels.CSUBJVERB);
+
+            if (conjunctions.keySet().contains(csubjVerb)) {
+                labels.add(Labels.CONJCHILD);
+            } else if (conjunctions.values().contains(csubjVerb)) {
+                labels.add(Labels.CONJPARENT);
+            }
+
             verbs.add(new Verb(csubjVerb, graph, labels));
         }
 
@@ -115,9 +130,17 @@ public class VerbFinder extends AbstractFinder<Verb> {
         for (IndexedWord xcompVerb : xcompVerbs) {
             Set<String> labels = new HashSet<>();
             labels.add(Labels.XCOMPVERB);
+
+            if (conjunctions.keySet().contains(xcompVerb)) {
+                labels.add(Labels.CONJCHILD);
+            } else if (conjunctions.values().contains(xcompVerb)) {
+                labels.add(Labels.CONJPARENT);
+            }
+
             verbs.add(new Verb(xcompVerb, graph, labels));
         }
         logger.info("verbs found: " + verbs);
+        logger.info("conjunctions found: " + conjunctions);
 
         return verbs;
     }
