@@ -33,7 +33,7 @@ public class VerbFinder extends AbstractFinder2<Verb> {
     }
 
     @Override
-    protected void init(SemanticGraph graph) {
+    protected void init() {
         dobjVerbs = new HashSet<>();
         copVerbs = new HashSet<>();
         adjectives = new HashSet<>();
@@ -80,7 +80,7 @@ public class VerbFinder extends AbstractFinder2<Verb> {
     }
 
     @Override
-    protected Set<Verb> get(SemanticGraph graph) {
+    protected Set<Verb> get() {
         // remove adjectives from candidate verbs
         dobjVerbs.removeAll(adjectives);
 

@@ -8,10 +8,11 @@ import java.util.*;
 
 
 public abstract class AbstractFinder2<T extends AbstractComponent> {
-    Collection<TypedDependency> dependencies;
-    Map<IndexedWord, IndexedWord> conjunctions = new HashMap<>();  // dep-to-gov
-    Set<IndexedWord> ignoredWords;
-    Set<T> components;
+    protected SemanticGraph graph;
+    protected Collection<TypedDependency> dependencies;
+    protected Map<IndexedWord, IndexedWord> conjunctions = new HashMap<>();  // dep-to-gov
+    protected Set<IndexedWord> ignoredWords;
+    protected Set<T> components;
 
     /**
      * Find statement components based on the dependency graph of a sentence.
@@ -22,9 +23,10 @@ public abstract class AbstractFinder2<T extends AbstractComponent> {
      */
     public final Set<T> find(SemanticGraph graph) {
         // initialise the fields to a neutral state
+        this.graph = graph;
         ignoredWords = getIgnoredWords(graph);
         dependencies = graph.typedDependencies();
-        init(graph);
+        init();
 
         // find relevant connections
         for (TypedDependency dependency : dependencies) {
@@ -33,7 +35,7 @@ public abstract class AbstractFinder2<T extends AbstractComponent> {
         }
 
         // produce components based on the connections
-        components = get(graph);
+        components = get();
 
         return components;
     }
@@ -41,10 +43,8 @@ public abstract class AbstractFinder2<T extends AbstractComponent> {
     /**
      * Initialise the fields of the finder prior to starting the finding process.
      * Needs to be implemented by subclasses.
-     *
-     * @param graph
      */
-    protected abstract void init(SemanticGraph graph);
+    protected abstract void init();
 
     /**
      * Check dependency and store relevant information.
@@ -58,10 +58,9 @@ public abstract class AbstractFinder2<T extends AbstractComponent> {
      * The components produced by this finder.
      * Needs to be implemented by subclasses.
      *
-     * @param graph
      * @return
      */
-    protected abstract Set<T> get(SemanticGraph graph);
+    protected abstract Set<T> get();
 
     /**
      * Generalised way to get labels for a new component.
