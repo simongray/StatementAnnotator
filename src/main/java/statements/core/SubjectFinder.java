@@ -11,35 +11,34 @@ import java.util.*;
 /**
  * Finds subjects in sentences.
  */
-public class SubjectFinder extends AbstractFinder<Subject> {
+public class SubjectFinder extends AbstractFinder2<Subject> {
     private static final Logger logger = LoggerFactory.getLogger(SubjectFinder.class);
 
-    /**
-     * The subjects that are found in a sentence.
-     *
-     * @param graph the dependency graph of a sentence
-     * @return subjects
-     */
+    private Set<IndexedWord> simpleSubjects;
+    private Set<IndexedWord> simplePassiveSubjects;
+    private Set<Subject> subjects;
+
     @Override
-    public Set<Subject> find(SemanticGraph graph) {
-        Collection<TypedDependency> dependencies = graph.typedDependencies();
-        Set<IndexedWord> simpleSubjects = new HashSet<>();
-        Set<IndexedWord> simplePassiveSubjects = new HashSet<>();
-        Set<Subject> subjects = new HashSet<>();
+    protected void init(SemanticGraph graph) {
+        simpleSubjects = new HashSet<>();
+        simplePassiveSubjects = new HashSet<>();
+        subjects = new HashSet<>();
 
-        Set<IndexedWord> ignoredWords = getIgnoredWords(graph);
         logger.info("ignored words: " + ignoredWords);
+    }
 
-        // find simple subjects from relations
-        for (TypedDependency dependency : dependencies) {
-            if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
-                if (!ignoredWords.contains(dependency.dep())) simpleSubjects.add(dependency.dep());
-            }
-            if (dependency.reln().getShortName().equals(Relations.NSUBJPASS)) {
-                if (!ignoredWords.contains(dependency.dep())) simplePassiveSubjects.add(dependency.dep());
-            }
+    @Override
+    protected void check(TypedDependency dependency) {
+        if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
+            if (!ignoredWords.contains(dependency.dep())) simpleSubjects.add(dependency.dep());
         }
+        if (dependency.reln().getShortName().equals(Relations.NSUBJPASS)) {
+            if (!ignoredWords.contains(dependency.dep())) simplePassiveSubjects.add(dependency.dep());
+        }
+    }
 
+    @Override
+    protected Set<Subject> get(SemanticGraph graph) {
         Set<IndexedWord> entries = new HashSet<>();
         entries.addAll(simpleSubjects);
         entries.addAll(simplePassiveSubjects);
