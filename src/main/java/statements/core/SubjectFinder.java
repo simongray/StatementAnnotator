@@ -1,7 +1,6 @@
 package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
-import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.trees.TypedDependency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +10,7 @@ import java.util.*;
 /**
  * Finds subjects in sentences.
  */
-public class SubjectFinder extends AbstractFinder2<Subject> {
+public class SubjectFinder extends AbstractFinder<Subject> {
     private static final Logger logger = LoggerFactory.getLogger(SubjectFinder.class);
 
     private Set<IndexedWord> simpleSubjects;

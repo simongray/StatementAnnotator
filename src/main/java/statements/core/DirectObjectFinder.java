@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Finds direct objects in sentences.
  */
-public class DirectObjectFinder extends AbstractFinder2<DirectObject> {
+public class DirectObjectFinder extends AbstractFinder<DirectObject> {
     private static final Logger logger = LoggerFactory.getLogger(DirectObjectFinder.class);
 
     private Map<IndexedWord, IndexedWord> dobjMapping ;

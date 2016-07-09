@@ -4,18 +4,101 @@ import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.trees.TypedDependency;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 public abstract class AbstractFinder<T extends AbstractComponent> {
+    protected SemanticGraph graph;
+    protected Collection<TypedDependency> dependencies;
+    protected Map<IndexedWord, IndexedWord> conjunctions = new HashMap<>();  // dep-to-gov
+    protected Set<IndexedWord> ignoredWords;
+    protected Set<T> components;
+
     /**
      * Find statement components based on the dependency graph of a sentence.
+     * Note: cannot be overridden in subclasses. Implement methods init(...), check(...), and get(...) instead.
      *
      * @param graph the dependency graph of a sentence
      * @return statement components
      */
-    public abstract Set<T> find(SemanticGraph graph);
+    public final Set<T> find(SemanticGraph graph) {
+        // initialise the fields to a neutral state
+        this.graph = graph;
+        ignoredWords = getIgnoredWords(graph);
+        dependencies = graph.typedDependencies();
+        init();
+
+        // find relevant connections
+        for (TypedDependency dependency : dependencies) {
+            findConjunctions(dependency);
+            check(dependency);
+        }
+
+        // produce components based on the connections
+        components = get();
+
+        return components;
+    }
+
+    /**
+     * Initialise the fields of the finder prior to starting the finding process.
+     * Needs to be implemented by subclasses.
+     */
+    protected abstract void init();
+
+    /**
+     * Check dependency and store relevant information.
+     * Needs to be implemented by subclasses.
+     *
+     * @param dependency
+     */
+    protected abstract void check(TypedDependency dependency);
+
+    /**
+     * The components produced by this finder.
+     * Needs to be implemented by subclasses.
+     *
+     * @return
+     */
+    protected abstract Set<T> get();
+
+    /**
+     * Generalised way to get labels for a new component.
+     *
+     * @param primary
+     * @param optionalLabels
+     * @return labels
+     */
+    protected final Set<String> getLabels(IndexedWord primary, String... optionalLabels) {
+        Set<String> labels = new HashSet<>();
+
+        // assign conjunction label if applicable
+        if (conjunctions.keySet().contains(primary)) {
+            labels.add(Labels.CONJ_CHILD_VERB);
+        } else if (conjunctions.values().contains(primary)) {
+            labels.add(Labels.CONJ_PARENT_VERB);
+        }
+
+        // assign the optional labels
+        for (String optionalLabel : optionalLabels) {
+            labels.add(optionalLabel);
+        }
+
+        return labels;
+    }
+
+    /**
+     * Retrieves the conjunctions (child-parent) of a dependency.
+     *
+     * @param dependency
+     */
+    protected final void findConjunctions(TypedDependency dependency) {
+        if (dependency.reln().getShortName().equals(Relations.CONJ)) {
+            if (!ignoredWords.contains(dependency.gov())) {
+                conjunctions.put(dependency.dep(), dependency.gov());
+            }
+        }
+    }
 
     /**
      * The specific scopes that will not be considered when finding statement components.
@@ -35,7 +118,7 @@ public abstract class AbstractFinder<T extends AbstractComponent> {
      * @param graph the dependency graph of a sentence
      * @return ignored words
      */
-    protected Set<IndexedWord> getIgnoredWords(SemanticGraph graph) {
+    protected final Set<IndexedWord> getIgnoredWords(SemanticGraph graph) {
         Set<String> ignoredScopes = getIgnoredScopes();
         Set<IndexedWord> scopeEntries = new HashSet<>();
         Set<IndexedWord> ignoredWords = new HashSet<>();

@@ -1,7 +1,6 @@
 package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
-import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.trees.TypedDependency;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +10,7 @@ import java.util.*;
 /**
  * Finds indirect objects in sentences.
  */
-public class IndirectObjectFinder extends AbstractFinder2<IndirectObject> {
+public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
     private static final Logger logger = LoggerFactory.getLogger(IndirectObjectFinder.class);
 
     private Map<IndexedWord, IndexedWord> nmodMapping;
