@@ -13,14 +13,14 @@ import java.util.*;
 public class SubjectFinder extends AbstractFinder<Subject> {
     private static final Logger logger = LoggerFactory.getLogger(SubjectFinder.class);
 
-    private Set<IndexedWord> simpleSubjects;
-    private Set<IndexedWord> simplePassiveSubjects;
+    private Set<IndexedWord> nsubjSubjects;
+    private Set<IndexedWord> nsubjpassSubjects;
     private Set<Subject> subjects;
 
     @Override
     protected void init() {
-        simpleSubjects = new HashSet<>();
-        simplePassiveSubjects = new HashSet<>();
+        nsubjSubjects = new HashSet<>();
+        nsubjpassSubjects = new HashSet<>();
         subjects = new HashSet<>();
 
         logger.info("ignored words: " + ignoredWords);
@@ -28,23 +28,17 @@ public class SubjectFinder extends AbstractFinder<Subject> {
 
     @Override
     protected void check(TypedDependency dependency) {
-        if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
-            if (!ignoredWords.contains(dependency.dep())) simpleSubjects.add(dependency.dep());
-        }
-        if (dependency.reln().getShortName().equals(Relations.NSUBJPASS)) {
-            if (!ignoredWords.contains(dependency.dep())) simplePassiveSubjects.add(dependency.dep());
-        }
+        addDependent(nsubjSubjects, dependency, Relations.NSUBJ);
+        addDependent(nsubjpassSubjects, dependency, Relations.NSUBJPASS);
     }
 
     @Override
     protected Set<Subject> get() {
-        Set<IndexedWord> entries = new HashSet<>();
-        entries.addAll(simpleSubjects);
-        entries.addAll(simplePassiveSubjects);
-
-        // build complete subjects
-        for (IndexedWord entry : entries) {
-            subjects.add(new Subject(entry, graph));
+        for (IndexedWord nsubjSubject : nsubjSubjects) {
+            subjects.add(new Subject(nsubjSubject, graph));
+        }
+        for (IndexedWord nsubjpassSubject : nsubjpassSubjects) {
+            subjects.add(new Subject(nsubjpassSubject, graph));
         }
 
         logger.info("subjects found: " + subjects);
