@@ -44,11 +44,7 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
             }
         }
 
-        // TODO: remove entirely, replace with general csubj solution for all finders
-        // will be removed further down
-        if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
-            if (!ignoredWords.contains(dependency.dep())) csubjVerbs.add(dependency.dep());
-        }
+        addDependent(csubjVerbs, dependency, Relations.CSUBJ);
 
         logger.info("dobj objects mapping: " + dobjMapping);
         logger.info("cop objects found: " + copObjects);
