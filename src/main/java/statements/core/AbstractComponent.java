@@ -235,10 +235,19 @@ public abstract class AbstractComponent implements StatementComponent {
      * Labeling containing statements can provide information
      * on, for example, how an embedded statement fits into its parent statement.
      *
-     * @return label
+     * @return labels
      */
     public Set<String> getLabels() {
         return labels;
+    }
+
+    /**
+     * Attach a label to this component.
+     *
+     * @return labels
+     */
+    public void addLabel(String label) {
+        labels.add(label);
     }
 
     @Override

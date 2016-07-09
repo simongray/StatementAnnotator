@@ -15,7 +15,7 @@ public abstract class AbstractFinder2<T extends AbstractComponent> {
 
     /**
      * Find statement components based on the dependency graph of a sentence.
-     * Note: cannot be overridden in subclasses. Instead, implement the init(...), check(...), and get(...) methods.
+     * Note: cannot be overridden in subclasses. Implement methods init(...), check(...), and get(...) instead.
      *
      * @param graph the dependency graph of a sentence
      * @return statement components
@@ -64,6 +64,31 @@ public abstract class AbstractFinder2<T extends AbstractComponent> {
      * @return
      */
     protected abstract Set<T> get(SemanticGraph graph);
+
+    /**
+     * Generalised way to get labels for a new component.
+     *
+     * @param primary
+     * @param optionalLabels
+     * @return labels
+     */
+    protected Set<String> getLabels(IndexedWord primary, String... optionalLabels) {
+        Set<String> labels = new HashSet<>();
+
+        // assign conjunction label if applicable
+        if (conjunctions.keySet().contains(primary)) {
+            labels.add(Labels.CONJ_CHILD_VERB);
+        } else if (conjunctions.values().contains(primary)) {
+            labels.add(Labels.CONJ_PARENT_VERB);
+        }
+
+        // assign the optional labels
+        for (String optionalLabel : optionalLabels) {
+            labels.add(optionalLabel);
+        }
+
+        return labels;
+    }
 
     /**
      * Retrieves the conjunctions (child-parent) of a dependency.

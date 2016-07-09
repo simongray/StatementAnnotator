@@ -15,16 +15,17 @@ import java.util.*;
 public class VerbFinder extends AbstractFinder2<Verb> {
     private static final Logger logger = LoggerFactory.getLogger(VerbFinder.class);
 
-    Set<IndexedWord> dobjVerbs;
-    Set<IndexedWord> copVerbs;
-    Set<IndexedWord> adjectives;
-    Set<IndexedWord> csubjVerbs;  // for verbs that act as subjects
-    Set<IndexedWord> xcompVerbs;  // for verbs that act as subjects
-    Set<IndexedWord> aclVerbs;// for verbs that are used to describe nouns
-    Set<Verb> verbs;
+    private Set<IndexedWord> dobjVerbs;
+    private Set<IndexedWord> copVerbs;
+    private Set<IndexedWord> adjectives;
+    private Set<IndexedWord> csubjVerbs;  // act as subjects
+    private Set<IndexedWord> xcompVerbs;
+    private Set<IndexedWord> aclVerbs;  // for verbs that are used to describe nouns
+    private Set<Verb> verbs;
+    private final Set<String> OUTGOING_RELATIONS;
 
-    private static final Set<String> OUTGOING_RELATIONS = new HashSet<>();
-    static {
+    public VerbFinder() {
+        OUTGOING_RELATIONS = new HashSet<>();
         OUTGOING_RELATIONS.add(Relations.NSUBJ);
         OUTGOING_RELATIONS.add(Relations.NSUBJPASS);
         OUTGOING_RELATIONS.add(Relations.DOBJ);
@@ -55,12 +56,12 @@ public class VerbFinder extends AbstractFinder2<Verb> {
 
         // find verbs acting as subjects in a sentence through a clause
         if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
-            if (!ignoredWords.contains(dependency.gov())) csubjVerbs.add(dependency.dep());  // TODO: contains(gov or dep)?
+            if (!ignoredWords.contains(dependency.dep())) csubjVerbs.add(dependency.dep());
         }
 
         // find verbs acting as direct objects in a sentence through a clause
         if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
-            if (!ignoredWords.contains(dependency.gov())) xcompVerbs.add(dependency.dep());  // TODO: contains(gov or dep)?
+            if (!ignoredWords.contains(dependency.dep())) xcompVerbs.add(dependency.dep());
         }
 
         // find conjunction
@@ -94,69 +95,26 @@ public class VerbFinder extends AbstractFinder2<Verb> {
         dobjVerbs.removeAll(csubjVerbs);
 
         // remove verbs that are used to describe nouns
-        dobjVerbs.removeAll(aclVerbs);  // TODO: safe to remove?
+        dobjVerbs.removeAll(aclVerbs);  // TODO: is this needed anymore?
 
-        for (IndexedWord simpleVerb : dobjVerbs) {
-            Set<String> labels = new HashSet<>();
-
-            if (conjunctions.keySet().contains(simpleVerb)) {
-                labels.add(Labels.CONJ_CHILD_VERB);
-            } else if (conjunctions.values().contains(simpleVerb)) {
-                labels.add(Labels.CONJ_PARENT_VERB);
-            }
-
-            verbs.add(new Verb(simpleVerb, graph, labels));
+        for (IndexedWord dobjVerb : dobjVerbs) {
+            verbs.add(new Verb(dobjVerb, graph, getLabels(dobjVerb)));
         }
 
-        // take care to label this type of verb
-        // this is done in order to be able to label statements, i.e. a csubj verb statement
-        // knowing a statement is a csubj verb statement, means it can be treated as a replacement for Subject
         for (IndexedWord copVerb : copVerbs) {
-            Set<String> labels = new HashSet<>();
-            labels.add(Labels.COP_VERB);
-
-            if (conjunctions.keySet().contains(copVerb)) {
-                labels.add(Labels.CONJ_CHILD_VERB);
-            } else if (conjunctions.values().contains(copVerb)) {
-                labels.add(Labels.CONJ_PARENT_VERB);
-            }
-
-            verbs.add(new Verb(copVerb, graph, labels));
+            verbs.add(new Verb(copVerb, graph, getLabels(copVerb, Labels.COP_VERB)));
         }
 
-        // take care to label this type of verb
-        // this is done in order to be able to label statements, i.e. a csubj verb statement
         // knowing a statement is a csubj verb statement, means it can be treated as a replacement for Subject
         for (IndexedWord csubjVerb : csubjVerbs) {
-            Set<String> labels = new HashSet<>();
-            labels.add(Labels.CSUBJ_VERB);
-
-            if (conjunctions.keySet().contains(csubjVerb)) {
-                labels.add(Labels.CONJ_CHILD_VERB);
-            } else if (conjunctions.values().contains(csubjVerb)) {
-                labels.add(Labels.CONJ_PARENT_VERB);
-            }
-
-            verbs.add(new Verb(csubjVerb, graph, labels));
+            verbs.add(new Verb(csubjVerb, graph, getLabels(csubjVerb, Labels.CSUBJ_VERB)));
         }
 
-        // take care to label this type of verb
-        // this is done in order to be able to label statements, i.e. a csubj verb statement
-        // knowing a statement is a csubj verb statement, means it can be treated as a replacement for Subject
         for (IndexedWord xcompVerb : xcompVerbs) {
-            Set<String> labels = new HashSet<>();
-            labels.add(Labels.XCOMP_VERB);
-
-            if (conjunctions.keySet().contains(xcompVerb)) {
-                labels.add(Labels.CONJ_CHILD_VERB);
-            } else if (conjunctions.values().contains(xcompVerb)) {
-                labels.add(Labels.CONJ_PARENT_VERB);
-            }
-
-            verbs.add(new Verb(xcompVerb, graph, labels));
+            verbs.add(new Verb(xcompVerb, graph, getLabels(xcompVerb, Labels.XCOMP_VERB)));
         }
+
         logger.info("verbs found: " + verbs);
-        logger.info("conjunction found: " + conjunctions);
 
         return verbs;
     }
