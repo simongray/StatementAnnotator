@@ -19,7 +19,7 @@ public class SubjectFinder extends AbstractFinder2<Subject> {
     private Set<Subject> subjects;
 
     @Override
-    protected void init(SemanticGraph graph) {
+    protected void init() {
         simpleSubjects = new HashSet<>();
         simplePassiveSubjects = new HashSet<>();
         subjects = new HashSet<>();
@@ -38,7 +38,7 @@ public class SubjectFinder extends AbstractFinder2<Subject> {
     }
 
     @Override
-    protected Set<Subject> get(SemanticGraph graph) {
+    protected Set<Subject> get() {
         Set<IndexedWord> entries = new HashSet<>();
         entries.addAll(simpleSubjects);
         entries.addAll(simplePassiveSubjects);
