@@ -88,6 +88,34 @@ public abstract class AbstractFinder<T extends AbstractComponent> {
     }
 
     /**
+     * Attach the dependent from a typed dependency with a given relation.
+     *
+     * @param words
+     * @param dependency
+     * @param relation
+     * @return dependent
+     */
+    protected final void addDependent(Set<IndexedWord> words, TypedDependency dependency, String relation) {
+        if (dependency.reln().getShortName().equals(relation)) {
+            if (!ignoredWords.contains(dependency.dep())) words.add(dependency.dep());
+        }
+    }
+
+    /**
+     * Attach the governor from a typed dependency with a given relation.
+     *
+     * @param words
+     * @param dependency
+     * @param relation
+     * @return dependent
+     */
+    protected final void addGovernor(Set<IndexedWord> words, TypedDependency dependency, String relation) {
+        if (dependency.reln().getShortName().equals(relation)) {
+            if (!ignoredWords.contains(dependency.gov())) words.add(dependency.gov());
+        }
+    }
+
+    /**
      * Retrieves the conjunctions (child-parent) of a dependency.
      *
      * @param dependency

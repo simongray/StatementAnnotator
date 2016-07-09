@@ -51,31 +51,18 @@ public class VerbFinder extends AbstractFinder<Verb> {
         }
 
         // find verbs acting as subjects in a sentence through a clause
-        if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
-            if (!ignoredWords.contains(dependency.dep())) csubjVerbs.add(dependency.dep());
-        }
+        addDependent(csubjVerbs, dependency, Relations.CSUBJ);
 
         // find verbs acting as direct objects in a sentence through a clause
-        if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
-            if (!ignoredWords.contains(dependency.dep())) xcompVerbs.add(dependency.dep());
-        }
-
-        // find conjunction
-        findConjunctions(dependency);
-
-        // make sure that adjectives are removed from the list of verbs
-        // in the very same move, cop relation verbs (is, be, 's, 'm, etc.) are found
-        if (dependency.reln().getShortName().equals(Relations.COP)) {
-            if (!ignoredWords.contains(dependency.dep())) {
-                adjectives.add(dependency.gov());
-                copVerbs.add(dependency.dep());
-            }
-        }
+        addDependent(xcompVerbs, dependency, Relations.XCOMP);
 
         // TODO: safe to remove?
-        if (dependency.reln().getShortName().equals(Relations.ACL)) {
-            if (!ignoredWords.contains(dependency.dep())) aclVerbs.add(dependency.dep());
-        }
+        addDependent(aclVerbs, dependency, Relations.ACL);
+
+        // make sure that adjectives are removed from the list of verbs
+        // and find cop relation verbs (is, be, 's, 'm, etc.) in the same relation
+        addDependent(copVerbs, dependency, Relations.COP);
+        addGovernor(adjectives, dependency, Relations.COP);
     }
 
     @Override
