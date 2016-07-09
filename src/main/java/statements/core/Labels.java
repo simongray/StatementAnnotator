@@ -4,6 +4,7 @@ package statements.core;
 public class Labels {
     // component labels
     public static final String CSUBJ_VERB = "CsubjVerb";  // clausal subject Verb found using the csubj relation
+    public static final String COP_VERB = "CopVerb";  // clausal subject Verb found using the csubj relation
     public static final String XCOMP_VERB = "XcompVerb";
     public static final String CONJ_PARENT_VERB = "ConjParentVerb";
     public static final String CONJ_CHILD_VERB = "ConjChildVerb";

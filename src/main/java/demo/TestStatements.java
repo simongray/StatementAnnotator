@@ -170,7 +170,7 @@ public class TestStatements {
          */
 //        String example = "The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.";
 //        String example = "The app allows you to smile and wave.";
-//        String example = "It's a big deal.";
+        String example = "It's a big deal.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";
 //        String example = "Establishing a practice goes a long way to reduce stress.";  // csubj verb example
 //        String example = "The app and the house are a big deal.";
@@ -179,7 +179,7 @@ public class TestStatements {
 //        String example = "She cried and yelled at him.";  // not attaching "at him" to "cried, which good enough
 //        String example = "She yelled at him and cried.";
 //        String example = "She yelled at him and cried at her.";
-        String example = "She shot and killed him.";
+//        String example = "She shot and killed him.";
 //        String example = "He pointed at her and spoke.";
 //        String example = "She hated him and he hated her.";
 //        String example = "She hated her and Lis.";

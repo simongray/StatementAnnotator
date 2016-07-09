@@ -15,7 +15,7 @@ import java.util.*;
 public class VerbFinder extends AbstractFinder2<Verb> {
     private static final Logger logger = LoggerFactory.getLogger(VerbFinder.class);
 
-    Set<IndexedWord> simpleVerbs;
+    Set<IndexedWord> dobjVerbs;
     Set<IndexedWord> copVerbs;
     Set<IndexedWord> adjectives;
     Set<IndexedWord> csubjVerbs;  // for verbs that act as subjects
@@ -34,7 +34,7 @@ public class VerbFinder extends AbstractFinder2<Verb> {
     protected void init(SemanticGraph graph) {
         super.init(graph);  // always start with call to super class method
 
-        simpleVerbs = new HashSet<>();
+        dobjVerbs = new HashSet<>();
         copVerbs = new HashSet<>();
         adjectives = new HashSet<>();
         csubjVerbs = new HashSet<>();
@@ -50,7 +50,7 @@ public class VerbFinder extends AbstractFinder2<Verb> {
         super.check(dependency);  // always start with call to super class method
 
         if (OUTGOING_RELATIONS.contains(dependency.reln().getShortName())) {
-            if (!ignoredWords.contains(dependency.dep())) simpleVerbs.add(dependency.gov());
+            if (!ignoredWords.contains(dependency.dep())) dobjVerbs.add(dependency.gov());
         }
 
         // find verbs acting as subjects in a sentence through a clause
@@ -84,21 +84,19 @@ public class VerbFinder extends AbstractFinder2<Verb> {
     @Override
     protected Set<Verb> get(SemanticGraph graph) {
         // remove adjectives from candidate verbs
-        simpleVerbs.removeAll(adjectives);
+        dobjVerbs.removeAll(adjectives);
 
         // remove verbs that are already in xcompverbs
-        simpleVerbs.removeAll(xcompVerbs);
+        dobjVerbs.removeAll(xcompVerbs);
 
         // remove verbs that act as subjects
-        simpleVerbs.removeAll(csubjVerbs); // TODO: safe to remove?
+        // these are added later with the correct label
+        dobjVerbs.removeAll(csubjVerbs);
 
         // remove verbs that are used to describe nouns
-        simpleVerbs.removeAll(aclVerbs);  // TODO: safe to remove?
+        dobjVerbs.removeAll(aclVerbs);  // TODO: safe to remove?
 
-        // add the cop relation verbs in
-        simpleVerbs.addAll(copVerbs);
-
-        for (IndexedWord simpleVerb : simpleVerbs) {
+        for (IndexedWord simpleVerb : dobjVerbs) {
             Set<String> labels = new HashSet<>();
 
             if (conjunctions.keySet().contains(simpleVerb)) {
@@ -108,6 +106,22 @@ public class VerbFinder extends AbstractFinder2<Verb> {
             }
 
             verbs.add(new Verb(simpleVerb, graph, labels));
+        }
+
+        // take care to label this type of verb
+        // this is done in order to be able to label statements, i.e. a csubj verb statement
+        // knowing a statement is a csubj verb statement, means it can be treated as a replacement for Subject
+        for (IndexedWord copVerb : copVerbs) {
+            Set<String> labels = new HashSet<>();
+            labels.add(Labels.COP_VERB);
+
+            if (conjunctions.keySet().contains(copVerb)) {
+                labels.add(Labels.CONJ_CHILD_VERB);
+            } else if (conjunctions.values().contains(copVerb)) {
+                labels.add(Labels.CONJ_PARENT_VERB);
+            }
+
+            verbs.add(new Verb(copVerb, graph, labels));
         }
 
         // take care to label this type of verb
