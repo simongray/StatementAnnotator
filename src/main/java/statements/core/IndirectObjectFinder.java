@@ -11,37 +11,38 @@ import java.util.*;
 /**
  * Finds indirect objects in sentences.
  */
-public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
+public class IndirectObjectFinder extends AbstractFinder2<IndirectObject> {
     private static final Logger logger = LoggerFactory.getLogger(IndirectObjectFinder.class);
 
-    /**
-     * The indirect objects that are found in a sentence.
-     *
-     * @param graph the dependency graph of a sentence
-     * @return indirect objects
-     */
-    public Set<IndirectObject> find(SemanticGraph graph) {
-        Collection<TypedDependency> dependencies = graph.typedDependencies();
-        Map<IndexedWord, IndexedWord> nmodMapping = new HashMap<>();
-        Set<IndexedWord> subjects = new HashSet<>();
-        Set<IndexedWord> subjectRelated = new HashSet<>();
-        Set<IndirectObject> indirectObjects = new HashSet<>();
+    private Map<IndexedWord, IndexedWord> nmodMapping;
+    private Set<IndexedWord> subjects;
+    private Set<IndexedWord> subjectRelated;
+    private Set<IndirectObject> indirectObjects;
 
-        Set<IndexedWord> ignoredWords = getIgnoredWords(graph);
+    @Override
+    protected void init() {
+        nmodMapping = new HashMap<>();
+        subjects = new HashSet<>();
+        subjectRelated = new HashSet<>();
+        indirectObjects = new HashSet<>();
+
         logger.info("ignored words: " + ignoredWords);
+    }
 
-        // find simple indirect objects from relations
+    @Override
+    protected void check(TypedDependency dependency) {
         // NOTE: the reason for the mapping in nmodMapping is so that the cases described in the stanza below can be filtered
         // the key set of the map are the real nmod entries!
-        for (TypedDependency dependency : dependencies) {
-            if (dependency.reln().getShortName().equals(Relations.NMOD)) {
-                if (!ignoredWords.contains(dependency.dep())) nmodMapping.put(dependency.dep(), dependency.gov());
-            }
-            if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
-                if (!ignoredWords.contains(dependency.dep())) subjects.add(dependency.dep());
-            }
+        if (dependency.reln().getShortName().equals(Relations.NMOD)) {
+            if (!ignoredWords.contains(dependency.dep())) nmodMapping.put(dependency.dep(), dependency.gov());
         }
+        if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
+            if (!ignoredWords.contains(dependency.dep())) subjects.add(dependency.dep());
+        }
+    }
 
+    @Override
+    protected Set<IndirectObject> get() {
         // TODO: consider whether nsubjpass, csubj should also be considered
         // remove indirect object that are a part of subjects (through nsubj relation)
         // this is done to fix cases such as "of Sweden" being seen as an indirect object in "Henry Larsson of Sweden"
