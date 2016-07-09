@@ -176,13 +176,13 @@ public class TestStatements {
 //        String example = "The app and the house are a big deal.";
 //        String example = "I keep them in my bag and on my head";
 //        String example = "I sing songs and write words in English.";
-//        String example = "She cried and yelled at him.";  // not attaching "at him" to "cried, which good enough
+        String example = "She cried and yelled at him.";  // not attaching "at him" to "cried, which good enough
 //        String example = "She yelled at him and cried.";
 //        String example = "She yelled at him and cried at her.";
 //        String example = "She shot and killed him.";
 //        String example = "He pointed at her and spoke.";
 //        String example = "She hated him and he hated her.";
-        String example = "She hated her and Lis.";
+//        String example = "She hated her and Lis.";
 
 
 

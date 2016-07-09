@@ -14,14 +14,14 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
     private static final Logger logger = LoggerFactory.getLogger(IndirectObjectFinder.class);
 
     private Map<IndexedWord, IndexedWord> nmodMapping;
-    private Set<IndexedWord> subjects;
+    private Set<IndexedWord> nsubjSubjects;
     private Set<IndexedWord> subjectRelated;
     private Set<IndirectObject> indirectObjects;
 
     @Override
     protected void init() {
         nmodMapping = new HashMap<>();
-        subjects = new HashSet<>();
+        nsubjSubjects = new HashSet<>();
         subjectRelated = new HashSet<>();
         indirectObjects = new HashSet<>();
 
@@ -35,9 +35,7 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
         if (dependency.reln().getShortName().equals(Relations.NMOD)) {
             if (!ignoredWords.contains(dependency.dep())) nmodMapping.put(dependency.dep(), dependency.gov());
         }
-        if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
-            if (!ignoredWords.contains(dependency.dep())) subjects.add(dependency.dep());
-        }
+        addDependent(nsubjSubjects, dependency, Relations.NSUBJ);
     }
 
     @Override
@@ -45,7 +43,7 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
         // TODO: consider whether nsubjpass, csubj should also be considered
         // remove indirect object that are a part of subjects (through nsubj relation)
         // this is done to fix cases such as "of Sweden" being seen as an indirect object in "Henry Larsson of Sweden"
-        for (IndexedWord subject : subjects) {
+        for (IndexedWord subject : nsubjSubjects) {
             for (IndexedWord obj : nmodMapping.keySet()) {
                 if (nmodMapping.get(obj).equals(subject)) {
                     subjectRelated.add(obj);
