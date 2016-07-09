@@ -22,10 +22,13 @@ public abstract class AbstractFinder2<T extends AbstractComponent> {
      */
     public final Set<T> find(SemanticGraph graph) {
         // initialise the fields to a neutral state
+        ignoredWords = getIgnoredWords(graph);
+        dependencies = graph.typedDependencies();
         init(graph);
 
         // find relevant connections
         for (TypedDependency dependency : dependencies) {
+            findConjunctions(dependency);
             check(dependency);
         }
 
@@ -37,28 +40,23 @@ public abstract class AbstractFinder2<T extends AbstractComponent> {
 
     /**
      * Initialise the fields of the finder prior to starting the finding process.
-     * Should be overridden by subclasses.
+     * Needs to be implemented by subclasses.
      *
      * @param graph
      */
-    protected void init(SemanticGraph graph) {
-        ignoredWords = getIgnoredWords(graph);
-        dependencies = graph.typedDependencies();
-    }
+    protected abstract void init(SemanticGraph graph);
 
     /**
      * Check dependency and store relevant information.
-     * Should be overridden by subclasses.
+     * Needs to be implemented by subclasses.
      *
      * @param dependency
      */
-    protected void check(TypedDependency dependency) {
-        findConjunctions(dependency);
-    }
+    protected abstract void check(TypedDependency dependency);
 
     /**
      * The components produced by this finder.
-     * Needs to be implemented by each finder separately.
+     * Needs to be implemented by subclasses.
      *
      * @param graph
      * @return
@@ -72,7 +70,7 @@ public abstract class AbstractFinder2<T extends AbstractComponent> {
      * @param optionalLabels
      * @return labels
      */
-    protected Set<String> getLabels(IndexedWord primary, String... optionalLabels) {
+    protected final Set<String> getLabels(IndexedWord primary, String... optionalLabels) {
         Set<String> labels = new HashSet<>();
 
         // assign conjunction label if applicable
@@ -95,7 +93,7 @@ public abstract class AbstractFinder2<T extends AbstractComponent> {
      *
      * @param dependency
      */
-    protected void findConjunctions(TypedDependency dependency) {
+    protected final void findConjunctions(TypedDependency dependency) {
         if (dependency.reln().getShortName().equals(Relations.CONJ)) {
             if (!ignoredWords.contains(dependency.gov())) {
                 conjunctions.put(dependency.dep(), dependency.gov());
@@ -121,7 +119,7 @@ public abstract class AbstractFinder2<T extends AbstractComponent> {
      * @param graph the dependency graph of a sentence
      * @return ignored words
      */
-    protected Set<IndexedWord> getIgnoredWords(SemanticGraph graph) {
+    protected final Set<IndexedWord> getIgnoredWords(SemanticGraph graph) {
         Set<String> ignoredScopes = getIgnoredScopes();
         Set<IndexedWord> scopeEntries = new HashSet<>();
         Set<IndexedWord> ignoredWords = new HashSet<>();

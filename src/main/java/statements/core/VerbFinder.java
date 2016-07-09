@@ -15,6 +15,8 @@ import java.util.*;
 public class VerbFinder extends AbstractFinder2<Verb> {
     private static final Logger logger = LoggerFactory.getLogger(VerbFinder.class);
 
+    private final Set<String> OUTGOING_RELATIONS;
+
     private Set<IndexedWord> dobjVerbs;
     private Set<IndexedWord> copVerbs;
     private Set<IndexedWord> adjectives;
@@ -22,7 +24,6 @@ public class VerbFinder extends AbstractFinder2<Verb> {
     private Set<IndexedWord> xcompVerbs;
     private Set<IndexedWord> aclVerbs;  // for verbs that are used to describe nouns
     private Set<Verb> verbs;
-    private final Set<String> OUTGOING_RELATIONS;
 
     public VerbFinder() {
         OUTGOING_RELATIONS = new HashSet<>();
@@ -33,8 +34,6 @@ public class VerbFinder extends AbstractFinder2<Verb> {
 
     @Override
     protected void init(SemanticGraph graph) {
-        super.init(graph);  // always start with call to super class method
-
         dobjVerbs = new HashSet<>();
         copVerbs = new HashSet<>();
         adjectives = new HashSet<>();
@@ -48,8 +47,6 @@ public class VerbFinder extends AbstractFinder2<Verb> {
 
     @Override
     protected void check(TypedDependency dependency) {
-        super.check(dependency);  // always start with call to super class method
-
         if (OUTGOING_RELATIONS.contains(dependency.reln().getShortName())) {
             if (!ignoredWords.contains(dependency.dep())) dobjVerbs.add(dependency.gov());
         }
@@ -100,20 +97,16 @@ public class VerbFinder extends AbstractFinder2<Verb> {
         for (IndexedWord dobjVerb : dobjVerbs) {
             verbs.add(new Verb(dobjVerb, graph, getLabels(dobjVerb)));
         }
-
         for (IndexedWord copVerb : copVerbs) {
             verbs.add(new Verb(copVerb, graph, getLabels(copVerb, Labels.COP_VERB)));
         }
-
-        // knowing a statement is a csubj verb statement, means it can be treated as a replacement for Subject
         for (IndexedWord csubjVerb : csubjVerbs) {
+            // knowing a statement is a csubj verb statement, means it can be treated as a replacement for Subject
             verbs.add(new Verb(csubjVerb, graph, getLabels(csubjVerb, Labels.CSUBJ_VERB)));
         }
-
         for (IndexedWord xcompVerb : xcompVerbs) {
             verbs.add(new Verb(xcompVerb, graph, getLabels(xcompVerb, Labels.XCOMP_VERB)));
         }
-
         logger.info("verbs found: " + verbs);
 
         return verbs;
