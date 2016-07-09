@@ -11,52 +11,52 @@ import java.util.*;
 /**
  * Finds direct objects in sentences.
  */
-public class DirectObjectFinder extends AbstractFinder<DirectObject> {
+public class DirectObjectFinder extends AbstractFinder2<DirectObject> {
     private static final Logger logger = LoggerFactory.getLogger(DirectObjectFinder.class);
 
-    /**
-     * The direct objects that are found in a sentence.
-     *
-     * @param graph the dependency graph of a sentence
-     * @return direct objects
-     */
+    private Map<IndexedWord, IndexedWord> dobjMapping ;
+    private Set<IndexedWord> csubjVerbs;// for verbs that act as subjects
+    private Set<IndexedWord> copObjects;
+    private Set<DirectObject> directObjects;
+
     @Override
-    public Set<DirectObject> find(SemanticGraph graph) {
-        Collection<TypedDependency> dependencies = graph.typedDependencies();
-        Map<IndexedWord, IndexedWord> dobjMapping = new HashMap<>();
-        Set<IndexedWord> csubjVerbs = new HashSet<>();  // for verbs that act as subjects
-        Set<IndexedWord> copObjects = new HashSet<>();
-        Set<DirectObject> directObjects = new HashSet<>();
+    protected void init() {
+        dobjMapping = new HashMap<>();
+        csubjVerbs = new HashSet<>();
+        copObjects = new HashSet<>();
+        directObjects = new HashSet<>();
 
-        Set<IndexedWord> ignoredWords = getIgnoredWords(graph);
         logger.info("ignored words: " + ignoredWords);
+    }
 
-        // find simple objects from relations
-        for (TypedDependency dependency : dependencies) {
-            // mapping from object to verb, defined by the dobj relation
-            if (dependency.reln().getShortName().equals(Relations.DOBJ)) {
-                if (!ignoredWords.contains(dependency.dep())) dobjMapping.put(dependency.dep(), dependency.gov());
-            }
+    @Override
+    protected void check(TypedDependency dependency) {
+        // mapping from object to verb, defined by the dobj relation
+        if (dependency.reln().getShortName().equals(Relations.DOBJ)) {
+            if (!ignoredWords.contains(dependency.dep())) dobjMapping.put(dependency.dep(), dependency.gov());
+        }
 
-            // direct objects defined by the cop relation
-            // when a is the governor in both an nsubj and a cop relation, then it's a direct object
-            if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
-                if (hasCopula(dependency.gov(), graph)) {
-                    if (!ignoredWords.contains(dependency.dep())) copObjects.add(dependency.gov());
-                }
+        // direct objects defined by the cop relation
+        // when a is the governor in both an nsubj and a cop relation, then it's a direct object
+        if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
+            if (hasCopula(dependency.gov(), graph)) {
+                if (!ignoredWords.contains(dependency.dep())) copObjects.add(dependency.gov());
             }
+        }
 
-            // TODO: remove entirely, replace with general csubj solution for all finders
-            // will be removed further down
-            if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
-                if (!ignoredWords.contains(dependency.dep())) csubjVerbs.add(dependency.dep());
-            }
+        // TODO: remove entirely, replace with general csubj solution for all finders
+        // will be removed further down
+        if (dependency.reln().getShortName().equals(Relations.CSUBJ)) {
+            if (!ignoredWords.contains(dependency.dep())) csubjVerbs.add(dependency.dep());
         }
 
         logger.info("dobj objects mapping: " + dobjMapping);
         logger.info("cop objects found: " + copObjects);
         logger.info("csubj objects found: " + csubjVerbs);
+    }
 
+    @Override
+    protected Set<DirectObject> get() {
         Set<IndexedWord> objectsToRemove = new HashSet<>();
 
         // remove dobj objects part of clausal verb subjects (through csubj relation)
