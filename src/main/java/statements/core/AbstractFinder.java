@@ -88,6 +88,19 @@ public abstract class AbstractFinder<T extends AbstractComponent> {
     }
 
     /**
+     * Put both dependent and governor from a typed dependency into a map.
+     *
+     * @param mapping
+     * @param dependency
+     * @param relation
+     */
+    protected final void updateMapping(Map<IndexedWord, IndexedWord> mapping, TypedDependency dependency, String relation) {
+        if (dependency.reln().getShortName().equals(relation)) {
+            if (!ignoredWords.contains(dependency.dep())) mapping.put(dependency.dep(), dependency.gov());
+        }
+    }
+
+    /**
      * Attach the dependent from a typed dependency with a given relation.
      *
      * @param words

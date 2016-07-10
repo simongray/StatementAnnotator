@@ -11,46 +11,51 @@ import java.util.*;
  * Finds indirect objects in sentences.
  */
 public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
-    private static final Logger logger = LoggerFactory.getLogger(IndirectObjectFinder.class);
+    private final Logger logger = LoggerFactory.getLogger(IndirectObjectFinder.class);
 
     private Map<IndexedWord, IndexedWord> nmodMapping;
     private Set<IndexedWord> nsubjSubjects;
-    private Set<IndexedWord> subjectRelated;
     private Set<IndirectObject> indirectObjects;
 
     @Override
     protected void init() {
         nmodMapping = new HashMap<>();
         nsubjSubjects = new HashSet<>();
-        subjectRelated = new HashSet<>();
         indirectObjects = new HashSet<>();
-
         logger.info("ignored words: " + ignoredWords);
     }
 
     @Override
     protected void check(TypedDependency dependency) {
-        // NOTE: the reason for the mapping in nmodMapping is so that the cases described in the stanza below can be filtered
-        // the key set of the map are the real nmod entries!
-        if (dependency.reln().getShortName().equals(Relations.NMOD)) {
-            if (!ignoredWords.contains(dependency.dep())) nmodMapping.put(dependency.dep(), dependency.gov());
-        }
+        // the dep is the potential IndirectObject, while the gov is needed to sort out nmod relations to subjects
+        updateMapping(nmodMapping, dependency, Relations.NMOD);
+
+        // TODO: consider whether nsubjpass, csubj should also be considered
+        // used in conjunction with the set of governors in the mapping to remove nmod deps connected to subjects
+        // this is done to fix cases such as "of Sweden" being seen as an indirect object in "Henry Larsson of Sweden"
         addDependent(nsubjSubjects, dependency, Relations.NSUBJ);
     }
 
     @Override
     protected Set<IndirectObject> get() {
-        // TODO: consider whether nsubjpass, csubj should also be considered
-        // remove indirect object that are a part of subjects (through nsubj relation)
-        // this is done to fix cases such as "of Sweden" being seen as an indirect object in "Henry Larsson of Sweden"
+        Set<IndexedWord> subjectRelatedNmod = new HashSet<>();
+
+        // find the intersection between the subjects and the nmod governors
+        // use this intersection to find any affected nmod dependents
         for (IndexedWord subject : nsubjSubjects) {
-            for (IndexedWord obj : nmodMapping.keySet()) {
-                if (nmodMapping.get(obj).equals(subject)) {
-                    subjectRelated.add(obj);
+            for (IndexedWord nmodGovernor : nmodMapping.keySet()) {
+                if (nmodMapping.get(nmodGovernor).equals(subject)) {
+                    subjectRelatedNmod.add(nmodGovernor);
                 }
             }
         }
-        for (IndexedWord obj : subjectRelated) {
+
+        logger.info("nmodMapping: " + nmodMapping);
+        logger.info("subjectRelatedNmod: " + subjectRelatedNmod);
+
+        // remove nmod dependents related to subjects of a sentence
+        // these are considered extended descriptions of nouns rather than real indirect objects
+        for (IndexedWord obj : subjectRelatedNmod) {
             nmodMapping.remove(obj);
         }
 
@@ -96,7 +101,6 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
             indirectObjects.add(new IndirectObject(primary, graph));
         }
 
-        logger.info("nmodMapping: " + nmodMapping);
         logger.info("indirect objects found: " + indirectObjects);
 
         return indirectObjects;
