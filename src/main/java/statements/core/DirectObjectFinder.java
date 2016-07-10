@@ -12,8 +12,6 @@ import java.util.*;
  * Finds direct objects in sentences.
  */
 public class DirectObjectFinder extends AbstractFinder<DirectObject> {
-    private static final Logger logger = LoggerFactory.getLogger(DirectObjectFinder.class);
-
     private Map<IndexedWord, IndexedWord> dobjMapping ;
     private Set<IndexedWord> csubjVerbs;// for verbs that act as subjects
     private Set<IndexedWord> copObjects;
@@ -25,8 +23,6 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
         csubjVerbs = new HashSet<>();
         copObjects = new HashSet<>();
         directObjects = new HashSet<>();
-
-        logger.info("ignored words: " + ignoredWords);
     }
 
     @Override
@@ -80,8 +76,6 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
             logger.info("creating new direct object based on: " + entry);
             directObjects.add(new DirectObject(entry, graph));
         }
-
-        logger.info("direct objects found: " + directObjects);
 
         return directObjects;
     }

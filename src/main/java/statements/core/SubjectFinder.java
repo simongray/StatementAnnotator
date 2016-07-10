@@ -11,8 +11,6 @@ import java.util.*;
  * Finds subjects in sentences.
  */
 public class SubjectFinder extends AbstractFinder<Subject> {
-    private static final Logger logger = LoggerFactory.getLogger(SubjectFinder.class);
-
     private Set<IndexedWord> nsubjSubjects;
     private Set<IndexedWord> nsubjpassSubjects;
     private Set<Subject> subjects;
@@ -22,8 +20,6 @@ public class SubjectFinder extends AbstractFinder<Subject> {
         nsubjSubjects = new HashSet<>();
         nsubjpassSubjects = new HashSet<>();
         subjects = new HashSet<>();
-
-        logger.info("ignored words: " + ignoredWords);
     }
 
     @Override
@@ -40,8 +36,6 @@ public class SubjectFinder extends AbstractFinder<Subject> {
         for (IndexedWord nsubjpassSubject : nsubjpassSubjects) {
             subjects.add(new Subject(nsubjpassSubject, graph));
         }
-
-        logger.info("subjects found: " + subjects);
 
         return subjects;
     }

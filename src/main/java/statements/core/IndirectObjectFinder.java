@@ -11,8 +11,6 @@ import java.util.*;
  * Finds indirect objects in sentences.
  */
 public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
-    private final Logger logger = LoggerFactory.getLogger(IndirectObjectFinder.class);
-
     private Map<IndexedWord, IndexedWord> nmodMapping;
     private Set<IndexedWord> nsubjSubjects;
     private Set<IndirectObject> indirectObjects;
@@ -22,7 +20,6 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
         nmodMapping = new HashMap<>();
         nsubjSubjects = new HashSet<>();
         indirectObjects = new HashSet<>();
-        logger.info("ignored words: " + ignoredWords);
     }
 
     @Override
@@ -100,8 +97,6 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
 
             indirectObjects.add(new IndirectObject(primary, graph));
         }
-
-        logger.info("indirect objects found: " + indirectObjects);
 
         return indirectObjects;
     }

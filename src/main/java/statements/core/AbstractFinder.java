@@ -3,11 +3,15 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.trees.TypedDependency;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 
 public abstract class AbstractFinder<T extends AbstractComponent> {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     protected SemanticGraph graph;
     protected Collection<TypedDependency> dependencies;
     protected Map<IndexedWord, IndexedWord> conjunctions = new HashMap<>();  // dep-to-gov
@@ -28,6 +32,8 @@ public abstract class AbstractFinder<T extends AbstractComponent> {
         dependencies = graph.typedDependencies();
         init();
 
+        logger.info("ignoring: " + ignoredWords);
+
         // find relevant connections
         for (TypedDependency dependency : dependencies) {
             findConjunctions(dependency);
@@ -36,6 +42,8 @@ public abstract class AbstractFinder<T extends AbstractComponent> {
 
         // produce components based on the connections
         components = get();
+
+        logger.info("found: " + components);
 
         return components;
     }

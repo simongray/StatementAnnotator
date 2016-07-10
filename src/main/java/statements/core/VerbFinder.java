@@ -12,8 +12,6 @@ import java.util.*;
  * Finds verbs in sentences.
  */
 public class VerbFinder extends AbstractFinder<Verb> {
-    private static final Logger logger = LoggerFactory.getLogger(VerbFinder.class);
-
     private final Set<String> OUTGOING_RELATIONS;
 
     private Set<IndexedWord> dobjVerbs;
@@ -40,8 +38,6 @@ public class VerbFinder extends AbstractFinder<Verb> {
         xcompVerbs = new HashSet<>();
         aclVerbs = new HashSet<>();
         verbs = new HashSet<>();
-
-        logger.info("ignored words: " + ignoredWords);
     }
 
     @Override
@@ -97,7 +93,6 @@ public class VerbFinder extends AbstractFinder<Verb> {
             logger.info("added new verb from xcomp relation: " + xcompVerb);
             verbs.add(new Verb(xcompVerb, graph, getLabels(xcompVerb, Labels.XCOMP_VERB)));
         }
-        logger.info("verbs found: " + verbs);
 
         return verbs;
     }
