@@ -49,6 +49,26 @@ public class StatementUtils {
     }
 
     /**
+     * Flip a map so that keys becomes values and values become keys.
+     *
+     * @param map
+     * @param <T>
+     * @return
+     */
+    public static <T> Map<T, Set<T>> flip(Map<T, T> map) {
+        Map<T, Set<T>> flippedMap = new HashMap<>();
+
+        for (T oldKey : map.keySet()) {
+            T oldValue = map.get(oldKey);
+            Set<T> newValue = flippedMap.getOrDefault(oldValue, new HashSet<>());
+            newValue.add(oldKey);
+            flippedMap.put(oldValue, newValue);
+        }
+
+        return flippedMap;
+    }
+
+    /**
      * Remove certain words from a list of words.
      *
      * @param undesired words to remove

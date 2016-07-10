@@ -56,9 +56,12 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
             nmodMapping.remove(obj);
         }
 
-        // find sequences (ex: "in a chair in a house in Copenhagen")
+        // find sequences (ex: "in a chair in a house in Copenhagen") and shared governance
+        // these are used for creating "conjunctions"
         Set<Set<IndexedWord>> sequences = StatementUtils.findSequences(nmodMapping.keySet(), Relations.NMOD, graph);
+        Collection<Set<IndexedWord>> sharedGovernance = StatementUtils.flip(nmodMapping).values();
         logger.info("sequences: " + sequences);
+        logger.info("shared governance: " + sharedGovernance);
 
         Set<IndexedWord> entries = new HashSet<>();
 
