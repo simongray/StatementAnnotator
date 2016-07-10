@@ -40,6 +40,8 @@ public abstract class AbstractFinder<T extends AbstractComponent> {
             check(dependency);
         }
 
+        logger.info("conjunctions: " + conjunctions);
+
         // produce components based on the connections
         components = get();
 
