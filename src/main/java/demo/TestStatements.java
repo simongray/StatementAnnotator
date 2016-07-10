@@ -59,7 +59,8 @@ public class TestStatements {
 
 
 
-//        String example = "She lives in a house in a lake outside of Copenhagen.";  // TODO: still not completely satisfied
+        String example = "She lives in a house in a lake outside of Copenhagen.";  // TODO: still not completely satisfied
+//        String example = "She lives in a house outside of Copenhagen.";  // TODO: still not completely satisfied
 
         // TODO: multiple issues
 //        String example = "If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too.";
@@ -110,7 +111,7 @@ public class TestStatements {
              |_ component: {IndirectObject: "to and hugged him"}
              |_ component: {Verb: "spoke", labels: "conjparent"}
          */
-        String example = "She both hugged and spoke to him.";
+//        String example = "She both hugged and spoke to him.";
 
 
 

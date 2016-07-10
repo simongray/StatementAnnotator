@@ -2,8 +2,6 @@ package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.trees.TypedDependency;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -59,46 +57,33 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
         // find sequences (ex: "in a chair in a house in Copenhagen") and shared governance
         // these are used for creating "conjunctions"
         Set<Set<IndexedWord>> sequences = StatementUtils.findSequences(nmodMapping.keySet(), Relations.NMOD, graph);
-        Collection<Set<IndexedWord>> sharedGovernance = StatementUtils.flip(nmodMapping).values();
+        Collection<Set<IndexedWord>> governance = StatementUtils.flip(nmodMapping).values();
         logger.info("sequences: " + sequences);
-        logger.info("shared governance: " + sharedGovernance);
+        logger.info("governance: " + governance);
 
-        Set<IndexedWord> entries = new HashSet<>();
-
-        // find out which indirect objects are already part of sequences
-        for (IndexedWord entry : nmodMapping.keySet()) {
-            boolean notInSequence = true;
-
-            for (Set<IndexedWord> sequence : sequences) {
-                if (sequence.contains(entry)) {
-                    notInSequence = false;
-                    break;
-                }
-            }
-
-            if (notInSequence) entries.add(entry);
+        // find all objects that are part of "conjunctions"
+        Set<IndexedWord> conjunctIndirectObjects = new HashSet<>();
+        for (Set<IndexedWord> sequence : sequences) {
+            conjunctIndirectObjects.addAll(sequence);
         }
+        for (Set<IndexedWord> words : governance) {
+            // if there is only a single word in the set, then there is no shared governance
+            if (words.size() > 1) conjunctIndirectObjects.addAll(words);
+        }
+        logger.info("conjunctIndirectObjects: ", conjunctIndirectObjects);
 
         // build complete objects from single entries
-        for (IndexedWord entry : entries) {
-            indirectObjects.add(new IndirectObject(entry, graph));
-            logger.info("new indirect object, primary: " + entry);
+        for (IndexedWord word : nmodMapping.keySet()) {
+            if (!conjunctIndirectObjects.contains(word)) {
+                logger.info("new indirect object, primary: " + word);
+                indirectObjects.add(new IndirectObject(word, graph, getLabels(word)));
+            }
         }
 
-        // build complete objects from sequences
-        for (Set<IndexedWord> sequence : sequences) {
-            IndexedWord primary = null;
-
-            // treat lowest indexed word as primary entry
-            for (IndexedWord entry : sequence) {
-                if (primary == null || primary.index() > entry.index()) {
-                    primary = entry;
-                }
-            }
-
-            logger.info("new indirect object with " + sequence.size() + " entries, primary: " + primary);
-
-            indirectObjects.add(new IndirectObject(primary, graph));
+        // build complete objects from conjunctions
+        for (IndexedWord word : conjunctIndirectObjects) {
+            logger.info("new indirect object from conjunction, primary: " + word);
+            indirectObjects.add(new IndirectObject(word, graph, getLabels(word, Labels.CONJ_INDIRECT_OBJECT)));
         }
 
         return indirectObjects;

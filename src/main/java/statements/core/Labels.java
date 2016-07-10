@@ -8,6 +8,7 @@ public class Labels {
     public static final String XCOMP_VERB = "XcompVerb";
     public static final String CONJ_PARENT_VERB = "ConjParentVerb";
     public static final String CONJ_CHILD_VERB = "ConjChildVerb";
+    public static final String CONJ_INDIRECT_OBJECT = "ConjIndirectObject";  // fake conjunction, based on shared governance and sequences
 
     // statement labels
     // these labels are more simple than the component labels
