@@ -85,22 +85,6 @@ public class TestStatements {
 
 
 
-        // TODO: weird fuckup
-        String example = "She spoke to and hugged him.";
-        /*
-        She spoke to and hugged him.
-          |_ statement: {Statement: "She spoke to and hugged him", components: 3}
-          |  |_ component: {Subject: "She"}
-          |  |_ component: {IndirectObject: "to and hugged him"}
-          |  |_ component: {Verb: "spoke", labels: "conjchild"}
-          |_ statement: {Statement: "She spoke to and hugged him", components: 3}
-             |_ component: {Subject: "She"}
-             |_ component: {IndirectObject: "to and hugged him"}
-             |_ component: {Verb: "spoke", labels: "conjparent"}
-         */
-
-
-
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
 //        String example = "Anyway, just make your own rule and stick to it.";
@@ -114,6 +98,20 @@ public class TestStatements {
 //        String example = "Her and I keep them in my bag and on my head";
         // TODO: doesn't recognise "her" as dobj
 //        String example = "She hated him and her.";
+//        String example = "She spoke to and hugged him.";  // REALLY WEIRD
+        /*
+        She spoke to and hugged him.
+          |_ statement: {Statement: "She spoke to and hugged him", components: 3}
+          |  |_ component: {Subject: "She"}
+          |  |_ component: {IndirectObject: "to and hugged him"}
+          |  |_ component: {Verb: "spoke", labels: "conjchild"}
+          |_ statement: {Statement: "She spoke to and hugged him", components: 3}
+             |_ component: {Subject: "She"}
+             |_ component: {IndirectObject: "to and hugged him"}
+             |_ component: {Verb: "spoke", labels: "conjparent"}
+         */
+        String example = "She both hugged and spoke to him.";
+
 
 
 
