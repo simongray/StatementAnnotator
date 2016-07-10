@@ -45,15 +45,15 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
         }
 
         addDependent(csubjVerbs, dependency, Relations.CSUBJ);
-
-        logger.info("dobj objects mapping: " + dobjMapping);
-        logger.info("cop objects found: " + copObjects);
-        logger.info("csubj objects found: " + csubjVerbs);
     }
 
     @Override
     protected Set<DirectObject> get() {
         Set<IndexedWord> objectsToRemove = new HashSet<>();
+
+        logger.info("dobj objects mapping: " + dobjMapping);
+        logger.info("cop objects found: " + copObjects);
+        logger.info("csubj objects found: " + csubjVerbs);
 
         // remove dobj objects part of clausal verb subjects (through csubj relation)
         for (IndexedWord csubjVerb : csubjVerbs) {

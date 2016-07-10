@@ -81,16 +81,20 @@ public class VerbFinder extends AbstractFinder<Verb> {
         dobjVerbs.removeAll(aclVerbs);  // TODO: is this needed anymore?
 
         for (IndexedWord dobjVerb : dobjVerbs) {
+            logger.info("added new verb from dobj relation: " + dobjVerb);
             verbs.add(new Verb(dobjVerb, graph, getLabels(dobjVerb)));
         }
         for (IndexedWord copVerb : copVerbs) {
+            logger.info("added new verb from cop relation: " + copVerb);
             verbs.add(new Verb(copVerb, graph, getLabels(copVerb, Labels.COP_VERB)));
         }
         for (IndexedWord csubjVerb : csubjVerbs) {
             // knowing a statement is a csubj verb statement, means it can be treated as a replacement for Subject
+            logger.info("added new verb from csubj relation: " + csubjVerb);
             verbs.add(new Verb(csubjVerb, graph, getLabels(csubjVerb, Labels.CSUBJ_VERB)));
         }
         for (IndexedWord xcompVerb : xcompVerbs) {
+            logger.info("added new verb from xcomp relation: " + xcompVerb);
             verbs.add(new Verb(xcompVerb, graph, getLabels(xcompVerb, Labels.XCOMP_VERB)));
         }
         logger.info("verbs found: " + verbs);

@@ -86,7 +86,7 @@ public class TestStatements {
 
 
         // TODO: weird fuckup
-//        String example = "She spoke to and hugged him.";
+        String example = "She spoke to and hugged him.";
         /*
         She spoke to and hugged him.
           |_ statement: {Statement: "She spoke to and hugged him", components: 3}
@@ -176,7 +176,7 @@ public class TestStatements {
 //        String example = "The app and the house are a big deal.";
 //        String example = "I keep them in my bag and on my head";
 //        String example = "I sing songs and write words in English.";
-        String example = "She cried and yelled at him.";  // not attaching "at him" to "cried, which good enough
+//        String example = "She cried and yelled at him.";  // not attaching "at him" to "cried, which good enough
 //        String example = "She yelled at him and cried.";
 //        String example = "She yelled at him and cried at her.";
 //        String example = "She shot and killed him.";
