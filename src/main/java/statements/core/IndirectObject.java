@@ -10,6 +10,11 @@ import java.util.Set;
  */
 public class IndirectObject extends AbstractComponent implements Resembling<IndirectObject> {
 
+    public IndirectObject(IndexedWord primary, SemanticGraph graph, Set<String> labels, Set<IndexedWord> conjunction) {
+        super(primary, graph, labels);
+        this.conjunction.addAll(conjunction);  // often are not available through conj relation
+    }
+
     public IndirectObject(IndexedWord primary, SemanticGraph graph, Set<String> labels) {
         super(primary, graph, labels);
     }

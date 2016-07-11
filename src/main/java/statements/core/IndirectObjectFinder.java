@@ -62,28 +62,29 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
         logger.info("governance: " + governance);
 
         // find all objects that are part of "conjunctions"
-        Set<IndexedWord> conjunctIndirectObjects = new HashSet<>();
-        for (Set<IndexedWord> sequence : sequences) {
-            conjunctIndirectObjects.addAll(sequence);
-        }
-        for (Set<IndexedWord> words : governance) {
-            // if there is only a single word in the set, then there is no shared governance
-            if (words.size() > 1) conjunctIndirectObjects.addAll(words);
-        }
-        logger.info("conjunctIndirectObjects: ", conjunctIndirectObjects);
+        Set<Set<IndexedWord>> conjunctions = new HashSet<>(governance);
+        conjunctions.addAll(sequences);
+        logger.info("unmerged conjunctions: " + conjunctions);
 
-        // build complete objects from single entries
-        for (IndexedWord word : nmodMapping.keySet()) {
-            if (!conjunctIndirectObjects.contains(word)) {
-                logger.info("new indirect object, primary: " + word);
-                indirectObjects.add(new IndirectObject(word, graph, getLabels(word)));
-            }
-        }
+        conjunctions = StatementUtils.merge(conjunctions);
+        logger.info("merged conjunctions: " + conjunctions);
 
         // build complete objects from conjunctions
-        for (IndexedWord word : conjunctIndirectObjects) {
-            logger.info("new indirect object from conjunction, primary: " + word);
-            indirectObjects.add(new IndirectObject(word, graph, getLabels(word, Labels.CONJ_INDIRECT_OBJECT)));
+        for (Set<IndexedWord> conjunction : conjunctions) {
+            if (conjunction.size() > 1) {
+                for (IndexedWord word : conjunction) {
+                    Set<IndexedWord> otherWords = new HashSet<>(conjunction);
+                    otherWords.remove(word);
+
+                    logger.info("added new indirect object from conjunction: " + word);
+                    logger.info("conjunction words: " + otherWords);
+                    indirectObjects.add(new IndirectObject(word, graph, getLabels(word, Labels.CONJ_INDIRECT_OBJECT), otherWords));
+                }
+            } else {
+                IndexedWord word = conjunction.iterator().next();
+                logger.info("added new indirect object: " + word);
+                indirectObjects.add(new IndirectObject(word, graph, getLabels(word, Labels.CONJ_INDIRECT_OBJECT)));
+            }
         }
 
         return indirectObjects;
