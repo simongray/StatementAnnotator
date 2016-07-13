@@ -33,9 +33,8 @@ public class TestStatements {
 
 
 
-        // TODO: fix these sentences, badly needed
-//        String example = "Well, a country can be both Western and Southern in geographical terms, they're not exclusive groups.";
-//        String example = "This is not really a machine learning question, it's more like a basic programming question.";
+        // TODO: not quite right, mostly due to parsing
+        String example = "Well, a country can be both Western and Southern in geographical terms, they're not exclusive groups.";
 
 
 
@@ -116,7 +115,8 @@ public class TestStatements {
          */
 //        String example = "She both hugged and spoke to him.";
         // TODO: since there is no subject in the final statement, the parser thinks the "I" of the previous statement should be the subject
-        String example = "Malmø can be interesting, I guess, but definitely spend a day in Helsingør.";
+//        String example = "Malmø can be interesting, I guess, but definitely spend a day in Helsingør.";
+//        String example = "This is not really a machine learning question, it's more like a basic programming question.";
 
 
 

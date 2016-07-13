@@ -16,7 +16,6 @@ public class VerbFinder extends AbstractFinder<Verb> {
 
     private Set<IndexedWord> dobjVerbs;
     private Set<IndexedWord> copVerbs;
-    private Set<IndexedWord> adjectives;
     private Set<IndexedWord> csubjVerbs;  // act as subjects
     private Set<IndexedWord> xcompVerbs;
     private Set<IndexedWord> aclVerbs;  // for verbs that are used to describe nouns
@@ -33,7 +32,6 @@ public class VerbFinder extends AbstractFinder<Verb> {
     protected void init() {
         dobjVerbs = new HashSet<>();
         copVerbs = new HashSet<>();
-        adjectives = new HashSet<>();
         csubjVerbs = new HashSet<>();
         xcompVerbs = new HashSet<>();
         aclVerbs = new HashSet<>();
@@ -58,13 +56,12 @@ public class VerbFinder extends AbstractFinder<Verb> {
         // make sure that adjectives are removed from the list of verbs
         // and find cop relation verbs (is, be, 's, 'm, etc.) in the same relation
         addDependent(copVerbs, dependency, Relations.COP);
-        addGovernor(adjectives, dependency, Relations.COP);
     }
 
     @Override
     protected Set<Verb> get() {
         // remove adjectives from candidate verbs
-        dobjVerbs.removeAll(adjectives);
+        dobjVerbs = Tags.reduce(dobjVerbs, Tags.VERBS);
 
         // remove verbs that are already in xcompverbs
         dobjVerbs.removeAll(xcompVerbs);
@@ -78,10 +75,12 @@ public class VerbFinder extends AbstractFinder<Verb> {
 
         for (IndexedWord dobjVerb : dobjVerbs) {
             logger.info("added new verb from dobj relation: " + dobjVerb);
+            logger.info("info: " + dobjVerb.tag());
             verbs.add(new Verb(dobjVerb, graph, getLabels(dobjVerb)));
         }
         for (IndexedWord copVerb : copVerbs) {
             logger.info("added new verb from cop relation: " + copVerb);
+            logger.info("info: " + copVerb.tag());
             verbs.add(new Verb(copVerb, graph, getLabels(copVerb, Labels.COP_VERB)));
         }
         for (IndexedWord csubjVerb : csubjVerbs) {

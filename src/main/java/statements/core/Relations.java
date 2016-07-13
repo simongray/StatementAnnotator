@@ -111,6 +111,7 @@ public class Relations {
     static {
         IGNORED_CONNECTING_RELATIONS.add(CONJ);
         IGNORED_CONNECTING_RELATIONS.add(DEP);
+        IGNORED_CONNECTING_RELATIONS.add(Relations.PARATAXIS);  // TODO: examine closer
     }
 
 
