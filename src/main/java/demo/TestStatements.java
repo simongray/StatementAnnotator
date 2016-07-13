@@ -55,10 +55,6 @@ public class TestStatements {
 //        String example = "Christiania is a must, as is taking the boat tour in the canals to see all the different architecture.";
 //        String example = "Central Copenhagen is for tourists and people from Jutland.";
 
-        // TODO: missing second statement in conjunction
-//        String example = "Suddenly the stinky tofu is no longer stinky and actually tastes great (served with a garlic dip).";
-
-
         // TODO: transfer clauses to other statement
 //        String example = "Check out Assistens Cemetery and Frederiksberg Park if you want to spend time in a park.";
 
@@ -153,7 +149,10 @@ public class TestStatements {
 //        String example = "This is not really a machine learning question, it's more like a basic programming question.";
 
         // TODO: three statements instead of two, "what" is treated as dobj, works in GrammarScope though
-        String example = "I think the technology is nice, but I don't like what they use it for.";
+//        String example = "I think the technology is nice, but I don't like what they use it for.";
+
+        // TODO: missing second statement in conjunction, works in GrammarScope
+        String example = "Suddenly the stinky tofu is no longer stinky and actually tastes great (served with a garlic dip).";
 
 
 
