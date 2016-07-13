@@ -144,9 +144,9 @@ public class TestStatements {
 //        String example =    "I think she's mad. I don't care whether she likes me. She says that they should go.";
 //        String example =    "I don't care whether or not they come.";
         // TODO: issue #51
-        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
+//        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
 
-//        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";  // xcomp verb example
+        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";  // xcomp verb example
 
 
 //        String example = "She speaks and shouts.";

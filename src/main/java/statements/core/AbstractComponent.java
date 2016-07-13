@@ -228,7 +228,9 @@ public abstract class AbstractComponent implements StatementComponent {
      * @return the longest string possible
      */
     protected String getString() {
-        return StatementUtils.join(getCompound());
+        Set<IndexedWord> expandedCompound = getCompound();
+        expandedCompound.addAll(getNegations());
+        return StatementUtils.join(expandedCompound);
     }
 
     /**
