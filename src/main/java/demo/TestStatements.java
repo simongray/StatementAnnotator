@@ -175,8 +175,8 @@ public class TestStatements {
 //        String example = "The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers.";
 //        String example = "The app allows you to smile and wave.";
 //        String example = "It's a big deal.";
-//        String example = "We also got two Xiaomi air purifiers that work quite well.";
-        String example = "Establishing a practice goes a long way to reduce stress.";  // csubj verb example
+        String example = "We also got two Xiaomi air purifiers that work quite well.";
+//        String example = "Establishing a practice goes a long way to reduce stress.";  // csubj verb example
 //        String example = "The app and the house are a big deal.";
 //        String example = "I keep them in my bag and on my head";
 //        String example = "I sing songs and write words in English.";
