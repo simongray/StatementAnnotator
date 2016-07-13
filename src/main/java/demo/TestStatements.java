@@ -38,6 +38,49 @@ public class TestStatements {
 //        String example = "Well, a country can be both Western and Southern in geographical terms, they're not exclusive groups.";
 
 
+        // TODO: use ConjVerb to resolve anaphora (if subject in second statement is they/it/etc. then it can be replaced by "Apple")
+//        String example = "Usually Apple is better at holding back with this stuff, but they are really losing it these days.";
+
+
+
+//        String example = "Maybe the angry doomsayers just haven't found this thread yet.";
+
+        // TODO: missing "it" in second statement, three statements instead of two
+//        String example = "I think the technology is nice, but I don't like what they use it for.";
+//
+//        String example = "Pressing something extra hard should make sense physically, like for a pining action or pushing something to the back.";
+//        String example = "It feels like Apple is shitting on affordances and good design these days and instead just joined the gimmick interface race that Samsung and others have been in for a while, but because it's Apple no one dares to say it doesn't make any sense.";
+//        String example = "Introducing another interface feature with a learning curve just for the sake of using this new pressure sensitive technology is actually a very bad use of pressure sensitivity.";
+//        String example = "Love the show and there's no denying that Justin Roiland has a unique sense of humour which is being accompanied perfectly by the cleverness of Dan Harmon's philosophical style.";
+//        String example = "This is funny, end up watching it every time it's posted here on reddit.";
+//        String example = "Is the jump in the early nineties due to a reclassification of countries in the Soviet sphere of influence?";
+//        String example = "He had a great show before but couldn't continue to do his \"Colbert\" character, so people are interested in how his new thing is turning out.";
+//        String example = "Christiania is a must, as is taking the boat tour in the canals to see all the different architecture.";
+//        String example = "Central Copenhagen is for tourists and people from Jutland.";
+
+        // TODO: missing second statement in conjunction
+//        String example = "Suddenly the stinky tofu is no longer stinky and actually tastes great (served with a garlic dip).";
+
+        // TODO: missing indirect object
+        String example = "The stinky tofu in other parts of China is too old.";
+
+
+        // TODO: transfer clauses to other statement
+//        String example = "Check out Assistens Cemetery and Frederiksberg Park if you want to spend time in a park.";
+
+        // TODO: should be DirectObject/Statement, not DirectObject
+//        String example = "Come visit Jægerborggade in Nørrebro.";
+
+        // TODO: transfer "in" to other statements
+//        String example = "Go out drinking in Nørrebro, Christiania or Vesterbro (meat packing district).";
+
+        // TODO: in this case, it seems like it's possible to transer the DirectObject to the other statement since subject is the same
+//        String example = "I'm currently attending meditation-based stress treatment and I really enjoy it.";
+
+
+        // TODO: duplication of statements
+//        String example = "It's once a week,  3 hours and is run by two psychologists.";
+
 
         // TODO: the sentence "Hates and loves it." - doesn't separate into two statements, however doubtful if it is possible to do in a non-hackish way
 
@@ -190,7 +233,7 @@ public class TestStatements {
 //        String example = "She hated her and Lis.";
 //        String example = "She lives in a house in a lake outside of Copenhagen.";  // both sequences and shared governor
 //        String example = "She lives in a house outside of Copenhagen.";
-        String example = "Is Greece considered Eastern Europe in Italy??";  // question
+//        String example = "Is Greece considered Eastern Europe in Italy??";  // question
 
 
 
