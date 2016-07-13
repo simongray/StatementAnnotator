@@ -35,12 +35,10 @@ public class SubjectFinder extends AbstractFinder<Subject> {
 
         for (IndexedWord nsubjSubject : nsubjSubjects) {
             logger.info("added new verb from nsubj relation: " + nsubjSubject);
-            logger.info("added new verb from nsubjpass relation: " + nsubjSubject.copyCount());
             subjects.add(new Subject(nsubjSubject, graph));
         }
         for (IndexedWord nsubjpassSubject : nsubjpassSubjects) {
             logger.info("added new verb from nsubjpass relation: " + nsubjpassSubject);
-            logger.info("added new verb from nsubjpass relation: " + nsubjpassSubject.copyCount());
             subjects.add(new Subject(nsubjpassSubject, graph));
         }
 
