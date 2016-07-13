@@ -159,7 +159,7 @@ public abstract class AbstractFinder<T extends AbstractComponent> {
      * @return ignored scopes
      */
     protected Set<String> getIgnoredScopes() {
-        return Relations.IGNORED_SCOPES;
+        return Relations.DEPENDENT_CLAUSE_SCOPES;
     }
 
     /**

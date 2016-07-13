@@ -34,140 +34,91 @@ public class Relations {
     public static final String PARATAXIS = "parataxis";  // ex: "sometimes <X>, sometimes <Y>"
     public static final String ADVMOD = "advmod";  // ex: the "always" in "always on"
 
-    public static final Set<String> IGNORED_SCOPES = new HashSet<>();
-
-    public static final Set<String> IGNORED_OUTGOING_RELATIONS = new HashSet<>();
-
-    public static final Set<String> SMALL_COMPOUND_SCOPE = new HashSet<>();
-
-    public static final Set<String> IGNORED_RELATIONS = new HashSet<>();
-    public static final Set<String> IGNORED_VERB_RELATIONS = new HashSet<>();
-    public static final Set<String> IGNORED_SUBJECT_RELATIONS = new HashSet<>();
-    public static final Set<String> IGNORED_DIRECT_OBJECT_RELATIONS = new HashSet<>();
-    public static final Set<String> IGNORED_INDIRECT_OBJECT_RELATIONS = new HashSet<>();
-
-    public static final Set<String> IGNORED_COMPOUND_RELATIONS = new HashSet<>();
-    public static final Set<String> IGNORED_VERB_COMPOUND_RELATIONS = new HashSet<>();
-    public static final Set<String> IGNORED_SUBJECT_COMPOUND_RELATIONS = new HashSet<>();
-    public static final Set<String> IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS = new HashSet<>();
-    public static final Set<String> IGNORED_INDIRECT_OBJECT_COMPOUND_RELATIONS = new HashSet<>();
-
-    public static final Set<String> IGNORED_INTER_COMPONENT_RELATIONS = new HashSet<>();
-
-    public static final Set<String> NESTED_STATEMENT_SCOPES = new HashSet<>();
-
+    /**
+     * Outgoing relations which are stored internally in any AbstractComponent, but not shown/used by default.
+     *
+     * An example is the NEG relation, which is separated out from the other words,
+     * but used to adjust results when doing comparisons.
+     */
+    public static final Set<String> HIDDEN_INTERNAL_RELATIONS = new HashSet<>();
     static {
-        IGNORED_OUTGOING_RELATIONS.add(CONJ);
+        HIDDEN_INTERNAL_RELATIONS.add(NEG);
+        HIDDEN_INTERNAL_RELATIONS.add(PUNCT);
+        HIDDEN_INTERNAL_RELATIONS.add(MARK);
+        HIDDEN_INTERNAL_RELATIONS.add(NEG);
+        HIDDEN_INTERNAL_RELATIONS.add(CONJ);
+        HIDDEN_INTERNAL_RELATIONS.add(CC);
+    }
+
+    /**
+     * Outgoing relations and their descendants which form dependent clauses for specific words.
+     * These relations are used by the finders to find out which words to ignore when searching for components.
+     * These dependent scopes later become internal parts of AbstractComponents,
+     * but are not allowed themselves to contain components.
+     */
+    public static final Set<String> DEPENDENT_CLAUSE_SCOPES = new HashSet<>();
+    static {
+        DEPENDENT_CLAUSE_SCOPES.add(Relations.ACL);  // scope for description of a noun
+        DEPENDENT_CLAUSE_SCOPES.add(Relations.ACL_RELCL);
+        DEPENDENT_CLAUSE_SCOPES.add(Relations.ADVCL);  // scope for description of a verb/adjective
+    }
+
+    /**
+     * Outgoing relations and their descendants which form dependent statements.
+     * These scopes should be analysed separately from the root relations
+     * and the statements found within them will become embedded into other relations.
+     */
+    public static final Set<String> EMBEDDED_STATEMENT_SCOPES = new HashSet<>();
+    static {
+        EMBEDDED_STATEMENT_SCOPES.add(CCOMP);
+        EMBEDDED_STATEMENT_SCOPES.add(XCOMP);
+        EMBEDDED_STATEMENT_SCOPES.add(CSUBJ);
+    }
+
+    /**
+     * Outgoing relations which almost certainly lead to other components and should be ignored.
+     */
+    public static final Set<String> COMPONENT_RELATIONS = new HashSet<>();
+    static {
+        COMPONENT_RELATIONS.add(DEP);  // TODO: is the best place to put this?
+        COMPONENT_RELATIONS.add(Relations.PARATAXIS);  // TODO: is the best place to put this?
+        COMPONENT_RELATIONS.add(Relations.NSUBJ);
+        COMPONENT_RELATIONS.add(Relations.NSUBJPASS);
+        COMPONENT_RELATIONS.add(Relations.DOBJ);
+        COMPONENT_RELATIONS.add(Relations.NMOD);
+        COMPONENT_RELATIONS.add(Relations.COP);
+    }
+
+    /**
+     * Outgoing relations which are completely ignored when building the basic scope of any AbstractComponent.
+     * These relations include the HIDDEN_INTERNAL_RELATIONS, DEPENDENT_CLAUSE_SCOPES, EMBEDDED_STATEMENT_SCOPES
+     * as well as COMPONENT_RELATIONS.
+     */
+    public static final Set<String> IGNORED_OUTGOING_RELATIONS = new HashSet<>();
+    static {
+        IGNORED_OUTGOING_RELATIONS.addAll(HIDDEN_INTERNAL_RELATIONS);
+        IGNORED_OUTGOING_RELATIONS.addAll(DEPENDENT_CLAUSE_SCOPES);
+        IGNORED_OUTGOING_RELATIONS.addAll(EMBEDDED_STATEMENT_SCOPES);
+        IGNORED_OUTGOING_RELATIONS.addAll(COMPONENT_RELATIONS);
+    }
+
+    /**
+     * Incoming relations which are ignored when connecting components in the statement finder.
+     */
+    public static final Set<String> IGNORED_CONNECTING_RELATIONS = new HashSet<>();
+    static {
+        IGNORED_CONNECTING_RELATIONS.add(CONJ);
+        IGNORED_CONNECTING_RELATIONS.add(DEP);
+    }
 
 
-
-
-        // TODO: rework everything below this point
-
-        /**
-         * The smallest scope for compounds.
-         */
+    // TODO: rework everything below this point
+    /**
+     * The smallest scope for compounds.
+     */
+    public static final Set<String> SMALL_COMPOUND_SCOPE = new HashSet<>();
+    static {
         SMALL_COMPOUND_SCOPE.add(COMPOUND);
         SMALL_COMPOUND_SCOPE.add(ADVMOD);  // TODO: consider whether it should be part of larger compound scope
-
-        /**
-         * Nested statement scopes.
-         */
-        NESTED_STATEMENT_SCOPES.add(CCOMP);
-        NESTED_STATEMENT_SCOPES.add(XCOMP);
-        NESTED_STATEMENT_SCOPES.add(CSUBJ);  // TODO: use this for special type of Statement (SubjectStatement) which also evaluates to a Subject
-
-        /**
-         * Relations whose dependant + children (= scope) cannot be used to find components in.
-         *
-         * These are basically all clauses.
-         */
-        IGNORED_SCOPES.add(Relations.ACL);  // scope for description of a noun
-        IGNORED_SCOPES.add(Relations.ACL_RELCL);
-        IGNORED_SCOPES.add(Relations.ADVCL);  // scope for description of a verb/adjective
-
-        /**
-         * Relations that are ignored when constructing ANY component.
-         */
-        IGNORED_RELATIONS.add(Relations.CONJ);
-        IGNORED_RELATIONS.add(Relations.CC);
-        IGNORED_RELATIONS.add(Relations.DEP);  // ignoring all unknown dependencies
-        IGNORED_RELATIONS.add(Relations.MARK);  // ignoring all markers
-        IGNORED_RELATIONS.add(Relations.CCOMP);  // moved from IGNORED_VERB_RELATIONS  // TODO: check if this has any repercussions
-        IGNORED_RELATIONS.add(Relations.XCOMP);  // moved from IGNORED_VERB_RELATIONS  // TODO: check if this has any repercussions
-        IGNORED_RELATIONS.add(Relations.ADVCL);  // ignoring adverbial clauses (still accessible through component)
-        IGNORED_RELATIONS.add(Relations.ACL);
-        IGNORED_RELATIONS.add(Relations.ACL_RELCL);
-        IGNORED_SUBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
-        IGNORED_VERB_RELATIONS.addAll(IGNORED_RELATIONS);
-        IGNORED_DIRECT_OBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
-        IGNORED_INDIRECT_OBJECT_RELATIONS.addAll(IGNORED_RELATIONS);
-
-        /**
-         * Relations that are ignored when constructing subjects.
-         */
-//        IGNORED_SUBJECT_RELATIONS.add(Relations.NMOD);  // TODO: line remove entirely?
-
-        /**
-         * Relations that are ignored when constructing verbs.
-         */
-        IGNORED_VERB_RELATIONS.add(Relations.NSUBJ);
-        IGNORED_VERB_RELATIONS.add(Relations.NSUBJPASS);
-        IGNORED_VERB_RELATIONS.add(Relations.CSUBJ);
-        IGNORED_VERB_RELATIONS.add(Relations.DOBJ);
-        IGNORED_VERB_RELATIONS.add(Relations.NMOD);
-        IGNORED_VERB_RELATIONS.add(Relations.CONJ);  // conjunct verbs are found using common governor, not conj relation!
-        IGNORED_VERB_RELATIONS.add(Relations.CC);  // conjunct verbs are found using common governor, not conj relation!
-        IGNORED_VERB_RELATIONS.add(Relations.PARATAXIS);
-
-        /**
-         * Relations that are ignored when constructing direct objects.
-         */
-        IGNORED_DIRECT_OBJECT_RELATIONS.add(Relations.NSUBJ);
-        IGNORED_DIRECT_OBJECT_RELATIONS.add(Relations.NMOD);
-        IGNORED_DIRECT_OBJECT_RELATIONS.add(Relations.COP);  // to avoid including cop verbs with cop objects
-
-        /**
-         * Relations that are ignored when constructing indirect objects.
-         */
-        IGNORED_INDIRECT_OBJECT_RELATIONS.add(Relations.NMOD);  // TODO: revise with sequences?
-
-        /**
-         * Relations that are ignored when determining ANY compound boundaries.
-         */
-        IGNORED_COMPOUND_RELATIONS.add(Relations.CONJ);  // ignoring all links to conjunct verbs, nouns, etc.
-        IGNORED_COMPOUND_RELATIONS.add(Relations.CC);  // ignoring all conjunction words (like "and", "or", etc.)
-        IGNORED_COMPOUND_RELATIONS.add(Relations.PUNCT);  // ignoring all punctuation (can still be accessed for recomposing as text)
-
-        /**
-         * Relations that are ignored when determining subject compound boundaries.
-         */
-        IGNORED_SUBJECT_COMPOUND_RELATIONS.addAll(IGNORED_SUBJECT_RELATIONS);
-        IGNORED_SUBJECT_COMPOUND_RELATIONS.addAll(IGNORED_COMPOUND_RELATIONS);
-
-        /**
-         * Relations that are ignored when determining verb compound boundaries.
-         */
-        IGNORED_VERB_COMPOUND_RELATIONS.addAll(IGNORED_VERB_RELATIONS);
-        IGNORED_VERB_COMPOUND_RELATIONS.addAll(IGNORED_COMPOUND_RELATIONS);
-
-        /**
-         * Relations that are ignored when determining direct object compound boundaries.
-         */
-        IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS.addAll(IGNORED_DIRECT_OBJECT_RELATIONS);
-        IGNORED_DIRECT_OBJECT_COMPOUND_RELATIONS.addAll(IGNORED_COMPOUND_RELATIONS);
-
-        /**
-         * Relations that are ignored when determining direct object compound boundaries.
-         */
-        IGNORED_INDIRECT_OBJECT_COMPOUND_RELATIONS.addAll(IGNORED_INDIRECT_OBJECT_RELATIONS);
-        IGNORED_INDIRECT_OBJECT_COMPOUND_RELATIONS.addAll(IGNORED_COMPOUND_RELATIONS);
-
-        /**
-         * Relations that are ignored when linking components in a statement.
-         *
-         * TODO: rethink this, it's retarded to re-add them after removing them
-         */
-        IGNORED_INTER_COMPONENT_RELATIONS.add(Relations.DEP);  // following unknown dependencies generally gives weird results
     }
 }

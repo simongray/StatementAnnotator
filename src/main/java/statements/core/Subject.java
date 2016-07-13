@@ -15,13 +15,6 @@ public class Subject extends AbstractComponent implements Resembling<Subject> {
     }
 
     /**
-     * Describes which relations are ignored when producing the complete subject.
-     */
-    protected Set<String> getIgnoredRelations() {
-        return Relations.IGNORED_SUBJECT_RELATIONS;
-    }
-
-    /**
      * The resemblance of this object to another object.
      *
      * @param otherObject subject to be compared with

@@ -52,7 +52,7 @@ public class StatementFinder {
         logger.info("components for linking: " + components);
         logger.info("based on dependencies: " + graph.typedDependencies());
 
-        Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping = findNestedStatementMapping(Relations.NESTED_STATEMENT_SCOPES, graph);
+        Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping = findNestedStatementMapping(Relations.EMBEDDED_STATEMENT_SCOPES, graph);
         Map<IndexedWord, Set<AbstractComponent>> nestedComponentMapping = new HashMap<>();
         Set<AbstractComponent> nestedComponents = new HashSet<>();
         logger.info("nested statement mapping: " + nestedStatementMapping);
@@ -147,10 +147,10 @@ public class StatementFinder {
         // which words are entry points for nested statements?
         // use these to find the exact scope of the statements
         for (TypedDependency dependency : graph.typedDependencies()) {
-            if (Relations.NESTED_STATEMENT_SCOPES.contains(dependency.reln().getShortName())) {
+            if (Relations.EMBEDDED_STATEMENT_SCOPES.contains(dependency.reln().getShortName())) {
                 nestedStatementMapping.put(
                         dependency.dep(),
-                        StatementUtils.findCompound(dependency.dep(), graph, Relations.NESTED_STATEMENT_SCOPES, null)
+                        StatementUtils.findCompound(dependency.dep(), graph, Relations.EMBEDDED_STATEMENT_SCOPES, null)
                 );
             }
         }

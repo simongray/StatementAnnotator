@@ -45,6 +45,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> negations;
     protected final Set<IndexedWord> punctuation;
     protected final Set<IndexedWord> markers;
+    protected final Set<IndexedWord> cc;
     protected final Set<IndexedWord> adverbialClauses;
     protected final Set<IndexedWord> nounClauses;
 
@@ -54,15 +55,20 @@ public abstract class AbstractComponent implements StatementComponent {
 
     public AbstractComponent(IndexedWord primary, SemanticGraph graph, Set<String> labels) {
         this.primary = primary;
-        compound = StatementUtils.findCompound(primary, graph, getIgnoredRelations(), getOwnedScopes());
+        compound = StatementUtils.findCompound(primary, graph, getIgnoredRelations(), null);
 
         // relevant parts of the component that have been separated out from the compound
         negations = StatementUtils.findSpecificChildren(Relations.NEG, primary, graph);
         punctuation = StatementUtils.findSpecificChildren(Relations.PUNCT, primary, graph);
         markers = StatementUtils.findSpecificChildren(Relations.MARK, primary, graph);
+        cc = StatementUtils.findSpecificChildren(Relations.CC, primary, graph);
         adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, primary, graph);
         nounClauses = StatementUtils.findSpecificDescendants(Relations.ACL, primary, graph);
         nounClauses.addAll(StatementUtils.findSpecificDescendants(Relations.ACL_RELCL, primary, graph));
+
+        // conjunction are used to loosely "link" separate statements
+        conjunction = StatementUtils.findSpecificChildren(Relations.CONJ, primary, graph);
+        conjunction.addAll(StatementUtils.findSpecificParents(Relations.CONJ, primary, graph));
 
         // the stuff that doesn't go into the compound
         // used by containing statements to reproduce the statement text
@@ -72,7 +78,7 @@ public abstract class AbstractComponent implements StatementComponent {
         remaining.addAll(markers);
         remaining.addAll(adverbialClauses);
         remaining.addAll(nounClauses);
-
+        remaining.addAll(conjunction);
 
         // the governors/parents of the component
         // some relations are ignored, e.g. the conj relation which is not treated as governor since it defines siblings
@@ -80,14 +86,10 @@ public abstract class AbstractComponent implements StatementComponent {
         for (SemanticGraphEdge edge : graph.incomingEdgeList(primary)) {
             // it is important to leave out certain governor relations
             // (e.g. the conj relation, since multiple of the same component type should not be connecting)
-            if (!Relations.IGNORED_OUTGOING_RELATIONS.contains(edge.getRelation().getShortName())) {
+            if (!Relations.IGNORED_CONNECTING_RELATIONS.contains(edge.getRelation().getShortName())) {
                 governors.add(edge.getGovernor());
             }
         }
-
-        // conjunction are used to loosely "link" separate statements
-        conjunction = StatementUtils.findSpecificChildren(Relations.CONJ, primary, graph);
-        conjunction.addAll(StatementUtils.findSpecificParents(Relations.CONJ, primary, graph));
 
         this.labels = labels;
     }
@@ -96,14 +98,7 @@ public abstract class AbstractComponent implements StatementComponent {
      * Describes which relations are ignored when producing the compound.
      */
     protected Set<String> getIgnoredRelations() {
-        return Relations.IGNORED_RELATIONS;
-    }
-
-    /**
-     * Describes relations whose entire set of descendants is to be accepted, regardless of ignored relations.
-     */
-    protected Set<String> getOwnedScopes() {
-        return Relations.IGNORED_SCOPES;
+        return Relations.IGNORED_OUTGOING_RELATIONS;
     }
 
     /**
@@ -150,6 +145,16 @@ public abstract class AbstractComponent implements StatementComponent {
     public Set<IndexedWord> getPunctuation() {
         return punctuation;
     }
+
+    /**
+     * All conjunction words.
+     *
+     * @return markers
+     */
+    public Set<IndexedWord> getCc() {
+        return cc;
+    }
+
 
     /**
      * All markers.
@@ -242,9 +247,7 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
-     * Attach a label to this component.
-     *
-     * @return labels
+     * Attach a label to this component.  // TODO: is this needed?
      */
     public void addLabel(String label) {
         labels.add(label);
