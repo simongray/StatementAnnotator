@@ -146,7 +146,7 @@ public class TestStatements {
         // TODO: issue #51
 //        String example = "I just have a widget on my Android phone that says the current AQI from the nearest measuring station.";
 
-        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";  // xcomp verb example
+//        String example = "Henry, Louis the Dragon or Sally Bates don't like doing anything in particular.";  // xcomp verb example
 
 
 //        String example = "She speaks and shouts.";
@@ -176,7 +176,7 @@ public class TestStatements {
 //        String example = "The app allows you to smile and wave.";
 //        String example = "It's a big deal.";
 //        String example = "We also got two Xiaomi air purifiers that work quite well.";
-//        String example = "Establishing a practice goes a long way to reduce stress.";  // csubj verb example
+        String example = "Establishing a practice goes a long way to reduce stress.";  // csubj verb example
 //        String example = "The app and the house are a big deal.";
 //        String example = "I keep them in my bag and on my head";
 //        String example = "I sing songs and write words in English.";

@@ -9,6 +9,7 @@ import java.util.Set;
 public class Tags {
     public static final String VB = "VB";
     public static final String VBP = "VBP";
+    public static final String VBZ = "VBZ";
 
     /**
      * Outgoing relations which are stored internally in any AbstractComponent, but not shown/used by default.
@@ -20,6 +21,7 @@ public class Tags {
     static {
         VERBS.add(VB);
         VERBS.add(VBP);
+        VERBS.add(VBZ);
     }
 
     /**
