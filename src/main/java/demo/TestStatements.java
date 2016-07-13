@@ -75,10 +75,6 @@ public class TestStatements {
 //        String example = "I'm currently attending meditation-based stress treatment and I really enjoy it.";
 
 
-        // TODO: duplication of statements
-//        String example = "It's once a week,  3 hours and is run by two psychologists.";
-
-
         // TODO: the sentence "Hates and loves it." - doesn't separate into two statements, however doubtful if it is possible to do in a non-hackish way
 
 
@@ -231,8 +227,8 @@ public class TestStatements {
 //        String example = "She lives in a house in a lake outside of Copenhagen.";  // both sequences and shared governor
 //        String example = "She lives in a house outside of Copenhagen.";
 //        String example = "Is Greece considered Eastern Europe in Italy??";  // question
-        String example = "The stinky tofu in other parts of China is too old.";  // has nmod related to subject
-
+//        String example = "The stinky tofu in other parts of China is too old.";  // has nmod related to subject
+        String example = "It's once a week,  3 hours and is run by two psychologists.";  // re-using subject
 
 
 

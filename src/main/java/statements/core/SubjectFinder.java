@@ -30,10 +30,17 @@ public class SubjectFinder extends AbstractFinder<Subject> {
 
     @Override
     protected Set<Subject> get() {
+        // remove duplicates (this happens sometimes, e.g. "It's once a week,  3 hours and is run by two psychologists.")
+        nsubjSubjects.removeAll(nsubjpassSubjects);
+
         for (IndexedWord nsubjSubject : nsubjSubjects) {
+            logger.info("added new verb from nsubj relation: " + nsubjSubject);
+            logger.info("added new verb from nsubjpass relation: " + nsubjSubject.copyCount());
             subjects.add(new Subject(nsubjSubject, graph));
         }
         for (IndexedWord nsubjpassSubject : nsubjpassSubjects) {
+            logger.info("added new verb from nsubjpass relation: " + nsubjpassSubject);
+            logger.info("added new verb from nsubjpass relation: " + nsubjpassSubject.copyCount());
             subjects.add(new Subject(nsubjpassSubject, graph));
         }
 
