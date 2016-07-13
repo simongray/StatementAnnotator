@@ -61,9 +61,6 @@ public class TestStatements {
         // TODO: missing second statement in conjunction
 //        String example = "Suddenly the stinky tofu is no longer stinky and actually tastes great (served with a garlic dip).";
 
-        // TODO: missing indirect object
-        String example = "The stinky tofu in other parts of China is too old.";
-
 
         // TODO: transfer clauses to other statement
 //        String example = "Check out Assistens Cemetery and Frederiksberg Park if you want to spend time in a park.";
@@ -234,6 +231,7 @@ public class TestStatements {
 //        String example = "She lives in a house in a lake outside of Copenhagen.";  // both sequences and shared governor
 //        String example = "She lives in a house outside of Copenhagen.";
 //        String example = "Is Greece considered Eastern Europe in Italy??";  // question
+        String example = "The stinky tofu in other parts of China is too old.";  // has nmod related to subject
 
 
 
