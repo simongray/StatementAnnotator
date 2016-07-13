@@ -34,7 +34,7 @@ public class TestStatements {
 
 
         // TODO: fix these sentences, badly needed
-//        String example = "Malmø can be interesting, I guess, but definitely spend a day in Helsingør.";
+        String example = "Malmø can be interesting, I guess, but definitely spend a day in Helsingør.";
 //        String example = "Well, a country can be both Western and Southern in geographical terms, they're not exclusive groups.";
 //        String example = "This is not really a machine learning question, it's more like a basic programming question.";
 
@@ -186,7 +186,7 @@ public class TestStatements {
 //        String example = "He pointed at her and spoke.";
 //        String example = "She hated him and he hated her.";
 //        String example = "She hated her and Lis.";
-        String example = "She lives in a house in a lake outside of Copenhagen.";  // both sequences and shared governor
+//        String example = "She lives in a house in a lake outside of Copenhagen.";  // both sequences and shared governor
 //        String example = "She lives in a house outside of Copenhagen.";
 
 

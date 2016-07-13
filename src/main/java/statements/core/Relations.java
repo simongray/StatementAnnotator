@@ -33,6 +33,7 @@ public class Relations {
     public static final String ADVCL = "advcl";  // modifies a verb or adjective with additional description
     public static final String PARATAXIS = "parataxis";  // ex: "sometimes <X>, sometimes <Y>"
     public static final String ADVMOD = "advmod";  // ex: the "always" in "always on"
+    public static final String AUX = "aux";  // ex: the "always" in "always on"
 
     /**
      * Outgoing relations which are stored internally in any AbstractComponent, but not shown/used by default.
@@ -91,8 +92,8 @@ public class Relations {
 
     /**
      * Outgoing relations which are completely ignored when building the basic scope of any AbstractComponent.
-     * These relations include the HIDDEN_INTERNAL_RELATIONS, DEPENDENT_CLAUSE_SCOPES, EMBEDDED_STATEMENT_SCOPES
-     * as well as COMPONENT_RELATIONS.
+     * These relations include the HIDDEN_INTERNAL_RELATIONS, DEPENDENT_CLAUSE_SCOPES, EMBEDDED_STATEMENT_SCOPES,
+     * COMPONENT_RELATIONS, as well as a few special relations.
      */
     public static final Set<String> IGNORED_OUTGOING_RELATIONS = new HashSet<>();
     static {
@@ -100,6 +101,7 @@ public class Relations {
         IGNORED_OUTGOING_RELATIONS.addAll(DEPENDENT_CLAUSE_SCOPES);
         IGNORED_OUTGOING_RELATIONS.addAll(EMBEDDED_STATEMENT_SCOPES);
         IGNORED_OUTGOING_RELATIONS.addAll(COMPONENT_RELATIONS);
+        IGNORED_OUTGOING_RELATIONS.add(AUX);  // only relevant for verbs, sometimes associated with non-verbs
     }
 
     /**
