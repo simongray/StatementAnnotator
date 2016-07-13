@@ -7,8 +7,8 @@ import java.util.Set;
 
 
 public class Tags {
-    public static final String VB = "vb";
-    public static final String VBP = "vbp";
+    public static final String VB = "VB";
+    public static final String VBP = "VBP";
 
     /**
      * Outgoing relations which are stored internally in any AbstractComponent, but not shown/used by default.
