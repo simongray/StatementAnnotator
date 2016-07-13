@@ -32,9 +32,6 @@ public class TestStatements {
 //        "If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too. I sure was (I come from Copenhagen, Denmark). ";
 
 
-        // TODO: question detection
-        String example = "Is Greece considered Eastern Europe in Italy??";
-
 
 
         // TODO: not quite right, mostly due to parsing
@@ -193,7 +190,7 @@ public class TestStatements {
 //        String example = "She hated her and Lis.";
 //        String example = "She lives in a house in a lake outside of Copenhagen.";  // both sequences and shared governor
 //        String example = "She lives in a house outside of Copenhagen.";
-
+        String example = "Is Greece considered Eastern Europe in Italy??";  // question
 
 
 

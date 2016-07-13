@@ -298,7 +298,8 @@ public class Statement implements StatementComponent, Resembling<Statement> {
             }
         }
 
-        // check for question marks, TODO: make more efficient
+        // TODO: make less hacky
+        // check for question marks
         if (StatementUtils.join(getWords()).endsWith("?")) labels.add(Labels.QUESTION);
 
         return labels;
