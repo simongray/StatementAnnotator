@@ -77,6 +77,21 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
             directObjects.add(new DirectObject(entry, graph));
         }
 
+//        Set<IndexedWord> conjunctions = new HashSet<>();
+//
+//        // TODO: revise, very hacky, created to fix this example: Central Copenhagen is for tourists and people from Jutland.
+//        // check for missing components in conjunctions
+//        for (DirectObject object : directObjects) {
+//            conjunctions.addAll(object.getConjunction());
+//        }
+//        conjunctions.removeAll(entries);
+//
+//        // create direct objects from conjunctions
+//        for (IndexedWord word : conjunctions) {
+//            logger.info("creating new direct object based on: " + word);
+//            directObjects.add(new DirectObject(word, graph));
+//        }
+
         return directObjects;
     }
 

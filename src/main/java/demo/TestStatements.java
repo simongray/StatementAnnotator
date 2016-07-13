@@ -41,9 +41,6 @@ public class TestStatements {
         // TODO: use ConjVerb to resolve anaphora (if subject in second statement is they/it/etc. then it can be replaced by "Apple")
 //        String example = "Usually Apple is better at holding back with this stuff, but they are really losing it these days.";
 
-
-
-//        String example = "Maybe the angry doomsayers just haven't found this thread yet.";
 //
 //        String example = "Pressing something extra hard should make sense physically, like for a pining action or pushing something to the back.";
 //        String example = "It feels like Apple is shitting on affordances and good design these days and instead just joined the gimmick interface race that Samsung and others have been in for a while, but because it's Apple no one dares to say it doesn't make any sense.";
@@ -152,7 +149,7 @@ public class TestStatements {
 //        String example = "I think the technology is nice, but I don't like what they use it for.";
 
         // TODO: missing second statement in conjunction, works in GrammarScope
-        String example = "Suddenly the stinky tofu is no longer stinky and actually tastes great (served with a garlic dip).";
+//        String example = "Suddenly the stinky tofu is no longer stinky and actually tastes great (served with a garlic dip).";
 
 
 
@@ -223,11 +220,13 @@ public class TestStatements {
 //        String example = "He pointed at her and spoke.";
 //        String example = "She hated him and he hated her.";
 //        String example = "She hated her and Lis.";
+        String example = "Gandalf gave Frodo the ring from Mordor.";  // iobj + nmod tied to direct object
 //        String example = "She lives in a house in a lake outside of Copenhagen.";  // both sequences and shared governor
 //        String example = "She lives in a house outside of Copenhagen.";
 //        String example = "Is Greece considered Eastern Europe in Italy??";  // question
 //        String example = "The stinky tofu in other parts of China is too old.";  // has nmod related to subject
 //        String example = "It's once a week,  3 hours and is run by two psychologists.";  // re-using subject
+//        String example = "Maybe the angry doomsayers just haven't found this thread yet.";
 
 
 

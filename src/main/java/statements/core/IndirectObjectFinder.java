@@ -10,13 +10,13 @@ import java.util.*;
  */
 public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
     private Map<IndexedWord, IndexedWord> nmodMapping;
-    private Set<IndexedWord> nsubjSubjects;
     private Set<IndirectObject> indirectObjects;
+    private Set<IndexedWord> iobjObjects;
 
     @Override
     protected void init() {
         nmodMapping = new HashMap<>();
-        nsubjSubjects = new HashSet<>();
+        iobjObjects = new HashSet<>();
         indirectObjects = new HashSet<>();
     }
 
@@ -24,33 +24,26 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
     protected void check(TypedDependency dependency) {
         // the dep is the potential IndirectObject, while the gov is needed to sort out nmod relations to subjects
         updateMapping(nmodMapping, dependency, Relations.NMOD);
-
-        // TODO: consider whether nsubjpass, csubj should also be considered
-        // used in conjunction with the set of governors in the mapping to remove nmod deps connected to subjects
-        // this is done to fix cases such as "of Sweden" being seen as an indirect object in "Henry Larsson of Sweden"
-        addDependent(nsubjSubjects, dependency, Relations.NSUBJ);
+        addDependent(iobjObjects, dependency, Relations.IOBJ);
     }
 
     @Override
     protected Set<IndirectObject> get() {
-        Set<IndexedWord> subjectRelatedNmod = new HashSet<>();
+        Set<IndexedWord> notRelatedToVerbs = new HashSet<>();
+        logger.info("nmodMapping: " + nmodMapping);
 
-        // find the intersection between the subjects and the nmod governors
-        // use this intersection to find any affected nmod dependents
-        for (IndexedWord subject : nsubjSubjects) {
-            for (IndexedWord nmodGovernor : nmodMapping.keySet()) {
-                if (nmodMapping.get(nmodGovernor).equals(subject)) {
-                    subjectRelatedNmod.add(nmodGovernor);
-                }
+        // find and remove any NMOD relation that isn't tied to a verb or another NMOD relation (= in a sequence)
+        // other nmod relations (with subject/dirobj governors) are included directly as part of those components!
+        for (IndexedWord nmodGovernor : nmodMapping.keySet()) {
+            IndexedWord nmodDependent = nmodMapping.get(nmodGovernor);
+            if (!Tags.VERBS.contains(nmodDependent.tag()) && !nmodMapping.containsKey(nmodDependent)) {
+                notRelatedToVerbs.add(nmodGovernor);
             }
         }
 
-        logger.info("nmodMapping: " + nmodMapping);
-        logger.info("subjectRelatedNmod: " + subjectRelatedNmod);
+        logger.info("notRelatedToVerbs: " + notRelatedToVerbs);
 
-        // remove nmod dependents related to subjects of a sentence
-        // these are considered extended descriptions of nouns rather than real indirect objects
-        for (IndexedWord obj : subjectRelatedNmod) {
+        for (IndexedWord obj : notRelatedToVerbs) {
             nmodMapping.remove(obj);
         }
 
@@ -85,6 +78,12 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
                 logger.info("added new indirect object: " + word);
                 indirectObjects.add(new IndirectObject(word, graph, getLabels(word, Labels.CONJ_INDIRECT_OBJECT)));
             }
+        }
+
+        // build indirect objects from the iobj relation (ex: "He gave Frodo the ring")
+        for (IndexedWord word : iobjObjects) {
+            logger.info("added new indirect object: " + word);
+            indirectObjects.add(new IndirectObject(word, graph, getLabels(word)));
         }
 
         return indirectObjects;

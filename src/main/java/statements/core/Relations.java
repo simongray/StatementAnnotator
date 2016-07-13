@@ -34,6 +34,7 @@ public class Relations {
     public static final String PARATAXIS = "parataxis";  // ex: "sometimes <X>, sometimes <Y>"
     public static final String ADVMOD = "advmod";  // ex: the "always" in "always on"
     public static final String AUX = "aux";  // ex: the "always" in "always on"
+    public static final String IOBJ = "iobj";  // ex: the "always" in "always on"
 
     /**
      * Outgoing relations which are stored internally in any AbstractComponent, but not shown/used by default.
@@ -88,6 +89,7 @@ public class Relations {
         COMPONENT_RELATIONS.add(Relations.DOBJ);
         COMPONENT_RELATIONS.add(Relations.NMOD);
         COMPONENT_RELATIONS.add(Relations.COP);
+        COMPONENT_RELATIONS.add(Relations.IOBJ);
     }
 
     /**
