@@ -33,6 +33,13 @@ public class TestStatements {
 
 
 
+        // TODO: fix these sentences, badly needed
+//        String example = "Malmø can be interesting, I guess, but definitely spend a day in Helsingør.";
+//        String example = "Well, a country can be both Western and Southern in geographical terms, they're not exclusive groups.";
+//        String example = "This is not really a machine learning question, it's more like a basic programming question.";
+
+
+
         // TODO: the sentence "Hates and loves it." - doesn't separate into two statements, however doubtful if it is possible to do in a non-hackish way
 
 
@@ -58,9 +65,6 @@ public class TestStatements {
 
 
 
-
-        String example = "She lives in a house in a lake outside of Copenhagen.";  // TODO: still not completely satisfied
-//        String example = "She lives in a house outside of Copenhagen.";  // TODO: still not completely satisfied
 
         // TODO: multiple issues
 //        String example = "If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too.";
@@ -182,6 +186,8 @@ public class TestStatements {
 //        String example = "He pointed at her and spoke.";
 //        String example = "She hated him and he hated her.";
 //        String example = "She hated her and Lis.";
+        String example = "She lives in a house in a lake outside of Copenhagen.";  // both sequences and shared governor
+//        String example = "She lives in a house outside of Copenhagen.";
 
 
 
