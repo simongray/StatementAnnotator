@@ -44,9 +44,6 @@ public class TestStatements {
 
 
 //        String example = "Maybe the angry doomsayers just haven't found this thread yet.";
-
-        // TODO: missing "it" in second statement, three statements instead of two
-//        String example = "I think the technology is nice, but I don't like what they use it for.";
 //
 //        String example = "Pressing something extra hard should make sense physically, like for a pining action or pushing something to the back.";
 //        String example = "It feels like Apple is shitting on affordances and good design these days and instead just joined the gimmick interface race that Samsung and others have been in for a while, but because it's Apple no one dares to say it doesn't make any sense.";
@@ -155,6 +152,9 @@ public class TestStatements {
 //        String example = "Malmø can be interesting, I guess, but definitely spend a day in Helsingør.";
 //        String example = "This is not really a machine learning question, it's more like a basic programming question.";
 
+        // TODO: three statements instead of two, "what" is treated as dobj, works in GrammarScope though
+        String example = "I think the technology is nice, but I don't like what they use it for.";
+
 
 
 
@@ -228,7 +228,7 @@ public class TestStatements {
 //        String example = "She lives in a house outside of Copenhagen.";
 //        String example = "Is Greece considered Eastern Europe in Italy??";  // question
 //        String example = "The stinky tofu in other parts of China is too old.";  // has nmod related to subject
-        String example = "It's once a week,  3 hours and is run by two psychologists.";  // re-using subject
+//        String example = "It's once a week,  3 hours and is run by two psychologists.";  // re-using subject
 
 
 
