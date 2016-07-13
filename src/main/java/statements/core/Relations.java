@@ -47,7 +47,6 @@ public class Relations {
         HIDDEN_INTERNAL_RELATIONS.add(PUNCT);
         HIDDEN_INTERNAL_RELATIONS.add(MARK);
         HIDDEN_INTERNAL_RELATIONS.add(NEG);
-        HIDDEN_INTERNAL_RELATIONS.add(CONJ);
         HIDDEN_INTERNAL_RELATIONS.add(CC);
     }
 
@@ -81,6 +80,7 @@ public class Relations {
      */
     public static final Set<String> COMPONENT_RELATIONS = new HashSet<>();
     static {
+        COMPONENT_RELATIONS.add(CONJ);
         COMPONENT_RELATIONS.add(DEP);  // TODO: is the best place to put this?
         COMPONENT_RELATIONS.add(Relations.PARATAXIS);  // TODO: is the best place to put this?
         COMPONENT_RELATIONS.add(Relations.NSUBJ);

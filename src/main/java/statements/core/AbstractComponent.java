@@ -74,11 +74,9 @@ public abstract class AbstractComponent implements StatementComponent {
         // used by containing statements to reproduce the statement text
         remaining = new HashSet<>();
         remaining.addAll(negations);
-        remaining.addAll(punctuation);
         remaining.addAll(markers);
         remaining.addAll(adverbialClauses);
         remaining.addAll(nounClauses);
-        remaining.addAll(conjunction);
 
         // the governors/parents of the component
         // some relations are ignored, e.g. the conj relation which is not treated as governor since it defines siblings
