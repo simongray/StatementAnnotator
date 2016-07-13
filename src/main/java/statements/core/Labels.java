@@ -15,4 +15,5 @@ public class Labels {
     // they are designed to replace the label "Statement" with the component they act like
     public static final String SUBJECT = "Subject";  // statements that act as subjects
     public static final String DIRECT_OBJECT = "DirectObject";  // statements that act as subjects
+    public static final String QUESTION = "Question";  // statements that act as subjects
 }

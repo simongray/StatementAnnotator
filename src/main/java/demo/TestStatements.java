@@ -33,7 +33,7 @@ public class TestStatements {
 
 
         // TODO: question detection
-        String example = "Is Greece considered Eastern Europe in Italy?";
+        String example = "Is Greece considered Eastern Europe in Italy??";
 
 
 

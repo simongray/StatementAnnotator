@@ -17,10 +17,6 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     private Set<AbstractComponent> pureComponents;
     private Set<IndexedWord> governors;
 
-//    public Statement(Set<AbstractComponent> pureComponents) {
-//        this(pureComponents, null);
-//    }
-
     @Override
     public boolean equals(Object object) {
         if (object instanceof Statement) {
@@ -301,6 +297,9 @@ public class Statement implements StatementComponent, Resembling<Statement> {
                 }
             }
         }
+
+        // check for question marks, TODO: make more efficient
+        if (StatementUtils.join(getWords()).endsWith("?")) labels.add(Labels.QUESTION);
 
         return labels;
     }
