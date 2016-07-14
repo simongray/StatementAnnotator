@@ -1,6 +1,8 @@
 package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
+import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.util.CoreMap;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -303,6 +305,10 @@ public class Statement implements StatementComponent, Resembling<Statement> {
         if (StatementUtils.join(getWords()).endsWith("?")) labels.add(Labels.QUESTION);
 
         return labels;
+    }
+
+    public SemanticGraph getGraph() {
+        return getComponents().iterator().next().getGraph();
     }
 
     /**

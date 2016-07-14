@@ -14,6 +14,9 @@ import sentiment.SentimentTarget;
 import statements.annotations.StatementsAnnotation;
 import statements.core.Statement;
 import statements.core.StatementUtils;
+import statements.core.Subject;
+import statements.profile.ComponentSearchString;
+import statements.profile.Profile;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -86,7 +89,11 @@ public class TestProfile {
         System.out.println("statements: " + statements.size());
 
         DemoTimer.start("building profile...");
-//        SentimentProfile testProfile = new SentimentProfile(annotations);
+        Profile testProfile = new Profile(statements);
+        ComponentSearchString predicate = new ComponentSearchString(Subject.class, "I");
+        for (Statement statement : testProfile.filter(predicate)) {
+            System.out.println(statement + " ----> " + statement.getGraph().toRecoveredSentenceString());
+        }
         DemoTimer.stop();
     }
 }

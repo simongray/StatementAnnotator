@@ -12,6 +12,8 @@ import java.util.Set;
  * A component of a natural language statement.
  */
 public abstract class AbstractComponent implements StatementComponent {
+    protected final SemanticGraph graph;
+
     /**
      * The primary word of the component.
      * Used as the entry point for the rest of the compound.
@@ -55,6 +57,7 @@ public abstract class AbstractComponent implements StatementComponent {
 
     public AbstractComponent(IndexedWord primary, SemanticGraph graph, Set<String> labels) {
         this.primary = primary;
+        this.graph = graph;
         compound = StatementUtils.findCompound(primary, graph, getIgnoredRelations(), null);
 
         // relevant parts of the component that have been separated out from the compound
@@ -244,6 +247,10 @@ public abstract class AbstractComponent implements StatementComponent {
      */
     public Set<String> getLabels() {
         return labels;
+    }
+
+    public SemanticGraph getGraph() {
+        return graph;
     }
 
     /**

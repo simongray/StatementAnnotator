@@ -47,9 +47,8 @@ public class TestStatements {
 //        String example = "Introducing another interface feature with a learning curve just for the sake of using this new pressure sensitive technology is actually a very bad use of pressure sensitivity.";
 //        String example = "Love the show and there's no denying that Justin Roiland has a unique sense of humour which is being accompanied perfectly by the cleverness of Dan Harmon's philosophical style.";
 //        String example = "This is funny, end up watching it every time it's posted here on reddit.";
-//        String example = "Is the jump in the early nineties due to a reclassification of countries in the Soviet sphere of influence?";
 //        String example = "He had a great show before but couldn't continue to do his \"Colbert\" character, so people are interested in how his new thing is turning out.";
-//        String example = "Christiania is a must, as is taking the boat tour in the canals to see all the different architecture.";
+        String example = "Christiania is a must, as is taking the boat tour in the canals to see all the different architecture.";
 //        String example = "Central Copenhagen is for tourists and people from Jutland.";
 
         // TODO: transfer clauses to other statement
@@ -117,6 +116,7 @@ public class TestStatements {
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
+//        String example = "Is the jump in the early nineties due to a reclassification of countries in the Soviet sphere of influence?";
 //        String example = "Anyway, just make your own rule and stick to it.";
         // TODO: this one is really bad
 //        String example = "Chronically stressed people often have trouble sleeping and establishing a practice goes a long way to reduce stress.";
@@ -220,7 +220,7 @@ public class TestStatements {
 //        String example = "He pointed at her and spoke.";
 //        String example = "She hated him and he hated her.";
 //        String example = "She hated her and Lis.";
-        String example = "Gandalf gave Frodo the ring from Mordor.";  // iobj + nmod tied to direct object
+//        String example = "Gandalf gave Frodo the ring from Mordor.";  // iobj + nmod tied to direct object
 //        String example = "She lives in a house in a lake outside of Copenhagen.";  // both sequences and shared governor
 //        String example = "She lives in a house outside of Copenhagen.";
 //        String example = "Is Greece considered Eastern Europe in Italy??";  // question
