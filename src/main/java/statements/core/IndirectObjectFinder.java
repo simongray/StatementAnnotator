@@ -27,6 +27,23 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
         addDependent(iobjObjects, dependency, Relations.IOBJ);
     }
 
+    private boolean isValid(IndexedWord nmodDependent) {
+        IndexedWord nmodGovernor = nmodMapping.get(nmodDependent);
+
+        // finds the first reference in a sequence (if applicable)
+        while (nmodMapping.containsKey(nmodGovernor)) {
+            nmodDependent = nmodGovernor;
+            nmodGovernor = nmodMapping.get(nmodDependent);
+        }
+
+        // check if the nmod relation is to a verb
+        if (Tags.VERBS.contains(nmodGovernor.tag())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     protected Set<IndirectObject> get() {
         Set<IndexedWord> notRelatedToVerbs = new HashSet<>();
@@ -34,11 +51,8 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
 
         // find and remove any NMOD relation that isn't tied to a verb or another NMOD relation (= in a sequence)
         // other nmod relations (with subject/dirobj governors) are included directly as part of those components!
-        for (IndexedWord nmodGovernor : nmodMapping.keySet()) {
-            IndexedWord nmodDependent = nmodMapping.get(nmodGovernor);
-            if (!Tags.VERBS.contains(nmodDependent.tag()) && !nmodMapping.containsKey(nmodDependent)) {
-                notRelatedToVerbs.add(nmodGovernor);
-            }
+        for (IndexedWord nmodDependent : nmodMapping.keySet()) {
+            if (!isValid(nmodDependent)) notRelatedToVerbs.add(nmodDependent);
         }
 
         logger.info("notRelatedToVerbs: " + notRelatedToVerbs);
