@@ -43,7 +43,7 @@ public class TestProfile {
         List<String> danishComments = new ArrayList<>();
         List<String> otherComments = new ArrayList<>();
 
-        List<Statement> statements = new ArrayList<>();
+        Map<CoreMap, Set<Statement>> statements = new HashMap<>();
 
         for (Object obj : jsonArray) {
             String comment = (String) obj;
@@ -72,7 +72,7 @@ public class TestProfile {
                     Set<Statement> sentenceStatements = sentence.get(StatementsAnnotation.class);
                     System.out.println(sentence);
                     StatementUtils.printStatements(sentenceStatements);
-                    if (sentenceStatements != null) statements.addAll(sentenceStatements);
+                    statements.put(sentence, sentenceStatements);
                 }
 
                 englishComments.add(comment);
@@ -91,8 +91,13 @@ public class TestProfile {
         DemoTimer.start("building profile...");
         Profile testProfile = new Profile(statements);
         ComponentSearchString predicate = new ComponentSearchString(Subject.class, "I");
-        for (Statement statement : testProfile.filter(predicate)) {
-            System.out.println(statement + " ----> " + statement.getGraph().toRecoveredSentenceString());
+        Map<CoreMap, Set<Statement>> result = testProfile.filter(predicate);
+
+        for (CoreMap sentence : result.keySet()) {
+            Set<Statement> sentenceStatements = result.get(sentence);
+            for (Statement statement : sentenceStatements) {
+                System.out.println(statement + " ----> " + sentence);
+            }
         }
         DemoTimer.stop();
     }

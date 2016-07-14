@@ -42,13 +42,14 @@ public class TestStatements {
 //        String example = "Usually Apple is better at holding back with this stuff, but they are really losing it these days.";
 
 //
+        String example = "I've been coming here since the very beginning and in my opinion it's better than ever.";
 //        String example = "Pressing something extra hard should make sense physically, like for a pining action or pushing something to the back.";
 //        String example = "It feels like Apple is shitting on affordances and good design these days and instead just joined the gimmick interface race that Samsung and others have been in for a while, but because it's Apple no one dares to say it doesn't make any sense.";
 //        String example = "Introducing another interface feature with a learning curve just for the sake of using this new pressure sensitive technology is actually a very bad use of pressure sensitivity.";
 //        String example = "Love the show and there's no denying that Justin Roiland has a unique sense of humour which is being accompanied perfectly by the cleverness of Dan Harmon's philosophical style.";
 //        String example = "This is funny, end up watching it every time it's posted here on reddit.";
 //        String example = "He had a great show before but couldn't continue to do his \"Colbert\" character, so people are interested in how his new thing is turning out.";
-        String example = "Christiania is a must, as is taking the boat tour in the canals to see all the different architecture.";
+//        String example = "Christiania is a must, as is taking the boat tour in the canals to see all the different architecture.";
 //        String example = "Central Copenhagen is for tourists and people from Jutland.";
 
         // TODO: transfer clauses to other statement
