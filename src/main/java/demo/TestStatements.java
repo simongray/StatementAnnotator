@@ -125,7 +125,7 @@ public class TestStatements {
 //        String example = "Anyway, just make your own rule and stick to it.";
         // TODO: this one is really bad
 //        String example = "Chronically stressed people often have trouble sleeping and establishing a practice goes a long way to reduce stress.";
-//        String example = "I'm sure you meant the EU as a whole and not the European Parliament specifically";  // specifically should modify to "meant", not "sure"
+        String example = "I'm sure you meant the EU as a whole and not the European Parliament specifically";  // specifically should modify to "meant", not "sure"
 //        String example = "Bought some 3M 95N-rated face masks for smoggy days.\n";
         // TODO: in this case, the indirect object does not even respect a normal conjunction
 //        String example = "I keep one in my bag and on my head at all times.";
@@ -148,7 +148,7 @@ public class TestStatements {
 //        String example = "She both hugged and spoke to him.";
         // TODO: since there is no subject in the final statement, the parser thinks the "I" of the previous statement should be the subject
 //        String example = "Malmø can be interesting, I guess, but definitely spend a day in Helsingør.";
-        String example = "This is not really a machine learning question, it's more like a basic programming question.";
+//        String example = "This is not really a machine learning question, it's more like a basic programming question.";
 
         // TODO: three statements instead of two, "what" is treated as dobj, works in GrammarScope though
 //        String example = "I think the technology is nice, but I don't like what they use it for.";

@@ -295,6 +295,7 @@ public abstract class AbstractComponent implements StatementComponent {
             }
         }
 
+        logger.info("name: " + StatementUtils.join(allWords));
         logger.info("lowest to highest: " + lowest + " - " + highest);
         logger.info("word count: " + allWords.size());
 
@@ -310,9 +311,11 @@ public abstract class AbstractComponent implements StatementComponent {
         int gaps = 0;
         boolean inGap = false;
         for (boolean filledIndex : filledIndexes) {
-            if (!filledIndex  && !inGap) {
-                inGap = true;
-                gaps++;
+            if (!filledIndex) {
+                if (!inGap) {
+                    inGap = true;
+                    gaps++;
+                }
             } else {
                 inGap = false;
             }
