@@ -307,6 +307,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
         return labels;
     }
 
+    // TODO: remove? currently unused
     public SemanticGraph getGraph() {
         return getComponents().iterator().next().getGraph();
     }
