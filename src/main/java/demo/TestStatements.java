@@ -148,7 +148,7 @@ public class TestStatements {
 //        String example = "She both hugged and spoke to him.";
         // TODO: since there is no subject in the final statement, the parser thinks the "I" of the previous statement should be the subject
 //        String example = "Malmø can be interesting, I guess, but definitely spend a day in Helsingør.";
-//        String example = "This is not really a machine learning question, it's more like a basic programming question.";
+        String example = "This is not really a machine learning question, it's more like a basic programming question.";
 
         // TODO: three statements instead of two, "what" is treated as dobj, works in GrammarScope though
 //        String example = "I think the technology is nice, but I don't like what they use it for.";
@@ -157,7 +157,7 @@ public class TestStatements {
 //        String example = "Suddenly the stinky tofu is no longer stinky and actually tastes great (served with a garlic dip).";
 
         // TODO: this one is just one weird parsing mess
-        String example = "Yeah, I'm from Northern Zealand and I pronounce them differently when stressing stuff, although I'll sometimes be lazy and just pronounce them the same.";
+//        String example = "Yeah, I'm from Northern Zealand and I pronounce them differently when stressing stuff, although I'll sometimes be lazy and just pronounce them the same.";
 
 
 
@@ -238,6 +238,7 @@ public class TestStatements {
 //        String example = "Maybe the angry doomsayers just haven't found this thread yet.";
 //        String example = "I also do a non-directive meditation involving listening to sounds atmospheric sounds which I picked from a book on yoga philosophy.";
 //        String example = "I can totally sympathize with him as it is indeed very difficult for foreigners to get into the Danish labour market for a number of reasons, but this idea that Sweden is doing any better is definitely not true.";
+//        String example = "Usually Apple is better at holding back with this stuff, but they are really losing it these days.";
 
 
 

@@ -4,6 +4,8 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphEdge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +14,8 @@ import java.util.Set;
  * A component of a natural language statement.
  */
 public abstract class AbstractComponent implements StatementComponent {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     protected final SemanticGraph graph;
 
     /**
@@ -265,6 +269,58 @@ public abstract class AbstractComponent implements StatementComponent {
         return false;
     }
 
+    /**
+     * Count the gaps between the component words (compound + remaining).
+     * It is useful for determining if a component is likely to be malformed.
+     *
+     * @return number of gaps
+     */
+    private int gaps() {
+        Set<IndexedWord> allWords = new HashSet<>(compound);
+        allWords.addAll(remaining);
+        int highest = -1;
+        int lowest = -1;
+
+        // determine the size of the array used to count gaps
+        for (IndexedWord word : allWords) {
+            if (word.index() > highest) {
+                highest = word.index();
+            }
+
+            // assigns the first index as the lowest by default
+            if (lowest == -1) {
+                lowest = word.index();
+            } else if (word.index() < lowest) {
+                lowest = word.index();
+            }
+        }
+
+        logger.info("lowest to highest: " + lowest + " - " + highest);
+        logger.info("word count: " + allWords.size());
+
+        // populate an array so that words are true and missing words at some index are false
+        // this is done to find the gaps (= missing word at some index between the highest and lowest index)
+        boolean[] filledIndexes = new boolean[highest - lowest + 1];
+        for (IndexedWord word : allWords) {
+            filledIndexes[word.index() - lowest] = true;
+        }
+
+        // count the gaps in the resulting array
+        // note: multi-word gaps in a row count as a single gap, not as multiple gaps!
+        int gaps = 0;
+        boolean inGap = false;
+        for (boolean filledIndex : filledIndexes) {
+            if (!filledIndex  && !inGap) {
+                inGap = true;
+                gaps++;
+            } else {
+                inGap = false;
+            }
+        }
+
+        return gaps;
+    }
+
     @Override
     public String toString() {
         Set<String> conjunctions = new HashSet<>();
@@ -274,6 +330,7 @@ public abstract class AbstractComponent implements StatementComponent {
 
         return "{" +
             getClass().getSimpleName() + ": \"" + getString() + "\"" +
+            ", gaps: " + gaps() +
             (!getClauses().isEmpty()? ", clause: \"" + StatementUtils.join(getClauses()) + "\"" : "") +
             (!getLabels().isEmpty()? ", labels: \"" + String.join(", ", getLabels()) + "\"" : "") +
             (!conjunctions.isEmpty()? ", conjunction: \"" + String.join(", ", conjunctions) + "\"" : "") +
