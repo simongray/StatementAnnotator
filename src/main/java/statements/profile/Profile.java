@@ -67,7 +67,7 @@ public class Profile {
     }
 
     private boolean isWellFormed(Statement statement) {
-        return statement.gaps() == 0;
+        return statement.gaps() == 0  && statement.getVerb() != null;
     }
 
     public Map<CoreMap, Set<Statement>>  filter(Predicate predicate) {
