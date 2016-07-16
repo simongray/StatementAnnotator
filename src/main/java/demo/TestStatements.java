@@ -43,9 +43,17 @@ public class TestStatements {
 
 //
 //        String example = "I've been coming here since the very beginning and in my opinion it's better than ever.";
-        String example = "Oh, I had lots of Zamzam in Western/Muslim China. Very tasty stuff, but only the Muslims seem to drink it for some reason.";
+//        String example = "Oh, I had lots of Zamzam in Western/Muslim China. Very tasty stuff, but only the Muslims seem to drink it for some reason.";
 
 
+        String example = "I went to Copenhagen Business School myself and it's quite comforting to know that the place is also funding research into inequality.";
+
+
+        // TODO: detect questions better
+//        String example = "What is the future looking like for South African politics?";
+//        String example = "Didn't they manage to get proportional representation in the Scottish parliament?";
+//        String example = "Who comes up with stuff like this?";
+//        String example = "Where are the guys and slightly older people?";
 
 
 //        String example = "Pressing something extra hard should make sense physically, like for a pining action or pushing something to the back.";
