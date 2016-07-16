@@ -231,6 +231,7 @@ public class Statement implements StatementComponent, Resembling<Statement> {
             (getLabels().isEmpty()? "" : String.join("/", getLabels()) + "/") +
             getClass().getSimpleName() +
             ": \"" + StatementUtils.join(getWords()) + "\"" +
+            ", gaps: " + gaps() +  // TODO: remove after done debugging
             (count() > 1? ", components: " + count() : "") +
         "}";
     }
@@ -305,6 +306,41 @@ public class Statement implements StatementComponent, Resembling<Statement> {
         if (StatementUtils.join(getWords()).endsWith("?")) labels.add(Labels.QUESTION);
 
         return labels;
+    }
+
+    public Set<IndexedWord> getAll() {
+        Set<IndexedWord> all = new HashSet<>();
+        for (StatementComponent component : getComponents()) {
+            all.addAll(component.getAll());
+        }
+
+        return all;
+    }
+
+    public int getLowestIndex() {
+        int lowestIndex = -1;
+
+        for (StatementComponent component : getComponents()) {
+            if (lowestIndex == -1) {
+                lowestIndex = component.getLowestIndex();
+            } else if (component.getLowestIndex() < lowestIndex) {
+                lowestIndex = component.getLowestIndex();
+            }
+        }
+
+        return lowestIndex;
+    }
+
+    public int getHighestIndex() {
+        int highestIndex = 0;
+
+        for (StatementComponent component : getComponents()) {
+            if (component.getHighestIndex() > highestIndex) {
+                highestIndex = component.getHighestIndex();
+            }
+        }
+
+        return highestIndex;
     }
 
     // TODO: remove? currently unused

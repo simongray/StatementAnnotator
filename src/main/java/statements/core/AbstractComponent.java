@@ -31,6 +31,9 @@ public abstract class AbstractComponent implements StatementComponent {
      */
     protected final Set<IndexedWord> compound;
     protected final Set<IndexedWord> remaining;
+    protected final Set<IndexedWord> all;
+    protected final int lowestIndex;
+    protected final int highestIndex;
 
     /**
      * The incoming connections of the primary word, i.e. its governors.
@@ -84,6 +87,26 @@ public abstract class AbstractComponent implements StatementComponent {
         remaining.addAll(markers);
         remaining.addAll(adverbialClauses);
         remaining.addAll(nounClauses);
+        all = new HashSet<>(compound);
+        all.addAll(remaining);
+
+        // determine the size of the array used to count gaps
+        int highestIndex = -1;
+        int lowestIndex = -1;
+        for (IndexedWord word : all) {
+            if (word.index() > highestIndex) {
+                highestIndex = word.index();
+            }
+
+            // assigns the first index as the lowest by default
+            if (lowestIndex == -1) {
+                lowestIndex = word.index();
+            } else if (word.index() < lowestIndex) {
+                lowestIndex = word.index();
+            }
+        }
+        this.highestIndex = highestIndex;
+        this.lowestIndex = lowestIndex;
 
         // the governors/parents of the component
         // some relations are ignored, e.g. the conj relation which is not treated as governor since it defines siblings
@@ -123,6 +146,16 @@ public abstract class AbstractComponent implements StatementComponent {
     public Set<IndexedWord> getCompound() {
         return compound;
     }
+
+    /**
+     * All words of the component.
+     *
+     * @return compound
+     */
+    public Set<IndexedWord> getAll() {  // TODO: rename
+        return all;
+    }
+
 
     /**
      * The remaining words of the component.
@@ -269,59 +302,12 @@ public abstract class AbstractComponent implements StatementComponent {
         return false;
     }
 
-    /**
-     * Count the gaps between the component words (compound + remaining).
-     * It is useful for determining if a component is likely to be malformed.
-     *
-     * @return number of gaps
-     */
-    private int gaps() {
-        Set<IndexedWord> allWords = new HashSet<>(compound);
-        allWords.addAll(remaining);
-        int highest = -1;
-        int lowest = -1;
+    public int getLowestIndex() {
+        return lowestIndex;
+    }
 
-        // determine the size of the array used to count gaps
-        for (IndexedWord word : allWords) {
-            if (word.index() > highest) {
-                highest = word.index();
-            }
-
-            // assigns the first index as the lowest by default
-            if (lowest == -1) {
-                lowest = word.index();
-            } else if (word.index() < lowest) {
-                lowest = word.index();
-            }
-        }
-
-        logger.info("name: " + StatementUtils.join(allWords));
-        logger.info("lowest to highest: " + lowest + " - " + highest);
-        logger.info("word count: " + allWords.size());
-
-        // populate an array so that words are true and missing words at some index are false
-        // this is done to find the gaps (= missing word at some index between the highest and lowest index)
-        boolean[] filledIndexes = new boolean[highest - lowest + 1];
-        for (IndexedWord word : allWords) {
-            filledIndexes[word.index() - lowest] = true;
-        }
-
-        // count the gaps in the resulting array
-        // note: multi-word gaps in a row count as a single gap, not as multiple gaps!
-        int gaps = 0;
-        boolean inGap = false;
-        for (boolean filledIndex : filledIndexes) {
-            if (!filledIndex) {
-                if (!inGap) {
-                    inGap = true;
-                    gaps++;
-                }
-            } else {
-                inGap = false;
-            }
-        }
-
-        return gaps;
+    public int getHighestIndex() {
+        return highestIndex;
     }
 
     @Override
