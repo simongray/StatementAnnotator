@@ -48,7 +48,6 @@ public class TestStatements {
 
         String example = "I went to Copenhagen Business School myself and it's quite comforting to know that the place is also funding research into inequality.";
 
-
         // TODO: detect questions better
 //        String example = "What is the future looking like for South African politics?";
 //        String example = "Didn't they manage to get proportional representation in the Scottish parliament?";
@@ -130,6 +129,7 @@ public class TestStatements {
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
+//        String example = "We both use Android phones.";  // works in GrammarScope
 //        String example = "Is the jump in the early nineties due to a reclassification of countries in the Soviet sphere of influence?";
 //        String example = "Anyway, just make your own rule and stick to it.";
         // TODO: this one is really bad
