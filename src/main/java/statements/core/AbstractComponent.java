@@ -330,7 +330,7 @@ public abstract class AbstractComponent implements StatementComponent {
 
         return "{" +
             getClass().getSimpleName() + ": \"" + getString() + "\"" +
-            ", gaps: " + gaps() +
+            ", gaps: " + gaps() +  // TODO: remove after done debugging
             (!getClauses().isEmpty()? ", clause: \"" + StatementUtils.join(getClauses()) + "\"" : "") +
             (!getLabels().isEmpty()? ", labels: \"" + String.join(", ", getLabels()) + "\"" : "") +
             (!conjunctions.isEmpty()? ", conjunction: \"" + String.join(", ", conjunctions) + "\"" : "") +
