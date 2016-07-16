@@ -90,26 +90,34 @@ public class TestProfile {
 
         DemoTimer.start("building profile...");
         Profile testProfile = new Profile(statements);
-        ComponentSearchString predicate = new ComponentSearchString(Subject.class, "I");
-        Map<CoreMap, Set<Statement>> result = testProfile.filter(predicate);
-        Set<Statement> statementsWithGaps = new HashSet<>();
+        Map<CoreMap, Set<Statement>> result = testProfile.getInteresting();
 
         for (CoreMap sentence : result.keySet()) {
             Set<Statement> sentenceStatements = result.get(sentence);
             for (Statement statement : sentenceStatements) {
-                if (statement.gaps() == 0) {
-                    System.out.println(statement + " ----> " + sentence);
-                } else {
-                    statementsWithGaps.add(statement);
-                }
+                System.out.println(statement + " ----> " + sentence);
             }
         }
-        DemoTimer.stop();
-
-        System.out.println();
-        System.out.println("Statements with gaps: " + statementsWithGaps.size());
-        for (Statement statement : statementsWithGaps) {
-            System.out.println(statement);
-        }
+//        ComponentSearchString predicate = new ComponentSearchString(Subject.class, "I");
+//        Map<CoreMap, Set<Statement>> result = testProfile.filter(predicate);
+//        Set<Statement> statementsWithGaps = new HashSet<>();
+//
+//        for (CoreMap sentence : result.keySet()) {
+//            Set<Statement> sentenceStatements = result.get(sentence);
+//            for (Statement statement : sentenceStatements) {
+//                if (statement.gaps() == 0) {
+//                    System.out.println(statement + " ----> " + sentence);
+//                } else {
+//                    statementsWithGaps.add(statement);
+//                }
+//            }
+//        }
+//        DemoTimer.stop();
+//
+//        System.out.println();
+//        System.out.println("Statements with gaps: " + statementsWithGaps.size());
+//        for (Statement statement : statementsWithGaps) {
+//            System.out.println(statement);
+//        }
     }
 }
