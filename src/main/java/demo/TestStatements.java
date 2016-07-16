@@ -42,7 +42,7 @@ public class TestStatements {
 //        String example = "Usually Apple is better at holding back with this stuff, but they are really losing it these days.";
 
 //
-//        String example = "I've been coming here since the very beginning and in my opinion it's better than ever.";
+        String example = "I've been coming here since the very beginning and in my opinion it's better than ever.";
 
 
 
@@ -228,7 +228,7 @@ public class TestStatements {
 //        String example = "She hated him and he hated her.";
 //        String example = "She hated her and Lis.";
 //        String example = "Gandalf gave Frodo the ring from Mordor.";  // iobj + nmod tied to direct object
-        String example = "She lives in a house in a lake outside of Copenhagen.";  // both sequences and shared governor
+//        String example = "She lives in a house in a lake outside of Copenhagen.";  // both sequences and shared governor
 //        String example = "She lives in a house outside of Copenhagen.";
 //        String example = "Is Greece considered Eastern Europe in Italy??";  // question
 //        String example = "The stinky tofu in other parts of China is too old.";  // has nmod related to subject

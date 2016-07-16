@@ -37,8 +37,47 @@ public class StatementFinder {
         components.addAll(directObjectFinder.find(graph));
         components.addAll(indirectObjectFinder.find(graph));
 
+        components = reduceToNonOverlappingComponents(components);
+
         // link components to produce statements
         return link(graph, components);
+    }
+
+    /**
+     * Ranks components based on subjective preference/likelihood to not be syntactically the issue.
+     *
+     * @param component
+     * @return
+     */
+    private static int rank(AbstractComponent component) {
+        if (component instanceof Subject) return 1;
+        if (component instanceof Verb) return 2;
+        if (component instanceof DirectObject) return 3;
+        if (component instanceof IndirectObject) return 4;
+        return -1;
+    }
+
+    /**
+     * Removes components that overlap with others.
+     *
+     * @param components
+     * @return
+     */
+    private static Set<AbstractComponent> reduceToNonOverlappingComponents(Set<AbstractComponent> components) {
+        Set<AbstractComponent> reducedComponents = new HashSet<>(components);
+
+        for (AbstractComponent component : components) {
+            for (AbstractComponent otherComponent : components) {
+                if (component != otherComponent && StatementUtils.intersects(component.getCompound(), otherComponent.getCompound())) {
+                    if (rank(component) <= rank(otherComponent)) {
+                        reducedComponents.remove(otherComponent);
+                        logger.error("removed " + otherComponent + " since it intersected with " + component);
+                    }
+                }
+            }
+        }
+
+        return reducedComponents;
     }
 
     /**
