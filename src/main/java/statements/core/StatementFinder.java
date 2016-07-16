@@ -337,22 +337,30 @@ public class StatementFinder {
 
         return splitStatements;
     }
-
     /**
      * Connect components based on their parent-child relations.
+     * Starts a recursive connection operation.
      *
      * @param components the components to connect
      * @return Statements consisting of connected components + leftover unconnected AbstractComponents
      */
     private static Set<StatementComponent> connect(Set<StatementComponent> components) {
+        return connect(components, new HashSet<>());
+    }
+
+    /**
+     * Recursively connect components based on their parent-child relations.
+     *
+     * @param components the components to connect
+     * @return Statements consisting of connected components + leftover unconnected AbstractComponents
+     */
+    private static Set<StatementComponent> connect(Set<StatementComponent> components, Set<StatementComponent> representedElsewhere) {
         Set<StatementComponent> connectedComponents = new HashSet<>();
         logger.info("recursively connecting components: " + components);
 
         for (StatementComponent component : components) {
             // all connections to this component are containd in this set (including the component itself)
             Set<StatementComponent> connections = new HashSet<>();
-            connections.add(component);
-            boolean representedElsewhere = false;
 
             // check against all the other components
             // if a component is fully contained within another, then there is no reason to keep it
@@ -361,13 +369,14 @@ public class StatementFinder {
                 if (!component.equals(otherComponent)) {
                     if (component.parentOf(otherComponent)) {
                         connections.add(otherComponent);
+                        representedElsewhere.add(otherComponent);
                         logger.info(component + " is the parent of " + otherComponent);
                     } else if (otherComponent.contains(component)) {
-                        representedElsewhere = true;
+                        representedElsewhere.add(component);
                         logger.info(component + " is contained by " + otherComponent);
                     } else if (component instanceof Statement && otherComponent instanceof Statement) {
                         if (((Statement) otherComponent).contains(((Statement) component).getComponents())) {
-                            representedElsewhere = true;
+                            representedElsewhere.add(component);
                             logger.info(component + " is contained by " + otherComponent);
                         }
                     }
@@ -376,8 +385,9 @@ public class StatementFinder {
 
             // in case the component had any connections, these are used to construct a new Statement
             // otherwise the component is preserved as it is (unless it was completely contained)
-            if (!representedElsewhere) {
-                if (connections.size() > 1) {
+            if (!representedElsewhere.contains(component)) {
+                if (!connections.isEmpty()) {
+                    connections.add(component);
                     logger.info("made new statement from components: " + connections);
                     Statement newStatement = new Statement(connections);
                     logger.info("new statement: " + newStatement);
