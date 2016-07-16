@@ -35,6 +35,7 @@ public class Relations {
     public static final String ADVMOD = "advmod";  // ex: the "always" in "always on"
     public static final String AUX = "aux";  // ex: the "always" in "always on"
     public static final String IOBJ = "iobj";  // ex: the "always" in "always on"
+    public static final String DISCOURSE = "discourse";  // useless words like "yeah"
 
     /**
      * Outgoing relations which are stored internally in any AbstractComponent, but not shown/used by default.
@@ -104,6 +105,7 @@ public class Relations {
         IGNORED_OUTGOING_RELATIONS.addAll(EMBEDDED_STATEMENT_SCOPES);
         IGNORED_OUTGOING_RELATIONS.addAll(COMPONENT_RELATIONS);
         IGNORED_OUTGOING_RELATIONS.add(AUX);  // only relevant for verbs, sometimes associated with non-verbs
+        IGNORED_OUTGOING_RELATIONS.add(DISCOURSE);  // usually nothing of value in this relation
     }
 
     /**

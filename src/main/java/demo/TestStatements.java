@@ -42,9 +42,7 @@ public class TestStatements {
 //        String example = "Usually Apple is better at holding back with this stuff, but they are really losing it these days.";
 
 //
-        String example = "I've been coming here since the very beginning and in my opinion it's better than ever.";
-
-
+//        String example = "I've been coming here since the very beginning and in my opinion it's better than ever.";
 
 
 
@@ -158,6 +156,10 @@ public class TestStatements {
         // TODO: missing second statement in conjunction, works in GrammarScope
 //        String example = "Suddenly the stinky tofu is no longer stinky and actually tastes great (served with a garlic dip).";
 
+        // TODO: this one is just one weird parsing mess
+        String example = "Yeah, I'm from Northern Zealand and I pronounce them differently when stressing stuff, although I'll sometimes be lazy and just pronounce them the same.";
+
+
 
 
 
@@ -234,6 +236,8 @@ public class TestStatements {
 //        String example = "The stinky tofu in other parts of China is too old.";  // has nmod related to subject
 //        String example = "It's once a week,  3 hours and is run by two psychologists.";  // re-using subject
 //        String example = "Maybe the angry doomsayers just haven't found this thread yet.";
+//        String example = "I also do a non-directive meditation involving listening to sounds atmospheric sounds which I picked from a book on yoga philosophy.";
+//        String example = "I can totally sympathize with him as it is indeed very difficult for foreigners to get into the Danish labour market for a number of reasons, but this idea that Sweden is doing any better is definitely not true.";
 
 
 
