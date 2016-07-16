@@ -37,8 +37,7 @@ import java.util.Set;
  23.	RP	Particle
  24.	SYM	Symbol
  25.	TO	to
- 26.	UH	Interjection
-
+        [interjection taken out]
         [verbs taken out]
 
  33.	WDT	Wh-determiner
@@ -53,6 +52,8 @@ public class Tags {
     public static final String VBN = "VBN";  // Verb, past participle
     public static final String VBP = "VBP";  // Verb, non-3rd person singular present
     public static final String VBZ = "VBZ";  // Verb, 3rd person singular present
+
+    public static final String UH = "UH";  // Verb, 3rd person singular present
 
     /**
      * Outgoing relations which are stored internally in any AbstractComponent, but not shown/used by default.
@@ -70,6 +71,11 @@ public class Tags {
         VERBS.add(VBZ);
     }
 
+    public static final Set<String> INTERJECTIONS = new HashSet<>();
+    static {
+        INTERJECTIONS.add(UH);
+    }
+
     /**
      * Reduce a set of words based on their part-of-speech tags.
      *
@@ -77,7 +83,7 @@ public class Tags {
      * @param allowedtags the tags present after reducing
      * @return reduced words
      */
-    public static Set<IndexedWord> reduce(Set<IndexedWord> words, Set<String> allowedtags) {
+    public static Set<IndexedWord> reduceToAllowedTags(Set<IndexedWord> words, Set<String> allowedtags) {
         Set<IndexedWord> badWords = new HashSet<>();
         Set<IndexedWord> reducedWords = new HashSet<>(words);
 

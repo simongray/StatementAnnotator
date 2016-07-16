@@ -2,8 +2,6 @@ package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.trees.TypedDependency;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -61,7 +59,7 @@ public class VerbFinder extends AbstractFinder<Verb> {
     @Override
     protected Set<Verb> get() {
         // remove adjectives from candidate verbs
-        dobjVerbs = Tags.reduce(dobjVerbs, Tags.VERBS);
+        dobjVerbs = Tags.reduceToAllowedTags(dobjVerbs, Tags.VERBS);
 
         // remove verbs that are already in xcompverbs
         dobjVerbs.removeAll(xcompVerbs);

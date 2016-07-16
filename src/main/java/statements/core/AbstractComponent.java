@@ -67,6 +67,10 @@ public abstract class AbstractComponent implements StatementComponent {
         this.graph = graph;
         compound = StatementUtils.findCompound(primary, graph, getIgnoredRelations(), null);
 
+        // remove interjections based on POS tags
+        // sometimes interjections are not found in the relations!
+        compound.removeAll(Tags.reduceToAllowedTags(compound, Tags.INTERJECTIONS));
+
         // relevant parts of the component that have been separated out from the compound
         negations = StatementUtils.findSpecificChildren(Relations.NEG, primary, graph);
         punctuation = StatementUtils.findSpecificChildren(Relations.PUNCT, primary, graph);
