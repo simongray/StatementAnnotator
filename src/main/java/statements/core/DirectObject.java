@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * The complete direct object of a natural language statement.
  */
-public class DirectObject extends AbstractComponent implements Resembling<DirectObject> {
+public class DirectObject extends AbstractComponent {
     Set<IndexedWord> nmod = new HashSet<>();
 
     public DirectObject(IndexedWord primary, SemanticGraph graph) {
@@ -19,16 +19,5 @@ public class DirectObject extends AbstractComponent implements Resembling<Direct
 
         // TODO: put in separate place
         compound.addAll(nmod);
-    }
-
-    /**
-     * The resemblance of another direct object to this direct object.
-     *
-     * @param otherObject direct object to be compared with
-     * @return resemblance
-     */
-    @Override
-    public Resemblance resemble(DirectObject otherObject) {
-        return null;  // TODO
     }
 }

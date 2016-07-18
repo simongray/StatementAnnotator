@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * The complete subject of a natural language statement.
  */
-public class Subject extends AbstractComponent implements Resembling<Subject> {
+public class Subject extends AbstractComponent {
     Set<IndexedWord> nmod = new HashSet<>();
 
     public Subject(IndexedWord primary, SemanticGraph graph) {
@@ -20,16 +20,5 @@ public class Subject extends AbstractComponent implements Resembling<Subject> {
 
         // TODO: put in separate place
         compound.addAll(nmod);
-    }
-
-    /**
-     * The resemblance of this object to another object.
-     *
-     * @param otherObject subject to be compared with
-     * @return resemblance
-     */
-    @Override
-    public Resemblance resemble(Subject otherObject) {
-        return null;  // TODO
     }
 }

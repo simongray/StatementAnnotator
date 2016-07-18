@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * A component of a natural language statement.
  */
-public abstract class AbstractComponent implements StatementComponent {
+public abstract class AbstractComponent implements StatementComponent, Resembling<AbstractComponent> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected final SemanticGraph graph;
@@ -328,5 +328,36 @@ public abstract class AbstractComponent implements StatementComponent {
             (!getLabels().isEmpty()? ", labels: \"" + String.join(", ", getLabels()) + "\"" : "") +
             (!conjunctions.isEmpty()? ", conjunction: \"" + String.join(", ", conjunctions) + "\"" : "") +
         "}";
+    }
+
+    @Override
+    public Resemblance resemble(AbstractComponent otherComponent) {
+        if (otherComponent == null) return Resemblance.NONE;
+
+        // same component type?
+        if (this.getClass().equals(otherComponent.getClass())) {
+            // both negated?
+            if (isNegated() && otherComponent.isNegated()) {
+                // TODO: currently not comparing dependent clauses at all
+                // completely the same compound?
+                if (StatementUtils.lemmatise(getCompound()).equals(StatementUtils.lemmatise(otherComponent.getCompound()))) {
+                    logger.info("FULL: " + StatementUtils.lemmatise(getCompound()).toString() + " <--> " + StatementUtils.lemmatise(otherComponent.getCompound()).toString());
+                    return Resemblance.FULL;
+                } else {
+                    // TODO: also insert step checking smaller compound version for returning CLOSE resemblance!
+                    // use lemmatised words if available
+                    String primaryLemma = getPrimary().lemma() != null? getPrimary().lemma() : getPrimary().word();
+                    String otherPrimaryLemma = otherComponent.getPrimary().lemma() != null? otherComponent.getPrimary().lemma() : otherComponent.getPrimary().word();
+
+                    // primary word is the same?
+                    if (primaryLemma.equals(otherPrimaryLemma)) {
+                        logger.info("SLIGHT: " + primaryLemma + " <--> " + otherPrimaryLemma);
+                        return Resemblance.SLIGHT;
+                    }
+                }
+            }
+        }
+
+        return Resemblance.NONE;
     }
 }
