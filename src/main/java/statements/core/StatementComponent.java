@@ -47,6 +47,7 @@ public interface StatementComponent {
             filledIndexes[word.index() - lowestIndex] = true;
         }
 
+        // TODO: sometimes this randomly fails (accesseses an index that doesn't exist)
         // count the gaps in the resulting array
         // note: multi-word gaps in a row count as a single gap, not as multiple gaps!
         int gaps = 0;
