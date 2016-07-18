@@ -426,6 +426,7 @@ public class StatementUtils {
      */
     public static Resemblance getMostFrequent(Resemblance... resemblances) {
         Map<Resemblance, Integer> frequency = new HashMap<>();
+        Map<Resemblance, Integer> cumulativeFrequency = new HashMap<>();
 
         for (Resemblance resemblance : resemblances) {
             if (resemblance != null) {
@@ -435,12 +436,24 @@ public class StatementUtils {
             }
         }
 
+        cumulativeFrequency.put(Resemblance.FULL, frequency.getOrDefault(Resemblance.FULL, 0));
+        cumulativeFrequency.put(Resemblance.CLOSE, frequency.getOrDefault(Resemblance.FULL, 0) + frequency.getOrDefault(Resemblance.CLOSE, 0));
+        cumulativeFrequency.put(Resemblance.SLIGHT, frequency.getOrDefault(Resemblance.FULL, 0) + frequency.getOrDefault(Resemblance.CLOSE, 0) + frequency.getOrDefault(Resemblance.SLIGHT, 0));
+
         int highestCount = 0;
         Resemblance mostFrequent = Resemblance.NONE;
         for (Map.Entry<Resemblance, Integer> entry : frequency.entrySet()) {
             if (entry.getValue() > highestCount) {
                 highestCount = entry.getValue();
                 mostFrequent = entry.getKey();
+            }
+        }
+
+        // re-adjust based on level
+        // this is done since FULL implies same or higher level as CLOSE, and ditto for CLOSE and SLIGHT
+        if (mostFrequent.equals(Resemblance.NONE)) {
+            if (cumulativeFrequency.get(Resemblance.SLIGHT) > highestCount) {
+                return Resemblance.SLIGHT;
             }
         }
 
