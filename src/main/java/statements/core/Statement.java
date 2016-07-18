@@ -224,13 +224,22 @@ public class Statement implements StatementComponent, Resembling<Statement> {
         return getComponents().size();
     }
 
+    /**
+     * The sentence string that can be constructed from this Statement.
+     *
+     * @return sentence
+     */
+    public String getSentence() {
+        return StatementUtils.join(getWords());
+    }
+
 
     @Override
     public String toString() {
         return "{" +
             (getLabels().isEmpty()? "" : String.join("/", getLabels()) + "/") +
             getClass().getSimpleName() +
-            ": \"" + StatementUtils.join(getWords()) + "\"" +
+            ": \"" + getSentence() + "\"" +
             ", gaps: " + gaps() +  // TODO: remove after done debugging
             (count() > 1? ", components: " + count() : "") +
         "}";
