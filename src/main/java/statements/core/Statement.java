@@ -3,7 +3,9 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -232,12 +234,40 @@ public class Statement implements StatementComponent, Resembling<Statement> {
         return StatementUtils.join(getWords());
     }
 
+    /**
+     * A summary is a string that quickly tells you which components this Statement contains.
+     *
+     * @return summary
+     */
+    public String getSummary() {
+        List<String> summary = new ArrayList<>();
+
+        if (getSubject() != null) {
+            summary.add("S");
+        }
+        if (getVerb() != null) {
+            summary.add("V");
+        }
+        if (getDirectObject() != null) {
+            summary.add("DO");
+        }
+        if (getIndirectObject() != null) {
+            summary.add("IO");
+        }
+        if (getEmbeddedStatement() != null) {
+            summary.add("E");
+        }
+
+        return String.join("+", summary);
+    }
+
 
     @Override
     public String toString() {
         return "{" +
             (getLabels().isEmpty()? "" : String.join("/", getLabels()) + "/") +
-            getClass().getSimpleName() +
+//            getClass().getSimpleName() +
+            getSummary() +
             ": \"" + getSentence() + "\"" +
             ", gaps: " + gaps() +  // TODO: remove after done debugging
             (count() > 1? ", components: " + count() : "") +
