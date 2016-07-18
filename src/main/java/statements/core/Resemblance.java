@@ -9,7 +9,7 @@ package statements.core;
  *    * slightly resemble another (= partial fuzzy or direct equality of fields)
  *    * not resemble another (= no direct or fuzzy equality)
  */
-enum Resemblance {
+public enum Resemblance {
     FULL,
     CLOSE,
     SLIGHT,
