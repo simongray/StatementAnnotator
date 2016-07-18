@@ -2,6 +2,8 @@ package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
@@ -43,11 +45,15 @@ public interface StatementComponent {
         // populate an array so that words are true and missing words at some index are false
         // this is done to find the gaps (= missing word at some index between the highest and lowest index)
         boolean[] filledIndexes = new boolean[highestIndex - lowestIndex + 1];
-        for (IndexedWord word : getAll()) {
-            filledIndexes[word.index() - lowestIndex] = true;
+        // TODO: sometimes this randomly fails
+        try {
+            for (IndexedWord word : getAll()) {
+                filledIndexes[word.index() - lowestIndex] = true;
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            Logger logger = LoggerFactory.getLogger(getClass());
+            logger.error("error finding gaps! lowestIndex= " + lowestIndex + ", highestIndex=" + highestIndex + ", getAll()=" + getAll(), e);
         }
-
-        // TODO: sometimes this randomly fails (accesseses an index that doesn't exist)
         // count the gaps in the resulting array
         // note: multi-word gaps in a row count as a single gap, not as multiple gaps!
         int gaps = 0;
