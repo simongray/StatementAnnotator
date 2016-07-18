@@ -2,7 +2,6 @@ package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
-import edu.stanford.nlp.util.CoreMap;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -365,18 +364,14 @@ public class Statement implements StatementComponent, Resembling<Statement> {
      */
     @Override
     public Resemblance resemble(Statement otherStatement) {
-        // check that components match
-        if (subject == null && otherStatement.getSubject() != null) return Resemblance.NONE;
-        if (verb == null && otherStatement.getVerb() != null) return Resemblance.NONE;
-        if (directObject == null && otherStatement.getDirectObject() != null) return Resemblance.NONE;
-        if (indirectObject == null && otherStatement.getIndirectObject() != null) return Resemblance.NONE;
+        if (otherStatement == null) return Resemblance.NONE;
 
-        // reduce lowest valued resemblance state
-        return StatementUtils.reduce(
+        return StatementUtils.getMostFrequent(
             subject == null? null : subject.resemble(otherStatement.getSubject()),
             verb == null? null : verb.resemble(otherStatement.getVerb()),
             directObject == null? null : directObject.resemble(otherStatement.getDirectObject()),
-            indirectObject == null? null : indirectObject.resemble(otherStatement.getIndirectObject())
+            indirectObject == null? null : indirectObject.resemble(otherStatement.getIndirectObject()),
+            embeddedStatement == null? null : embeddedStatement.resemble(otherStatement.getEmbeddedStatement())
         );
     }
 }

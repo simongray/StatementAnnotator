@@ -375,12 +375,34 @@ public class StatementUtils {
     }
 
     /**
+     * Transform a set of IndexedWords (e.g. from a component) to an ordered list of lemmatised words (if available).
+     *
+     * @param words input words set
+     * @return lemmatised words list
+     */
+    public static List<String> lemmatise(Set<IndexedWord> words) {
+        List<IndexedWord> orderedWords = new ArrayList<>(words);
+        orderedWords.sort(new IndexComparator());
+        List<String> lemmatisedWords = new ArrayList<>();
+
+        for (IndexedWord word : orderedWords) {
+            if (word.lemma() != null) {
+                lemmatisedWords.add(word.lemma());
+            } else {
+                lemmatisedWords.add(word.word());
+            }
+        }
+
+        return lemmatisedWords;
+    }
+
+    /**
      * Reduce a variable amount of Resemblance objects to the lowest common denominator.
      *
      * @param resemblances range of Resemblance to reduce
      * @return common denominator
      */
-    public static Resemblance reduce(Resemblance... resemblances) {
+    public static Resemblance getLowestCommonDenominator(Resemblance... resemblances) {
         Resemblance lowestCommonDenominator = Resemblance.FULL;  // default
 
         for (Resemblance resemblance : resemblances) {
@@ -394,6 +416,35 @@ public class StatementUtils {
         }
 
         return lowestCommonDenominator;
+    }
+
+    /**
+     * Reduce a variable amount of Resemblance objects to the lowest common denominator.
+     *
+     * @param resemblances range of Resemblance to reduce
+     * @return common denominator
+     */
+    public static Resemblance getMostFrequent(Resemblance... resemblances) {
+        Map<Resemblance, Integer> frequency = new HashMap<>();
+
+        for (Resemblance resemblance : resemblances) {
+            if (resemblance != null) {
+                int count = frequency.getOrDefault(resemblance, 0);
+                count++;
+                frequency.put(resemblance, count);
+            }
+        }
+
+        int highestCount = 0;
+        Resemblance mostFrequent = Resemblance.NONE;
+        for (Map.Entry<Resemblance, Integer> entry : frequency.entrySet()) {
+            if (entry.getValue() > highestCount) {
+                highestCount = entry.getValue();
+                mostFrequent = entry.getKey();
+            }
+        }
+
+        return mostFrequent;
     }
 
     /**
