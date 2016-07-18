@@ -341,7 +341,7 @@ public abstract class AbstractComponent implements StatementComponent, Resemblin
                 // TODO: currently not comparing dependent clauses at all
                 // completely the same compound?
                 if (StatementUtils.lemmatise(getCompound()).equals(StatementUtils.lemmatise(otherComponent.getCompound()))) {
-                    logger.info("FULL: " + StatementUtils.lemmatise(getCompound()).toString() + " <--> " + StatementUtils.lemmatise(otherComponent.getCompound()).toString());
+//                    logger.info("FULL: " + StatementUtils.lemmatise(getCompound()).toString() + " <--> " + StatementUtils.lemmatise(otherComponent.getCompound()).toString());
                     return Resemblance.FULL;
                 } else {
                     // TODO: also insert step checking smaller compound version for returning CLOSE resemblance!
@@ -351,7 +351,7 @@ public abstract class AbstractComponent implements StatementComponent, Resemblin
 
                     // primary word is the same?
                     if (primaryLemma.equals(otherPrimaryLemma)) {
-                        logger.info("SLIGHT: " + primaryLemma + " <--> " + otherPrimaryLemma);
+//                        logger.info("SLIGHT: " + primaryLemma + " <--> " + otherPrimaryLemma);
                         return Resemblance.SLIGHT;
                     }
                 }
