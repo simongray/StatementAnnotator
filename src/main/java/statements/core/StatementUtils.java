@@ -21,7 +21,7 @@ public class StatementUtils {
      * @param words the list of words to be joined
      * @return the string representing the words
      */
-    public static String join(Set<IndexedWord> words) {
+    public static String join(Set<IndexedWord> words, boolean useLemma) {
         List<IndexedWord> wordsList = new ArrayList<>(words);
         wordsList.sort(new IndexComparator());
 
@@ -30,6 +30,8 @@ public class StatementUtils {
             IndexedWord indexedWord = wordsList.get(i);
             String tag = indexedWord.tag();
             String word = indexedWord.word();
+            String lemma = indexedWord.lemma();
+
             boolean shortened = isShortened(word);
 
             if (!tag.equals(".")) {
@@ -40,12 +42,17 @@ public class StatementUtils {
                 if (i == 0 && word.equals("n't")) {
                     buffer.append("not");  // special rule
                 } else {
-                    buffer.append(word);  // default
+                    String wordString = useLemma && lemma != null? lemma : word;
+                    buffer.append(wordString);  // default
                 }
             }
         }
 
         return buffer.toString();
+    }
+
+    public static String join(Set<IndexedWord> words) {
+        return join(words, false);
     }
 
     /**
