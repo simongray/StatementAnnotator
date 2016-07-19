@@ -305,6 +305,21 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
+     * Whether a component is capitalised.
+     * This method checks the normal compound to see if any of the words are capitalised,
+     * e.g. the words "American president" would return true.
+     *
+     * @return true if capitalised
+     */
+    public boolean isCapitalised() {
+        for (IndexedWord word : normalCompound) {
+            if (Character.isUpperCase(word.word().charAt(0))) return true;
+        }
+
+        return false;
+    }
+
+    /**
      * The compound as a string.
      *
      * @return the longest string possible
