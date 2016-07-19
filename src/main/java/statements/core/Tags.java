@@ -29,8 +29,7 @@ import java.util.Set;
 
  16.	PDT	Predeterminer
  17.	POS	Possessive ending
- 18.	PRP	Personal pronoun
- 19.	PRP$	Possessive pronoun
+
  20.	RB	Adverb
  21.	RBR	Adverb, comparative
  22.	RBS	Adverb, superlative
@@ -41,8 +40,7 @@ import java.util.Set;
         [verbs taken out]
 
  33.	WDT	Wh-determiner
- 34.	WP	Wh-pronoun
- 35.	WP$	Possessive wh-pronoun
+
  36.	WRB	Wh-adverb
  */
 public class Tags {
@@ -58,6 +56,12 @@ public class Tags {
     public static final String NNS = "NNS";  // Noun, plural
     public static final String NNPS = "NNPS";  // Proper noun, plural
 
+    // pronouns
+    public static final String PRP = "PRP";  // Personal pronoun
+    public static final String PRP$ = "PRP$";  // Possessive pronoun
+    public static final String WP = "WP";  // Wh-pronoun
+    public static final String WP$ = "WP$";  // Possessive wh-pronoun
+
     /**
      * Outgoing relations which are stored internally in any AbstractComponent, but not shown/used by default.
      *
@@ -72,6 +76,14 @@ public class Tags {
         VERBS.add(VBN);
         VERBS.add(VBP);
         VERBS.add(VBZ);
+    }
+
+    public static final Set<String> PRONOUNS = new HashSet<>();
+    static {
+        PRONOUNS.add(PRP);
+        PRONOUNS.add(PRP$);
+        PRONOUNS.add(WP);
+        PRONOUNS.add(WP$);
     }
 
     public static final Set<String> PLURAL = new HashSet<>();
