@@ -24,9 +24,9 @@ import java.util.Set;
  10.	LS	List item marker
  11.	MD	Modal
  12.	NN	Noun, singular or mass
- 13.	NNS	Noun, plural
+
  14.	NNP	Proper noun, singular
- 15.	NNPS	Proper noun, plural
+
  16.	PDT	Predeterminer
  17.	POS	Possessive ending
  18.	PRP	Personal pronoun
@@ -53,7 +53,10 @@ public class Tags {
     public static final String VBP = "VBP";  // Verb, non-3rd person singular present
     public static final String VBZ = "VBZ";  // Verb, 3rd person singular present
 
-    public static final String UH = "UH";  // Verb, 3rd person singular present
+    public static final String UH = "UH";  // interjections
+
+    public static final String NNS = "NNS";  // Noun, plural
+    public static final String NNPS = "NNPS";  // Proper noun, plural
 
     /**
      * Outgoing relations which are stored internally in any AbstractComponent, but not shown/used by default.
@@ -70,6 +73,13 @@ public class Tags {
         VERBS.add(VBP);
         VERBS.add(VBZ);
     }
+
+    public static final Set<String> PLURAL = new HashSet<>();
+    static {
+        PLURAL.add(NNS);
+        PLURAL.add(NNPS);
+    }
+
 
     public static final Set<String> INTERJECTIONS = new HashSet<>();
     static {

@@ -271,6 +271,16 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
+     * Whether a component is plural.
+     * Only applies to nouns (obviously).
+     *
+     * @return
+     */
+    public boolean isPlural() {
+        return Tags.PLURAL.contains(getPrimary().tag());
+    }
+
+    /**
      * The compound as a string.
      *
      * @return the longest string possible
