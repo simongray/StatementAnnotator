@@ -55,6 +55,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> punctuation;
     protected final Set<IndexedWord> markers;
     protected final Set<IndexedWord> cc;
+    protected final Set<IndexedWord> determiners;
     protected final Set<IndexedWord> adverbialClauses;
     protected final Set<IndexedWord> nounClauses;
 
@@ -76,6 +77,7 @@ public abstract class AbstractComponent implements StatementComponent {
         punctuation = StatementUtils.findSpecificChildren(Relations.PUNCT, primary, graph);
         markers = StatementUtils.findSpecificChildren(Relations.MARK, primary, graph);
         cc = StatementUtils.findSpecificChildren(Relations.CC, primary, graph);
+        determiners = StatementUtils.findSpecificChildren(Relations.DET, primary, graph);
         adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, primary, graph);
         nounClauses = StatementUtils.findSpecificDescendants(Relations.ACL, primary, graph);
         nounClauses.addAll(StatementUtils.findSpecificDescendants(Relations.ACL_RELCL, primary, graph));
@@ -274,10 +276,18 @@ public abstract class AbstractComponent implements StatementComponent {
      * Whether a component is plural.
      * Only applies to nouns (obviously).
      *
-     * @return
+     * @return true if plural
      */
     public boolean isPlural() {
         return Tags.PLURAL.contains(getPrimary().tag());
+    }
+
+    /**
+     * Whether a component is specific or general
+     * @return true if specific
+     */
+    public boolean isSpecific() {
+        return SpecialWords.SPECIFIC_DETERMINERS.contains(determiners.iterator().next().word().toLowerCase());
     }
 
     /**
