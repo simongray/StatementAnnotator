@@ -146,11 +146,11 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     public String getBasicCompound() {
-        return StatementUtils.join(basicCompound, true);
+        return StatementUtils.join(basicCompound, true, true);
     }
 
     public String getNormalCompound() {
-        return StatementUtils.join(normalCompound, true);
+        return StatementUtils.join(normalCompound, true, true);
     }
 
     /**

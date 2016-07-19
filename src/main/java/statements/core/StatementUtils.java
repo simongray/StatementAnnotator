@@ -21,7 +21,7 @@ public class StatementUtils {
      * @param words the list of words to be joined
      * @return the string representing the words
      */
-    public static String join(Set<IndexedWord> words, boolean useLemma) {
+    public static String join(Set<IndexedWord> words, boolean useLemma, boolean useLowerCase) {
         List<IndexedWord> wordsList = new ArrayList<>(words);
         wordsList.sort(new IndexComparator());
 
@@ -43,6 +43,7 @@ public class StatementUtils {
                     buffer.append("not");  // special rule
                 } else {
                     String wordString = useLemma && lemma != null? lemma : word;
+                    wordString = useLowerCase? wordString.toLowerCase() : wordString;
                     buffer.append(wordString);  // default
                 }
             }
@@ -52,7 +53,7 @@ public class StatementUtils {
     }
 
     public static String join(Set<IndexedWord> words) {
-        return join(words, false);
+        return join(words, false, false);
     }
 
     /**
