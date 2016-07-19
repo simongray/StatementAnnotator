@@ -12,6 +12,7 @@ import sentiment.ComplexSentiment;
 import sentiment.SentimentProfile;
 import sentiment.SentimentTarget;
 import statements.annotations.StatementsAnnotation;
+import statements.core.Resemblance;
 import statements.core.Statement;
 import statements.core.StatementUtils;
 import statements.core.Subject;
@@ -44,6 +45,7 @@ public class TestProfile {
         List<String> otherComments = new ArrayList<>();
 
         Map<CoreMap, Set<Statement>> statements = new HashMap<>();
+        Set<Statement> allStatements = new HashSet<>();
 
         for (Object obj : jsonArray) {
             String comment = (String) obj;
@@ -73,6 +75,7 @@ public class TestProfile {
                     System.out.println(sentence);
                     StatementUtils.printStatements(sentenceStatements);
                     statements.put(sentence, sentenceStatements);
+                    if (sentenceStatements != null) allStatements.addAll(sentenceStatements);
                 }
 
                 englishComments.add(comment);
@@ -89,15 +92,28 @@ public class TestProfile {
         System.out.println("statements: " + statements.size());
 
         DemoTimer.start("building profile...");
-        Profile testProfile = new Profile(statements);
-        Map<CoreMap, Set<Statement>> result = testProfile.getInteresting();
-
-        for (CoreMap sentence : result.keySet()) {
-            Set<Statement> sentenceStatements = result.get(sentence);
-            for (Statement statement : sentenceStatements) {
-                System.out.println(statement + " ----> " + sentence);
+        for (Statement statement : allStatements) {
+            for (Statement otherStatement : allStatements) {
+                if (statement != otherStatement) {
+                    Resemblance resemblance = statement.resemble(otherStatement);
+                    if (resemblance != Resemblance.NONE) {
+                        System.out.println(resemblance + ": " + statement + " <---> " + otherStatement);
+                    }
+                }
             }
         }
+//        Profile testProfile = new Profile(statements);
+//        Map<CoreMap, Set<Statement>> result = testProfile.getInteresting();
+//        Map<CoreMap, Set<Statement>> result = testProfile.getLikes();
+//        Map<CoreMap, Set<Statement>> result = testProfile.getSpecial();
+//
+//        for (CoreMap sentence : result.keySet()) {
+//            Set<Statement> sentenceStatements = result.get(sentence);
+//            for (Statement statement : sentenceStatements) {
+//                System.out.println(statement + " ----> " + sentence);
+//            }
+//        }
+
 //        ComponentSearchString predicate = new ComponentSearchString(Subject.class, "I");
 //        Map<CoreMap, Set<Statement>> result = testProfile.filter(predicate);
 //        Set<Statement> statementsWithGaps = new HashSet<>();
