@@ -22,6 +22,12 @@ public class Pattern {
         for (Proxy proxy : proxies) this.proxies.add(proxy);
     }
 
+    /**
+     * Matches statement if all proxies match.
+     *
+     * @param statement statement to test
+     * @return true if statement matches pattern
+     */
     public boolean matches(Statement statement) {
         if (proxies != null) {
             int matchCount = 0;
@@ -31,7 +37,6 @@ public class Pattern {
             }
 
             if (matchCount == proxies.size()) {
-                System.out.println("found " + matchCount + " proxies out of " + proxies.size());
                 return true;
             }
         }

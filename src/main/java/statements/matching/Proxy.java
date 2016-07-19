@@ -11,7 +11,7 @@ public class Proxy {
 
     /**
      * Standard private proxy constructor.
-     * Use the factory functions instead.
+     * Use the factory functions below instead.
      *
      * @param type the type of component to emulate
      * @param words the words of the component
@@ -43,11 +43,19 @@ public class Proxy {
         return new Proxy(IndirectObject.class, words);
     }
 
+    /**
+     * Matches the statement if all conditions are met.
+     * Examples of conditions:
+     *     * specified component type found
+     *     * (one of) specified word(s) found
+     *
+     * @param statement statement to test
+     * @return true if proxy matches component in statement
+     */
     public boolean matches(Statement statement) {
         for (StatementComponent component : statement.getComponents()) {
             if (type.equals(component.getClass())) {
                 if (words == null) {
-                    System.out.println("found " + getType());
                     return true;
                 } else {
                     if (component instanceof AbstractComponent) {
@@ -55,7 +63,6 @@ public class Proxy {
 
                         for (String word : words) {
                             if (word.equals(abstractComponent.getNormalCompound())) {
-                                System.out.println("found " + word);
                                 return true;
                             }
                         }
@@ -65,13 +72,5 @@ public class Proxy {
         }
 
         return false;
-    }
-
-    public Class getType() {
-        return type;
-    }
-
-    public Set<String> getWords() {
-        return words;
     }
 }
