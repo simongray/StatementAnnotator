@@ -1,5 +1,6 @@
 package statements.matching;
 
+import statements.core.AbstractComponent;
 import statements.core.Statement;
 import statements.core.StatementComponent;
 
@@ -21,7 +22,7 @@ public class Proxy {
 
         if (words.length > 0) {
             this.words = new HashSet<>();
-            for (String word : words) this.words.add(word);
+            for (String word : words) this.words.add(word.toLowerCase());
         } else {
             this.words = null;
         }
@@ -29,10 +30,22 @@ public class Proxy {
 
     public boolean matches(Statement statement) {
         for (StatementComponent component : statement.getComponents()) {
-            if (getType().equals(component.getClass())) {
-                System.out.println("found " + getType());
-                // TODO: more stuff needs to be done
-                return true;
+            if (type.equals(component.getClass())) {
+                if (words == null) {
+                    System.out.println("found " + getType());
+                    return true;
+                } else {
+                    if (component instanceof AbstractComponent) {
+                        AbstractComponent abstractComponent = (AbstractComponent) component;
+
+                        for (String word : words) {
+                            if (word.equals(abstractComponent.getNormalCompound())) {
+                                System.out.println("found " + word);
+                                return true;
+                            }
+                        }
+                    }
+                }
             }
         }
 
