@@ -1,8 +1,6 @@
 package statements.matching;
 
-import statements.core.AbstractComponent;
-import statements.core.Statement;
-import statements.core.StatementComponent;
+import statements.core.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,12 +10,13 @@ public class Proxy {
     private final Set<String> words;
 
     /**
-     * Standard proxy constructor.
+     * Standard private proxy constructor.
+     * Use the factory functions instead.
      *
      * @param type the type of component to emulate
      * @param words the words of the component
      */
-    public Proxy(Class type, String... words) {
+    private Proxy(Class type, String... words) {
         this.type = type;
 
         if (words.length > 0) {
@@ -26,6 +25,22 @@ public class Proxy {
         } else {
             this.words = null;
         }
+    }
+
+    public static Proxy Subject(String... words) {
+        return new Proxy(Subject.class, words);
+    }
+
+    public static Proxy Verb(String... words) {
+        return new Proxy(Verb.class, words);
+    }
+
+    public static Proxy DirectObject(String... words) {
+        return new Proxy(DirectObject.class, words);
+    }
+
+    public static Proxy IndirectObject(String... words) {
+        return new Proxy(IndirectObject.class, words);
     }
 
     public boolean matches(Statement statement) {

@@ -72,7 +72,7 @@ public class TestPatterns {
         System.out.println("#######");
 
         Set<Statement> matchingStatements = new HashSet<>();
-        Pattern pattern = new Pattern(new Proxy(Subject.class, "I"), new Proxy(IndirectObject.class));
+        Pattern pattern = new Pattern(Proxy.Subject("I"), Proxy.IndirectObject());
 
         for (Statement statement : firstValues) {
             if (pattern.matches(statement)) {
