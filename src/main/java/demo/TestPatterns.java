@@ -9,10 +9,7 @@ import org.json.JSONArray;
 import reddit.MarkdownStripper;
 import reddit.RedditCommentProcessor;
 import statements.annotations.StatementsAnnotation;
-import statements.core.IndirectObject;
-import statements.core.Statement;
-import statements.core.StatementUtils;
-import statements.core.Subject;
+import statements.core.*;
 import statements.matching.Pattern;
 import statements.matching.Proxy;
 import statements.profile.Profile;
@@ -73,13 +70,43 @@ public class TestPatterns {
 
         Set<Statement> matchingStatements = new HashSet<>();
 //        Pattern pattern = new Pattern(Proxy.Subject("I"), Proxy.IndirectObject());
-        Pattern pattern = new Pattern(Proxy.Subject("I"), Proxy.Verb("be", "come", "like", "hate", "live", "stay"));
+        Pattern pattern = new Pattern(Proxy.Subject("I"), Proxy.Verb("be"));
 
         for (Statement statement : firstValues) {
             if (pattern.matches(statement)) {
                 matchingStatements.add(statement);
-                System.out.println(statement);
+//                System.out.println(statement);
             }
         }
+
+        //  some personal information
+        Set<Statement> nonMatchingParts = new HashSet<>();
+        for (Statement statement : matchingStatements) {
+            Set<StatementComponent> components = new HashSet<>(statement.getComponents());
+            Set<StatementComponent> matchingComponents = pattern.getMatchingComponents(statement);
+            components.removeAll(matchingComponents);
+
+            Statement embeddedStatement = null;
+            Set<AbstractComponent> abstractComponents = new HashSet<>();
+
+            for (StatementComponent component : components) {
+                if (component instanceof Statement) {
+                    embeddedStatement = (Statement) component;
+                } else {
+                    abstractComponents.add((AbstractComponent) component);
+                }
+            }
+
+            if (embeddedStatement == null && !components.isEmpty()) {
+                nonMatchingParts.add(new Statement(components));
+            } else {
+                nonMatchingParts.add(new Statement(abstractComponents, embeddedStatement));
+            }
+        }
+        System.out.println("Simon is");
+        for (Statement statement : nonMatchingParts) {
+            System.out.println("  * " + statement.getSentence());
+        }
+
     }
 }

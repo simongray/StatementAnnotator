@@ -3,6 +3,7 @@ package statements.matching;
 
 import statements.core.AbstractComponent;
 import statements.core.Statement;
+import statements.core.StatementComponent;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -42,6 +43,16 @@ public class Pattern {
         }
 
         return false;
+    }
+
+    public Set<StatementComponent> getMatchingComponents(Statement statement) {
+        Set<StatementComponent> matchingComponents = new HashSet<>();
+
+        for (Proxy proxy : proxies) {
+            matchingComponents.addAll(proxy.getMatchingComponents(statement));
+        }
+
+        return matchingComponents;
     }
 
     public boolean test(Statement otherStatement) {

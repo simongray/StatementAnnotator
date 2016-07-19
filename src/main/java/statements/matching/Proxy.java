@@ -73,4 +73,30 @@ public class Proxy {
 
         return false;
     }
+
+    /**
+     * Returns the component(s) that match this particular proxy.
+     *
+     * @param statement  statement to test
+     * @return the matching components
+     */
+    public Set<StatementComponent> getMatchingComponents(Statement statement) {
+        Set<StatementComponent> matchingComponents = new HashSet<>();
+
+        for (StatementComponent component : statement.getComponents()) {
+            if (type.equals(component.getClass())) {
+                if (component instanceof AbstractComponent) {
+                    AbstractComponent abstractComponent = (AbstractComponent) component;
+
+                    for (String word : words) {
+                        if (word.equals(abstractComponent.getNormalCompound())) {
+                            matchingComponents.add(component);
+                        }
+                    }
+                }
+            }
+        }
+
+        return matchingComponents;
+    }
 }
