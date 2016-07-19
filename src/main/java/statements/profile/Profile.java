@@ -19,30 +19,6 @@ public class Profile {
     private final Set<String> opinionVerbs;
     private final AdwComparison adwComparison;
     Map<CoreMap, Set<Statement>> statements;
-    static Set<String> uninterestingNouns = new HashSet<>();
-    static {
-        uninterestingNouns.add("it");
-        uninterestingNouns.add("they");
-        uninterestingNouns.add("them");
-        uninterestingNouns.add("this");
-        uninterestingNouns.add("that");
-        uninterestingNouns.add("he");
-        uninterestingNouns.add("she");
-        uninterestingNouns.add("her");
-        uninterestingNouns.add("him");
-        uninterestingNouns.add("you");
-        uninterestingNouns.add("here");
-        uninterestingNouns.add("there");
-        uninterestingNouns.add("who");
-        uninterestingNouns.add("what");
-        uninterestingNouns.add("which");
-        uninterestingNouns.add("those");
-        uninterestingNouns.add("all");
-        uninterestingNouns.add("thing");
-        uninterestingNouns.add("one");
-        uninterestingNouns.add("some");
-        uninterestingNouns.add("someone");
-    }
 
 
     public Profile(Map<CoreMap, Set<Statement>> statements) {
@@ -169,7 +145,8 @@ public class Profile {
 
         for (StatementComponent component : statement.getComponents()) {
             if (component instanceof AbstractComponent) {
-                if (uninterestingNouns.contains(((AbstractComponent) component).getBasicCompound())) {
+                if (SpecialWords.uninterestingNouns.contains(((AbstractComponent) component).getBasicCompound())) {
+//                if (Tags.PRONOUNS.contains(((AbstractComponent) component).getPrimary().tag())) {
                     return false;
                 }
             } else if (component instanceof Statement) {
