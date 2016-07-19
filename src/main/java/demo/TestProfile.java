@@ -11,7 +11,7 @@ import reddit.RedditCommentProcessor;
 import statements.annotations.StatementsAnnotation;
 import statements.core.Statement;
 import statements.core.StatementUtils;
-import statements.matching.StatementPattern;
+import statements.matching.Pattern;
 import statements.profile.Profile;
 
 import java.io.IOException;
@@ -96,16 +96,16 @@ public class TestProfile {
 
         System.out.println();
         System.out.println();
-        System.out.println("MATCHES");
+        System.out.println("MATCHING SUBJECTS");
         System.out.println("#######");
 
         Map<String, Set<Statement>> matchingSubjectStatements = new HashMap<>();
 
         for (Statement statement : firstValues) {
-            StatementPattern pattern = new StatementPattern(statement);
+            Pattern pattern = new Pattern(statement);
             for (Statement otherStatement : secondValues) {
-                if (statement != otherStatement && pattern.matches(otherStatement)) {
-                    String statementSubjectLemma = statement.getSubject().getBasicCompound();
+                if (statement != otherStatement && pattern.test(otherStatement)) {
+                    String statementSubjectLemma = statement.getSubject().getNormalCompound();
                     Set<Statement> matchingSubjects = matchingSubjectStatements.getOrDefault(statementSubjectLemma, new HashSet<>());
                     matchingSubjects.add(statement);
                     matchingSubjects.add(otherStatement);
@@ -118,6 +118,20 @@ public class TestProfile {
             System.out.println(subject + ": " + matchingSubjectStatements.get(subject).size());
         }
 
+        System.out.println();
+        System.out.println();
+        System.out.println("ALL NON-PERSONAL MATCHES");
+        System.out.println("#######");
+
+        for (String subject : matchingSubjectStatements.keySet()) {
+            if (!subject.equals("i") && !subject.equals("we")) {
+                Set<Statement> matchingStatements = matchingSubjectStatements.get(subject);
+                for (Statement statement : matchingStatements) {
+                    System.out.println(statement);
+                }
+                System.out.println();
+            }
+        }
 
 //        ComponentSearchString predicate = new ComponentSearchString(Subject.class, "I");
 //        Map<CoreMap, Set<Statement>> result = testProfile.filter(predicate);
