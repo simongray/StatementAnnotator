@@ -87,7 +87,7 @@ public abstract class AbstractComponent implements StatementComponent {
         punctuation = StatementUtils.findSpecificChildren(Relations.PUNCT, primary, graph);
         markers = StatementUtils.findSpecificChildren(Relations.MARK, primary, graph);
         cc = StatementUtils.findSpecificChildren(Relations.CC, primary, graph);
-        determiners = StatementUtils.findSpecificChildren(Relations.DET, primary, graph);
+        determiners = StatementUtils.findSpecificChildren(Relations.DET, primary, graph);  // TODO: nmod:poss are also determiners!
         adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, primary, graph);
         nounClauses = StatementUtils.findSpecificDescendants(Relations.ACL, primary, graph);
         nounClauses.addAll(StatementUtils.findSpecificDescendants(Relations.ACL_RELCL, primary, graph));
