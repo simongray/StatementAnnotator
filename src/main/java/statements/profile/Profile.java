@@ -7,7 +7,7 @@ import it.uniroma1.lcl.adw.DisambiguationMethod;
 import it.uniroma1.lcl.adw.ItemType;
 import it.uniroma1.lcl.adw.comparison.SignatureComparison;
 import it.uniroma1.lcl.adw.comparison.WeightedOverlap;
-import statements.comparison.AdwComparison;
+import statements.matching.AdwComparison;
 import statements.core.*;
 
 import java.util.*;
@@ -166,26 +166,6 @@ public class Profile {
     private boolean isWellFormed(Statement statement) {
         return statement.gaps() == 0  && statement.getVerb() != null;
     }
-
-    public Map<CoreMap, Set<Statement>>  filter(Predicate predicate) {
-        Map<CoreMap, Set<Statement>> filteredStatements = new HashMap<>();
-
-        for (CoreMap sentence : statements.keySet()) {
-            Set<Statement> sentenceStatements = statements.get(sentence);
-            if (sentenceStatements != null) {
-                for (Statement statement : sentenceStatements) {
-                    if (predicate.evaluate(statement)) {
-                        Set<Statement> filteredSentenceStatements = filteredStatements.getOrDefault(sentence, new HashSet<>());
-                        filteredSentenceStatements.add(statement);
-                        filteredStatements.put(sentence, filteredSentenceStatements);
-                    }
-                }
-            }
-        }
-
-        return filteredStatements;
-    }
-
 
     /**
      * Quick frequency count.

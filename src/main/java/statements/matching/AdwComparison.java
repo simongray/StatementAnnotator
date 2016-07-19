@@ -1,4 +1,4 @@
-package statements.comparison;
+package statements.matching;
 
 import it.uniroma1.lcl.adw.ADW;
 import it.uniroma1.lcl.adw.DisambiguationMethod;

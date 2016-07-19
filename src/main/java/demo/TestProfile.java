@@ -8,15 +8,9 @@ import edu.stanford.nlp.util.CoreMap;
 import org.json.JSONArray;
 import reddit.MarkdownStripper;
 import reddit.RedditCommentProcessor;
-import sentiment.ComplexSentiment;
-import sentiment.SentimentProfile;
-import sentiment.SentimentTarget;
 import statements.annotations.StatementsAnnotation;
-import statements.core.Resemblance;
 import statements.core.Statement;
 import statements.core.StatementUtils;
-import statements.core.Subject;
-import statements.profile.ComponentSearchString;
 import statements.profile.Profile;
 
 import java.io.IOException;
@@ -92,27 +86,34 @@ public class TestProfile {
         System.out.println("statements: " + statements.size());
 
         DemoTimer.start("building profile...");
-        for (Statement statement : allStatements) {
-            for (Statement otherStatement : allStatements) {
-                if (statement != otherStatement) {
-                    Resemblance resemblance = statement.resemble(otherStatement);
-                    if (resemblance != Resemblance.NONE) {
-                        System.out.println(resemblance + ": " + statement + " <---> " + otherStatement);
-                    }
-                }
-            }
-        }
-//        Profile testProfile = new Profile(statements);
-//        Map<CoreMap, Set<Statement>> result = testProfile.getInteresting();
+//        for (Statement statement : allStatements) {
+//            for (Statement otherStatement : allStatements) {
+//                if (statement != otherStatement) {
+//                    Resemblance resemblance = statement.resemble(otherStatement);
+//                    if (resemblance != Resemblance.NONE) {
+//                        System.out.println(resemblance + ": " + statement + " <---> " + otherStatement);
+//                    }
+//                }
+//            }
+//        }
+        Profile testProfile = new Profile(statements);
+        Map<CoreMap, Set<Statement>> result = testProfile.getInteresting();
 //        Map<CoreMap, Set<Statement>> result = testProfile.getLikes();
 //        Map<CoreMap, Set<Statement>> result = testProfile.getSpecial();
 //
-//        for (CoreMap sentence : result.keySet()) {
-//            Set<Statement> sentenceStatements = result.get(sentence);
-//            for (Statement statement : sentenceStatements) {
-//                System.out.println(statement + " ----> " + sentence);
-//            }
-//        }
+        for (CoreMap sentence : result.keySet()) {
+            Set<Statement> sentenceStatements = result.get(sentence);
+            for (Statement statement : sentenceStatements) {
+                System.out.println(statement + " ----> " + sentence);
+            }
+        }
+
+        for (CoreMap sentence : result.keySet()) {
+            System.out.println(sentence);
+            Set<Statement> sentenceStatements = result.get(sentence);
+            StatementUtils.printStatements(sentenceStatements);
+        }
+
 
 //        ComponentSearchString predicate = new ComponentSearchString(Subject.class, "I");
 //        Map<CoreMap, Set<Statement>> result = testProfile.filter(predicate);

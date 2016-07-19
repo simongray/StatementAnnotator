@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * A statement found in a natural language sentence.
  */
-public class Statement implements StatementComponent, Resembling<Statement> {
+public class Statement implements StatementComponent {
     private Subject subject;
     private Verb verb;
     private DirectObject directObject;
@@ -384,24 +384,5 @@ public class Statement implements StatementComponent, Resembling<Statement> {
     // TODO: remove? currently unused
     public SemanticGraph getGraph() {
         return getComponents().iterator().next().getGraph();
-    }
-
-    /**
-     * The resemblance of another statement to this statement.
-     *
-     * @param otherStatement statement to be compared with
-     * @return resemblance
-     */
-    @Override
-    public Resemblance resemble(Statement otherStatement) {
-        if (otherStatement == null) return Resemblance.NONE;
-
-        return StatementUtils.getMostFrequent(
-            subject == null? null : subject.resemble(otherStatement.getSubject()),
-            verb == null? null : verb.resemble(otherStatement.getVerb()),
-            directObject == null? null : directObject.resemble(otherStatement.getDirectObject()),
-            indirectObject == null? null : indirectObject.resemble(otherStatement.getIndirectObject()),
-            embeddedStatement == null? null : embeddedStatement.resemble(otherStatement.getEmbeddedStatement())
-        );
     }
 }
