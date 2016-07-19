@@ -18,32 +18,22 @@ import java.util.Set;
  4.	EX	Existential there
  5.	FW	Foreign word
  6.	IN	Preposition or subordinating conjunction
- 7.	JJ	Adjective
- 8.	JJR	Adjective, comparative
- 9.	JJS	Adjective, superlative
+
  10.	LS	List item marker
  11.	MD	Modal
- 12.	NN	Noun, singular or mass
-
- 14.	NNP	Proper noun, singular
 
  16.	PDT	Predeterminer
  17.	POS	Possessive ending
 
- 20.	RB	Adverb
- 21.	RBR	Adverb, comparative
- 22.	RBS	Adverb, superlative
  23.	RP	Particle
  24.	SYM	Symbol
  25.	TO	to
-        [interjection taken out]
-        [verbs taken out]
 
  33.	WDT	Wh-determiner
 
- 36.	WRB	Wh-adverb
  */
 public class Tags {
+    // verbs
     public static final String VB = "VB";  // Verb, base form
     public static final String VBD = "VBD";  // Verb, past tense
     public static final String VBG = "VBG";  // VBG	Verb, gerund or present participle
@@ -51,16 +41,31 @@ public class Tags {
     public static final String VBP = "VBP";  // Verb, non-3rd person singular present
     public static final String VBZ = "VBZ";  // Verb, 3rd person singular present
 
-    public static final String UH = "UH";  // interjections
-
+    // nouns
+    public static final String NN = "NN";  // Noun, singular or mass
+    public static final String NNP = "NNP";  // Proper noun, singular
     public static final String NNS = "NNS";  // Noun, plural
     public static final String NNPS = "NNPS";  // Proper noun, plural
+
+    // adjectives
+    public static final String JJ = "JJ";  // Adjective
+    public static final String JJR = "JJR";  // Adjective, comparative
+    public static final String JJS = "JJS";  // Adjective, superlative
+
+    // adverbs
+    public static final String RB = "RB";  // Adverb
+    public static final String RBR = "RBR";  // Adverb, comparative
+    public static final String RBS = "RBS";  // Adverb, superlative
+    public static final String WRB = "WRB";  // Wh-adverb
 
     // pronouns
     public static final String PRP = "PRP";  // Personal pronoun
     public static final String PRP$ = "PRP$";  // Possessive pronoun
     public static final String WP = "WP";  // Wh-pronoun
     public static final String WP$ = "WP$";  // Possessive wh-pronoun
+
+    // other
+    public static final String UH = "UH";  // interjections
 
     /**
      * Outgoing relations which are stored internally in any AbstractComponent, but not shown/used by default.
@@ -76,6 +81,29 @@ public class Tags {
         VERBS.add(VBN);
         VERBS.add(VBP);
         VERBS.add(VBZ);
+    }
+
+    public static final Set<String> NOUNS = new HashSet<>();
+    static {
+        NOUNS.add(NN);
+        NOUNS.add(NNP);
+        NOUNS.add(NNS);
+        NOUNS.add(NNPS);
+    }
+
+    public static final Set<String> ADJECTIVES = new HashSet<>();
+    static {
+        ADJECTIVES.add(JJ);
+        ADJECTIVES.add(JJR);
+        ADJECTIVES.add(JJS);
+    }
+
+    public static final Set<String> ADVERBS = new HashSet<>();
+    static {
+        ADVERBS.add(RB);
+        ADVERBS.add(RBR);
+        ADVERBS.add(RBS);
+        ADVERBS.add(WRB);
     }
 
     public static final Set<String> PRONOUNS = new HashSet<>();
