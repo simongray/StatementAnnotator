@@ -133,6 +133,10 @@ public abstract class AbstractComponent implements StatementComponent {
         return Relations.IGNORED_OUTGOING_RELATIONS;
     }
 
+    public String getBasicWord() {
+        return getPrimary().lemma() == null? getPrimary().word().toLowerCase() : getPrimary().lemma().toLowerCase();
+    }
+
     /**
      * The primary word contained within the compound component.
      *

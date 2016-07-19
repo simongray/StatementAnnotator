@@ -148,27 +148,44 @@ public class Profile {
         return filteredStatements;
     }
 
+    /**
+     * Subjective evaluation of whether a statement is interesting.
+     * Currently this method simply discards statements with pronouns that are not 1st person.
+     *
+     * @param statement
+     * @return
+     */
     private boolean isInteresting(Statement statement) {
+        boolean interesting = true;
+
         for (StatementComponent component : statement.getComponents()) {
-            if (component instanceof Subject || component instanceof DirectObject) {
-                if (uninterestingNouns.contains(((AbstractComponent) component).getPrimary().word().toLowerCase())) {
+            if (component instanceof AbstractComponent) {
+                if (uninterestingNouns.contains(((AbstractComponent) component).getBasicWord())) {
                     return false;
                 }
-            }
-            if (component instanceof Statement) {
-                return isInteresting((Statement) component);
+            } else if (component instanceof Statement) {
+                interesting = isInteresting((Statement) component);
             }
         }
 
-        return true;
+        return interesting;
     }
 
+    /**
+     * Subjective evaluation of whether a statement is welformed grammatically.
+     * The purpose is to make sure they can parse back into plain English.
+     * Note: these criteria are subject to change.
+     *
+     * @param statement
+     * @return
+     */
     private boolean isWellFormed(Statement statement) {
         return statement.gaps() == 0  && statement.getVerb() != null;
     }
 
     /**
      * Quick frequency count.
+     * TODO: remove or revise, currently not working
      *
      * @param items
      * @param <T>

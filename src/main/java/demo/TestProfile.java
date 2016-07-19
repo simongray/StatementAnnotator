@@ -11,6 +11,7 @@ import reddit.RedditCommentProcessor;
 import statements.annotations.StatementsAnnotation;
 import statements.core.Statement;
 import statements.core.StatementUtils;
+import statements.matching.StatementPattern;
 import statements.profile.Profile;
 
 import java.io.IOException;
@@ -98,20 +99,39 @@ public class TestProfile {
 //        }
         Profile testProfile = new Profile(statements);
         Map<CoreMap, Set<Statement>> result = testProfile.getInteresting();
+        Set<Statement> resultValues = new HashSet<>();
+
 //        Map<CoreMap, Set<Statement>> result = testProfile.getLikes();
 //        Map<CoreMap, Set<Statement>> result = testProfile.getSpecial();
 //
         for (CoreMap sentence : result.keySet()) {
-            Set<Statement> sentenceStatements = result.get(sentence);
-            for (Statement statement : sentenceStatements) {
-                System.out.println(statement + " ----> " + sentence);
-            }
-        }
-
-        for (CoreMap sentence : result.keySet()) {
             System.out.println(sentence);
             Set<Statement> sentenceStatements = result.get(sentence);
             StatementUtils.printStatements(sentenceStatements);
+            resultValues.addAll(sentenceStatements);
+        }
+
+        System.out.println();
+        System.out.println();
+        System.out.println("MATCHES");
+        System.out.println("#######");
+
+        Map<String, Set<Statement>> matchingSubjectStatements = new HashMap<>();
+
+        for (Statement statement : resultValues) {
+            StatementPattern pattern = new StatementPattern(statement);
+            for (Statement otherStatement : resultValues) {
+                if (statement != otherStatement && pattern.matches(otherStatement)) {
+                    String statementSubjectLemma = statement.getSubject().getBasicWord();
+                    Set<Statement> matchingSubjects = matchingSubjectStatements.getOrDefault(statementSubjectLemma, new HashSet<>());
+                    matchingSubjects.add(otherStatement);
+                    matchingSubjectStatements.put(statementSubjectLemma, matchingSubjects);
+                }
+            }
+        }
+
+        for (String subject : matchingSubjectStatements.keySet()) {
+            System.out.println(subject + ": " + matchingSubjectStatements.get(subject).size());
         }
 
 
