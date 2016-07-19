@@ -32,83 +32,66 @@ public class TestProfile {
 
         MarkdownStripper stripper = new MarkdownStripper();
         String content = RedditCommentProcessor.readFile("src/main/java/demo/data/data.json", Charset.defaultCharset());
-//        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/mark_comment_history.json", Charset.defaultCharset());
-        JSONArray jsonArray = new JSONArray(content);
+        String otherContent = RedditCommentProcessor.readFile("src/main/java/demo/data/mark_comment_history.json", Charset.defaultCharset());
+        JSONArray firstUserJsonArray = new JSONArray(content);
+        JSONArray secondUserJsonArray = new JSONArray(otherContent);
 
-        List<String> englishComments = new ArrayList<>();
-        List<String> danishComments = new ArrayList<>();
-        List<String> otherComments = new ArrayList<>();
 
-        Map<CoreMap, Set<Statement>> statements = new HashMap<>();
-        Set<Statement> allStatements = new HashSet<>();
+        Map<CoreMap, Set<Statement>> firstStatements = new HashMap<>();
+        Map<CoreMap, Set<Statement>> secondStatements = new HashMap<>();
 
-        for (Object obj : jsonArray) {
-            String comment = (String) obj;
+        List<String> firstComments = RedditCommentProcessor.getComments(firstUserJsonArray, RedditCommentProcessor.ENGLISH);
+        List<String> secondComments = RedditCommentProcessor.getComments(secondUserJsonArray, RedditCommentProcessor.ENGLISH);
 
-            // strip markdown
-            comment = stripper.strip(comment);
 
-            // identify language
-            DemoTimer.start("language identification");
-            String language = RedditCommentProcessor.getLanguage(comment);
-            DemoTimer.stop();
+        for (String comment : firstComments) {
+            Annotation annotation = new Annotation(comment);
+            pipeline.annotate(annotation);
 
-            int endIndex = comment.length() < 30? comment.length() - 1: 30;
-            System.out.println(language + " -> " + comment.substring(0, endIndex));
+            List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
 
-            if (language.equals(ENGLISH)) {
-                // annotate a piece of text
-                DemoTimer.start("creating annotation");
-                Annotation annotation = new Annotation(comment);
-                pipeline.annotate(annotation);
-                DemoTimer.stop();
-
-                List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
-
-                for (CoreMap sentence : sentences) {
-                    Set<Statement> sentenceStatements = sentence.get(StatementsAnnotation.class);
-                    System.out.println(sentence);
-                    StatementUtils.printStatements(sentenceStatements);
-                    statements.put(sentence, sentenceStatements);
-                    if (sentenceStatements != null) allStatements.addAll(sentenceStatements);
-                }
-
-                englishComments.add(comment);
-            } else if (language.equals(DANISH)) {
-                danishComments.add(comment);
-            } else {
-                otherComments.add(comment);
+            for (CoreMap sentence : sentences) {
+                Set<Statement> sentenceStatements = sentence.get(StatementsAnnotation.class);
+                System.out.println(sentence);
+                StatementUtils.printStatements(sentenceStatements);
+                firstStatements.put(sentence, sentenceStatements);
             }
         }
 
-        System.out.println("english comments: " + englishComments.size());
-        System.out.println("danish comments: " + danishComments.size());
-        System.out.println("unknown comments: " + otherComments.size());
-        System.out.println("statements: " + statements.size());
+        for (String comment : secondComments) {
+            Annotation annotation = new Annotation(comment);
+            pipeline.annotate(annotation);
 
-        DemoTimer.start("building profile...");
-//        for (Statement statement : allStatements) {
-//            for (Statement otherStatement : allStatements) {
-//                if (statement != otherStatement) {
-//                    Resemblance resemblance = statement.resemble(otherStatement);
-//                    if (resemblance != Resemblance.NONE) {
-//                        System.out.println(resemblance + ": " + statement + " <---> " + otherStatement);
-//                    }
-//                }
-//            }
-//        }
-        Profile testProfile = new Profile(statements);
-        Map<CoreMap, Set<Statement>> result = testProfile.getInteresting();
-        Set<Statement> resultValues = new HashSet<>();
+            List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
 
-//        Map<CoreMap, Set<Statement>> result = testProfile.getLikes();
-//        Map<CoreMap, Set<Statement>> result = testProfile.getSpecial();
-//
-        for (CoreMap sentence : result.keySet()) {
+            for (CoreMap sentence : sentences) {
+                Set<Statement> sentenceStatements = sentence.get(StatementsAnnotation.class);
+                System.out.println(sentence);
+                StatementUtils.printStatements(sentenceStatements);
+                secondStatements.put(sentence, sentenceStatements);
+            }
+        }
+
+        Profile firstProfile = new Profile(firstStatements);
+        Map<CoreMap, Set<Statement>> firstResult = firstProfile.getInteresting();
+
+        Profile secondProfile = new Profile(secondStatements);
+        Map<CoreMap, Set<Statement>> secondResult = secondProfile.getInteresting();
+        Set<Statement> firstValues = new HashSet<>();
+        Set<Statement> secondValues = new HashSet<>();
+
+        for (CoreMap sentence : firstResult.keySet()) {
             System.out.println(sentence);
-            Set<Statement> sentenceStatements = result.get(sentence);
+            Set<Statement> sentenceStatements = firstResult.get(sentence);
             StatementUtils.printStatements(sentenceStatements);
-            resultValues.addAll(sentenceStatements);
+            firstValues.addAll(sentenceStatements);
+        }
+
+        for (CoreMap sentence : secondResult.keySet()) {
+            System.out.println(sentence);
+            Set<Statement> sentenceStatements = secondResult.get(sentence);
+            StatementUtils.printStatements(sentenceStatements);
+            secondValues.addAll(sentenceStatements);
         }
 
         System.out.println();
@@ -118,12 +101,13 @@ public class TestProfile {
 
         Map<String, Set<Statement>> matchingSubjectStatements = new HashMap<>();
 
-        for (Statement statement : resultValues) {
+        for (Statement statement : firstValues) {
             StatementPattern pattern = new StatementPattern(statement);
-            for (Statement otherStatement : resultValues) {
+            for (Statement otherStatement : secondValues) {
                 if (statement != otherStatement && pattern.matches(otherStatement)) {
                     String statementSubjectLemma = statement.getSubject().getBasicWord();
                     Set<Statement> matchingSubjects = matchingSubjectStatements.getOrDefault(statementSubjectLemma, new HashSet<>());
+                    matchingSubjects.add(statement);
                     matchingSubjects.add(otherStatement);
                     matchingSubjectStatements.put(statementSubjectLemma, matchingSubjects);
                 }
@@ -149,7 +133,6 @@ public class TestProfile {
 //                }
 //            }
 //        }
-//        DemoTimer.stop();
 //
 //        System.out.println();
 //        System.out.println("Statements with gaps: " + statementsWithGaps.size());
