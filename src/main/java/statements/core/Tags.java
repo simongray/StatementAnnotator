@@ -120,7 +120,6 @@ public class Tags {
         PLURAL.add(NNPS);
     }
 
-
     public static final Set<String> INTERJECTIONS = new HashSet<>();
     static {
         INTERJECTIONS.add(UH);
