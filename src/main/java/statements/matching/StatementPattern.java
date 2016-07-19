@@ -12,8 +12,8 @@ public class StatementPattern {
 
     public boolean matches(Statement otherStatement) {
         if (statement.getSubject() != null && otherStatement.getSubject() != null) {
-            String statementSubjectLemma = statement.getSubject().getBasicWord();
-            String otherStatementSubjectLemma = otherStatement.getSubject().getBasicWord();
+            String statementSubjectLemma = statement.getSubject().getNormalCompound();
+            String otherStatementSubjectLemma = otherStatement.getSubject().getNormalCompound();
 
             if (statementSubjectLemma.equals(otherStatementSubjectLemma)) {
                 return true;

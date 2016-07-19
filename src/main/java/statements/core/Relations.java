@@ -37,6 +37,7 @@ public class Relations {
     public static final String IOBJ = "iobj";  // ex: the "always" in "always on"
     public static final String DISCOURSE = "discourse";  // useless words like "yeah"
     public static final String DET = "det";  // determiners like "a", "the", "some", "very"
+    public static final String AMOD = "amod";  // adjectives describing nouns, e.g. "racist person"
 
     /**
      * Outgoing relations which are stored internally in any AbstractComponent, but not shown/used by default.

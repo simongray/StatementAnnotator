@@ -58,6 +58,8 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> determiners;
     protected final Set<IndexedWord> adverbialClauses;
     protected final Set<IndexedWord> nounClauses;
+    protected final Set<IndexedWord> basicCompound;
+    protected final Set<IndexedWord> normalCompound;
 
     public AbstractComponent(IndexedWord primary, SemanticGraph graph) {
        this(primary, graph, new HashSet<>());
@@ -71,6 +73,14 @@ public abstract class AbstractComponent implements StatementComponent {
         // remove interjections based on POS tags
         // sometimes interjections are not found in the relations!
         compound.removeAll(Tags.reduceToAllowedTags(compound, Tags.INTERJECTIONS));
+
+        // smallest compound
+        basicCompound = StatementUtils.findSpecificChildren(Relations.COMPOUND, primary, graph);
+        basicCompound.add(primary);
+
+        // medium compound
+        normalCompound = StatementUtils.findSpecificChildren(Relations.AMOD, primary, graph);
+        normalCompound.addAll(basicCompound);
 
         // relevant parts of the component that have been separated out from the compound
         negations = StatementUtils.findSpecificChildren(Relations.NEG, primary, graph);
@@ -135,8 +145,12 @@ public abstract class AbstractComponent implements StatementComponent {
         return Relations.IGNORED_OUTGOING_RELATIONS;
     }
 
-    public String getBasicWord() {
-        return getPrimary().lemma() == null? getPrimary().word().toLowerCase() : getPrimary().lemma().toLowerCase();
+    public String getBasicCompound() {
+        return StatementUtils.join(basicCompound, true);
+    }
+
+    public String getNormalCompound() {
+        return StatementUtils.join(normalCompound, true);
     }
 
     /**

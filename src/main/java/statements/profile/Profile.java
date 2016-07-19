@@ -33,6 +33,15 @@ public class Profile {
         uninterestingNouns.add("you");
         uninterestingNouns.add("here");
         uninterestingNouns.add("there");
+        uninterestingNouns.add("who");
+        uninterestingNouns.add("what");
+        uninterestingNouns.add("which");
+        uninterestingNouns.add("those");
+        uninterestingNouns.add("all");
+        uninterestingNouns.add("thing");
+        uninterestingNouns.add("one");
+        uninterestingNouns.add("some");
+        uninterestingNouns.add("someone");
     }
 
 
@@ -160,7 +169,7 @@ public class Profile {
 
         for (StatementComponent component : statement.getComponents()) {
             if (component instanceof AbstractComponent) {
-                if (uninterestingNouns.contains(((AbstractComponent) component).getBasicWord())) {
+                if (uninterestingNouns.contains(((AbstractComponent) component).getBasicCompound())) {
                     return false;
                 }
             } else if (component instanceof Statement) {

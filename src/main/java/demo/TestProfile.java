@@ -105,7 +105,7 @@ public class TestProfile {
             StatementPattern pattern = new StatementPattern(statement);
             for (Statement otherStatement : secondValues) {
                 if (statement != otherStatement && pattern.matches(otherStatement)) {
-                    String statementSubjectLemma = statement.getSubject().getBasicWord();
+                    String statementSubjectLemma = statement.getSubject().getBasicCompound();
                     Set<Statement> matchingSubjects = matchingSubjectStatements.getOrDefault(statementSubjectLemma, new HashSet<>());
                     matchingSubjects.add(statement);
                     matchingSubjects.add(otherStatement);
