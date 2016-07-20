@@ -72,32 +72,32 @@ public class TestProfile {
             }
         }
 
-        Profile firstProfile = new Profile(firstStatements);
-        Map<CoreMap, Set<Statement>> firstResult = firstProfile.getInteresting();
-
-        Profile secondProfile = new Profile(secondStatements);
-        Map<CoreMap, Set<Statement>> secondResult = secondProfile.getInteresting();
-        Set<Statement> firstValues = new HashSet<>();
-        Set<Statement> secondValues = new HashSet<>();
-
-        for (CoreMap sentence : firstResult.keySet()) {
-            System.out.println(sentence);
-            Set<Statement> sentenceStatements = firstResult.get(sentence);
-            StatementUtils.printStatements(sentenceStatements);
-            firstValues.addAll(sentenceStatements);
-        }
-
-        for (CoreMap sentence : secondResult.keySet()) {
-            System.out.println(sentence);
-            Set<Statement> sentenceStatements = secondResult.get(sentence);
-            StatementUtils.printStatements(sentenceStatements);
-            secondValues.addAll(sentenceStatements);
-        }
-
-        System.out.println();
-        System.out.println();
-        System.out.println("MATCHING STATEMENTS");
-        System.out.println("#######");
+//        Profile firstProfile = new Profile(firstStatements);
+//        Map<CoreMap, Set<Statement>> firstResult = firstProfile.getInteresting();
+//
+//        Profile secondProfile = new Profile(secondStatements);
+//        Map<CoreMap, Set<Statement>> secondResult = secondProfile.getInteresting();
+//        Set<Statement> firstValues = new HashSet<>();
+//        Set<Statement> secondValues = new HashSet<>();
+//
+//        for (CoreMap sentence : firstResult.keySet()) {
+//            System.out.println(sentence);
+//            Set<Statement> sentenceStatements = firstResult.get(sentence);
+//            StatementUtils.printStatements(sentenceStatements);
+//            firstValues.addAll(sentenceStatements);
+//        }
+//
+//        for (CoreMap sentence : secondResult.keySet()) {
+//            System.out.println(sentence);
+//            Set<Statement> sentenceStatements = secondResult.get(sentence);
+//            StatementUtils.printStatements(sentenceStatements);
+//            secondValues.addAll(sentenceStatements);
+//        }
+//
+//        System.out.println();
+//        System.out.println();
+//        System.out.println("MATCHING STATEMENTS");
+//        System.out.println("#######");
 
 //        for (Statement otherStatement : secondValues) {
 //            System.out.println("s: " + (otherStatement.getSubject() == null? null : otherStatement.getSubject().getBasicCompound()));
@@ -113,20 +113,20 @@ public class TestProfile {
 //                }
 //            }
 //        }
-
-        System.out.println();
-        System.out.println();
-        System.out.println("MATCHING TOPICS");
-        System.out.println("#######");
-
-
-        for (Statement statement : firstValues) {
-            for (Statement otherStatement : secondValues) {
-                if (statement.matchesTopic(otherStatement)) {
-                    System.out.println(statement + " matches topic of " + otherStatement);
-                }
-            }
-        }
+//
+//        System.out.println();
+//        System.out.println();
+//        System.out.println("MATCHING TOPICS");
+//        System.out.println("#######");
+//
+//
+//        for (Statement statement : firstValues) {
+//            for (Statement otherStatement : secondValues) {
+//                if (statement.matchesTopic(otherStatement)) {
+//                    System.out.println(statement + " matches topic of " + otherStatement);
+//                }
+//            }
+//        }
 
 //        System.out.println();
 //        System.out.println();

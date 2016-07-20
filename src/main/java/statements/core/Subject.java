@@ -21,4 +21,28 @@ public class Subject extends AbstractComponent {
         // TODO: put in separate place
         compound.addAll(nmod);
     }
+
+    /**
+     * Allow components to define what makes them interesting.
+     *
+     * @return true if interesting
+     */
+    @Override
+    public boolean isInteresting() {
+        if (SpecialWords.uninterestingNouns.contains(getBasicCompound())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Allow components to define what makes them well formed.
+     *
+     * @return true if well formed
+     */
+    @Override
+    public boolean isWellFormed() {
+        return gaps() == 0;
+    }
 }

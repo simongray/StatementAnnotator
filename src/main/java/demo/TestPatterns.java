@@ -31,12 +31,13 @@ public class TestPatterns {
         JSONArray firstUserJsonArray = new JSONArray(content);
 
 
-        Map<CoreMap, Set<Statement>> firstStatements = new HashMap<>();
+        Map<CoreMap, Set<Statement>> statements = new HashMap<>();
 
-        List<String> firstComments = RedditCommentProcessor.getComments(firstUserJsonArray, RedditCommentProcessor.ENGLISH);
+        List<String> comments = RedditCommentProcessor.getComments(firstUserJsonArray, RedditCommentProcessor.ENGLISH);
 
+        Set<Statement> allStatements = new HashSet<>();
 
-        for (String comment : firstComments) {
+        for (String comment : comments) {
             Annotation annotation = new Annotation(comment);
             pipeline.annotate(annotation);
 
@@ -46,20 +47,9 @@ public class TestPatterns {
                 Set<Statement> sentenceStatements = sentence.get(StatementsAnnotation.class);
                 System.out.println(sentence);
                 StatementUtils.printStatements(sentenceStatements);
-                firstStatements.put(sentence, sentenceStatements);
+                statements.put(sentence, sentenceStatements);
+                if (sentenceStatements != null) allStatements.addAll(sentenceStatements);
             }
-        }
-
-        Profile firstProfile = new Profile(firstStatements);
-        Map<CoreMap, Set<Statement>> firstResult = firstProfile.getInteresting();
-
-        Set<Statement> firstValues = new HashSet<>();
-
-        for (CoreMap sentence : firstResult.keySet()) {
-            System.out.println(sentence);
-            Set<Statement> sentenceStatements = firstResult.get(sentence);
-            StatementUtils.printStatements(sentenceStatements);
-            firstValues.addAll(sentenceStatements);
         }
 
         System.out.println();
@@ -67,7 +57,6 @@ public class TestPatterns {
         System.out.println("MATCHING STATEMENTS");
         System.out.println("#######");
 
-        Set<Statement> matchingStatements = new HashSet<>();
 //        Pattern pattern = new Pattern(Proxy.Subject("I"), Proxy.IndirectObject());
         Pattern bePattern = new Pattern(
                 Proxy.Subject("I", "we"),
@@ -88,7 +77,7 @@ public class TestPatterns {
                 Proxy.Verb("think", "know", "believe", "imagine", "guess", "consider", "reckon", "suppose")
         );
 
-        for (Statement statement : firstValues) {
+        for (Statement statement : allStatements) {
             if (bePattern.matches(statement)) {
 //                matchingStatements.add(statement);
                 System.out.println("be: " + statement);
@@ -105,35 +94,5 @@ public class TestPatterns {
                 System.out.println("think: " + statement);
             }
         }
-
-        //  some personal information
-//        Set<Statement> nonMatchingParts = new HashSet<>();
-//        for (Statement statement : matchingStatements) {
-//            Set<StatementComponent> components = new HashSet<>(statement.getComponents());
-//            Set<StatementComponent> matchingComponents = bePattern.getMatchingComponents(statement);
-//            components.removeAll(matchingComponents);
-//
-//            Statement embeddedStatement = null;
-//            Set<AbstractComponent> abstractComponents = new HashSet<>();
-//
-//            for (StatementComponent component : components) {
-//                if (component instanceof Statement) {
-//                    embeddedStatement = (Statement) component;
-//                } else {
-//                    abstractComponents.add((AbstractComponent) component);
-//                }
-//            }
-//
-//            if (embeddedStatement == null && !components.isEmpty()) {
-//                nonMatchingParts.add(new Statement(components));
-//            } else {
-//                nonMatchingParts.add(new Statement(abstractComponents, embeddedStatement));
-//            }
-//        }
-//        System.out.println("Simon is");
-//        for (Statement statement : nonMatchingParts) {
-//            System.out.println("  * " + statement.getSentence());
-//        }
-
     }
 }

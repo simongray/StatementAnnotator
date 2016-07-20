@@ -24,4 +24,24 @@ public class Verb extends AbstractComponent {
 
         compound.addAll(aux);
     }
+
+    /**
+     * Allow components to define what makes them interesting.
+     *
+     * @return true if interesting
+     */
+    @Override
+    public boolean isInteresting() {
+        return true;
+    }
+
+    /**
+     * Allow components to define what makes them well formed.
+     *
+     * @return true if well formed
+     */
+    @Override
+    public boolean isWellFormed() {
+        return gaps() == 0;
+    }
 }

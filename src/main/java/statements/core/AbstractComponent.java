@@ -317,6 +317,22 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
+     * Allow components to define what makes them interesting.
+     *
+     * @return true if interesting
+     */
+    @Override
+    public abstract boolean isInteresting();
+
+    /**
+     * Allow components to define what makes them well formed.
+     *
+     * @return true if well formed
+     */
+    @Override
+    public abstract boolean isWellFormed();
+
+    /**
      * The compound as a string.
      *
      * @return the longest string possible

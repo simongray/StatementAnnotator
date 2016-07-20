@@ -18,4 +18,24 @@ public class IndirectObject extends AbstractComponent {
     public IndirectObject(IndexedWord primary, SemanticGraph graph, Set<String> labels) {
         super(primary, graph, labels);
     }
+
+    /**
+     * Allow components to define what makes them interesting.
+     *
+     * @return true if interesting
+     */
+    @Override
+    public boolean isInteresting() {
+        return true;
+    }
+
+    /**
+     * Allow components to define what makes them well formed.
+     *
+     * @return true if well formed
+     */
+    @Override
+    public boolean isWellFormed() {
+        return gaps() == 0;
+    }
 }

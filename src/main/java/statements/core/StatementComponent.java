@@ -20,6 +20,8 @@ public interface StatementComponent {
     int getLowestIndex();
     int getHighestIndex();
     boolean matches(StatementComponent otherComponent);
+    boolean isInteresting();
+    boolean isWellFormed();
 
     /**
      * Is this component the parent of another component?

@@ -401,6 +401,26 @@ public class Statement implements StatementComponent {
         return false;
     }
 
+    @Override
+    public boolean isInteresting() {
+        for (StatementComponent component : getComponents()) {
+            if (!component.isInteresting()) return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean isWellFormed() {
+        if (getVerb() == null) return false;
+
+        for (StatementComponent component : getComponents()) {
+            if (!component.isInteresting()) return false;
+        }
+
+        return true;
+    }
+
     /**
      * A slightly more advanced way of comparing two statements.
      * This method of comparison tries to find statements with the same topic,
