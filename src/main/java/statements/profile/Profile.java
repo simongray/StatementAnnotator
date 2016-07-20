@@ -121,7 +121,8 @@ public class Profile {
             Set<Statement> sentenceStatements = statements.get(sentence);
             if (sentenceStatements != null) {
                 for (Statement statement : sentenceStatements) {
-                    if (isInteresting(statement) && isWellFormed(statement)) {
+//                    if (isInteresting(statement) && isWellFormed(statement)) {
+                    if (isInteresting(statement)) {
                         Set<Statement> filteredSentenceStatements = filteredStatements.getOrDefault(sentence, new HashSet<>());
                         filteredSentenceStatements.add(statement);
                         filteredStatements.put(sentence, filteredSentenceStatements);

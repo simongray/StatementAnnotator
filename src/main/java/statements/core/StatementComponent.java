@@ -16,10 +16,10 @@ public interface StatementComponent {
     Set<IndexedWord> getAll();
     Set<IndexedWord> getGovernors();
     Set<String> getLabels();
-    SemanticGraph getGraph();
     boolean contains(StatementComponent otherComponent);  // TODO: do or do not?
     int getLowestIndex();
     int getHighestIndex();
+    boolean matches(StatementComponent otherComponent);
 
     /**
      * Is this component the parent of another component?

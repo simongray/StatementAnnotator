@@ -381,8 +381,75 @@ public class Statement implements StatementComponent {
         return highestIndex;
     }
 
-    // TODO: remove? currently unused
-    public SemanticGraph getGraph() {
-        return getComponents().iterator().next().getGraph();
+    /**
+     * A basic way of comparing two statements.
+     * In most cases, this will return false since it requires ALL components of the statement
+     * to be matched in the other statement in their basic form.
+     *
+     * @param otherComponent
+     * @return
+     */
+    @Override
+    public boolean matches(StatementComponent otherComponent) {
+        Set<StatementComponent> matchingComponents = new HashSet<>();
+
+        if (otherComponent instanceof Statement) {
+            Statement otherStatement = (Statement) otherComponent;
+            return matchesPureComponents(otherStatement) && matchesEmbeddedStatement(otherStatement);
+        }
+
+        return false;
+    }
+
+    /**
+     * Compares the pure components of two statements.
+     *
+     * @param otherStatement
+     * @return
+     */
+    private boolean matchesPureComponents(Statement otherStatement) {
+        return getMatchingPureComponents(otherStatement).size() > getPureComponents().size();
+    }
+
+    /**
+     * Compares the embedded statements of two statements.
+     *
+     * @param otherStatement
+     * @return
+     */
+    private boolean matchesEmbeddedStatement(Statement otherStatement) {
+        if (getEmbeddedStatement() == null && otherStatement.getEmbeddedStatement() == null) return true;
+        if (getEmbeddedStatement() != null && otherStatement.getEmbeddedStatement() == null) return false;
+        return getEmbeddedStatement().matches(otherStatement.getEmbeddedStatement());
+    }
+
+    /**
+     * Returns the matching pure components of the other statement.
+     *
+     * @param otherStatement
+     * @return
+     */
+    public Set<StatementComponent> getMatchingPureComponents(Statement otherStatement) {
+        Set<StatementComponent> matchingComponents = new HashSet<>();
+
+        for (AbstractComponent component : getPureComponents()) {
+            for (AbstractComponent otherComponent : otherStatement.getPureComponents()) {
+                if (component.matches(otherComponent)) matchingComponents.add(otherComponent);
+            }
+        }
+
+        return matchingComponents;
+    }
+
+    /**
+     * Returns the matching components (AbstractComponent and Statement) of the other statement.
+     *
+     * @param otherStatement
+     * @return
+     */
+    public Set<StatementComponent> getMatchingComponents(Statement otherStatement) {
+        Set<StatementComponent> matchingComponents = getMatchingPureComponents(otherStatement);
+        if (matchesEmbeddedStatement(otherStatement) && otherStatement.getEmbeddedStatement() != null) matchingComponents.add(otherStatement.getEmbeddedStatement());
+        return matchingComponents;
     }
 }

@@ -16,8 +16,6 @@ import java.util.Set;
 public abstract class AbstractComponent implements StatementComponent {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected final SemanticGraph graph;
-
     /**
      * The primary word of the component.
      * Used as the entry point for the rest of the compound.
@@ -67,7 +65,6 @@ public abstract class AbstractComponent implements StatementComponent {
 
     public AbstractComponent(IndexedWord primary, SemanticGraph graph, Set<String> labels) {
         this.primary = primary;
-        this.graph = graph;
         compound = StatementUtils.findCompound(primary, graph, getIgnoredRelations(), null);
 
         // remove interjections based on POS tags
@@ -343,10 +340,6 @@ public abstract class AbstractComponent implements StatementComponent {
         return labels;
     }
 
-    public SemanticGraph getGraph() {
-        return graph;
-    }
-
     /**
      * Attach a label to this component.  // TODO: is this needed?
      */
@@ -365,6 +358,44 @@ public abstract class AbstractComponent implements StatementComponent {
 
     public int getHighestIndex() {
         return highestIndex;
+    }
+
+    /**
+     * A basic method of comparison against other components.
+     * This method uses the most basic representation of each component for matching,
+     * ignoring clauses and other more complex parts of the component.
+     *
+     * @param otherComponent the component to be matched against
+     * @return true if matching
+     */
+    @Override
+    public boolean matches(StatementComponent otherComponent) {
+        if (otherComponent instanceof AbstractComponent && getClass().equals(otherComponent.getClass())) {
+            AbstractComponent abstractOtherComponent = (AbstractComponent) otherComponent;
+            if (matchesBasicCompound(abstractOtherComponent) && matchesNegation(abstractOtherComponent)) return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Compares the basic compound of two components.
+     *
+     * @param abstractOtherComponent
+     * @return
+     */
+    private boolean matchesBasicCompound(AbstractComponent abstractOtherComponent) {
+        return getBasicCompound().equals(abstractOtherComponent.getBasicCompound());
+    }
+
+    /**
+     * Compares the negation of two components.
+     *
+     * @param abstractOtherComponent
+     * @return
+     */
+    private boolean matchesNegation(AbstractComponent abstractOtherComponent) {
+        return isNegated() && abstractOtherComponent.isNegated();
     }
 
     @Override

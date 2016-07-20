@@ -96,42 +96,57 @@ public class TestProfile {
 
         System.out.println();
         System.out.println();
-        System.out.println("MATCHING SUBJECTS");
+        System.out.println("MATCHING STATEMENTS");
         System.out.println("#######");
 
         Map<String, Set<Statement>> matchingSubjectStatements = new HashMap<>();
 
         for (Statement statement : firstValues) {
-            Pattern pattern = new Pattern(statement);
             for (Statement otherStatement : secondValues) {
-                if (statement != otherStatement && pattern.test(otherStatement)) {
-                    String statementSubjectLemma = statement.getSubject().getNormalCompound();
-                    Set<Statement> matchingSubjects = matchingSubjectStatements.getOrDefault(statementSubjectLemma, new HashSet<>());
-                    matchingSubjects.add(statement);
-                    matchingSubjects.add(otherStatement);
-                    matchingSubjectStatements.put(statementSubjectLemma, matchingSubjects);
+                if (statement.matches(otherStatement)) {
+                    System.out.println(statement + " matches " + otherStatement);
                 }
             }
         }
 
-        for (String subject : matchingSubjectStatements.keySet()) {
-            System.out.println(subject + ": " + matchingSubjectStatements.get(subject).size());
-        }
-
-        System.out.println();
-        System.out.println();
-        System.out.println("ALL NON-PERSONAL MATCHES");
-        System.out.println("#######");
-
-        for (String subject : matchingSubjectStatements.keySet()) {
-            if (!subject.equals("i") && !subject.equals("we")) {
-                Set<Statement> matchingStatements = matchingSubjectStatements.get(subject);
-                for (Statement statement : matchingStatements) {
-                    System.out.println(statement);
-                }
-                System.out.println();
-            }
-        }
+//        System.out.println();
+//        System.out.println();
+//        System.out.println("MATCHING SUBJECTS");
+//        System.out.println("#######");
+//
+//        Map<String, Set<Statement>> matchingSubjectStatements = new HashMap<>();
+//
+//        for (Statement statement : firstValues) {
+//            Pattern pattern = new Pattern(statement);
+//            for (Statement otherStatement : secondValues) {
+//                if (statement != otherStatement && pattern.test(otherStatement)) {
+//                    String statementSubjectLemma = statement.getSubject().getNormalCompound();
+//                    Set<Statement> matchingSubjects = matchingSubjectStatements.getOrDefault(statementSubjectLemma, new HashSet<>());
+//                    matchingSubjects.add(statement);
+//                    matchingSubjects.add(otherStatement);
+//                    matchingSubjectStatements.put(statementSubjectLemma, matchingSubjects);
+//                }
+//            }
+//        }
+//
+//        for (String subject : matchingSubjectStatements.keySet()) {
+//            System.out.println(subject + ": " + matchingSubjectStatements.get(subject).size());
+//        }
+//
+//        System.out.println();
+//        System.out.println();
+//        System.out.println("ALL NON-PERSONAL MATCHES");
+//        System.out.println("#######");
+//
+//        for (String subject : matchingSubjectStatements.keySet()) {
+//            if (!subject.equals("i") && !subject.equals("we")) {
+//                Set<Statement> matchingStatements = matchingSubjectStatements.get(subject);
+//                for (Statement statement : matchingStatements) {
+//                    System.out.println(statement);
+//                }
+//                System.out.println();
+//            }
+//        }
 
 //        ComponentSearchString predicate = new ComponentSearchString(Subject.class, "I");
 //        Map<CoreMap, Set<Statement>> result = testProfile.filter(predicate);

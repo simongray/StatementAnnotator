@@ -1,7 +1,6 @@
 package statements.matching;
 
 
-import statements.core.AbstractComponent;
 import statements.core.Statement;
 import statements.core.StatementComponent;
 
