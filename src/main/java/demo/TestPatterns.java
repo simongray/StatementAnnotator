@@ -27,7 +27,6 @@ public class TestPatterns {
         props.setProperty("customAnnotatorClass.statement", "statements.StatementAnnotator");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
-        MarkdownStripper stripper = new MarkdownStripper();
         String content = RedditCommentProcessor.readFile("src/main/java/demo/data/data.json", Charset.defaultCharset());
         JSONArray firstUserJsonArray = new JSONArray(content);
 
@@ -70,43 +69,71 @@ public class TestPatterns {
 
         Set<Statement> matchingStatements = new HashSet<>();
 //        Pattern pattern = new Pattern(Proxy.Subject("I"), Proxy.IndirectObject());
-        Pattern pattern = new Pattern(Proxy.Subject("I"), Proxy.Verb("be"));
+        Pattern bePattern = new Pattern(
+                Proxy.Subject("I", "we"),
+                Proxy.Verb("be", "become"),
+                Proxy.DirectObject()
+        );
+        Pattern locationPattern = new Pattern(
+                Proxy.Subject("I", "we"),
+                Proxy.Verb("come", "be", "live", "go", "move"),
+                Proxy.IndirectObject()
+        );
+        Pattern likeHatePattern = new Pattern(
+                Proxy.Subject("I", "we"),
+                Proxy.Verb("like", "love", "prefer", "want", "sure", "hate", "dislike")
+        );
+        Pattern thinkPattern = new Pattern(
+                Proxy.Subject("I", "we"),
+                Proxy.Verb("think", "know", "believe", "imagine", "guess", "consider", "reckon", "suppose")
+        );
 
         for (Statement statement : firstValues) {
-            if (pattern.matches(statement)) {
-                matchingStatements.add(statement);
-//                System.out.println(statement);
+            if (bePattern.matches(statement)) {
+//                matchingStatements.add(statement);
+                System.out.println("be: " + statement);
+            }
+            if (locationPattern.matches(statement)) {
+                System.out.println("come: " + statement);
+            }
+            if (likeHatePattern.matches(statement)) {
+//                matchingStatements.add(statement);
+                System.out.println("like: " + statement);
+            }
+            if (thinkPattern.matches(statement)) {
+//                matchingStatements.add(statement);
+                System.out.println("think: " + statement);
             }
         }
 
         //  some personal information
-        Set<Statement> nonMatchingParts = new HashSet<>();
-        for (Statement statement : matchingStatements) {
-            Set<StatementComponent> components = new HashSet<>(statement.getComponents());
-            Set<StatementComponent> matchingComponents = pattern.getMatchingComponents(statement);
-            components.removeAll(matchingComponents);
-
-            Statement embeddedStatement = null;
-            Set<AbstractComponent> abstractComponents = new HashSet<>();
-
-            for (StatementComponent component : components) {
-                if (component instanceof Statement) {
-                    embeddedStatement = (Statement) component;
-                } else {
-                    abstractComponents.add((AbstractComponent) component);
-                }
-            }
-
-            if (embeddedStatement == null && !components.isEmpty()) {
-                nonMatchingParts.add(new Statement(components));
-            } else {
-                nonMatchingParts.add(new Statement(abstractComponents, embeddedStatement));
-            }
-        }
-        System.out.println("Simon is");
-        for (Statement statement : nonMatchingParts) {
-            System.out.println("  * " + statement.getSentence());
-        }
+//        Set<Statement> nonMatchingParts = new HashSet<>();
+//        for (Statement statement : matchingStatements) {
+//            Set<StatementComponent> components = new HashSet<>(statement.getComponents());
+//            Set<StatementComponent> matchingComponents = bePattern.getMatchingComponents(statement);
+//            components.removeAll(matchingComponents);
+//
+//            Statement embeddedStatement = null;
+//            Set<AbstractComponent> abstractComponents = new HashSet<>();
+//
+//            for (StatementComponent component : components) {
+//                if (component instanceof Statement) {
+//                    embeddedStatement = (Statement) component;
+//                } else {
+//                    abstractComponents.add((AbstractComponent) component);
+//                }
+//            }
+//
+//            if (embeddedStatement == null && !components.isEmpty()) {
+//                nonMatchingParts.add(new Statement(components));
+//            } else {
+//                nonMatchingParts.add(new Statement(abstractComponents, embeddedStatement));
+//            }
+//        }
+//        System.out.println("Simon is");
+//        for (Statement statement : nonMatchingParts) {
+//            System.out.println("  * " + statement.getSentence());
+//        }
 
     }
 }
