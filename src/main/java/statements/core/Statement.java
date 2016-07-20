@@ -402,6 +402,23 @@ public class Statement implements StatementComponent {
     }
 
     /**
+     * A slightly more advanced way of comparing two statements.
+     * This method of comparison tries to find statements with the same topic,
+     * defined as: (S or DI matches) && (at least one other component matches)
+     *
+     * @param otherStatement
+     * @return
+     */
+    public boolean matchesTopic(Statement otherStatement) {
+        if (getSubject() != null && getSubject().matches(otherStatement.getSubject())
+                || getDirectObject() != null && getDirectObject().matches(otherStatement.getDirectObject())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Compares the pure components of two statements.
      *
      * @param otherStatement

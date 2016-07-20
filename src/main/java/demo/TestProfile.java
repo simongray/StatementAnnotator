@@ -99,12 +99,31 @@ public class TestProfile {
         System.out.println("MATCHING STATEMENTS");
         System.out.println("#######");
 
-        Map<String, Set<Statement>> matchingSubjectStatements = new HashMap<>();
+//        for (Statement otherStatement : secondValues) {
+//            System.out.println("s: " + (otherStatement.getSubject() == null? null : otherStatement.getSubject().getBasicCompound()));
+//            System.out.println("d: " + (otherStatement.getDirectObject() == null? null : otherStatement.getDirectObject().getBasicCompound()));
+//            System.out.println("i: " + (otherStatement.getIndirectObject() == null? null : otherStatement.getIndirectObject().getBasicCompound()));
+//        }
+
+
+//        for (Statement statement : firstValues) {
+//            for (Statement otherStatement : secondValues) {
+//                if (statement.matches(otherStatement)) {
+//                    System.out.println(statement + " matches " + otherStatement);
+//                }
+//            }
+//        }
+
+        System.out.println();
+        System.out.println();
+        System.out.println("MATCHING TOPICS");
+        System.out.println("#######");
+
 
         for (Statement statement : firstValues) {
             for (Statement otherStatement : secondValues) {
-                if (statement.matches(otherStatement)) {
-                    System.out.println(statement + " matches " + otherStatement);
+                if (statement.matchesTopic(otherStatement)) {
+                    System.out.println(statement + " matches topic of " + otherStatement);
                 }
             }
         }
