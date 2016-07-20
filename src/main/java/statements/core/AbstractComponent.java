@@ -372,7 +372,10 @@ public abstract class AbstractComponent implements StatementComponent {
     public boolean matches(StatementComponent otherComponent) {
         if (otherComponent instanceof AbstractComponent && getClass().equals(otherComponent.getClass())) {
             AbstractComponent abstractOtherComponent = (AbstractComponent) otherComponent;
-            if (matchesBasicCompound(abstractOtherComponent) && matchesNegation(abstractOtherComponent)) return true;
+            if (matchesBasicCompound(abstractOtherComponent) && matchesNegation(abstractOtherComponent)) {
+                System.out.println(this + " matches component " + abstractOtherComponent);
+                return true;
+            }
         }
 
         return false;
