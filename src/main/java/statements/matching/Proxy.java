@@ -8,6 +8,7 @@ import java.util.Set;
 public class Proxy {
     private final Class type;
     private final Set<String> words;
+    private final Pattern pattern;
 
     /**
      * Standard private proxy constructor.
@@ -18,6 +19,7 @@ public class Proxy {
      */
     private Proxy(Class type, String... words) {
         this.type = type;
+        this.pattern = null;
 
         if (words.length > 0) {
             this.words = new HashSet<>();
@@ -25,6 +27,18 @@ public class Proxy {
         } else {
             this.words = null;
         }
+    }
+
+    /**
+     * Constructor used for embedded statements.
+     * Use the factory function below.
+     *
+     * @param proxies the embedded statement components to emulate
+     */
+    private Proxy(Proxy... proxies) {
+        this.type = Statement.class;
+        this.words = null;
+        this.pattern = new Pattern(proxies);
     }
 
     public static Proxy Subject(String... words) {
@@ -43,6 +57,10 @@ public class Proxy {
         return new Proxy(IndirectObject.class, words);
     }
 
+    public static Proxy Statement(Proxy... proxies) {
+        return new Proxy(proxies);
+    }
+
     /**
      * Matches the statement if all conditions are met.
      * Examples of conditions:
@@ -53,6 +71,23 @@ public class Proxy {
      * @return true if proxy matches component in statement
      */
     public boolean matches(Statement statement) {
+        if (type.equals(Statement.class)) {
+            return matchesStatement(statement);
+        } else {
+            return matchesComponent(statement);
+        }
+    }
+
+    private boolean matchesStatement(Statement statement) {
+        if (statement.getEmbeddedStatement() != null) {
+            return pattern.matches(statement.getEmbeddedStatement());
+        }
+
+        return false;
+    }
+
+    // TODO: really should only be making a single run through components, not one for every proxy!
+    private boolean matchesComponent(Statement statement) {
         for (StatementComponent component : statement.getComponents()) {
             if (type.equals(component.getClass())) {
                 if (words == null) {

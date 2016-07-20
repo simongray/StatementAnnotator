@@ -2,22 +2,33 @@ package statements.matching;
 
 
 import statements.core.Statement;
-import statements.core.StatementComponent;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class Pattern {
-    private final Statement statement;
     private final Set<Proxy> proxies;
+    private final boolean strict;
 
-    public Pattern(Statement statement) {
-        this.statement = statement;
-        this.proxies = null;
+    /**
+     * Non-strict evaluation (= other components are allowed).
+     *
+     * @param proxies
+     */
+    public Pattern(Proxy... proxies) {
+        this.strict = false;
+        this.proxies = new HashSet<>();
+        for (Proxy proxy : proxies) this.proxies.add(proxy);
     }
 
-    public Pattern(Proxy... proxies) {
-        this.statement = null;
+    /**
+     * Strict evaluation (= only the stated components are allowed).
+     *
+     * @param strict
+     * @param proxies
+     */
+    public Pattern(boolean strict, Proxy... proxies) {
+        this.strict = true;
         this.proxies = new HashSet<>();
         for (Proxy proxy : proxies) this.proxies.add(proxy);
     }
@@ -29,6 +40,8 @@ public class Pattern {
      * @return true if statement matches pattern
      */
     public boolean matches(Statement statement) {
+        if (strict && statement.getComponents().size() != proxies.size()) return false;
+
         if (proxies != null) {
             int matchCount = 0;
 
@@ -37,29 +50,6 @@ public class Pattern {
             }
 
             if (matchCount == proxies.size()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public Set<StatementComponent> getMatchingComponents(Statement statement) {
-        Set<StatementComponent> matchingComponents = new HashSet<>();
-
-        for (Proxy proxy : proxies) {
-            matchingComponents.addAll(proxy.getMatchingComponents(statement));
-        }
-
-        return matchingComponents;
-    }
-
-    public boolean test(Statement otherStatement) {
-        if (statement.getSubject() != null && otherStatement.getSubject() != null) {
-            String statementString = statement.getSubject().getNormalCompound();
-            String otherStatementString = otherStatement.getSubject().getNormalCompound();
-
-            if (statementString.equals(otherStatementString)) {
                 return true;
             }
         }
