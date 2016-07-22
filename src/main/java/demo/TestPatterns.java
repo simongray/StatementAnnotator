@@ -28,6 +28,7 @@ public class TestPatterns {
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
         String content = RedditCommentProcessor.readFile("src/main/java/demo/data/data.json", Charset.defaultCharset());
+//        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/mark_comment_history.json", Charset.defaultCharset());
         JSONArray firstUserJsonArray = new JSONArray(content);
 
 
