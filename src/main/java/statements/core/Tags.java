@@ -125,6 +125,14 @@ public class Tags {
         INTERJECTIONS.add(UH);
     }
 
+    public static final Set<String> LEXICAL_WORDS = new HashSet<>();
+    static {
+        LEXICAL_WORDS.addAll(VERBS);
+        LEXICAL_WORDS.addAll(NOUNS);
+        LEXICAL_WORDS.addAll(ADJECTIVES);
+        LEXICAL_WORDS.addAll(ADVERBS);
+    }
+
     /**
      * Reduce a set of words based on their part-of-speech tags.
      *

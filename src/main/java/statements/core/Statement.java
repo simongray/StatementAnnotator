@@ -3,6 +3,7 @@ package statements.core;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +20,7 @@ public class Statement implements StatementComponent {
     private Statement embeddedStatement;
     private Set<AbstractComponent> pureComponents;
     private Set<IndexedWord> governors;
+    private static DecimalFormat df = new DecimalFormat("#.##");
 
     @Override
     public boolean equals(Object object) {
@@ -266,11 +268,9 @@ public class Statement implements StatementComponent {
     public String toString() {
         return "{" +
             (getLabels().isEmpty()? "" : String.join("/", getLabels()) + "/") +
-//            getClass().getSimpleName() +
             getSummary() +
             ": \"" + getSentence() + "\"" +
-            ", gaps: " + gaps() +  // TODO: remove after done debugging
-            (count() > 1? ", components: " + count() : "") +
+            ", density: " + df.format(getLexicalDensity()) +  // TODO: remove after done debugging
         "}";
     }
 
@@ -488,5 +488,21 @@ public class Statement implements StatementComponent {
         Set<StatementComponent> matchingComponents = getMatchingPureComponents(otherStatement);
         if (matchesEmbeddedStatement(otherStatement) && otherStatement.getEmbeddedStatement() != null) matchingComponents.add(otherStatement.getEmbeddedStatement());
         return matchingComponents;
+    }
+
+    /**
+     * Computes the lexical density of the words in the statement.
+     * Based on the definitions found on: http://www.sltinfo.com/lexical-density/
+     * @return the lexical density of the statement
+     */
+    public double getLexicalDensity() {
+        double lexicalWords = 0;
+        Set<IndexedWord> words = getWords();
+
+        for (IndexedWord word : words) {
+            if (Tags.LEXICAL_WORDS.contains(word.tag())) lexicalWords++;
+        }
+
+        return lexicalWords / (double) words.size();
     }
 }
