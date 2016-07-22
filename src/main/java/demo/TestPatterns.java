@@ -76,7 +76,7 @@ public class TestPatterns {
         Pattern thinkPattern = new Pattern(
                 true,
                 Proxy.Subject("I", "we"),
-                Proxy.Verb("think", "know", "believe", "imagine", "guess", "consider", "reckon", "suppose"),
+                Proxy.Verb("think", "feel", "know", "believe", "imagine", "guess", "consider", "reckon", "suppose"),
                 Proxy.Statement()
         );
 
