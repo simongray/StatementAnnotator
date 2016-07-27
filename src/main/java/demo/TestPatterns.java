@@ -60,38 +60,36 @@ public class TestPatterns {
 
         WordnetDictionary dict = new WordnetDictionary();
 
-//        Pattern pattern = new Pattern(Proxy.Subject("I"), Proxy.IndirectObject());
-//        Pattern bePattern = new Pattern(
-//                Proxy.Subject("I", "we"),
-//                Proxy.Verb("be", "become"),
-//                Proxy.DirectObject()
-//        );
-//        Pattern locationPattern = new Pattern(
-//                Proxy.Subject("I", "we"),
-//                Proxy.Verb("come", "be", "live", "go", "move"),
-//                Proxy.IndirectObject()
-//        );
-//        Pattern likeHatePattern = new Pattern(
-//                Proxy.Subject("I", "we"),
-//                Proxy.Verb("like", "love", "enjoy", "prefer", "want", "sure", "hate", "dislike")
-//        );
+        Pattern bePattern = new Pattern(
+                Proxy.Subject("I", "we"),
+                Proxy.Verb(dict.getSynonyms(POS.VERB, "be", "become")),
+                Proxy.DirectObject()
+        );
+        Pattern locationPattern = new Pattern(
+                Proxy.Subject("I", "we"),
+                Proxy.Verb(dict.getSynonyms(POS.VERB, "be", "come", "go", "move", "live", "travel")),
+                Proxy.IndirectObject()
+        );
+        Pattern likeHatePattern = new Pattern(
+                Proxy.Subject("I", "we"),
+                Proxy.Verb(dict.getSynonyms(POS.VERB, "like", "love", "enjoy", "prefer", "want", "sure", "hate", "dislike"))
+        );
         Pattern thinkPattern = new Pattern(
-                true,
                 Proxy.Subject("I", "we"),
                 Proxy.Verb(dict.getSynonyms(POS.VERB, "think", "reckon", "believe")),
                 Proxy.Statement()
         );
 
         for (Statement statement : allStatements) {
-//            if (bePattern.matches(statement)) {
-//                System.out.println("be: " + statement);
-//            }
-//            if (locationPattern.matches(statement)) {
-//                System.out.println("come: " + statement);
-//            }
-//            if (likeHatePattern.matches(statement)) {
-//                System.out.println("like: " + statement);
-//            }
+            if (bePattern.matches(statement)) {
+                System.out.println("be: " + statement);
+            }
+            if (locationPattern.matches(statement)) {
+                System.out.println("come: " + statement);
+            }
+            if (likeHatePattern.matches(statement)) {
+                System.out.println("like: " + statement);
+            }
             if (thinkPattern.matches(statement)) {
                 System.out.println("think: " + statement);
             }
