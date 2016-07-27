@@ -51,5 +51,14 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Gradle: edu.mit.jwi_2.4.0">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/wordnet/edu.mit.jwi_2.4.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
