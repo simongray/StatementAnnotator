@@ -8,7 +8,9 @@ import edu.mit.jwi.item.IWordID;
 import edu.mit.jwi.item.POS;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -16,6 +18,7 @@ import java.util.Set;
  */
 public class WordnetDictionary {
     IDictionary dict;
+    Map<String, Set<String>> history = new HashMap<>();  // for lazy-loading
 
     public WordnetDictionary() throws IOException {
         String path = "wordnet/dict/";
@@ -34,19 +37,26 @@ public class WordnetDictionary {
      * @return the synonyms, including the original word
      */
     public Set<String> getSynonyms(String word, POS pos) {
-        word = word.replaceAll(" ", "_");
-        IIndexWord indexWord = dict.getIndexWord(word, pos);
-        Set<String> synonyms = new HashSet<>();
+        if (history.containsKey(word)) {
+            return history.get(word);
+        } else {
+            word = word.replaceAll(" ", "_");
+            IIndexWord indexWord = dict.getIndexWord(word, pos);
+            Set<String> synonyms = new HashSet<>();
 
-        for (IWordID wordID : indexWord.getWordIDs()) {
-            IWord entry = dict.getWord(wordID);
-            synonyms.add(entry.getLemma().replaceAll("_", " "));
+            for (IWordID wordID : indexWord.getWordIDs()) {
+                IWord entry = dict.getWord(wordID);
+                synonyms.add(entry.getLemma().replaceAll("_", " "));
 
-            for (IWord iWord : entry.getSynset().getWords()) {
-                synonyms.add(iWord.getLemma().replaceAll("_", " "));
+                for (IWord iWord : entry.getSynset().getWords()) {
+                    synonyms.add(iWord.getLemma().replaceAll("_", " "));
+                }
             }
-        }
 
-        return synonyms;
+            // save to history
+            history.put(word, synonyms);
+
+            return synonyms;
+        }
     }
 }

@@ -29,6 +29,12 @@ public class Proxy {
         }
     }
 
+    private Proxy(Class type, Set<String> words) {
+        this.type = type;
+        this.pattern = null;
+        this.words = words;
+    }
+
     /**
      * Constructor used for embedded statements.
      * Use the factory function below.
@@ -56,6 +62,23 @@ public class Proxy {
     public static Proxy IndirectObject(String... words) {
         return new Proxy(IndirectObject.class, words);
     }
+
+    public static Proxy Subject(Set<String> words) {
+        return new Proxy(Subject.class, words);
+    }
+
+    public static Proxy Verb(Set<String> words) {
+        return new Proxy(Verb.class, words);
+    }
+
+    public static Proxy DirectObject(Set<String> words) {
+        return new Proxy(DirectObject.class, words);
+    }
+
+    public static Proxy IndirectObject(Set<String> words) {
+        return new Proxy(IndirectObject.class, words);
+    }
+
 
     public static Proxy Statement(Proxy... proxies) {
         return new Proxy(proxies);

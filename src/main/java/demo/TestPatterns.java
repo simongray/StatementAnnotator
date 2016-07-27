@@ -1,6 +1,7 @@
 package demo;
 
 
+import edu.mit.jwi.item.POS;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
@@ -12,6 +13,7 @@ import statements.annotations.StatementsAnnotation;
 import statements.core.*;
 import statements.matching.Pattern;
 import statements.matching.Proxy;
+import statements.matching.WordnetDictionary;
 import statements.profile.Profile;
 
 import java.io.IOException;
@@ -58,6 +60,8 @@ public class TestPatterns {
         System.out.println("MATCHING STATEMENTS");
         System.out.println("#######");
 
+        WordnetDictionary dict = new WordnetDictionary();
+
 //        Pattern pattern = new Pattern(Proxy.Subject("I"), Proxy.IndirectObject());
 //        Pattern bePattern = new Pattern(
 //                Proxy.Subject("I", "we"),
@@ -76,7 +80,7 @@ public class TestPatterns {
         Pattern thinkPattern = new Pattern(
                 true,
                 Proxy.Subject("I", "we"),
-                Proxy.Verb("think", "feel", "know", "believe", "imagine", "guess", "consider", "reckon", "suppose"),
+                Proxy.Verb(dict.getSynonyms("think", POS.VERB)),
                 Proxy.Statement()
         );
 
