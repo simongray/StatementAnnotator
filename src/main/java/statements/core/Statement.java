@@ -2,6 +2,7 @@ package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
+import edu.stanford.nlp.util.CoreMap;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class Statement implements StatementComponent {
     private Set<AbstractComponent> pureComponents;
     private Set<IndexedWord> governors;
     private static DecimalFormat df = new DecimalFormat("#.##");
+    private CoreMap origin;
 
     @Override
     public boolean equals(Object object) {
@@ -33,6 +35,14 @@ public class Statement implements StatementComponent {
         }
 
         return false;
+    }
+    
+    public CoreMap getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(CoreMap origin) {
+        this.origin = origin;
     }
 
     public Statement getEmbeddedStatement() {

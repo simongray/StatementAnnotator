@@ -40,7 +40,15 @@ public class StatementFinder {
         components = reduceToNonOverlappingComponents(components);
 
         // link components to produce statements
-        return link(graph, components);
+        Set<Statement> statements = link(graph, components);
+
+        // annotate with origin
+        // TODO: better way to do this?
+        for (Statement statement : statements) {
+            statement.setOrigin(sentence);
+        }
+
+        return statements;
     }
 
     /**
