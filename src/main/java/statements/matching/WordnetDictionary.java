@@ -40,20 +40,27 @@ public class WordnetDictionary {
         if (history.containsKey(word)) {
             return history.get(word);
         } else {
+            // the entry word is always itself part of the synonyms
+            Set<String> synonyms = new HashSet<>();
+            synonyms.add(word);
+
+            // make sure that multi-word entries are in the Wordnet format
             word = word.replaceAll(" ", "_");
             IIndexWord indexWord = dict.getIndexWord(word, pos);
-            Set<String> synonyms = new HashSet<>();
 
-            for (IWordID wordID : indexWord.getWordIDs()) {
-                IWord entry = dict.getWord(wordID);
-                synonyms.add(entry.getLemma().replaceAll("_", " "));
+            // find every possible synonym in the dictionary
+            if (indexWord != null) {
+                for (IWordID wordID : indexWord.getWordIDs()) {
+                    IWord entry = dict.getWord(wordID);
+                    synonyms.add(entry.getLemma().replaceAll("_", " "));
 
-                for (IWord iWord : entry.getSynset().getWords()) {
-                    synonyms.add(iWord.getLemma().replaceAll("_", " "));
+                    for (IWord iWord : entry.getSynset().getWords()) {
+                        synonyms.add(iWord.getLemma().replaceAll("_", " "));
+                    }
                 }
             }
 
-            // save to history
+            // save to memory for faster retrieval second time around
             history.put(word, synonyms);
 
             return synonyms;
