@@ -1,43 +1,50 @@
 package statements.profile;
 
-
-import edu.stanford.nlp.util.CoreMap;
-import it.uniroma1.lcl.adw.ADW;
-import it.uniroma1.lcl.adw.DisambiguationMethod;
-import it.uniroma1.lcl.adw.ItemType;
-import it.uniroma1.lcl.adw.comparison.SignatureComparison;
-import it.uniroma1.lcl.adw.comparison.WeightedOverlap;
-import statements.matching.AdwComparison;
+import edu.mit.jwi.item.POS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import statements.core.*;
+import statements.matching.Pattern;
+import statements.matching.Proxy;
+import statements.matching.WordnetDictionary;
 
+import java.io.IOException;
 import java.util.*;
 
 public class Profile {
-    private final ADW adw;
-    private final DisambiguationMethod disMethod;
-    private final SignatureComparison measure;
-    private final Set<String> opinionVerbs;
-    private final AdwComparison adwComparison;
-    Map<CoreMap, Set<Statement>> statements;
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    Set<Statement> statements;
+    WordnetDictionary dict;
 
-    public Profile(Map<CoreMap, Set<Statement>> statements) {
-        this.adw = new ADW();
+    public Profile(Set<Statement> statements) throws IOException {
+        this.dict = new WordnetDictionary();
         this.statements = statements;
 
-        this.adwComparison = new AdwComparison();
+        // unpack embedded statements according to a pattern
+        // the original statements are replaced with the embedded statements based on the pattern
+        Set<Statement> packedStatements = new HashSet<>();
+        Set<Statement> unpackedStatements = new HashSet<>();
 
-        //if lexical items has to be disambiguated
-        this.disMethod = DisambiguationMethod.ALIGNMENT_BASED;
+        Pattern thinkPattern = new Pattern(
+                Proxy.Subject("I", "we"),
+                Proxy.Verb(dict.getSynonyms(POS.VERB, "think", "reckon", "believe")),
+                Proxy.Statement()
+        );
 
-        //measure for comparing semantic signatures
-        this.measure = new WeightedOverlap();
+        for (Statement statement : statements) {
+            if (thinkPattern.matches(statement)) {
+                unpackedStatements.add(statement.getEmbeddedStatement());
+                packedStatements.add(statement);
+            }
+        }
 
-        this.opinionVerbs = new HashSet<>();
-        opinionVerbs.add("like#v");
-        opinionVerbs.add("love#v");
-        opinionVerbs.add("prefer#v");
-        opinionVerbs.add("hate#v");
-        opinionVerbs.add("dislike#v");
+        statements.addAll(unpackedStatements);
+        statements.removeAll(packedStatements);
+        logger.info("unpacked " + packedStatements.size() + " statements");
+    }
+
+    public Set<Statement> getStatements() {
+        return statements;
     }
 }
