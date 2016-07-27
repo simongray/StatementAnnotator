@@ -7,14 +7,12 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 import org.json.JSONArray;
-import reddit.MarkdownStripper;
 import reddit.RedditCommentProcessor;
 import statements.annotations.StatementsAnnotation;
 import statements.core.*;
 import statements.matching.Pattern;
 import statements.matching.Proxy;
 import statements.matching.WordnetDictionary;
-import statements.profile.Profile;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -80,7 +78,7 @@ public class TestPatterns {
         Pattern thinkPattern = new Pattern(
                 true,
                 Proxy.Subject("I", "we"),
-                Proxy.Verb(dict.getSynonyms("think", POS.VERB)),
+                Proxy.Verb(dict.getSynonyms(POS.VERB, "think", "reckon", "believe")),
                 Proxy.Statement()
         );
 
