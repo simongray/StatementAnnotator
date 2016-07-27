@@ -20,11 +20,23 @@ public class TestWordnet {
         dict.open();
 
         // look up first sense of the word "dog"
-        IIndexWord idxWord = dict.getIndexWord("dog", POS.NOUN);
+//        IIndexWord idxWord = dict.getIndexWord("dog", POS.NOUN);
+//        IWordID wordID = idxWord.getWordIDs().get(0);
+//        IWord word = dict.getWord(wordID);
+//        System.out.println("Id = " + wordID);
+//        System.out.println("Lemma = " + word.getLemma());
+//        System.out.println("Gloss = " + word.getSynset().getGloss());
+
+
+        IIndexWord idxWord = dict.getIndexWord("think", POS.VERB);
         IWordID wordID = idxWord.getWordIDs().get(0);
         IWord word = dict.getWord(wordID);
         System.out.println("Id = " + wordID);
         System.out.println("Lemma = " + word.getLemma());
         System.out.println("Gloss = " + word.getSynset().getGloss());
+
+        for (IWord iWord : word.getSynset().getWords()) {
+            System.out.println(iWord.getLemma());
+        }
     }
 }
