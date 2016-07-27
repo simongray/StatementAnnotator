@@ -16,6 +16,11 @@ public class Profile {
 
     Set<Statement> statements;
     WordnetDictionary dict;
+    Set<String> subjectWords = new HashSet<>();
+    Set<String> verbWords = new HashSet<>();
+    Set<String> directObjectWords = new HashSet<>();
+    Set<String> indirectObjectWords = new HashSet<>();
+    Set<String> componentWords = new HashSet<>();
 
     public Profile(Set<Statement> statements) throws IOException {
         this.dict = new WordnetDictionary();
@@ -42,9 +47,37 @@ public class Profile {
         statements.addAll(unpackedStatements);
         statements.removeAll(packedStatements);
         logger.info("unpacked " + packedStatements.size() + " statements");
+
+        // register all of the words of the statements
+        for (Statement statement : statements) {
+            for (StatementComponent component : statement.getComponents()) {
+                if (component instanceof AbstractComponent) {
+                    AbstractComponent abstractComponent = (AbstractComponent) component;
+                    if (component instanceof Subject) subjectWords.add(abstractComponent.getBasicCompound());
+                    if (component instanceof Verb) verbWords.add(abstractComponent.getBasicCompound());
+                    if (component instanceof DirectObject) directObjectWords.add(abstractComponent.getBasicCompound());
+                    if (component instanceof IndirectObject) indirectObjectWords.add(abstractComponent.getBasicCompound());
+                }
+            }
+        }
+
+        componentWords.addAll(subjectWords);
+        componentWords.addAll(verbWords);
+        componentWords.addAll(directObjectWords);
+        componentWords.addAll(indirectObjectWords);
     }
 
     public Set<Statement> getStatements() {
         return statements;
+    }
+
+    public Set<String> getComponentWords() {
+        return componentWords;
+    }
+
+    public Set<String> getSharedComponentWords(Profile otherProfile) {
+        Set<String> sharedComponentWords = new HashSet<>(getComponentWords());
+        sharedComponentWords.retainAll(otherProfile.getComponentWords());
+        return sharedComponentWords;
     }
 }
