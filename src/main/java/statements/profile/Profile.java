@@ -20,7 +20,7 @@ public class Profile {
     Set<String> verbWords = new HashSet<>();
     Set<String> directObjectWords = new HashSet<>();
     Set<String> indirectObjectWords = new HashSet<>();
-    Set<String> componentWords = new HashSet<>();
+    Set<String> topics = new HashSet<>();
 
     public Profile(Set<Statement> statements) throws IOException {
         this.dict = new WordnetDictionary();
@@ -28,6 +28,17 @@ public class Profile {
 
         // unpack embedded statements according to a pattern
         // the original statements are replaced with the embedded statements based on the pattern
+        unpackStatements();
+
+        // store the topic keywords of all interesting statements
+        // used to rank statements in relation to other users
+        registerTopics();
+    }
+
+    /**
+     * Unpack statements according to certain patterns to replace them with their embedded statements.
+     */
+    private void unpackStatements() {
         Set<Statement> packedStatements = new HashSet<>();
         Set<Statement> unpackedStatements = new HashSet<>();
 
@@ -47,37 +58,65 @@ public class Profile {
         statements.addAll(unpackedStatements);
         statements.removeAll(packedStatements);
         logger.info("unpacked " + packedStatements.size() + " statements");
+    }
 
+    /**
+     * Store the topic keywords of all of the interesting statements.
+     */
+    private void registerTopics() {
         // register all of the words of the statements
         for (Statement statement : statements) {
             for (StatementComponent component : statement.getComponents()) {
                 if (component instanceof AbstractComponent) {
                     AbstractComponent abstractComponent = (AbstractComponent) component;
                     if (component instanceof Subject) subjectWords.add(abstractComponent.getBasicCompound());
-                    if (component instanceof Verb) verbWords.add(abstractComponent.getBasicCompound());
+                    // TODO: use verbs (excluding most common ones)?
+//                    if (component instanceof Verb) verbWords.add(abstractComponent.getBasicCompound());
                     if (component instanceof DirectObject) directObjectWords.add(abstractComponent.getBasicCompound());
                     if (component instanceof IndirectObject) indirectObjectWords.add(abstractComponent.getBasicCompound());
                 }
             }
         }
 
-        componentWords.addAll(subjectWords);
-        componentWords.addAll(verbWords);
-        componentWords.addAll(directObjectWords);
-        componentWords.addAll(indirectObjectWords);
+        topics.addAll(subjectWords);
+        topics.addAll(verbWords);
+        topics.addAll(directObjectWords);
+        topics.addAll(indirectObjectWords);
+    }
+
+    /**
+     * Get the statements that evaluate as interesting according to their own internal measure.
+     *
+     * @return interesting statements
+     */
+    public Set<Statement> getInterestingStatements() {
+        Set<Statement> interestingStatements = new HashSet<>();
+
+        for (Statement statement : getStatements()) {
+            if (statement.isInteresting()) interestingStatements.add(statement);
+        }
+
+        return interestingStatements;
+    }
+
+    /**
+     * Returns the topics that are shared between two profiles.
+     * Useful for adjusting the ranking of statements.
+     *
+     * @param otherProfile the other profile to compare topics with
+     * @return the topics found in both profiles
+     */
+    public Set<String> findSharedTopics(Profile otherProfile) {
+        Set<String> sharedTopics = new HashSet<>(getTopics());
+        sharedTopics.retainAll(otherProfile.getTopics());
+        return sharedTopics;
     }
 
     public Set<Statement> getStatements() {
         return statements;
     }
 
-    public Set<String> getComponentWords() {
-        return componentWords;
-    }
-
-    public Set<String> getSharedComponentWords(Profile otherProfile) {
-        Set<String> sharedComponentWords = new HashSet<>(getComponentWords());
-        sharedComponentWords.retainAll(otherProfile.getComponentWords());
-        return sharedComponentWords;
+    public Set<String> getTopics() {
+        return topics;
     }
 }

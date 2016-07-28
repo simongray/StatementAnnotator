@@ -6,12 +6,9 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 import org.json.JSONArray;
-import reddit.MarkdownStripper;
 import reddit.RedditCommentProcessor;
 import statements.annotations.StatementsAnnotation;
 import statements.core.Statement;
-import statements.core.StatementUtils;
-import statements.matching.Pattern;
 import statements.profile.Profile;
 
 import java.io.IOException;
@@ -74,6 +71,6 @@ public class TestProfile {
         Profile secondProfile = new Profile(secondStatements);
         System.out.println(firstProfile.getStatements().size() + " statements in first profile");
         System.out.println(secondProfile.getStatements().size() + " statements in second profile");
-        System.out.println("shared: " + firstProfile.getSharedComponentWords(secondProfile));
+        System.out.println("shared: " + firstProfile.findSharedTopics(secondProfile));
     }
 }

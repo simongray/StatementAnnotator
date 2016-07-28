@@ -3,7 +3,7 @@ package statements.core;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SpecialWords {
+public class Lexicon {
     // ref: https://learnenglish.britishcouncil.org/en/english-grammar/determiners-and-quantifiers
     public static final Set<String> POSSESSIVES = new HashSet<>();
     static {
@@ -52,24 +52,29 @@ public class SpecialWords {
         GENERAL_DETERMINERS.add("what");
     }
 
+    /**
+     * This set of nouns comprises second and third person pronouns, but not first person.
+     * It also adds other words that do not carry any information without context.
+     */
     public static Set<String> uninterestingNouns = new HashSet<>();
     static {
+        uninterestingNouns.add("you");
+        uninterestingNouns.add("he");
+        uninterestingNouns.add("she");
         uninterestingNouns.add("it");
         uninterestingNouns.add("they");
+        uninterestingNouns.add("him");
+        uninterestingNouns.add("her");
         uninterestingNouns.add("them");
         uninterestingNouns.add("this");
         uninterestingNouns.add("that");
-        uninterestingNouns.add("he");
-        uninterestingNouns.add("she");
-        uninterestingNouns.add("her");
-        uninterestingNouns.add("him");
-        uninterestingNouns.add("you");
+        uninterestingNouns.add("these");
+        uninterestingNouns.add("those");
         uninterestingNouns.add("here");
         uninterestingNouns.add("there");
         uninterestingNouns.add("who");
         uninterestingNouns.add("what");
         uninterestingNouns.add("which");
-        uninterestingNouns.add("those");
         uninterestingNouns.add("all");
         uninterestingNouns.add("thing");
         uninterestingNouns.add("one");

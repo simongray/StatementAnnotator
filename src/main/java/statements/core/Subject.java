@@ -29,7 +29,7 @@ public class Subject extends AbstractComponent {
      */
     @Override
     public boolean isInteresting() {
-        if (SpecialWords.uninterestingNouns.contains(getBasicCompound())) {
+        if (Lexicon.uninterestingNouns.contains(getBasicCompound())) {
             return false;
         }
 

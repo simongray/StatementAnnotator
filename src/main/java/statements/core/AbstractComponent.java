@@ -298,7 +298,7 @@ public abstract class AbstractComponent implements StatementComponent {
      * @return true if specific
      */
     public boolean isSpecific() {
-        return SpecialWords.SPECIFIC_DETERMINERS.contains(determiners.iterator().next().word().toLowerCase());
+        return Lexicon.SPECIFIC_DETERMINERS.contains(determiners.iterator().next().word().toLowerCase());
     }
 
     /**
