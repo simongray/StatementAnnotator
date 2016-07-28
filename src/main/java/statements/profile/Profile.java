@@ -112,11 +112,38 @@ public class Profile {
         return sharedTopics;
     }
 
+    public List<Statement> getStatementsByLexicalDensity() {
+        List<Statement> rankedStatements = new ArrayList<>(getInterestingStatements());
+        rankedStatements.sort(new LexicalDensityComparator());
+        return rankedStatements;
+    }
+
     public Set<Statement> getStatements() {
         return statements;
     }
 
     public Set<String> getTopics() {
         return topics;
+    }
+
+    /**
+     * Used to sort Statements by lexical density.
+     */
+    public static class LexicalDensityComparator implements Comparator<Statement> {
+        @Override
+        public int compare(Statement x, Statement y) {
+            double xn = x.getLexicalDensity();
+            double yn = y.getLexicalDensity();
+
+            if (xn == yn) {
+                return 0;
+            } else {
+                if (xn > yn) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        }
     }
 }
