@@ -118,6 +118,12 @@ public class Profile {
         return rankedStatements;
     }
 
+    public List<Statement> getStatementsByQuality() {
+        List<Statement> rankedStatements = new ArrayList<>(getInterestingStatements());
+        rankedStatements.sort(new QualityComparator());
+        return rankedStatements;
+    }
+
     public Set<Statement> getStatements() {
         return statements;
     }
@@ -134,6 +140,28 @@ public class Profile {
         public int compare(Statement x, Statement y) {
             double xn = x.getLexicalDensity();
             double yn = y.getLexicalDensity();
+
+            if (xn == yn) {
+                return 0;
+            } else {
+                if (xn > yn) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Used to sort Statements by quality.
+     */
+    public static class QualityComparator implements Comparator<Statement> {
+        @Override
+        public int compare(Statement x, Statement y) {
+            double xn = x.getQuality();
+            double yn = y.getQuality();
 
             if (xn == yn) {
                 return 0;

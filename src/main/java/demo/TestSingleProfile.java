@@ -56,8 +56,12 @@ public class TestSingleProfile {
         Profile firstProfile = new Profile(firstStatements);
         System.out.println(firstProfile.getStatements().size() + " statements in first profile");
         System.out.println(firstProfile.getInterestingStatements().size() + " interesting statements in first profile");
-        for (Statement statement : firstProfile.getStatementsByLexicalDensity()) {
-            System.out.println(statement);
+        List<Statement> statementsByLexicalDensity = firstProfile.getStatementsByLexicalDensity();
+        List<Statement> statementsByQuality = firstProfile.getStatementsByQuality();
+        for (int i = 0; i < statementsByLexicalDensity.size(); i++) {
+            System.out.println("quality: " + statementsByQuality.get(i));
+            System.out.println("density: " + statementsByLexicalDensity.get(i));
+            System.out.println();
         }
     }
 }

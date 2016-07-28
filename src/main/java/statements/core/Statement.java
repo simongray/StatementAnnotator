@@ -1,7 +1,6 @@
 package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
-import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.util.CoreMap;
 
 import java.text.DecimalFormat;
@@ -431,6 +430,15 @@ public class Statement implements StatementComponent {
         return true;
     }
 
+    public boolean isGoodSize() {
+        // Using as guide the number 12 found here: http://www.aje.com/en/arc/editing-tip-sentence-length/
+        int preferredSize = 12;
+        int upperLimit = preferredSize + preferredSize/4;
+        int lowerLimit = preferredSize - preferredSize/4;
+
+        return size() < upperLimit && size() > lowerLimit;
+    }
+
     /**
      * A slightly more advanced way of comparing two statements.
      * This method of comparison tries to find statements with the same topic,
@@ -514,5 +522,66 @@ public class Statement implements StatementComponent {
         }
 
         return lexicalWords / (double) words.size();
+    }
+
+    /**
+     * A subjective score used to rank statements.
+     * The baseline used is lexical density, which is then adjusted based on certain heuristics.
+     *
+     * @return quality score
+     */
+    public double getQuality() {
+        double quality = getLexicalDensity();  // baseline
+
+        quality = adjustForWellformedness(quality);
+        quality = adjustForSize(quality);
+
+        return quality;
+    }
+
+    /**
+     * Adjusts the baseline quality score based on the wellformedness of the statement.
+     *
+     * @param quality the score to adjust
+     * @return the adjusted score
+     */
+    private double adjustForWellformedness(double quality) {
+        if (isWellFormed()) {
+            quality += getUpwardsAdjustment(quality);
+        } else {
+            quality -= getDownwardsAdjustment(quality);
+        }
+
+        return quality;
+    }
+
+    /**
+     * Adjusts the baseline quality score based on length of the statement.
+     *
+     * @param quality the score to adjust
+     * @return the adjusted score
+     */
+    private double adjustForSize(double quality) {
+        if (isGoodSize()) {
+            quality += getUpwardsAdjustment(quality);
+        } else {
+            quality -= getDownwardsAdjustment(quality);
+        }
+
+        return quality;
+    }
+
+    private double getAdjustmentMultiplier() {
+        return 0.20;   // TODO: this is an arbitrary value!
+    }
+
+    private double getUpwardsAdjustment(double quality) {
+        double remainder = 1.0 - quality;
+        double adjustment = remainder * getAdjustmentMultiplier();
+        return adjustment;
+    }
+
+    private double getDownwardsAdjustment(double quality) {
+        return quality * getAdjustmentMultiplier();
     }
 }
