@@ -72,5 +72,17 @@ public class TestProfile {
         System.out.println(firstProfile.getStatements().size() + " statements in first profile");
         System.out.println(secondProfile.getStatements().size() + " statements in second profile");
         System.out.println("shared: " + firstProfile.findSharedTopics(secondProfile));
+
+        // create profiles based on statements from both data sets
+        System.out.println(firstProfile.getInterestingStatements().size() + " interesting statements in first profile");
+        List<Statement> statementsByLexicalDensity = firstProfile.getStatementsByLexicalDensity();
+        List<Statement> statementsByQuality = firstProfile.getStatementsByQuality();
+        List<Statement> statementsByRelativeQuality = firstProfile.getStatementsByRelativeQuality(secondProfile);
+        for (int i = 0; i < statementsByLexicalDensity.size(); i++) {
+            System.out.println("r.qual.: " + statementsByRelativeQuality.get(i));
+            System.out.println("quality: " + statementsByQuality.get(i));
+            System.out.println("density: " + statementsByLexicalDensity.get(i));
+            System.out.println();
+        }
     }
 }

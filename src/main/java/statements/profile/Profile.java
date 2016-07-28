@@ -124,12 +124,67 @@ public class Profile {
         return rankedStatements;
     }
 
+    public List<Statement> getStatementsByRelativeQuality(Profile otherProfile) {
+        List<Statement> rankedStatements = new ArrayList<>(getInterestingStatements());
+        rankedStatements.sort(new RelativeQualityComparator(otherProfile));
+        return rankedStatements;
+    }
+
     public Set<Statement> getStatements() {
         return statements;
     }
 
     public Set<String> getTopics() {
         return topics;
+    }
+
+    /**
+     * Returns a quality score relative to the contents of this profile.
+     * It is meant to be used on statements from other profiles.
+     *
+     * @param statement the statement to get the relative quality for
+     * @return the relative quality
+     */
+    public double getRelativeQuality(Statement statement) {
+        double quality = statement.getQuality();
+
+        quality = adjustForSharedTopics(statement, quality);
+
+        return quality;
+    }
+
+    /**
+     * Adjusts the baseline quality score based on it being a shared topic.
+     *
+     * @param quality the score to adjust
+     * @return the adjusted score
+     */
+    private double adjustForSharedTopics(Statement statement, double quality) {
+        if (containsTopics(statement)) {
+            quality += statement.getUpwardsAdjustment(quality);
+        } else {
+            quality -= statement.getDownwardsAdjustment(quality);
+        }
+
+        return quality;
+    }
+
+    /**
+     * Whether or not the statement contains one of the topics of the profile.
+     *
+     * @param statement the statement to check
+     * @return true if the statement contains a topic
+     */
+    private boolean containsTopics(Statement statement) {
+        for (StatementComponent component : statement.getComponents()) {
+            if (component instanceof AbstractComponent) {
+                AbstractComponent abstractComponent = (AbstractComponent) component;
+                String basicCompound = abstractComponent.getBasicCompound();
+                if (getTopics().contains(basicCompound)) return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -157,11 +212,38 @@ public class Profile {
     /**
      * Used to sort Statements by quality.
      */
-    public static class QualityComparator implements Comparator<Statement> {
+    public class QualityComparator implements Comparator<Statement> {
         @Override
         public int compare(Statement x, Statement y) {
             double xn = x.getQuality();
             double yn = y.getQuality();
+
+            if (xn == yn) {
+                return 0;
+            } else {
+                if (xn > yn) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        }
+    }
+
+    /**
+     * Used to sort Statements by quality relative to other profiles.
+     */
+    public class RelativeQualityComparator implements Comparator<Statement> {
+        private final Profile otherProfile;
+
+        public RelativeQualityComparator(Profile otherProfile) {
+            this.otherProfile = otherProfile;
+        }
+
+        @Override
+        public int compare(Statement x, Statement y) {
+            double xn = otherProfile.getRelativeQuality(x);
+            double yn = otherProfile.getRelativeQuality(y);
 
             if (xn == yn) {
                 return 0;

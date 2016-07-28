@@ -575,13 +575,13 @@ public class Statement implements StatementComponent {
         return 0.20;   // TODO: this is an arbitrary value!
     }
 
-    private double getUpwardsAdjustment(double quality) {
+    public double getUpwardsAdjustment(double quality) {
         double remainder = 1.0 - quality;
         double adjustment = remainder * getAdjustmentMultiplier();
         return adjustment;
     }
 
-    private double getDownwardsAdjustment(double quality) {
+    public double getDownwardsAdjustment(double quality) {
         return quality * getAdjustmentMultiplier();
     }
 }
