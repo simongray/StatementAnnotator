@@ -126,7 +126,7 @@ public class Profile {
 
     public List<Statement> getStatementsByRelativeQuality(Profile otherProfile) {
         List<Statement> rankedStatements = new ArrayList<>(getInterestingStatements());
-        rankedStatements.sort(new RelativeQualityComparator(otherProfile));
+        rankedStatements.sort(new RelevanceComparator(otherProfile));
         return rankedStatements;
     }
 
@@ -145,7 +145,7 @@ public class Profile {
      * @param statement the statement to get the relative quality for
      * @return the relative quality
      */
-    public double getRelativeQuality(Statement statement) {
+    public double getRelevance(Statement statement) {
         double quality = statement.getQuality();
 
         quality = adjustForSharedTopics(statement, quality);
@@ -233,17 +233,17 @@ public class Profile {
     /**
      * Used to sort Statements by quality relative to other profiles.
      */
-    public class RelativeQualityComparator implements Comparator<Statement> {
+    public class RelevanceComparator implements Comparator<Statement> {
         private final Profile otherProfile;
 
-        public RelativeQualityComparator(Profile otherProfile) {
+        public RelevanceComparator(Profile otherProfile) {
             this.otherProfile = otherProfile;
         }
 
         @Override
         public int compare(Statement x, Statement y) {
-            double xn = otherProfile.getRelativeQuality(x);
-            double yn = otherProfile.getRelativeQuality(y);
+            double xn = otherProfile.getRelevance(x);
+            double yn = otherProfile.getRelevance(y);
 
             if (xn == yn) {
                 return 0;
