@@ -89,7 +89,7 @@ public abstract class AbstractComponent implements StatementComponent {
         adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, primary, graph);
         nounClauses = StatementUtils.findSpecificDescendants(Relations.ACL, primary, graph);
         nounClauses.addAll(StatementUtils.findSpecificDescendants(Relations.ACL_RELCL, primary, graph));
-        descriptive = StatementUtils.findSpecificDescendants(Relations.NMOD_INCLUDING, primary, graph);
+        descriptive = StatementUtils.findSpecificDescendants(Relations.DESCRIPTIVE_NMOD, primary, graph);
 
         // conjunction are used to loosely "link" separate statements
         conjunction = StatementUtils.findSpecificChildren(Relations.CONJ, primary, graph);

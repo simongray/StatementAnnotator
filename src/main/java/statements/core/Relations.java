@@ -132,5 +132,5 @@ public class Relations {
     }
     public static final String INCLUDING = "including";
     public static final ComplexRelation INDIRECT_OBJECT_NMOD = ComplexRelation.getRelationExcludingSpecifics(NMOD, INCLUDING);
-    public static final ComplexRelation NMOD_INCLUDING = ComplexRelation.getRelationIncludingSpecifics(NMOD, INCLUDING);
+    public static final ComplexRelation DESCRIPTIVE_NMOD = ComplexRelation.getRelationIncludingSpecifics(NMOD, INCLUDING);
 }
