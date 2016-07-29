@@ -17,8 +17,7 @@ public class Subject extends AbstractComponent {
         super(primary, graph);
 
         // nmod relations from nouns are typically descriptive in nature
-        nmod = StatementUtils.findSpecificDescendants(Relations.NMOD, primary, graph);
-        descriptive.addAll(nmod);
+        otherDescriptives.addAll(StatementUtils.findSpecificDescendants(Relations.NMOD, primary, graph));
     }
 
     /**

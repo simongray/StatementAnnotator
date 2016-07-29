@@ -58,7 +58,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> nounClauses;
     protected final Set<IndexedWord> basicCompound;
     protected final Set<IndexedWord> normalCompound;
-    protected final Set<IndexedWord> descriptive;  // used to store descriptive/clausal type content not fitting other categories
+    protected final Set<IndexedWord> otherDescriptives;  // used to store descriptive/clausal type content not fitting other categories
 
     public AbstractComponent(IndexedWord primary, SemanticGraph graph) {
        this(primary, graph, new HashSet<>());
@@ -89,7 +89,7 @@ public abstract class AbstractComponent implements StatementComponent {
         adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, primary, graph);
         nounClauses = StatementUtils.findSpecificDescendants(Relations.ACL, primary, graph);
         nounClauses.addAll(StatementUtils.findSpecificDescendants(Relations.ACL_RELCL, primary, graph));
-        descriptive = StatementUtils.findSpecificDescendants(Relations.DESCRIPTIVE_NMOD, primary, graph);
+        otherDescriptives = StatementUtils.findSpecificDescendants(Relations.DESCRIPTIVE_NMOD, primary, graph);
 
         // conjunction are used to loosely "link" separate statements
         conjunction = StatementUtils.findSpecificChildren(Relations.CONJ, primary, graph);
@@ -249,11 +249,11 @@ public abstract class AbstractComponent implements StatementComponent {
      *
      * @return clauses
      */
-    public Set<IndexedWord> getClauses() {
+    public Set<IndexedWord> getDescriptives() {
         Set<IndexedWord> clauses = new HashSet<>();
         clauses.addAll(getAdverbialClauses());
         clauses.addAll(getNounClauses());
-        clauses.addAll(getDescriptive());
+        clauses.addAll(getOtherDescriptives());
         return clauses;
     }
 
@@ -429,13 +429,13 @@ public abstract class AbstractComponent implements StatementComponent {
         return "{" +
             getClass().getSimpleName() + ": \"" + getString() + "\"" +
             ", gaps: " + gaps() +  // TODO: remove after done debugging
-            (!getClauses().isEmpty()? ", clause: \"" + StatementUtils.join(getClauses()) + "\"" : "") +
+            (!getDescriptives().isEmpty()? ", descriptive: \"" + StatementUtils.join(getDescriptives()) + "\"" : "") +
             (!getLabels().isEmpty()? ", labels: \"" + String.join(", ", getLabels()) + "\"" : "") +
             (!conjunctions.isEmpty()? ", conjunction: \"" + String.join(", ", conjunctions) + "\"" : "") +
         "}";
     }
 
-    public Set<IndexedWord> getDescriptive() {
-        return descriptive;
+    public Set<IndexedWord> getOtherDescriptives() {
+        return otherDescriptives;
     }
 }
