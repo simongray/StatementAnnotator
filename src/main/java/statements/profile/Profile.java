@@ -112,19 +112,35 @@ public class Profile {
         return sharedTopics;
     }
 
+    /**
+     * Returns statements in order of diminishing lexical density.
+     *
+     * @return statements
+     */
     public List<Statement> getStatementsByLexicalDensity() {
         List<Statement> rankedStatements = new ArrayList<>(getInterestingStatements());
         rankedStatements.sort(new LexicalDensityComparator());
         return rankedStatements;
     }
 
+    /**
+     * Returns statements in order of diminishing quality.
+     *
+     * @return statements
+     */
     public List<Statement> getStatementsByQuality() {
         List<Statement> rankedStatements = new ArrayList<>(getInterestingStatements());
         rankedStatements.sort(new QualityComparator());
         return rankedStatements;
     }
 
-    public List<Statement> getStatementsByRelativeQuality(Profile otherProfile) {
+    /**
+     * Returns statements in order of diminishing relevance from the perspective of another profile.
+     *
+     * @param otherProfile the profile to measure relevance against
+     * @return relevant statements
+     */
+    public List<Statement> getStatementsByRelevance(Profile otherProfile) {
         List<Statement> rankedStatements = new ArrayList<>(getInterestingStatements());
         rankedStatements.sort(new RelevanceComparator(otherProfile));
         return rankedStatements;
