@@ -21,6 +21,7 @@ public class TestStatements {
 //        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, gender, ner, parse, depparse, subjectobject, sentiment, sentimenttargets");  // long pipeline
         props.setProperty("annotators", "tokenize, ssplit, pos, depparse, statements");  // short pipeline
         props.setProperty("customAnnotatorClass.statements", "statements.StatementAnnotator");
+        props.setProperty("ssplit.newlineIsSentenceBreak", "always");  // IMPORTANT!!
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
 //        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament... \n" +

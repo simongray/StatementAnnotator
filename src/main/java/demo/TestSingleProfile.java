@@ -28,6 +28,7 @@ public class TestSingleProfile {
         Properties props = new Properties();
         props.setProperty("annotators", "tokenize, ssplit, pos, lemma, depparse, statement");  // short pipeline
         props.setProperty("customAnnotatorClass.statement", "statements.StatementAnnotator");
+        props.setProperty("ssplit.newlineIsSentenceBreak", "always");  // IMPORTANT!!
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
         // load
