@@ -95,13 +95,14 @@ public abstract class AbstractComponent implements StatementComponent {
         conjunction = StatementUtils.findSpecificChildren(Relations.CONJ, primary, graph);
         conjunction.addAll(StatementUtils.findSpecificParents(Relations.CONJ, primary, graph));
 
-        // the stuff that doesn't go into the compound
+        // the stuff that doesn't go directly into the compound
         // used by containing statements to reproduce the statement text
         remaining = new HashSet<>();
         remaining.addAll(negations);
         remaining.addAll(markers);
         remaining.addAll(adverbialClauses);
         remaining.addAll(nounClauses);
+        remaining.addAll(otherDescriptives);
         all = new HashSet<>(compound);
         all.addAll(remaining);
 
@@ -179,7 +180,6 @@ public abstract class AbstractComponent implements StatementComponent {
         return all;
     }
 
-
     /**
      * The remaining words of the component.
      *
@@ -215,7 +215,6 @@ public abstract class AbstractComponent implements StatementComponent {
     public Set<IndexedWord> getCc() {
         return cc;
     }
-
 
     /**
      * All markers.
@@ -429,7 +428,7 @@ public abstract class AbstractComponent implements StatementComponent {
         return "{" +
             getClass().getSimpleName() + ": \"" + getString() + "\"" +
             ", gaps: " + gaps() +  // TODO: remove after done debugging
-            (!getDescriptives().isEmpty()? ", descriptive: \"" + StatementUtils.join(getDescriptives()) + "\"" : "") +
+            (!getDescriptives().isEmpty()? ", description: \"" + StatementUtils.join(getDescriptives()) + "\"" : "") +
             (!getLabels().isEmpty()? ", labels: \"" + String.join(", ", getLabels()) + "\"" : "") +
             (!conjunctions.isEmpty()? ", conjunction: \"" + String.join(", ", conjunctions) + "\"" : "") +
         "}";

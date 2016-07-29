@@ -184,13 +184,13 @@ public class Statement implements StatementComponent {
      * @return compound
      */
     public Set<IndexedWord> getCompound() {
-        Set<IndexedWord> complete = new HashSet<>();
+        Set<IndexedWord> compound = new HashSet<>();
 
         for (StatementComponent component : getComponents()) {
-            complete.addAll(component.getCompound());
+            compound.addAll(component.getCompound());
         }
 
-        return complete;
+        return compound;
     }
 
     /**
@@ -199,13 +199,13 @@ public class Statement implements StatementComponent {
      * @return compound
      */
     public Set<IndexedWord> getRemaining() {
-        Set<IndexedWord> complete = new HashSet<>();
+        Set<IndexedWord> remaining = new HashSet<>();
 
         for (StatementComponent component : getComponents()) {
-            complete.addAll(component.getRemaining());
+            remaining.addAll(component.getRemaining());
         }
 
-        return complete;
+        return remaining;
     }
 
     public Set<IndexedWord> getWords() {
