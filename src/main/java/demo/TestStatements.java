@@ -31,8 +31,9 @@ public class TestStatements {
 //        "They are smartphone-connected and always on, except when we're out during weekdays. The app allows you to check the latest PM2.5 index inside your flat and automate the purifiers. " +
 //        "If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too. I sure was (I come from Copenhagen, Denmark). ";
 
-
-
+//        String example = "The Danish equivalent of Andersson is Andersen and the first name Anders is, though not quite as much recently, fairly popular.";
+//        String example = "Even today the most viewed shows are often found on the national broadcasters channels and many people don't have more than a couple of alternatives to those (of course with streaming etc this is changing very fast).";
+//        String example = "Even today the most viewed shows are often found on the national broadcasters channels and many people don't have more than a couple of alternatives to those (of course with streaming etc this is changing very fast).";
 
         // TODO: not quite right, mostly due to parsing
 //        String example = "Well, a country can be both Western and Southern in geographical terms, they're not exclusive groups.";
@@ -46,7 +47,7 @@ public class TestStatements {
 //        String example = "Oh, I had lots of Zamzam in Western/Muslim China. Very tasty stuff, but only the Muslims seem to drink it for some reason.";
 
 
-        String example = "I went to Copenhagen Business School myself and it's quite comforting to know that the place is also funding research into inequality.";
+//        String example = "I went to Copenhagen Business School myself and it's quite comforting to know that the place is also funding research into inequality.";
 
         // TODO: detect questions better
 //        String example = "What is the future looking like for South African politics?";
@@ -168,6 +169,7 @@ public class TestStatements {
         // TODO: this one is just one weird parsing mess
 //        String example = "Yeah, I'm from Northern Zealand and I pronounce them differently when stressing stuff, although I'll sometimes be lazy and just pronounce them the same.";
 
+//        String example = "Chicago is very rare here, mostly places like Pizza Hut serve deep pan pizzas and I'm sure it is a far cry from the original.";
 
 
 
@@ -248,8 +250,7 @@ public class TestStatements {
 //        String example = "I also do a non-directive meditation involving listening to sounds atmospheric sounds which I picked from a book on yoga philosophy.";
 //        String example = "I can totally sympathize with him as it is indeed very difficult for foreigners to get into the Danish labour market for a number of reasons, but this idea that Sweden is doing any better is definitely not true.";
 //        String example = "Usually Apple is better at holding back with this stuff, but they are really losing it these days.";
-
-
+        String example = "Policy outside collective bargaining is often also created in a deliberative democratic process including hearing affected parties.";
 
         Annotation annotation = new Annotation(example);
         pipeline.annotate(annotation);

@@ -200,6 +200,25 @@ public class StatementUtils {
     }
 
     /**
+     * Recursively finds specific descendants of a word.
+     *
+     * @param word the word that serves as an entry point
+     * @param graph the graph of the sentence
+     * @return specific descendants
+     */
+    public static Set<IndexedWord> findSpecificDescendants(ComplexRelation relation, IndexedWord word, SemanticGraph graph) {
+        Set<IndexedWord> specificDescendants = new HashSet<>();
+
+        for (IndexedWord child : graph.getChildren(word)) {
+            if (relation.evaluate(graph.reln(word, child))) {
+                specificDescendants.addAll(findCompound(child, graph));
+            }
+        }
+
+        return specificDescendants;
+    }
+
+    /**
      * Recursively finds specific children of a word.
      * This differs from findSpecificDescendants() in that it only adds direct children.
      * It is useful for finding entries for a component, e.g. all of the subjects in a conjunction.

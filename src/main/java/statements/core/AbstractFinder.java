@@ -104,9 +104,10 @@ public abstract class AbstractFinder<T extends AbstractComponent> {
      * @param dependency
      * @param relation
      */
-    protected final void updateMapping(Map<IndexedWord, IndexedWord> mapping, TypedDependency dependency, String relation) {
-        if (dependency.reln().getShortName().equals(relation)) {
-            if (!ignoredWords.contains(dependency.dep())) mapping.put(dependency.dep(), dependency.gov());
+    protected final void updateMapping(Map<IndexedWord, IndexedWord> mapping, TypedDependency dependency, ComplexRelation relation) {
+        if (relation.evaluate(dependency.reln()) && !ignoredWords.contains(dependency.dep())) {
+            logger.info("nmod rel info: " + dependency.reln() + ", " + dependency.reln().getSpecific());
+            mapping.put(dependency.dep(), dependency.gov());
         }
     }
 

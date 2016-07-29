@@ -23,7 +23,7 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
     @Override
     protected void check(TypedDependency dependency) {
         // the dep is the potential IndirectObject, while the gov is needed to sort out nmod relations to subjects
-        updateMapping(nmodMapping, dependency, Relations.NMOD);
+        updateMapping(nmodMapping, dependency, Relations.INDIRECT_OBJECT_NMOD);
         addDependent(iobjObjects, dependency, Relations.IOBJ);
     }
 
