@@ -32,8 +32,6 @@ public class TestStatements {
 //        "If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too. I sure was (I come from Copenhagen, Denmark). ";
 
 //        String example = "The Danish equivalent of Andersson is Andersen and the first name Anders is, though not quite as much recently, fairly popular.";
-//        String example = "Even today the most viewed shows are often found on the national broadcasters channels and many people don't have more than a couple of alternatives to those (of course with streaming etc this is changing very fast).";
-//        String example = "Even today the most viewed shows are often found on the national broadcasters channels and many people don't have more than a couple of alternatives to those (of course with streaming etc this is changing very fast).";
 
         // TODO: not quite right, mostly due to parsing
 //        String example = "Well, a country can be both Western and Southern in geographical terms, they're not exclusive groups.";
@@ -171,6 +169,8 @@ public class TestStatements {
 
 //        String example = "Chicago is very rare here, mostly places like Pizza Hut serve deep pan pizzas and I'm sure it is a far cry from the original.";
 
+        // TODO: a good example of how much the parser fucks up when encountering the word "and" - is there a way to detect this situation?
+        String example = "Even today the most viewed shows are often found on the national broadcasters channels and many people don't have more than a couple of alternatives to those (of course with streaming etc this is changing very fast).";
 
 
 
@@ -250,7 +250,7 @@ public class TestStatements {
 //        String example = "I also do a non-directive meditation involving listening to sounds atmospheric sounds which I picked from a book on yoga philosophy.";
 //        String example = "I can totally sympathize with him as it is indeed very difficult for foreigners to get into the Danish labour market for a number of reasons, but this idea that Sweden is doing any better is definitely not true.";
 //        String example = "Usually Apple is better at holding back with this stuff, but they are really losing it these days.";
-        String example = "Policy outside collective bargaining is often also created in a deliberative democratic process including hearing affected parties.";
+//        String example = "Policy outside collective bargaining is often also created in a deliberative democratic process including hearing affected parties.";
 
         Annotation annotation = new Annotation(example);
         pipeline.annotate(annotation);
