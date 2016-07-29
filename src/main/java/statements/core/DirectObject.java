@@ -15,10 +15,9 @@ public class DirectObject extends AbstractComponent {
     public DirectObject(IndexedWord primary, SemanticGraph graph) {
         super(primary, graph);
 
+        // nmod relations from nouns are typically descriptive in nature
         nmod = StatementUtils.findSpecificDescendants(Relations.NMOD, primary, graph);
-
-        // TODO: put in separate place
-        compound.addAll(nmod);
+        descriptive.addAll(nmod);
     }
 
     /**

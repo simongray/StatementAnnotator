@@ -16,10 +16,9 @@ public class Subject extends AbstractComponent {
     public Subject(IndexedWord primary, SemanticGraph graph) {
         super(primary, graph);
 
+        // nmod relations from nouns are typically descriptive in nature
         nmod = StatementUtils.findSpecificDescendants(Relations.NMOD, primary, graph);
-
-        // TODO: put in separate place
-        compound.addAll(nmod);
+        descriptive.addAll(nmod);
     }
 
     /**
