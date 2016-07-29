@@ -82,17 +82,17 @@ public class Relations {
     /**
      * Outgoing relations which almost certainly lead to other components and should be ignored.
      */
-    public static final Set<String> COMPONENT_RELATIONS = new HashSet<>();
+    public static final Set<String> INTER_COMPONENT_RELATIONS = new HashSet<>();
     static {
-        COMPONENT_RELATIONS.add(CONJ);
-        COMPONENT_RELATIONS.add(DEP);  // TODO: is the best place to put this?
-        COMPONENT_RELATIONS.add(Relations.PARATAXIS);  // TODO: is the best place to put this?
-        COMPONENT_RELATIONS.add(Relations.NSUBJ);
-        COMPONENT_RELATIONS.add(Relations.NSUBJPASS);
-        COMPONENT_RELATIONS.add(Relations.DOBJ);
-        COMPONENT_RELATIONS.add(Relations.NMOD);
-        COMPONENT_RELATIONS.add(Relations.COP);
-        COMPONENT_RELATIONS.add(Relations.IOBJ);
+        INTER_COMPONENT_RELATIONS.add(CONJ);
+        INTER_COMPONENT_RELATIONS.add(DEP);  // TODO: is the best place to put this?
+        INTER_COMPONENT_RELATIONS.add(Relations.PARATAXIS);  // TODO: is the best place to put this?
+        INTER_COMPONENT_RELATIONS.add(Relations.NSUBJ);
+        INTER_COMPONENT_RELATIONS.add(Relations.NSUBJPASS);
+        INTER_COMPONENT_RELATIONS.add(Relations.DOBJ);
+        INTER_COMPONENT_RELATIONS.add(Relations.NMOD);
+        INTER_COMPONENT_RELATIONS.add(Relations.COP);
+        INTER_COMPONENT_RELATIONS.add(Relations.IOBJ);
     }
 
     /**
@@ -105,7 +105,7 @@ public class Relations {
         IGNORED_OUTGOING_RELATIONS.addAll(HIDDEN_INTERNAL_RELATIONS);
         IGNORED_OUTGOING_RELATIONS.addAll(DEPENDENT_CLAUSE_SCOPES);
         IGNORED_OUTGOING_RELATIONS.addAll(EMBEDDED_STATEMENT_SCOPES);
-        IGNORED_OUTGOING_RELATIONS.addAll(COMPONENT_RELATIONS);
+        IGNORED_OUTGOING_RELATIONS.addAll(INTER_COMPONENT_RELATIONS);
         IGNORED_OUTGOING_RELATIONS.add(AUX);  // only relevant for verbs, sometimes associated with non-verbs
         IGNORED_OUTGOING_RELATIONS.add(DISCOURSE);  // usually nothing of value in this relation
     }
