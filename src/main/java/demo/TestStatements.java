@@ -170,9 +170,8 @@ public class TestStatements {
 //        String example = "Chicago is very rare here, mostly places like Pizza Hut serve deep pan pizzas and I'm sure it is a far cry from the original.";
 
         // TODO: a good example of how much the parser fucks up when encountering the word "and" - is there a way to detect this situation?
-        String example = "Even today the most viewed shows are often found on the national broadcasters channels and many people don't have more than a couple of alternatives to those (of course with streaming etc this is changing very fast).";
-
-
+//        String example = "Even today the most viewed shows are often found on the national broadcasters channels and many people don't have more than a couple of alternatives to those (of course with streaming etc this is changing very fast).";
+        String example = "Even today the most viewed shows are often found on the national broadcasters channels. many people don't have more than a couple of alternatives to those (of course with streaming etc this is changing very fast).";
 
 
         // FIXED (SOMEWHAT)
