@@ -237,6 +237,38 @@ public class Statement implements StatementComponent {
     }
 
     /**
+     * The number of duplicate component types in the statement.
+     * Useful for determining the quality of the statement,
+     * as well as whether a component ought to be moved from this statement to another during statement finding (#57).
+     *
+     * @return duplicate count
+     */
+    public int duplicateCount() {
+        int verbCount = 0;
+        int subjectCount = 0;
+        int directObjectCount = 0;
+        int indirectObjectCount = 0;
+        int embeddedStatementCount = 0;
+
+        for (StatementComponent component : getComponents()) {
+            if (component instanceof Verb) verbCount++;
+            if (component instanceof Subject) subjectCount++;
+            if (component instanceof DirectObject) directObjectCount++;
+            if (component instanceof IndirectObject) indirectObjectCount++;
+            if (component instanceof Statement) embeddedStatementCount++;
+        }
+
+        int duplicateCount = 0;
+        duplicateCount += verbCount - 1;
+        duplicateCount += subjectCount - 1;
+        duplicateCount += directObjectCount - 1;
+        duplicateCount += indirectObjectCount - 1;
+        duplicateCount += embeddedStatementCount - 1;
+
+        return duplicateCount;
+    }
+
+    /**
      * The sentence string that can be constructed from this Statement.
      *
      * @return sentence
