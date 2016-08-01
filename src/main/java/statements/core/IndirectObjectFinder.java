@@ -37,7 +37,7 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
         }
 
         // check if the nmod relation is to a verb
-        if (Tags.VERBS.contains(nmodGovernor.tag())) {
+        if (PartsOfSpeech.VERBS.contains(nmodGovernor.tag())) {
             return true;
         } else {
             return false;

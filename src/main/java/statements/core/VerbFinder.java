@@ -59,7 +59,7 @@ public class VerbFinder extends AbstractFinder<Verb> {
     @Override
     protected Set<Verb> get() {
         // remove adjectives from candidate verbs
-        dobjVerbs = Tags.reduceToAllowedTags(dobjVerbs, Tags.VERBS);
+        dobjVerbs = PartsOfSpeech.reduceToAllowedTags(dobjVerbs, PartsOfSpeech.VERBS);
 
         // remove verbs that are already in xcompverbs
         dobjVerbs.removeAll(xcompVerbs);

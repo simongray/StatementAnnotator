@@ -70,7 +70,7 @@ public abstract class AbstractComponent implements StatementComponent {
 
         // remove interjections based on POS tags
         // sometimes interjections are not found in the relations!
-        compound.removeAll(Tags.reduceToAllowedTags(compound, Tags.INTERJECTIONS));
+        compound.removeAll(PartsOfSpeech.reduceToAllowedTags(compound, PartsOfSpeech.INTERJECTIONS));
 
         // smallest compound
         basicCompound = StatementUtils.findSpecificChildren(Relations.COMPOUND, primary, graph);
@@ -292,7 +292,7 @@ public abstract class AbstractComponent implements StatementComponent {
      * @return true if plural
      */
     public boolean isPlural() {
-        return Tags.PLURAL.contains(getPrimary().tag());
+        return PartsOfSpeech.PLURAL.contains(getPrimary().tag());
     }
 
     /**

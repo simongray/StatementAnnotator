@@ -32,7 +32,7 @@ import java.util.Set;
  33.	WDT	Wh-determiner
 
  */
-public class Tags {
+public class PartsOfSpeech {
     // verbs
     public static final String VB = "VB";  // Verb, base form
     public static final String VBD = "VBD";  // Verb, past tense

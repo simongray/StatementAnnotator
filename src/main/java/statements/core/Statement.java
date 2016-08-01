@@ -518,7 +518,7 @@ public class Statement implements StatementComponent {
         Set<IndexedWord> words = getWords();
 
         for (IndexedWord word : words) {
-            if (Tags.LEXICAL_WORDS.contains(word.tag())) lexicalWords++;
+            if (PartsOfSpeech.LEXICAL_WORDS.contains(word.tag())) lexicalWords++;
         }
 
         return lexicalWords / (double) words.size();

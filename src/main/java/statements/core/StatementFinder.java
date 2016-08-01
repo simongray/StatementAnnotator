@@ -27,7 +27,7 @@ public class StatementFinder {
      * @return statements
      */
     public static Set<Statement> find(CoreMap sentence) {
-        SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
+        SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.AlternativeDependenciesAnnotation.class);
         graph.prettyPrint();  // TODO: remove when done debugging
 
         // find statement components
@@ -378,7 +378,10 @@ public class StatementFinder {
                     if (component.parentOf(otherComponent)) {
                         connections.add(otherComponent);
                         representedElsewhere.add(otherComponent);
+                        Set<IndexedWord> connectingWords = new HashSet<>();
                         logger.info(component + " is the parent of " + otherComponent);
+                        logger.info("governors 1: " + component.getGovernors());
+                        logger.info("governors 2: " + otherComponent.getGovernors());
                     } else if (otherComponent.contains(component)) {
                         representedElsewhere.add(component);
                         logger.info(component + " is contained by " + otherComponent);
