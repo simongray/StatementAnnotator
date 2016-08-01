@@ -296,11 +296,33 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
-     * Whether a component is specific or general
+     * Whether a component is specific or general.
      * @return true if specific
      */
     public boolean isSpecific() {
-        return Lexicon.SPECIFIC_DETERMINERS.contains(determiners.iterator().next().word().toLowerCase());
+        for (IndexedWord word : determiners) {
+            if (Lexicon.SPECIFIC_DETERMINERS.contains(word.word().toLowerCase())) {
+                return true;
+            }
+        }
+
+       return false;
+    }
+
+    /**
+     * Whether a component is very specific.
+     * This only differs from isSpecific(...) by not including considering the definite article.
+     *
+     * @return true if specific
+     */
+    public boolean isLocal() {
+        for (IndexedWord word : determiners) {
+            if (Lexicon.LOCAL_DETERMINERS.contains(word.word().toLowerCase())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -429,6 +451,7 @@ public abstract class AbstractComponent implements StatementComponent {
             getClass().getSimpleName() + ": \"" + getString() + "\"" +
             ", gaps: " + gaps() +  // TODO: remove after done debugging
             (!getDescriptives().isEmpty()? ", description: \"" + StatementUtils.join(getDescriptives()) + "\"" : "") +
+            ", local: \"" + (isLocal()? "yes" : "no") + "\"" +
             (!getLabels().isEmpty()? ", labels: \"" + String.join(", ", getLabels()) + "\"" : "") +
             (!conjunctions.isEmpty()? ", conjunction: \"" + String.join(", ", conjunctions) + "\"" : "") +
         "}";

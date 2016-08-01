@@ -27,9 +27,8 @@ public class DirectObject extends AbstractComponent {
      */
     @Override
     public boolean isInteresting() {
-        if (Lexicon.uninterestingNouns.contains(getBasicCompound())) {
-            return false;
-        }
+        if (Lexicon.uninterestingNouns.contains(getBasicCompound())) return false;
+        if (isLocal()) return false;
 
         return true;
     }

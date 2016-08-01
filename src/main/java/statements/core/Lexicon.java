@@ -27,19 +27,31 @@ public class Lexicon {
         DEMONSTRATIVES.add("those");
     }
 
+    /**
+     * Local Determiners is a neologism of mine. For the purpose of sorting through statements
+     * specific determiners such as "this" or "my" are categorically different from "the".
+     * Anything local to a user's situation is not useful for comparison "my x" or "those ys"
+     * while "the x" can both refer to a specific instance or something more general.
+     */
+    public static final Set<String> LOCAL_DETERMINERS = new HashSet<>();
+    {
+        // possessives
+        LOCAL_DETERMINERS.addAll(POSSESSIVES);
+
+        // demonstratives
+        LOCAL_DETERMINERS.addAll(DEMONSTRATIVES);
+    }
+
     public static final Set<String> SPECIFIC_DETERMINERS = new HashSet<>();
     static {
         // definite article
         SPECIFIC_DETERMINERS.add("the");
 
-        // possessives
-        SPECIFIC_DETERMINERS.addAll(POSSESSIVES);
-
-        // demonstratives
-        SPECIFIC_DETERMINERS.addAll(DEMONSTRATIVES);
-
         // interrogatives
-        SPECIFIC_DETERMINERS.add("which");
+        LOCAL_DETERMINERS.add("which");
+
+        // other specific determiners
+        SPECIFIC_DETERMINERS.addAll(LOCAL_DETERMINERS);
     }
 
     public static final Set<String> GENERAL_DETERMINERS = new HashSet<>();
