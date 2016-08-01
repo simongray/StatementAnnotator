@@ -46,8 +46,6 @@ public class TestStatements {
 //        String example = "Oh, I had lots of Zamzam in Western/Muslim China. Very tasty stuff, but only the Muslims seem to drink it for some reason.";
 
 
-//        String example = "I went to Copenhagen Business School myself and it's quite comforting to know that the place is also funding research into inequality.";
-
         // TODO: detect questions better
 //        String example = "What is the future looking like for South African politics?";
 //        String example = "Didn't they manage to get proportional representation in the Scottish parliament?";
@@ -101,6 +99,10 @@ public class TestStatements {
 
 
 
+//        String example = "The British parliament is an institution.";
+
+
+
 
 
         // TODO: multiple issues
@@ -129,6 +131,11 @@ public class TestStatements {
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
+
+        // The problem with this sentence is that "quit comforting" is considered in a conjunction with "myself"
+        // this produces two versions of "I went to Copenhagen Business School ..."
+        String example = "I went to Copenhagen Business School myself and it's quite comforting to know that the place is also funding research into inequality.";
+
 //        String example = "We both use Android phones.";  // works in GrammarScope
 //        String example = "Is the jump in the early nineties due to a reclassification of countries in the Soviet sphere of influence?";
 //        String example = "Anyway, just make your own rule and stick to it.";
@@ -172,7 +179,7 @@ public class TestStatements {
 
         // TODO: a good example of how much the parser fucks up when encountering the word "and" - is there a way to detect this situation?
 //        String example = "Even today the most viewed shows are often found on the national broadcasters channels and many people don't have more than a couple of alternatives to those (of course with streaming etc this is changing very fast).";
-        String example = "Even today the most viewed shows are often found on the national broadcasters channels. many people don't have more than a couple of alternatives to those (of course with streaming etc this is changing very fast).";
+//        String example = "Even today the most viewed shows are often found on the national broadcasters channels. many people don't have more than a couple of alternatives to those (of course with streaming etc this is changing very fast).";
 
 
         // FIXED (SOMEWHAT)
