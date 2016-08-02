@@ -28,6 +28,7 @@ public class StatementFinder {
      */
     public static Set<Statement> find(CoreMap sentence) {
         SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
+        logger.info("finding statements based on dependencies: " + graph.typedDependencies());
         graph.prettyPrint();  // TODO: remove when done debugging
 
         // components are found independently through their own finder classes
@@ -40,9 +41,14 @@ public class StatementFinder {
         // components are not allowed to overlap
         // this is sometimes caused by errors in the dependency graph (or bugs in this algorithm)
         components = removeOverlappingComponents(components);
+        logger.info("components for linking: " + components);
+
+        Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping = findNestedStatementMapping(Relations.EMBEDDED_STATEMENT_SCOPES, graph);
+
+        Set<Set<AbstractComponent>> componentsByNestingLevel = partitionByLevel(components, nestedStatementMapping);
 
         // statements are produced by discovering connection between the components
-        Set<Statement> statements = link(graph, components);
+        Set<Statement> statements = link(componentsByNestingLevel);
 
         // annotate with origin
         // TODO: better way to do this?
@@ -82,13 +88,13 @@ public class StatementFinder {
                 if (component != otherComponent && StatementUtils.intersects(component.getCompound(), otherComponent.getCompound())) {
                     if (component.contains(otherComponent)) {
                         reducedComponents.remove(otherComponent);
-                        logger.error("removed " + otherComponent + " since was contained by " + component);
+                        logger.error("removed " + otherComponent + " since it is contained by " + component);
                     } else if (otherComponent.contains(component)) {
                         reducedComponents.remove(component);
-                        logger.error("removed " + component + " since was contained by " + otherComponent);
+                        logger.error("removed " + component + " since it is contained by " + otherComponent);
                     } else if (rank(component) <= rank(otherComponent)) {
                         reducedComponents.remove(otherComponent);
-                        logger.error("removed " + otherComponent + " since overlapped with " + component);
+                        logger.error("removed " + otherComponent + " since it overlaps with " + component);
                     }
                 }
             }
@@ -98,17 +104,15 @@ public class StatementFinder {
     }
 
     /**
-     * Produces statements by linking together statement components.
+     * Partition the components of a sentence into sets of components by their level within the sentence.
+     * Levels are defined by relations indicating dependent clauses (such as ccomp and xcomp).
+     * Partitioning allows embedded statements to be clearly separated from root statements.
      *
-     * @param graph the graph of the sentence
-     * @param components the various statement components found in sentence
-     * @return statements
+     * @param components
+     * @param nestedStatementMapping
+     * @return
      */
-    private static Set<Statement> link(SemanticGraph graph, Set<AbstractComponent> components) {
-        logger.info("components for linking: " + components);
-        logger.info("based on dependencies: " + graph.typedDependencies());
-
-        Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping = findNestedStatementMapping(Relations.EMBEDDED_STATEMENT_SCOPES, graph);
+    private static Set<Set<AbstractComponent>> partitionByLevel(Set<AbstractComponent> components, Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping)  {
         Map<IndexedWord, Set<AbstractComponent>> nestedComponentMapping = new HashMap<>();
         Set<AbstractComponent> nestedComponents = new HashSet<>();
         logger.info("nested statement mapping: " + nestedStatementMapping);
@@ -138,6 +142,17 @@ public class StatementFinder {
         }
 
         logger.info("componentsByNestingLevel: " + componentsByNestingLevel);
+
+        return componentsByNestingLevel;
+    }
+
+
+    /**
+     * Produces statements by linking together statement components.
+     *
+     * @return statements
+     */
+    private static Set<Statement> link(Set<Set<AbstractComponent>> componentsByNestingLevel) {
         Set<Set<StatementComponent>> connectedComponentSets = new HashSet<>();
 
         // connect components by nesting level
