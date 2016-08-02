@@ -341,15 +341,7 @@ public class Statement implements StatementComponent {
      * @return true if contains component
      */
     public boolean contains(StatementComponent otherComponent) {
-        if (otherComponent instanceof Statement) {
-            if (getEmbeddedStatement() != null) {
-                return getEmbeddedStatement().equals(otherComponent);
-            }
-        } else {
-            return getComponents().contains(otherComponent);
-        }
-
-        return false;
+        return getComponents().contains(otherComponent);
     }
 
     /**
