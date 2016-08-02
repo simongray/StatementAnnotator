@@ -43,12 +43,14 @@ public class StatementFinder {
         components = removeOverlappingComponents(components);
         logger.info("components for linking: " + components);
 
+        // the scopes of dependent clauses are separated from the root scope into levels
         Set<Set<IndexedWord>> levels = findLevels(graph);
 
-        Set<Set<AbstractComponent>> componentsByNestingLevel = partitionByLevel(components, levels);
+        // these levels are then used to partition the components by levels
+        Set<Set<AbstractComponent>> componentLevels = partitionByLevel(components, levels);
 
         // statements are produced by discovering connection between the components
-        Set<Statement> statements = link(componentsByNestingLevel);
+        Set<Statement> statements = link(componentLevels);
 
         // annotate with origin
         // TODO: better way to do this?
