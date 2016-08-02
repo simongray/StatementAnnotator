@@ -48,7 +48,26 @@ public class Statement implements StatementComponent {
         return embeddedStatement;
     }
 
+    public static Statement merge(Set<Statement> statements) {
+        Set<StatementComponent> components = new HashSet<>();
+
+        for (Statement statement : statements) {
+            components.addAll(statement.getComponents());
+        }
+
+        return new Statement(components);
+    }
+
     public Statement(Set<StatementComponent> components) {
+        pureComponents = new HashSet<>();  // TODO: do away with pure components entirely
+        embeddedStatement = null;
+
+        for (StatementComponent component : components) {
+            add(component);
+        }
+    }
+
+    public Statement(AbstractComponent... components) {
         pureComponents = new HashSet<>();  // TODO: do away with pure components entirely
         embeddedStatement = null;
 
