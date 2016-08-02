@@ -39,7 +39,7 @@ public class StatementFinder {
 
         // components are not allowed to overlap
         // this is sometimes caused by errors in the dependency graph (or bugs in this algorithm)
-        components = reduceToNonOverlappingComponents(components);
+        components = removeOverlappingComponents(components);
 
         // statements are produced by discovering connection between the components
         Set<Statement> statements = link(graph, components);
@@ -69,19 +69,26 @@ public class StatementFinder {
 
     /**
      * Removes components that overlap with others.
+     * TODO: currently uses "rank" as last instance to decide which components to remove - might be a better way
      *
-     * @param components
-     * @return
+     * @param components components to modify
+     * @return components with overlapping components removed
      */
-    private static Set<AbstractComponent> reduceToNonOverlappingComponents(Set<AbstractComponent> components) {
+    private static Set<AbstractComponent> removeOverlappingComponents(Set<AbstractComponent> components) {
         Set<AbstractComponent> reducedComponents = new HashSet<>(components);
 
         for (AbstractComponent component : components) {
             for (AbstractComponent otherComponent : components) {
                 if (component != otherComponent && StatementUtils.intersects(component.getCompound(), otherComponent.getCompound())) {
-                    if (rank(component) <= rank(otherComponent)) {
+                    if (component.contains(otherComponent)) {
                         reducedComponents.remove(otherComponent);
-                        logger.error("removed " + otherComponent + " since it intersected with " + component);
+                        logger.error("removed " + otherComponent + " since was contained by " + component);
+                    } else if (otherComponent.contains(component)) {
+                        reducedComponents.remove(component);
+                        logger.error("removed " + component + " since was contained by " + otherComponent);
+                    } else if (rank(component) <= rank(otherComponent)) {
+                        reducedComponents.remove(otherComponent);
+                        logger.error("removed " + otherComponent + " since overlapped with " + component);
                     }
                 }
             }
