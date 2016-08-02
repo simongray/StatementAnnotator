@@ -377,6 +377,37 @@ public class StatementFinder {
     }
 
     /**
+     * Find overlap between statements.
+     *
+     * @param statements statements to base mapping on
+     * @return map with overlap as key and the overlapping statements as value
+     */
+    private static Map<Set<StatementComponent>, Set<Statement>> getOverlaps(Set<Statement> statements) {
+        Map<Set<StatementComponent>, Set<Statement>> overlapMapping = new HashMap<>();
+
+        for (Statement statement : statements) {
+            for (Statement otherStatement : statements) {
+                if (statement != otherStatement) {
+                    Set<StatementComponent> overlap = statement.getOverlap(otherStatement);
+
+                    if (overlap.size() > 0) {
+                        Set<Statement> overlappingStatements = overlapMapping.getOrDefault(overlap, new HashSet<>());
+                        overlappingStatements.add(statement);
+                        overlappingStatements.add(otherStatement);
+                        overlapMapping.put(overlap, overlappingStatements);
+                    }
+                }
+            }
+        }
+
+        return overlapMapping;
+    }
+
+    private static Set<Statement> shiftComponents(Set<Statement> unsplitStatements) {
+        return null; //TODO
+    }
+
+    /**
      * Produces statements by linking together statement components.
      *
      * @return statements
@@ -390,20 +421,14 @@ public class StatementFinder {
         }
 
         logger.info("unsplitStatements: " + unsplitStatements);
-        Set<Statement> splitStatements = new HashSet<>();
-
-
-
-
 
         // TODO: INSERT OPERATION FOR ISSUE #57 HERE!!
-
-
-
-
+//        unsplitStatements = shiftComponents(unsplitStatements);
+        System.out.println(getOverlaps(unsplitStatements));
 
         // TODO: is splitting even necessary? what if everything is handled in connect(...)?
         // split in case of duplicate roles in the component sets (e.g. multiple Subject components)
+        Set<Statement> splitStatements = new HashSet<>();
         for (Statement statement : unsplitStatements) {
             splitStatements.addAll(split(statement, getDuplicateComponentClasses(statement)));
         }

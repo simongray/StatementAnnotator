@@ -359,6 +359,18 @@ public class Statement implements StatementComponent {
     }
 
     /**
+     * Get the overlapping components of this statement and another.
+     *
+     * @param otherStatement the other statement
+     * @return the overlapping components
+     */
+    public Set<StatementComponent> getOverlap(Statement otherStatement) {
+        Set<StatementComponent> overlap = new HashSet<>(getComponents());
+        overlap.retainAll(otherStatement.getComponents());
+        return overlap;
+    }
+
+    /**
      * Link this statement to a child statement (e.g. a dependent clause).
      *
      * @param childStatement
