@@ -138,72 +138,6 @@ public class StatementFinder {
         return componentLevels;
     }
 
-
-    /**
-     * Produces statements by linking together statement components.
-     *
-     * @return statements
-     */
-    private static Set<Statement> link(Set<Set<AbstractComponent>> componentsByNestingLevel) {
-        Set<Set<StatementComponent>> connectedComponentSets = new HashSet<>();
-
-        // connect components by nesting level
-        // (avoid individual nested statement components being accidentally incorporated into their parent statements)
-        for (Set<AbstractComponent> componentLevel : componentsByNestingLevel) {
-            Set<StatementComponent> statementComponents = new HashSet<>(componentLevel);  // STUPID JAVA!!
-            connectedComponentSets.add(connect(statementComponents));
-        }
-
-        logger.info("connectedComponentSets: " + connectedComponentSets);
-        Set<Statement> unsplitStatements = new HashSet<>();
-        Set<StatementComponent> leftoverComponents = new HashSet<>();
-
-        // partition into full statements and leftover components (for debugging)
-        for (Set<StatementComponent> componentSet : connectedComponentSets) {
-            for (StatementComponent component : componentSet) {
-                if (component instanceof Statement) {
-                    unsplitStatements.add((Statement) component);
-                } else {
-                    leftoverComponents.add(component);
-                }
-            }
-        }
-
-        logger.info("unsplitStatements: " + unsplitStatements);
-        logger.info("leftoverComponents: " + leftoverComponents);
-        Set<Statement> splitStatements = new HashSet<>();
-
-        // TODO: is splitting even necessary? what if everything is handled in connect(...)?
-        // split in case of duplicate roles in the component sets (e.g. multiple Subject components)
-        for (Statement statement : unsplitStatements) {
-            splitStatements.addAll(split(statement, getDuplicateComponentClasses(statement)));
-        }
-
-        logger.info("splitStatements: " + splitStatements);
-        Set<Statement> modifiedStatements = new HashSet<>();
-        Set<Statement> statements = new HashSet<>();
-
-        // TODO: perform this step before splitting?
-        // discover links between unconnected statements and embed nested statements
-        for (Statement statement : splitStatements) {
-            for (Statement otherStatement : splitStatements) {
-                if (statement.parentOf(otherStatement)) {
-                    logger.info(statement + " embeds " + otherStatement);
-                    modifiedStatements.add(statement);
-                    modifiedStatements.add(otherStatement);
-                    statements.add(statement.embed(otherStatement));
-                }
-            }
-        }
-
-        // remove the modified statements and add remaining to final list
-        logger.info("modifiedStatements: " + modifiedStatements);
-        splitStatements.removeAll(modifiedStatements);
-        statements.addAll(splitStatements);
-
-        return statements;
-    }
-
     private static Map<IndexedWord, Set<IndexedWord>> findNestedStatementMapping(SemanticGraph graph) {
         Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping = new HashMap<>();
 
@@ -441,5 +375,70 @@ public class StatementFinder {
         }
 
         return connectedComponents;
+    }
+
+    /**
+     * Produces statements by linking together statement components.
+     *
+     * @return statements
+     */
+    private static Set<Statement> link(Set<Set<AbstractComponent>> componentsByNestingLevel) {
+        Set<Set<StatementComponent>> connectedComponentSets = new HashSet<>();
+
+        // connect components by nesting level
+        // (avoid individual nested statement components being accidentally incorporated into their parent statements)
+        for (Set<AbstractComponent> componentLevel : componentsByNestingLevel) {
+            Set<StatementComponent> statementComponents = new HashSet<>(componentLevel);  // STUPID JAVA!!
+            connectedComponentSets.add(connect(statementComponents));
+        }
+
+        logger.info("connectedComponentSets: " + connectedComponentSets);
+        Set<Statement> unsplitStatements = new HashSet<>();
+        Set<StatementComponent> leftoverComponents = new HashSet<>();
+
+        // partition into full statements and leftover components (for debugging)
+        for (Set<StatementComponent> componentSet : connectedComponentSets) {
+            for (StatementComponent component : componentSet) {
+                if (component instanceof Statement) {
+                    unsplitStatements.add((Statement) component);
+                } else {
+                    leftoverComponents.add(component);
+                }
+            }
+        }
+
+        logger.info("unsplitStatements: " + unsplitStatements);
+        logger.info("leftoverComponents: " + leftoverComponents);
+        Set<Statement> splitStatements = new HashSet<>();
+
+        // TODO: is splitting even necessary? what if everything is handled in connect(...)?
+        // split in case of duplicate roles in the component sets (e.g. multiple Subject components)
+        for (Statement statement : unsplitStatements) {
+            splitStatements.addAll(split(statement, getDuplicateComponentClasses(statement)));
+        }
+
+        logger.info("splitStatements: " + splitStatements);
+        Set<Statement> modifiedStatements = new HashSet<>();
+        Set<Statement> statements = new HashSet<>();
+
+        // TODO: perform this step before splitting?
+        // discover links between unconnected statements and embed nested statements
+        for (Statement statement : splitStatements) {
+            for (Statement otherStatement : splitStatements) {
+                if (statement.parentOf(otherStatement)) {
+                    logger.info(statement + " embeds " + otherStatement);
+                    modifiedStatements.add(statement);
+                    modifiedStatements.add(otherStatement);
+                    statements.add(statement.embed(otherStatement));
+                }
+            }
+        }
+
+        // remove the modified statements and add remaining to final list
+        logger.info("modifiedStatements: " + modifiedStatements);
+        splitStatements.removeAll(modifiedStatements);
+        statements.addAll(splitStatements);
+
+        return statements;
     }
 }
