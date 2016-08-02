@@ -403,8 +403,80 @@ public class StatementFinder {
         return overlapMapping;
     }
 
-    private static Set<Statement> shiftComponents(Set<Statement> unsplitStatements) {
-        return null; //TODO
+    /**
+     * Resolves overlap between a set of overlapping components by choosing the combination of statements
+     * with the lowest total count of duplicate component types.
+     *
+     * @param overlap the overlapping components
+     * @param overlappingStatements the statements with overlapping components
+     * @return the best combination of statements without overlap
+     */
+    private static Set<Statement> getBestCombination(Set<StatementComponent> overlap, Set<Statement> overlappingStatements) {
+        int smallestTotalDuplicateCount = -1;
+        Set<Statement> optimalCombination = null;
+
+        logger.info("finding best combination for overlap: " + overlap);
+        logger.info("between statements: " + overlappingStatements);
+
+        for (Statement overlappingStatement : overlappingStatements) {
+            Set<Statement> combination = new HashSet<>();
+            combination.add(overlappingStatement);
+
+            for (Statement otherOverlappingStatement : overlappingStatements) {
+                if (otherOverlappingStatement != overlappingStatement) {
+                    combination.add(otherOverlappingStatement.withoutComponents(overlap));
+                }
+            }
+
+            int totalDuplicateCount = 0;
+            for (Statement statement : combination) {
+                totalDuplicateCount += statement.duplicateCount();
+            }
+
+            if (smallestTotalDuplicateCount == -1 || totalDuplicateCount < smallestTotalDuplicateCount) {
+                logger.info("found smaller duplicate count with combination: " + combination);
+                smallestTotalDuplicateCount = totalDuplicateCount;
+                optimalCombination = combination;
+            }
+        }
+
+        logger.info("smallest total duplicate count for " + overlap + ": " + smallestTotalDuplicateCount);
+
+        return optimalCombination;
+    }
+
+    /**
+     * Recursively resolve overlap between statements.
+     * Overlap is removed based on minimising
+     *
+     * @param statements
+     * @return
+     */
+    private static Set<Statement> resolveOverlap(Set<Statement> statements) {
+        Map<Set<StatementComponent>, Set<Statement>> overlapMapping = getOverlaps(statements);
+
+        if (!overlapMapping.isEmpty()) {
+            logger.info("recursively resolving overlaps: " + overlapMapping.keySet());
+
+            // the remainder do not overlap and are preserved as before
+            Set<Statement> shiftedStatements = new HashSet<>(statements);
+            for (Set<Statement> overlappingStatements : overlapMapping.values()) {
+                shiftedStatements.removeAll(overlappingStatements);
+            }
+
+            // different combinations are attempted to remove the overlap
+            // the combination that produces the smallest total Statement.duplicateCount() is used (#57)
+            for (Set<StatementComponent> overlap : overlapMapping.keySet()) {
+                Set<Statement> overlappingStatements = overlapMapping.get(overlap);
+                shiftedStatements.addAll(getBestCombination(overlap, overlappingStatements));
+            }
+
+            logger.info("shifted statements: " + shiftedStatements);
+
+            statements = resolveOverlap(shiftedStatements);
+        }
+
+        return statements;
     }
 
     /**
@@ -422,9 +494,8 @@ public class StatementFinder {
 
         logger.info("unsplitStatements: " + unsplitStatements);
 
-        // TODO: INSERT OPERATION FOR ISSUE #57 HERE!!
-//        unsplitStatements = shiftComponents(unsplitStatements);
-        System.out.println(getOverlaps(unsplitStatements));
+        // fixing issue #57
+        unsplitStatements = resolveOverlap(unsplitStatements);
 
         // TODO: is splitting even necessary? what if everything is handled in connect(...)?
         // split in case of duplicate roles in the component sets (e.g. multiple Subject components)
@@ -437,15 +508,16 @@ public class StatementFinder {
         Set<Statement> modifiedStatements = new HashSet<>();
         Set<Statement> statements = new HashSet<>();
 
-        // TODO: perform this step before splitting?
         // discover links between unconnected statements and embed nested statements
         for (Statement statement : splitStatements) {
             for (Statement otherStatement : splitStatements) {
-                if (statement.parentOf(otherStatement)) {
+                if (statement.embeddingParentOf(otherStatement)) {
                     logger.info(statement + " embeds " + otherStatement);
                     modifiedStatements.add(statement);
                     modifiedStatements.add(otherStatement);
                     statements.add(statement.embed(otherStatement));
+                    // TODO: this final step does not expect embedded statements to contain embedded statements!
+                    // (might be able to solve it by using a map to find chained dependencies between statements)
                 }
             }
         }

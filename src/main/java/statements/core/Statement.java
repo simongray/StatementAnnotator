@@ -20,6 +20,7 @@ public class Statement implements StatementComponent {
     private Statement embeddedStatement;
     private Set<AbstractComponent> pureComponents;
     private Set<IndexedWord> governors;
+    private Set<IndexedWord> embeddingGovernors;
     private static DecimalFormat df = new DecimalFormat("#.##");
     private CoreMap origin;
 
@@ -186,6 +187,28 @@ public class Statement implements StatementComponent {
         return governors;
     }
 
+
+    /**
+     * Outgoing (= governing) words.
+     * Useful for establishing whether this statement is connected to another component.
+     *
+     * @return governors
+     */
+    public Set<IndexedWord> getEmbeddingGovernors() {
+        if (embeddingGovernors == null) {
+            embeddingGovernors = new HashSet<>();
+            for (StatementComponent component : getComponents()) {
+                embeddingGovernors.addAll(component.getEmbeddingGovernors());
+            }
+        }
+
+        // remove internal governors from other components
+        // otherwise, a statement can be the parent of itself
+        embeddingGovernors.removeAll(getCompound());
+
+        return embeddingGovernors;
+    }
+
     /**
      * All components making up the statement (including any nested statement).
      *
@@ -278,11 +301,11 @@ public class Statement implements StatementComponent {
         }
 
         int duplicateCount = 0;
-        duplicateCount += verbCount - 1;
-        duplicateCount += subjectCount - 1;
-        duplicateCount += directObjectCount - 1;
-        duplicateCount += indirectObjectCount - 1;
-        duplicateCount += embeddedStatementCount - 1;
+        duplicateCount += verbCount > 1? verbCount - 1 : 0;
+        duplicateCount += subjectCount > 1? subjectCount - 1 : 0;
+        duplicateCount += directObjectCount > 1? directObjectCount - 1 : 0;
+        duplicateCount += indirectObjectCount > 1? indirectObjectCount - 1: 0;
+        duplicateCount += embeddedStatementCount > 1? embeddedStatementCount - 1 : 0;
 
         return duplicateCount;
     }
@@ -368,6 +391,18 @@ public class Statement implements StatementComponent {
         Set<StatementComponent> overlap = new HashSet<>(getComponents());
         overlap.retainAll(otherStatement.getComponents());
         return overlap;
+    }
+
+    /**
+     * Produce a new Statement without certain components.
+     *
+     * @param components the components to remove
+     * @return Statement without the specific components
+     */
+    public Statement withoutComponents(Set<StatementComponent> components) {
+        Set<StatementComponent> reducedComponents = getComponents();
+        reducedComponents.removeAll(components);
+        return new Statement(reducedComponents);
     }
 
     /**

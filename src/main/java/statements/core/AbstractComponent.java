@@ -38,6 +38,7 @@ public abstract class AbstractComponent implements StatementComponent {
      * Used to find connections between different components.
      */
     protected final Set<IndexedWord> governors;
+    protected final Set<IndexedWord> embeddingGovernors;
 
     /**
      * Conjunctions (= sibling components).
@@ -127,11 +128,15 @@ public abstract class AbstractComponent implements StatementComponent {
         // the governors/parents of the component
         // some relations are ignored, e.g. the conj relation which is not treated as governor since it defines siblings
         governors = new HashSet<>();
+        embeddingGovernors = new HashSet<>();
         for (SemanticGraphEdge edge : graph.incomingEdgeList(primary)) {
             // it is important to leave out certain governor relations
             // (e.g. the conj relation, since multiple of the same component type should not be connecting)
             if (!Relations.IGNORED_CONNECTING_RELATIONS.contains(edge.getRelation().getShortName())) {
                 governors.add(edge.getGovernor());
+            }
+            if (Relations.EMBEDDED_STATEMENT_SCOPES.contains(edge.getRelation().getShortName())) {
+                embeddingGovernors.add(edge.getGovernor());
             }
         }
 
@@ -266,6 +271,9 @@ public abstract class AbstractComponent implements StatementComponent {
         return governors;
     }
 
+    public Set<IndexedWord> getEmbeddingGovernors() {
+        return embeddingGovernors;
+    }
 
     /**
      * Conjunctions.

@@ -15,6 +15,7 @@ public interface StatementComponent {
     Set<IndexedWord> getRemaining();  // TODO: rename and find a stronger purpose than just getting clauses into the statement text
     Set<IndexedWord> getAll();
     Set<IndexedWord> getGovernors();
+    Set<IndexedWord> getEmbeddingGovernors();  // TODO: rename, sounds like crap
     Set<String> getLabels();
     boolean contains(StatementComponent otherComponent);  // TODO: do or do not?
     int getLowestIndex();
@@ -32,6 +33,17 @@ public interface StatementComponent {
      */
     default boolean parentOf(StatementComponent otherComponent) {
         return StatementUtils.intersects(getCompound(), otherComponent.getGovernors()) && !StatementUtils.intersects(getCompound(), otherComponent.getCompound());
+    }
+
+    /**
+     * Is this component the parent of another component?
+     * It will evaluate to false in case part of the other component
+     *
+     * @param otherComponent the other component
+     * @return true if parent of
+     */
+    default boolean embeddingParentOf(StatementComponent otherComponent) {
+        return StatementUtils.intersects(getCompound(), otherComponent.getEmbeddingGovernors()) && !StatementUtils.intersects(getCompound(), otherComponent.getCompound());
     }
 
     /**

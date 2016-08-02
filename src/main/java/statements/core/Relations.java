@@ -118,8 +118,8 @@ public class Relations {
         IGNORED_CONNECTING_RELATIONS.add(CONJ);
         IGNORED_CONNECTING_RELATIONS.add(DEP);
         IGNORED_CONNECTING_RELATIONS.add(Relations.PARATAXIS);  // TODO: examine closer
+        IGNORED_CONNECTING_RELATIONS.addAll(EMBEDDED_STATEMENT_SCOPES);  // TODO: added as part of solution to #57, re-examine
     }
-
 
     // TODO: rework everything below this point
     /**
