@@ -43,7 +43,7 @@ public class StatementFinder {
         components = removeOverlappingComponents(components);
         logger.info("components for linking: " + components);
 
-        Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping = findNestedStatementMapping(Relations.EMBEDDED_STATEMENT_SCOPES, graph);
+        Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping = findNestedStatementMapping(graph);
 
         Set<Set<AbstractComponent>> componentsByNestingLevel = partitionByLevel(components, nestedStatementMapping);
 
@@ -113,37 +113,29 @@ public class StatementFinder {
      * @return
      */
     private static Set<Set<AbstractComponent>> partitionByLevel(Set<AbstractComponent> components, Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping)  {
-        Map<IndexedWord, Set<AbstractComponent>> nestedComponentMapping = new HashMap<>();
-        Set<AbstractComponent> nestedComponents = new HashSet<>();
+        // TODO: levels should be defined as param instead of nestedStatementMapping
         logger.info("nested statement mapping: " + nestedStatementMapping);
+        Set<Set<IndexedWord>> levels = new HashSet<>();
+        for (Set<IndexedWord> level : nestedStatementMapping.values()) {
+            levels.add(level);
+        }
 
-        // map components into root statement and nested statements based on their primary entry
-        for (AbstractComponent component : components) {
-            for (IndexedWord statementEntry : nestedStatementMapping.keySet()) {
-                Set<IndexedWord> statementWords = nestedStatementMapping.get(statementEntry);
-                if (statementWords.contains(component.getPrimary())) {
-                    Set<AbstractComponent> statementComponents = nestedComponentMapping.getOrDefault(statementEntry, new HashSet<>());
-                    statementComponents.add(component);
-                    nestedComponentMapping.put(statementEntry, statementComponents);
-                    nestedComponents.add(component);  // keeping track of components not in root
-                    logger.info("non-root component: " + component);
-                }
+        // components are partitioned into levels based on where their primary word appears
+        Set<Set<AbstractComponent>> componentLevels = new HashSet<>();
+        for (Set<IndexedWord> level : levels) {
+            Set<AbstractComponent> componentLevel = new HashSet<>();
+            for (AbstractComponent component : components) {
+                if (level.contains(component.getPrimary())) componentLevel.add(component);
             }
+            componentLevels.add(componentLevel);
+        }
+        logger.info("component levels found: " + componentLevels.size());
+
+        for (Set<AbstractComponent> componentLevel : componentLevels) {
+            logger.info("component level: " + componentLevel);
         }
 
-        // the remaining components may be considered components of the root statement
-        components.removeAll(nestedComponents);
-
-        // TODO: just use set from beginning, skip mapping
-        Set<Set<AbstractComponent>> componentsByNestingLevel = new HashSet<>();
-        componentsByNestingLevel.add(components);
-        for (Set<AbstractComponent> componentSet : nestedComponentMapping.values()) {
-            componentsByNestingLevel.add(componentSet);
-        }
-
-        logger.info("componentsByNestingLevel: " + componentsByNestingLevel);
-
-        return componentsByNestingLevel;
+        return componentLevels;
     }
 
 
@@ -212,19 +204,27 @@ public class StatementFinder {
         return statements;
     }
 
-    private static Map<IndexedWord, Set<IndexedWord>> findNestedStatementMapping(Set<String> nestedStatementScopes, SemanticGraph graph) {
+    private static Map<IndexedWord, Set<IndexedWord>> findNestedStatementMapping(SemanticGraph graph) {
         Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping = new HashMap<>();
 
         // which words are entry points for nested statements?
         // use these to find the exact scope of the statements
         for (TypedDependency dependency : graph.typedDependencies()) {
             if (Relations.EMBEDDED_STATEMENT_SCOPES.contains(dependency.reln().getShortName())) {
+                // TODO: ignore dependent clauses
                 nestedStatementMapping.put(
                         dependency.dep(),
                         StatementUtils.findCompound(dependency.dep(), graph, Relations.EMBEDDED_STATEMENT_SCOPES, null)
                 );
             }
         }
+
+        // the remaining vertices in the graph comprise the root level (= non-embedded statements) of the sentence
+        Set<IndexedWord> rootLevel = new HashSet<>(graph.vertexSet());
+        for (Set<IndexedWord> level : nestedStatementMapping.values()) {
+            rootLevel.removeAll(level);
+        }
+        nestedStatementMapping.put(rootLevel.iterator().next(), rootLevel);
 
         logger.info("nested statement mapping before changes: " + nestedStatementMapping);
 
