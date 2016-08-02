@@ -43,9 +43,9 @@ public class StatementFinder {
         components = removeOverlappingComponents(components);
         logger.info("components for linking: " + components);
 
-        Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping = findNestedStatementMapping(graph);
+        Set<Set<IndexedWord>> levels = findLevels(graph);
 
-        Set<Set<AbstractComponent>> componentsByNestingLevel = partitionByLevel(components, nestedStatementMapping);
+        Set<Set<AbstractComponent>> componentsByNestingLevel = partitionByLevel(components, levels);
 
         // statements are produced by discovering connection between the components
         Set<Statement> statements = link(componentsByNestingLevel);
@@ -104,107 +104,97 @@ public class StatementFinder {
     }
 
     /**
-     * Partition the components of a sentence into sets of components by their level within the sentence.
-     * Levels are defined by relations indicating dependent clauses (such as ccomp and xcomp).
-     * Partitioning allows embedded statements to be clearly separated from root statements.
+     * Find levels of dependent clauses in the graph.
+     * This is used to partition components by level to create a hierarchy of statements embedding other statements.
      *
-     * @param components
-     * @param nestedStatementMapping
-     * @return
+     * @param graph the dependency graph of the sentence
+     * @return levels of dependent clauses
      */
-    private static Set<Set<AbstractComponent>> partitionByLevel(Set<AbstractComponent> components, Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping)  {
-        // TODO: levels should be defined as param instead of nestedStatementMapping
-        logger.info("nested statement mapping: " + nestedStatementMapping);
+    private static Set<Set<IndexedWord>> findLevels(SemanticGraph graph) {
         Set<Set<IndexedWord>> levels = new HashSet<>();
-        for (Set<IndexedWord> level : nestedStatementMapping.values()) {
-            levels.add(level);
-        }
-
-        // components are partitioned into levels based on where their primary word appears
-        Set<Set<AbstractComponent>> componentLevels = new HashSet<>();
-        for (Set<IndexedWord> level : levels) {
-            Set<AbstractComponent> componentLevel = new HashSet<>();
-            for (AbstractComponent component : components) {
-                if (level.contains(component.getPrimary())) componentLevel.add(component);
-            }
-            componentLevels.add(componentLevel);
-        }
-        logger.info("component levels found: " + componentLevels.size());
-
-        for (Set<AbstractComponent> componentLevel : componentLevels) {
-            logger.info("component level: " + componentLevel);
-        }
-
-        return componentLevels;
-    }
-
-    private static Map<IndexedWord, Set<IndexedWord>> findNestedStatementMapping(SemanticGraph graph) {
-        Map<IndexedWord, Set<IndexedWord>> nestedStatementMapping = new HashMap<>();
 
         // which words are entry points for nested statements?
         // use these to find the exact scope of the statements
         for (TypedDependency dependency : graph.typedDependencies()) {
             if (Relations.EMBEDDED_STATEMENT_SCOPES.contains(dependency.reln().getShortName())) {
-                // TODO: ignore dependent clauses
-                nestedStatementMapping.put(
-                        dependency.dep(),
-                        StatementUtils.findCompound(dependency.dep(), graph, Relations.EMBEDDED_STATEMENT_SCOPES, null)
+                // TODO: also ignore dependent clauses within dependent clauses
+                levels.add(StatementUtils.findCompound(dependency.dep(), graph, Relations.EMBEDDED_STATEMENT_SCOPES, null)
                 );
             }
         }
 
         // the remaining vertices in the graph comprise the root level (= non-embedded statements) of the sentence
         Set<IndexedWord> rootLevel = new HashSet<>(graph.vertexSet());
-        for (Set<IndexedWord> level : nestedStatementMapping.values()) {
+        for (Set<IndexedWord> level : levels) {
             rootLevel.removeAll(level);
         }
-        nestedStatementMapping.put(rootLevel.iterator().next(), rootLevel);
+        levels.add(rootLevel);
+        logger.info("levels before applying changes: " + levels);
 
-        logger.info("nested statement mapping before changes: " + nestedStatementMapping);
-
-        Set<IndexedWord> fullyContainedScopes = new HashSet<>();
-        Map<IndexedWord, Set<IndexedWord>> mappingChanges = new HashMap<>();
+        Set<Set<IndexedWord>> fullyContainedLevels = new HashSet<>();
 
         // remove fully intersecting scopes from mapping
         // if slightly intersecting, remove the relevant words as part of the super scope
         // this is done in order to get perfectly separated scopes
-        for (IndexedWord entry : nestedStatementMapping.keySet()) {
-            Set<IndexedWord> statementScope = nestedStatementMapping.get(entry);
-
-            for (IndexedWord otherEntry : nestedStatementMapping.keySet()) {
-                if (!entry.equals(otherEntry)) {
-                    Set<IndexedWord> otherStatementScope = new HashSet<>(nestedStatementMapping.get(otherEntry));
-
-                    if (StatementUtils.intersects(statementScope, otherStatementScope)) {
-                        if (statementScope.containsAll(otherStatementScope)) {
-                            logger.info("removing fully contained scope: " + otherStatementScope);
-                            fullyContainedScopes.add(otherEntry);
-                        } else {
-                            if (!otherStatementScope.containsAll(statementScope)) {
-                                statementScope.removeAll(otherStatementScope);
-                                mappingChanges.put(entry, statementScope);
-                            }
+        for (Set<IndexedWord> level : levels) {
+            for (Set<IndexedWord> otherLevel : levels) {
+                if (!level.equals(otherLevel) && StatementUtils.intersects(level, otherLevel)) {
+                    if (level.containsAll(otherLevel)) {
+                        logger.info("removing fully contained level: " + otherLevel);
+                        fullyContainedLevels.add(otherLevel);
+                    } else {
+                        if (!otherLevel.containsAll(level)) {
+                            logger.info("removing overlapping portion from: " + level);
+                            level.removeAll(otherLevel); // TODO: this might be/become a source of errors
+                            logger.info("level after changes: " + level);
                         }
                     }
                 }
             }
         }
 
-        // apply removals
-        for (IndexedWord entry : fullyContainedScopes) {
-            nestedStatementMapping.remove(entry);
-            mappingChanges.remove(entry);
+        // apply removals of fully contained levels
+        for (Set<IndexedWord> fullyContainedLevel : fullyContainedLevels) {
+            levels.remove(fullyContainedLevel);
         }
 
-        logger.info("applying changes to statement mapping: " + mappingChanges);
-
-        // apply the changes from mappingChanges
-        for (IndexedWord entry : mappingChanges.keySet()) {
-            Set<IndexedWord> newStatementScope = nestedStatementMapping.get(entry);
-            nestedStatementMapping.put(entry, newStatementScope);
+        logger.info("levels found: " + levels.size());
+        for (Set<IndexedWord> level : levels) {
+            logger.info("level: " + level);
         }
 
-        return nestedStatementMapping;
+        return levels;
+    }
+
+    /**
+     * Partition the components of a sentence into sets of components by their level within the sentence.
+     * Levels are defined by relations indicating dependent clauses (such as ccomp and xcomp).
+     * Partitioning allows embedded statements to be clearly separated from root statements.
+     *
+     * @param components
+     * @param levels
+     * @return
+     */
+    private static Set<Set<AbstractComponent>> partitionByLevel(Set<AbstractComponent> components, Set<Set<IndexedWord>> levels)  {
+        Set<Set<AbstractComponent>> componentLevels = new HashSet<>();
+
+        for (Set<IndexedWord> level : levels) {
+            Set<AbstractComponent> componentLevel = new HashSet<>();
+
+            // components are partitioned into levels based on where their primary word appears
+            for (AbstractComponent component : components) {
+                if (level.contains(component.getPrimary())) componentLevel.add(component);
+            }
+
+            componentLevels.add(componentLevel);
+        }
+
+        logger.info("component levels found: " + componentLevels.size());
+        for (Set<AbstractComponent> componentLevel : componentLevels) {
+            logger.info("component level: " + componentLevel);
+        }
+
+        return componentLevels;
     }
 
     /**
