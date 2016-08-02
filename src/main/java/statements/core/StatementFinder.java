@@ -30,16 +30,18 @@ public class StatementFinder {
         SemanticGraph graph = sentence.get(SemanticGraphCoreAnnotations.CollapsedCCProcessedDependenciesAnnotation.class);
         graph.prettyPrint();  // TODO: remove when done debugging
 
-        // find statement components
+        // components are found independently through their own finder classes
         Set<AbstractComponent> components = new HashSet<>();
         components.addAll(subjectFinder.find(graph));
         components.addAll(verbFinder.find(graph));
         components.addAll(directObjectFinder.find(graph));
         components.addAll(indirectObjectFinder.find(graph));
 
+        // components are not allowed to overlap
+        // this is sometimes caused by errors in the dependency graph (or bugs in this algorithm)
         components = reduceToNonOverlappingComponents(components);
 
-        // link components to produce statements
+        // statements are produced by discovering connection between the components
         Set<Statement> statements = link(graph, components);
 
         // annotate with origin
