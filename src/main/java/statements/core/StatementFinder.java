@@ -479,6 +479,54 @@ public class StatementFinder {
         return statements;
     }
 
+    private static Map<Statement, Statement> getEmbeddingMap(Set<Statement> statements) {
+        // discover links between unconnected statements and embed nested statements
+        Map<Statement, Statement> embeddingMap = new HashMap<>();
+        for (Statement statement : statements) {
+            for (Statement otherStatement : statements) {
+                if (statement.embeddingParentOf(otherStatement)) {
+                    logger.info(statement + " embeds " + otherStatement);
+                    embeddingMap.put(otherStatement, statement);
+                    // TODO: possible issue if a statement embeds two statements...
+                }
+            }
+        }
+
+        return embeddingMap;
+    }
+
+    private static Set<List<Statement>> getEmbeddingChains(Map<Statement, Statement> embeddingMap) {
+        Set<List<Statement>> chains = new HashSet<>();
+
+        for (Statement child : embeddingMap.keySet()) {
+            List<Statement> chain = new ArrayList<>();
+            chain.add(child);
+
+            // follow chain of parent statements until parent is no longer itself a child
+            while (embeddingMap.containsKey(child)) {
+                child = embeddingMap.get(child);
+                chain.add(child);
+            }
+
+            chains.add(chain);
+        }
+
+        // remove chains that are contained by other chains
+        // this simply ensures that no duplicate statements are created
+        Set<List<Statement>> containedChains = new HashSet<>();
+        for (List<Statement> chain : chains) {
+            for (List<Statement> otherChain : chains) {
+                if (chain != otherChain && otherChain.containsAll(chain)) {
+                    containedChains.add(chain);
+                }
+            }
+        }
+
+        chains.removeAll(containedChains);
+
+        return chains;
+    }
+
     /**
      * Produces statements by linking together statement components.
      *
@@ -505,27 +553,35 @@ public class StatementFinder {
         }
 
         logger.info("splitStatements: " + splitStatements);
-        Set<Statement> modifiedStatements = new HashSet<>();
         Set<Statement> statements = new HashSet<>();
 
         // discover links between unconnected statements and embed nested statements
-        for (Statement statement : splitStatements) {
-            for (Statement otherStatement : splitStatements) {
-                if (statement.embeddingParentOf(otherStatement)) {
-                    logger.info(statement + " embeds " + otherStatement);
-                    modifiedStatements.add(statement);
-                    modifiedStatements.add(otherStatement);
-                    statements.add(statement.embed(otherStatement));
-                    // TODO: this final step does not expect embedded statements to contain embedded statements!
-                    // (might be able to solve it by using a map to find chained dependencies between statements)
+        Map<Statement, Statement> embeddingMap = getEmbeddingMap(splitStatements);
+        logger.info("embeddingMap: " + embeddingMap);
+        Set<List<Statement>> chains = getEmbeddingChains(embeddingMap);
+        logger.info("chains: " + chains);
+
+        // create embedding statements from the chain of embeddings
+        Set<Statement> embeddingStatements = new HashSet<>();
+        Statement embeddingStatement = null;
+        for (List<Statement> chain : chains) {
+            for (Statement statement : chain) {
+                if (embeddingStatement == null) {
+                    embeddingStatement = statement;
+                } else {
+                    logger.info("embedded " + embeddingStatement + " within " + statement);
+                    embeddingStatement = statement.embed(embeddingStatement);
                 }
             }
+            embeddingStatements.add(embeddingStatement);
+
+            // remove chain from other statements to avoid duplicates
+            splitStatements.removeAll(chain);
         }
 
         // remove the modified statements and add remaining to final list
-        logger.info("modifiedStatements: " + modifiedStatements);
-        splitStatements.removeAll(modifiedStatements);
         statements.addAll(splitStatements);
+        statements.addAll(embeddingStatements);
 
         return statements;
     }
