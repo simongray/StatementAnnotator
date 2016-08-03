@@ -2,6 +2,8 @@ package statements.core;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.util.CoreMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -13,6 +15,8 @@ import java.util.Set;
  * A statement found in a natural language sentence.
  */
 public class Statement implements StatementComponent {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     private Subject subject;
     private Verb verb;
     private DirectObject directObject;
@@ -604,14 +608,18 @@ public class Statement implements StatementComponent {
      * @return the lexical density of the statement
      */
     public double getLexicalDensity() {
-        double lexicalWords = 0;
+        double lexicalWords = 0.0;
         Set<IndexedWord> words = getWords();
 
-        for (IndexedWord word : words) {
-            if (PartsOfSpeech.LEXICAL_WORDS.contains(word.tag())) lexicalWords++;
+        if (words.size() == 0) {
+            logger.error("no words in statement from sentence: " + getOrigin() + ")");
+            return 0.0;
+        } else {
+            for (IndexedWord word : words) {
+                if (PartsOfSpeech.LEXICAL_WORDS.contains(word.tag())) lexicalWords += 1.0;
+            }
+            return lexicalWords / (double) words.size();
         }
-
-        return lexicalWords / (double) words.size();
     }
 
     /**

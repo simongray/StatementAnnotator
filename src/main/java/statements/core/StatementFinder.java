@@ -413,7 +413,7 @@ public class StatementFinder {
      */
     private static Set<Statement> getBestCombination(Set<StatementComponent> overlap, Set<Statement> overlappingStatements) {
         int smallestTotalDuplicateCount = -1;
-        Set<Statement> optimalCombination = null;
+        Set<Statement> optimalCombination = new HashSet<>();
 
         logger.info("finding best combination for overlap: " + overlap);
         logger.info("between statements: " + overlappingStatements);
@@ -441,6 +441,9 @@ public class StatementFinder {
         }
 
         logger.info("smallest total duplicate count for " + overlap + ": " + smallestTotalDuplicateCount);
+
+        // if the optimal combination has resulted in empty statements, these must be removed
+        optimalCombination.removeIf(s -> s.getComponents().isEmpty());
 
         return optimalCombination;
     }
