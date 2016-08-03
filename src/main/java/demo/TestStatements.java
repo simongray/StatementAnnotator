@@ -132,10 +132,6 @@ public class TestStatements {
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
 
-        // The problem with this sentence is that "quit comforting" is considered in a conjunction with "myself"
-        // this produces two versions of "I went to Copenhagen Business School ..."
-        String example = "I went to Copenhagen Business School myself and it's quite comforting to know that the place is also funding research into inequality.";
-
 //        String example = "We both use Android phones.";  // works in GrammarScope
 //        String example = "Is the jump in the early nineties due to a reclassification of countries in the Soviet sphere of influence?";
 //        String example = "Anyway, just make your own rule and stick to it.";
@@ -258,6 +254,7 @@ public class TestStatements {
 //        String example = "I can totally sympathize with him as it is indeed very difficult for foreigners to get into the Danish labour market for a number of reasons, but this idea that Sweden is doing any better is definitely not true.";
 //        String example = "Usually Apple is better at holding back with this stuff, but they are really losing it these days.";
 //        String example = "Policy outside collective bargaining is often also created in a deliberative democratic process including hearing affected parties.";
+        String example = "I went to Copenhagen Business School myself and it's quite comforting to know that the place is also funding research into inequality.";  // used to fix issue #57
 
         Annotation annotation = new Annotation(example);
         pipeline.annotate(annotation);
