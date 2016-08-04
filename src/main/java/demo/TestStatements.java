@@ -132,7 +132,8 @@ public class TestStatements {
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
-        String example = "I always felt that French just has too much superfluous grammar, like the different spellings don't even serve a purpose most of the time since the modern pronunciation is now the same.";
+        String example = "That's also why I don't believe all those happiness rankings."; // impossible to fix :(
+//        String example = "I always felt that French just has too much superfluous grammar, like the different spellings don't even serve a purpose most of the time since the modern pronunciation is now the same.";
 //        String example = "When I was there last summer we stayed some days in a Hani-dominated area in the south and most people there who were 30+ could not speak any Chinese whatsoever, not even \"nihao\".";
 //        String example = "We both use Android phones.";  // works in GrammarScope
 //        String example = "Is the jump in the early nineties due to a reclassification of countries in the Soviet sphere of influence?";
