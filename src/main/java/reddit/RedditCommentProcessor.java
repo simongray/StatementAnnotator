@@ -43,8 +43,7 @@ public class RedditCommentProcessor {
         for (Object object : jsonArray) {
             String comment = (String) object;
 
-            // strip markdown
-            comment = stripper.strip(comment);
+            comment = clean(comment);
 
             // identify language
             String commentLanguage = RedditCommentProcessor.getLanguage(comment);
@@ -55,5 +54,28 @@ public class RedditCommentProcessor {
         }
 
         return comments;
+    }
+
+    public static String clean(String comment) {
+        // strip markdown
+        comment = stripper.strip(comment);
+
+        // fix common mistakes
+        comment = fixMistakes(comment);
+
+        return comment;
+    }
+
+    /**
+     * Certain common mistakes are easily fixed and usually improve dependency graph results.
+     *
+     * @param comment
+     * @return
+     */
+    private static String fixMistakes(String comment) {
+        // replace short dash with long dash
+        comment = comment.replaceAll(" - ", " – ");
+
+        return comment;
     }
 }
