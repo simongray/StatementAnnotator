@@ -531,10 +531,7 @@ public class Statement implements StatementComponent {
     @Override
     public boolean isWellFormed() {
         if (getVerb() == null) return false;
-
-        for (StatementComponent component : getComponents()) {
-            if (!component.isInteresting()) return false;
-        }
+        if (getComponents().size() < 2) return false;
 
         return true;
     }

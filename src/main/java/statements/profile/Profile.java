@@ -97,7 +97,7 @@ public class Profile {
         Set<Statement> interestingStatements = new HashSet<>();
 
         for (Statement statement : getStatements()) {
-            if (statement.isInteresting()) interestingStatements.add(statement);
+            if (statement.isInteresting() && statement.isWellFormed()) interestingStatements.add(statement);
         }
 
         return interestingStatements;
