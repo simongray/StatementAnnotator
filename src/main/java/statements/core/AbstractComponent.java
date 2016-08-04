@@ -55,7 +55,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> markers;
     protected final Set<IndexedWord> cc;
     protected final Set<IndexedWord> determiners;
-    protected final Set<IndexedWord> adverbialClauses;
+//    protected final Set<IndexedWord> adverbialClauses;  // TODO: trying out making this embedded instead
     protected final Set<IndexedWord> nounClauses;
     protected final Set<IndexedWord> basicCompound;
     protected final Set<IndexedWord> normalCompound;
@@ -87,7 +87,7 @@ public abstract class AbstractComponent implements StatementComponent {
         markers = StatementUtils.findSpecificChildren(Relations.MARK, primary, graph);
         cc = StatementUtils.findSpecificChildren(Relations.CC, primary, graph);
         determiners = StatementUtils.findSpecificChildren(Relations.DET, primary, graph);  // TODO: nmod:poss are also determiners!
-        adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, primary, graph);
+//        adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, primary, graph);  // TODO: trying out making this embedded instead
         nounClauses = StatementUtils.findSpecificDescendants(Relations.ACL, primary, graph);
         nounClauses.addAll(StatementUtils.findSpecificDescendants(Relations.ACL_RELCL, primary, graph));
         otherDescriptives = StatementUtils.findSpecificDescendants(Relations.DESCRIPTIVE_NMOD, primary, graph);
@@ -101,7 +101,7 @@ public abstract class AbstractComponent implements StatementComponent {
         remaining = new HashSet<>();
         remaining.addAll(negations);
         remaining.addAll(markers);
-        remaining.addAll(adverbialClauses);
+//        remaining.addAll(adverbialClauses) // TODO: trying out making this embedded instead
         remaining.addAll(nounClauses);
         remaining.addAll(otherDescriptives);
         all = new HashSet<>(compound);
@@ -236,7 +236,8 @@ public abstract class AbstractComponent implements StatementComponent {
      * @return adverbial clauses
      */
     public Set<IndexedWord> getAdverbialClauses() {
-        return adverbialClauses;
+//        return adverbialClauses; // TODO: trying out making this embedded instead
+        return new HashSet<>();
     }
 
     /**
@@ -457,11 +458,11 @@ public abstract class AbstractComponent implements StatementComponent {
 
         return "{" +
             getClass().getSimpleName() + ": \"" + getString() + "\"" +
-            ", gaps: " + gaps() +  // TODO: remove after done debugging
+//            ", gaps: " + gaps() +  // TODO: remove after done debugging
             (!getDescriptives().isEmpty()? ", description: \"" + StatementUtils.join(getDescriptives()) + "\"" : "") +
-            ", local: \"" + (isLocal()? "yes" : "no") + "\"" +
-            (!getLabels().isEmpty()? ", labels: \"" + String.join(", ", getLabels()) + "\"" : "") +
-            (!conjunctions.isEmpty()? ", conjunction: \"" + String.join(", ", conjunctions) + "\"" : "") +
+//            ", local: \"" + (isLocal()? "yes" : "no") + "\"" +
+//            (!getLabels().isEmpty()? ", labels: \"" + String.join(", ", getLabels()) + "\"" : "") +
+//            (!conjunctions.isEmpty()? ", conjunction: \"" + String.join(", ", conjunctions) + "\"" : "") +
         "}";
     }
 

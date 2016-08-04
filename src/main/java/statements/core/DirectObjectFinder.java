@@ -15,6 +15,7 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
     private Map<IndexedWord, IndexedWord> dobjMapping ;
     private Set<IndexedWord> csubjVerbs;// for verbs that act as subjects
     private Set<IndexedWord> copObjects;
+    private Set<IndexedWord> xcompObjects;
     private Set<DirectObject> directObjects;
 
     @Override
@@ -22,6 +23,7 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
         dobjMapping = new HashMap<>();
         csubjVerbs = new HashSet<>();
         copObjects = new HashSet<>();
+        xcompObjects = new HashSet<>();
         directObjects = new HashSet<>();
     }
 
@@ -32,6 +34,12 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
             if (!ignoredWords.contains(dependency.dep())) dobjMapping.put(dependency.dep(), dependency.gov());
         }
 
+        // certain xcomp objects are adjectives, not verbs
+        if (dependency.reln().getShortName().equals(Relations.XCOMP)) {
+            if (!ignoredWords.contains(dependency.dep()) && PartsOfSpeech.ADJECTIVES.contains(dependency.dep().tag())) {
+                xcompObjects.add(dependency.dep());
+            }
+        }
         // direct objects defined by the cop relation
         // when a is the governor in both an nsubj and a cop relation, then it's a direct object
         if (dependency.reln().getShortName().equals(Relations.NSUBJ)) {
@@ -47,10 +55,6 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
     protected Set<DirectObject> get() {
         Set<IndexedWord> objectsToRemove = new HashSet<>();
 
-        logger.info("dobj objects mapping: " + dobjMapping);
-        logger.info("cop objects found: " + copObjects);
-        logger.info("csubj objects found: " + csubjVerbs);
-
         // remove dobj objects part of clausal verb subjects (through csubj relation)
         for (IndexedWord csubjVerb : csubjVerbs) {
             for (IndexedWord obj : dobjMapping.keySet()) {
@@ -60,7 +64,6 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
             }
         }
 
-        logger.info("objects to remove: " + objectsToRemove);
 
         // remove the objects that don't qualify
         for (IndexedWord object : objectsToRemove) {
@@ -70,27 +73,12 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
         Set<IndexedWord> entries = new HashSet<>();
         entries.addAll(dobjMapping.keySet());
         entries.addAll(copObjects);
+        entries.addAll(xcompObjects);
 
         // build complete objects
         for (IndexedWord entry : entries) {
-            logger.info("creating new direct object based on: " + entry);
             directObjects.add(new DirectObject(entry, graph));
         }
-
-//        Set<IndexedWord> conjunctions = new HashSet<>();
-//
-//        // TODO: revise, very hacky, created to fix this example: Central Copenhagen is for tourists and people from Jutland.
-//        // check for missing components in conjunctions
-//        for (DirectObject object : directObjects) {
-//            conjunctions.addAll(object.getConjunction());
-//        }
-//        conjunctions.removeAll(entries);
-//
-//        // create direct objects from conjunctions
-//        for (IndexedWord word : conjunctions) {
-//            logger.info("creating new direct object based on: " + word);
-//            directObjects.add(new DirectObject(word, graph));
-//        }
 
         return directObjects;
     }

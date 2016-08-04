@@ -254,12 +254,13 @@ public class StatementFinder {
     private static Set<Statement> split(Statement statement, Set<Class> duplicateClasses) {
         Set<Statement> splitStatements = new HashSet<>();
         Set<Class> remainingDuplicateClasses = new HashSet<>(duplicateClasses);
-        logger.info("splitting " + statement + " based on duplicates: " + duplicateClasses);
 
         if (duplicateClasses.isEmpty()) {
             splitStatements.add(statement);
             return splitStatements;
         } else {
+            logger.info("splitting " + statement + " based on duplicates: " + duplicateClasses);
+
             // with each level of recursion one component class is no longer needed
             // remaining duplicate classes will be handled further down the recursive stack
             for (Class componentClass : duplicateClasses) {
@@ -400,6 +401,12 @@ public class StatementFinder {
             }
         }
 
+        // remove possibly legitimate overlap
+        for (Set<StatementComponent> overlap : overlapMapping.keySet()) {
+            Set<Statement> overlappingStatements = overlapMapping.get(overlap);
+            if (!containsDuplicateComponents(overlappingStatements)) overlapMapping.remove(overlap);
+        }
+
         return overlapMapping;
     }
 
@@ -446,6 +453,14 @@ public class StatementFinder {
         optimalCombination.removeIf(s -> s.getComponents().isEmpty());
 
         return optimalCombination;
+    }
+
+    private static boolean containsDuplicateComponents(Set<Statement> statements) {
+        for (Statement statement : statements) {
+            if (statement.duplicateCount() > 0) return true;
+        }
+
+        return false;
     }
 
     /**
@@ -566,8 +581,9 @@ public class StatementFinder {
 
         // create embedding statements from the chain of embeddings
         Set<Statement> embeddingStatements = new HashSet<>();
-        Statement embeddingStatement = null;
         for (List<Statement> chain : chains) {
+            Statement embeddingStatement = null;
+
             for (Statement statement : chain) {
                 if (embeddingStatement == null) {
                     embeddingStatement = statement;

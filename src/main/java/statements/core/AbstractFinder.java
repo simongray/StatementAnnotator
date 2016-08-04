@@ -32,7 +32,7 @@ public abstract class AbstractFinder<T extends AbstractComponent> {
         dependencies = graph.typedDependencies();
         init();
 
-        logger.info("ignoring: " + ignoredWords);
+//        logger.info("ignoring: " + ignoredWords);
 
         // find relevant connections
         for (TypedDependency dependency : dependencies) {
@@ -40,7 +40,7 @@ public abstract class AbstractFinder<T extends AbstractComponent> {
             check(dependency);
         }
 
-        logger.info("conjunctions: " + conjunctions);
+//        logger.info("conjunctions: " + conjunctions);
 
         // produce components based on the connections
         components = get();

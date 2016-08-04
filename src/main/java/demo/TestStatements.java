@@ -33,7 +33,6 @@ public class TestStatements {
 //        "If you live in a city (e.g. Copenhagen) you might be surprised that some days it can actually be quite polluted in Western cities too. I sure was (I come from Copenhagen, Denmark). ";
 
 //        String example = "The Danish equivalent of Andersson is Andersen and the first name Anders is, though not quite as much recently, fairly popular.";
-
         // TODO: not quite right, mostly due to parsing
 //        String example = "Well, a country can be both Western and Southern in geographical terms, they're not exclusive groups.";
 
@@ -43,6 +42,9 @@ public class TestStatements {
 
 //
 //        String example = "I've been coming here since the very beginning and in my opinion it's better than ever.";
+        String example = "I do take melatonin when I need to sleep, but don't feel sleepy.";
+
+
 //        String example = "Oh, I had lots of Zamzam in Western/Muslim China. Very tasty stuff, but only the Muslims seem to drink it for some reason.";
 
 
@@ -131,7 +133,7 @@ public class TestStatements {
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
-
+//        String example = "When I was there last summer we stayed some days in a Hani-dominated area in the south and most people there who were 30+ could not speak any Chinese whatsoever, not even \"nihao\".";
 //        String example = "We both use Android phones.";  // works in GrammarScope
 //        String example = "Is the jump in the early nineties due to a reclassification of countries in the Soviet sphere of influence?";
 //        String example = "Anyway, just make your own rule and stick to it.";
@@ -254,7 +256,7 @@ public class TestStatements {
 //        String example = "I can totally sympathize with him as it is indeed very difficult for foreigners to get into the Danish labour market for a number of reasons, but this idea that Sweden is doing any better is definitely not true.";
 //        String example = "Usually Apple is better at holding back with this stuff, but they are really losing it these days.";
 //        String example = "Policy outside collective bargaining is often also created in a deliberative democratic process including hearing affected parties.";
-        String example = "I went to Copenhagen Business School myself and it's quite comforting to know that the place is also funding research into inequality.";  // used to fix issue #57
+//        String example = "I went to Copenhagen Business School myself and it's quite comforting to know that the place is also funding research into inequality.";  // used to fix issue #57
 
         Annotation annotation = new Annotation(example);
         pipeline.annotate(annotation);

@@ -47,7 +47,6 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
     @Override
     protected Set<IndirectObject> get() {
         Set<IndexedWord> notRelatedToVerbs = new HashSet<>();
-        logger.info("nmodMapping: " + nmodMapping);
 
         // find and remove any NMOD relation that isn't tied to a verb or another NMOD relation (= in a sequence)
         // other nmod relations (with subject/dirobj governors) are included directly as part of those components!
@@ -55,7 +54,6 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
             if (!isValid(nmodDependent)) notRelatedToVerbs.add(nmodDependent);
         }
 
-        logger.info("notRelatedToVerbs: " + notRelatedToVerbs);
 
         for (IndexedWord obj : notRelatedToVerbs) {
             nmodMapping.remove(obj);
@@ -65,16 +63,12 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
         // these are used for creating "conjunctions"
         Set<Set<IndexedWord>> sequences = StatementUtils.findSequences(nmodMapping.keySet(), Relations.NMOD, graph);
         Collection<Set<IndexedWord>> governance = StatementUtils.flip(nmodMapping).values();
-        logger.info("sequences: " + sequences);
-        logger.info("governance: " + governance);
 
         // find all objects that are part of "conjunctions"
         Set<Set<IndexedWord>> conjunctions = new HashSet<>(governance);
         conjunctions.addAll(sequences);
-        logger.info("unmerged conjunctions: " + conjunctions);
 
         conjunctions = StatementUtils.merge(conjunctions);
-        logger.info("merged conjunctions: " + conjunctions);
 
         // build complete objects from conjunctions
         for (Set<IndexedWord> conjunction : conjunctions) {
@@ -82,21 +76,16 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
                 for (IndexedWord word : conjunction) {
                     Set<IndexedWord> otherWords = new HashSet<>(conjunction);
                     otherWords.remove(word);
-
-                    logger.info("added new indirect object from conjunction: " + word);
-                    logger.info("conjunction words: " + otherWords);
                     indirectObjects.add(new IndirectObject(word, graph, getLabels(word, Labels.CONJ_INDIRECT_OBJECT), otherWords));
                 }
             } else {
                 IndexedWord word = conjunction.iterator().next();
-                logger.info("added new indirect object: " + word);
                 indirectObjects.add(new IndirectObject(word, graph, getLabels(word, Labels.CONJ_INDIRECT_OBJECT)));
             }
         }
 
         // build indirect objects from the iobj relation (ex: "He gave Frodo the ring")
         for (IndexedWord word : iobjObjects) {
-            logger.info("added new indirect object: " + word);
             indirectObjects.add(new IndirectObject(word, graph, getLabels(word)));
         }
 

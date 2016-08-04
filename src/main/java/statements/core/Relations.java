@@ -64,7 +64,7 @@ public class Relations {
     static {
         DEPENDENT_CLAUSE_SCOPES.add(Relations.ACL);  // scope for description of a noun
         DEPENDENT_CLAUSE_SCOPES.add(Relations.ACL_RELCL);
-        DEPENDENT_CLAUSE_SCOPES.add(Relations.ADVCL);  // scope for description of a verb/adjective
+//        DEPENDENT_CLAUSE_SCOPES.add(Relations.ADVCL);  // scope for description of a verb/adjective
     }
 
     /**
@@ -77,6 +77,7 @@ public class Relations {
         EMBEDDED_STATEMENT_SCOPES.add(CCOMP);
         EMBEDDED_STATEMENT_SCOPES.add(XCOMP);
         EMBEDDED_STATEMENT_SCOPES.add(CSUBJ);
+        EMBEDDED_STATEMENT_SCOPES.add(ADVCL);  // TODO: TESTING THIS OUT FOR NOW!
     }
 
     /**
