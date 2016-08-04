@@ -28,7 +28,7 @@ public class Profile {
 
         // unpack embedded statements according to a pattern
         // the original statements are replaced with the embedded statements based on the pattern
-        unpackStatements();
+        unpackEmbeddedStatements();
 
         // store the topic keywords of all interesting statements
         // used to rank statements in relation to other users
@@ -38,9 +38,9 @@ public class Profile {
     /**
      * Unpack statements according to certain patterns to replace them with their embedded statements.
      */
-    private void unpackStatements() {
-        Set<Statement> packedStatements = new HashSet<>();
-        Set<Statement> unpackedStatements = new HashSet<>();
+    private void unpackEmbeddedStatements() {
+        Set<Statement> embeddingStatements = new HashSet<>();
+        Set<Statement> embeddedStatements = new HashSet<>();
 
         Pattern thinkPattern = new Pattern(
                 Proxy.Subject("I", "we"),
@@ -50,14 +50,18 @@ public class Profile {
 
         for (Statement statement : statements) {
             if (thinkPattern.matches(statement)) {
-                unpackedStatements.add(statement.getEmbeddedStatement());
-                packedStatements.add(statement);
+                // TODO: unpacked statements do not carry over negation, e.g. "I think ..." and "I don't think ..."
+                Statement embeddedStatement = statement.getEmbeddedStatement();
+                embeddedStatement.setOrigin(statement.getOrigin());
+                embeddedStatements.add(embeddedStatement);
+                embeddingStatements.add(statement);
+                logger.info("unpacked " + embeddedStatement + " from " + statement);
             }
         }
 
-        statements.addAll(unpackedStatements);
-        statements.removeAll(packedStatements);
-        logger.info("unpacked " + packedStatements.size() + " statements");
+        statements.removeAll(embeddingStatements);
+        statements.addAll(embeddedStatements);
+        logger.info("total statements unpacked: " + embeddingStatements.size());
     }
 
     /**
