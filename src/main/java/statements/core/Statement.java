@@ -372,6 +372,21 @@ public class Statement implements StatementComponent {
     }
 
     /**
+     * Whether this statement contains a specific type of component.
+     * Useful when flattening embedding statements.
+     *
+     * @param type component type to search for
+     * @return true if contains type
+     */
+    public boolean containsType(Class type) {
+        for (StatementComponent component : getComponents()) {
+            if (component.getClass().equals(type)) return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Whether this statement includes a set of components.
      *
      * @param otherComponents components to check

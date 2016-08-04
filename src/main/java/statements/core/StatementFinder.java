@@ -402,10 +402,12 @@ public class StatementFinder {
         }
 
         // remove possibly legitimate overlap
+        Set<Set<StatementComponent>> legitimateOverlaps = new HashSet<>();
         for (Set<StatementComponent> overlap : overlapMapping.keySet()) {
             Set<Statement> overlappingStatements = overlapMapping.get(overlap);
-            if (!containsDuplicateComponents(overlappingStatements)) overlapMapping.remove(overlap);
+            if (!containsDuplicateComponents(overlappingStatements)) legitimateOverlaps.add(overlap);
         }
+        for (Set<StatementComponent> legitimateOverlap : legitimateOverlaps) overlapMapping.remove(legitimateOverlap);
 
         return overlapMapping;
     }
@@ -546,6 +548,41 @@ public class StatementFinder {
     }
 
     /**
+     * Flatten certain statements that contain embedded statements.
+     *
+     * @param embeddingStatements
+     * @return
+     */
+    private static Set<Statement> flatten(Set<Statement> embeddingStatements) {
+        Set<Statement> flattenedStatements = new HashSet<>();
+
+        for (Statement statement : embeddingStatements) {
+            if (statement.getEmbeddedStatement().count() == 1) {
+                Statement embeddedStatement = statement.getEmbeddedStatement();
+                StatementComponent embeddedComponent = embeddedStatement.getComponents().iterator().next();
+
+                // replace the statement with a flattened statement,
+                // where the embedded statement is now a normal component
+                if (!statement.containsType(embeddedComponent.getClass())) {
+                    Set<StatementComponent> newComponents = statement.getComponents();
+                    newComponents.remove(embeddedStatement);
+                    newComponents.add(embeddedComponent);
+                    Statement flattenedStatement = new Statement(newComponents);
+                    flattenedStatements.add(flattenedStatement);
+                    logger.info("flattened statement: " + statement);
+                } else {
+                    flattenedStatements.add(statement);
+                }
+            } else {
+                flattenedStatements.add(statement);
+            }
+        }
+
+        return flattenedStatements;
+    }
+
+
+    /**
      * Produces statements by linking together statement components.
      *
      * @return statements
@@ -597,6 +634,11 @@ public class StatementFinder {
             // remove chain from other statements to avoid duplicates
             splitStatements.removeAll(chain);
         }
+
+        // flatten embedding statements if applicable
+        // flattening entails reducing embedded statements with a single component to a component of the parent
+        // (only in cases where this does not produce duplicate component types!)
+        embeddingStatements = flatten(embeddingStatements);
 
         // remove the modified statements and add remaining to final list
         statements.addAll(splitStatements);
