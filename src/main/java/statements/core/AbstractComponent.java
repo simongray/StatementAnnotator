@@ -324,8 +324,8 @@ public abstract class AbstractComponent implements StatementComponent {
      * @return true if specific
      */
     public boolean isLocal() {
-        for (IndexedWord word : determiners) {
-            if (Lexicon.LOCAL_DETERMINERS.contains(word.word().toLowerCase())) {
+        for (IndexedWord determiner : determiners) {
+            if (Lexicon.LOCAL_DETERMINERS.contains(determiner.word().toLowerCase())) {
                 return true;
             }
         }
