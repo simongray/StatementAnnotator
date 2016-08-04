@@ -40,8 +40,11 @@ public class TestProfile {
         Set<Statement> firstStatements = new HashSet<>();
         Set<Statement> secondStatements = new HashSet<>();
 
+        int commentLimit = 50;
+
         // retrieve statements from first data set
-        for (String comment : firstComments) {
+        for (int i = 0; i < commentLimit; i++) {
+            String comment = firstComments.get(i);
             Annotation annotation = new Annotation(comment);
             pipeline.annotate(annotation);
 
@@ -54,7 +57,8 @@ public class TestProfile {
         }
 
         // retrieve statements from second data set
-        for (String comment : secondComments) {
+        for (int i = 0; i < commentLimit; i++) {
+            String comment = secondComments.get(i);
             Annotation annotation = new Annotation(comment);
             pipeline.annotate(annotation);
 
