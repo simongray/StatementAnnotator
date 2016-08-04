@@ -42,7 +42,6 @@ public class TestStatements {
 
 //
 //        String example = "I've been coming here since the very beginning and in my opinion it's better than ever.";
-        String example = "I do take melatonin when I need to sleep, but don't feel sleepy.";
 
 
 //        String example = "Oh, I had lots of Zamzam in Western/Muslim China. Very tasty stuff, but only the Muslims seem to drink it for some reason.";
@@ -133,6 +132,7 @@ public class TestStatements {
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
+        String example = "I always felt that French just has too much superfluous grammar, like the different spellings don't even serve a purpose most of the time since the modern pronunciation is now the same.";
 //        String example = "When I was there last summer we stayed some days in a Hani-dominated area in the south and most people there who were 30+ could not speak any Chinese whatsoever, not even \"nihao\".";
 //        String example = "We both use Android phones.";  // works in GrammarScope
 //        String example = "Is the jump in the early nineties due to a reclassification of countries in the Soviet sphere of influence?";
@@ -257,6 +257,7 @@ public class TestStatements {
 //        String example = "Usually Apple is better at holding back with this stuff, but they are really losing it these days.";
 //        String example = "Policy outside collective bargaining is often also created in a deliberative democratic process including hearing affected parties.";
 //        String example = "I went to Copenhagen Business School myself and it's quite comforting to know that the place is also funding research into inequality.";  // used to fix issue #57
+//        String example = "I do take melatonin when I need to sleep, but don't feel sleepy.";
 
         Annotation annotation = new Annotation(example);
         pipeline.annotate(annotation);
