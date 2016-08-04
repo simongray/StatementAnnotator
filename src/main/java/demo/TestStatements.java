@@ -5,6 +5,7 @@ import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
+import reddit.RedditCommentProcessor;
 import statements.annotations.StatementsAnnotation;
 import statements.core.Statement;
 import statements.core.StatementUtils;
@@ -23,6 +24,11 @@ public class TestStatements {
         props.setProperty("customAnnotatorClass.statements", "statements.StatementAnnotator");
         props.setProperty("ssplit.newlineIsSentenceBreak", "always");  // IMPORTANT!!
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+
+//        String example = "";
+
+
+
 
 //        String example = "The European Parliament with its proportional representation is a much more democratic institution than the UK parliament... \n" +
 //        "I'm sure you meant the EU as a whole and not the European Parliament specifically, just thought it was funny that a Brit would complain about this when the UK voting system is one of the absolute worst in the world at representing the will of the people + your other house consists of a bunch of noble people.";
@@ -132,7 +138,14 @@ public class TestStatements {
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
-        String example = "That's also why I don't believe all those happiness rankings."; // impossible to fix :(
+        // "needs" is misinterpreted as a noun, conj:but relation possibly can be used to fix
+        String example = "I don't know about HBO Go but the HBO Nordic steaming service needs you to go back from a page on a specific episode and then select another.\n";
+//        String example = " The ones that don't probably aren't worth talking to - they exist in all countries and cultures of course but in europe they are a minority.\n";
+        // the "conj" problem where "and" is misinterpreted
+//        String example = "Employees are encouraged to get a semi public unemployment insurance and the government has unemployment benefits as well.";
+//        String example = " We only dub childrens movies and often cinemas will show the original as well with subtitles.";
+//        String example = "Counting calories meticulously as well a daily weighings kept me on track.";
+//        String example = "That's also why I don't believe all those happiness rankings."; // impossible to fix :(
 //        String example = "I always felt that French just has too much superfluous grammar, like the different spellings don't even serve a purpose most of the time since the modern pronunciation is now the same.";
 //        String example = "When I was there last summer we stayed some days in a Hani-dominated area in the south and most people there who were 30+ could not speak any Chinese whatsoever, not even \"nihao\".";
 //        String example = "We both use Android phones.";  // works in GrammarScope
@@ -260,7 +273,7 @@ public class TestStatements {
 //        String example = "I went to Copenhagen Business School myself and it's quite comforting to know that the place is also funding research into inequality.";  // used to fix issue #57
 //        String example = "I do take melatonin when I need to sleep, but don't feel sleepy.";
 
-        Annotation annotation = new Annotation(example);
+        Annotation annotation = new Annotation(RedditCommentProcessor.clean(example));
         pipeline.annotate(annotation);
         List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
 

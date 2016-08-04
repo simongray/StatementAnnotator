@@ -54,7 +54,6 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
             if (!isValid(nmodDependent)) notRelatedToVerbs.add(nmodDependent);
         }
 
-
         for (IndexedWord obj : notRelatedToVerbs) {
             nmodMapping.remove(obj);
         }
@@ -65,7 +64,8 @@ public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
         Collection<Set<IndexedWord>> governance = StatementUtils.flip(nmodMapping).values();
 
         // find all objects that are part of "conjunctions"
-        Set<Set<IndexedWord>> conjunctions = new HashSet<>(governance);
+        Set<Set<IndexedWord>> conjunctions = new HashSet<>();
+        conjunctions.addAll(governance);
         conjunctions.addAll(sequences);
 
         conjunctions = StatementUtils.merge(conjunctions);
