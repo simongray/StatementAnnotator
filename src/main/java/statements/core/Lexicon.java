@@ -64,6 +64,21 @@ public class Lexicon {
         GENERAL_DETERMINERS.add("what");
     }
 
+    public static final Set<String> FIRST_PERSON = new HashSet<>();
+    static {
+        FIRST_PERSON.add("i");
+        FIRST_PERSON.add("me");
+        FIRST_PERSON.add("we");
+        FIRST_PERSON.add("us");
+    }
+
+    public static final Set<String> SECOND_PERSON = new HashSet<>();
+    static {
+        SECOND_PERSON.add("you");
+        SECOND_PERSON.add("y'all");
+        SECOND_PERSON.add("yall");
+    }
+
     /**
      * This set of nouns comprises second and third person pronouns, but not first person.
      * It also adds other words that do not carry any information without context.

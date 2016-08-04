@@ -365,6 +365,19 @@ public abstract class AbstractComponent implements StatementComponent {
     @Override
     public abstract boolean isWellFormed();
 
+    public boolean isProperNoun() {
+        // TODO: what about possesives?
+        return getPrimary().tag().equals(PartsOfSpeech.PRP);
+    }
+
+    public boolean isFirstPerson() {
+        return isProperNoun() && Lexicon.FIRST_PERSON.contains(getPrimary().word().toLowerCase());
+    }
+
+    public boolean isSecondPerson() {
+        return isProperNoun() && Lexicon.SECOND_PERSON.contains(getPrimary().word().toLowerCase());
+    }
+
     /**
      * The compound as a string.
      *
