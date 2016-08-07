@@ -86,7 +86,7 @@ public class ComponentPattern implements Pattern {
     public abstract static class PatternBuilder {
         public final Class type;
         public String[] words = null;
-        public Boolean negated = false;
+        public Boolean negated = false;  // note: defaults to false - not null - unlike other attributes
         public Boolean plural = null;
         public Boolean specific = null;
         public Boolean local = null;
