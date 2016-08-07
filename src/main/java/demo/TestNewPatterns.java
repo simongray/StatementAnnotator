@@ -71,19 +71,9 @@ public class TestNewPatterns {
                 new StatementPattern()
         );
 
-        OldPattern thinkPattern = new OldPattern(
-                OldProxy.Subject("I", "we"),
-                OldProxy.Verb(dict.getSynonyms(POS.VERB, "think", "reckon", "believe")),
-                OldProxy.Statement()
-        );
-
         for (Statement statement : allStatements) {
-
             if (newThinkPattern.matches(statement)) {
                 System.out.println("NEW think: " + statement);
-            }
-            if (thinkPattern.matches(statement)) {
-                System.out.println("think: " + statement);
             }
         }
     }
