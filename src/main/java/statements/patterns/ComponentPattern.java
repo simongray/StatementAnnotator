@@ -127,7 +127,7 @@ public class ComponentPattern implements Pattern {
         public Boolean properNoun = null;
         public int[] person = null;
 
-        private PatternBuilder(Class type) {
+        protected PatternBuilder(Class type) {
             this.type = type;
         }
 
@@ -169,42 +169,6 @@ public class ComponentPattern implements Pattern {
         public PatternBuilder person(int... states) {
             this.person = states;
             return this;
-        }
-    }
-
-    /**
-     * A builder for a proxy Subject.
-     */
-    public static class Subject extends PatternBuilder {
-        public Subject() {
-            super(statements.core.Subject.class);
-        }
-    }
-
-    /**
-     * A builder for a proxy Verb.
-     */
-    public static class Verb extends PatternBuilder {
-        public Verb() {
-            super(statements.core.Verb.class);
-        }
-    }
-
-    /**
-     * A builder for a proxy DirectObject.
-     */
-    public static class DirectObject extends PatternBuilder {
-        public DirectObject() {
-            super(statements.core.DirectObject.class);
-        }
-    }
-
-    /**
-     * A builder for a proxy IndirectObject.
-     */
-    public static class IndirectObject extends PatternBuilder {
-        public IndirectObject() {
-            super(statements.core.IndirectObject.class);
         }
     }
 }

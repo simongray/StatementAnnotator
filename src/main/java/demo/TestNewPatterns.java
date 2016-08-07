@@ -65,27 +65,27 @@ public class TestNewPatterns {
 
         // testing the new pattern class
         Pattern thinkPattern = new StatementPattern(
-                new ComponentPattern.Subject().person(1).build(),
-                new ComponentPattern.Verb().words(Common.THINK).build(),
+                new SubjectPattern().person(1).build(),
+                new VerbPattern().words(Common.THINK).build(),
                 new StatementPattern()
         );
 
         Pattern thinkNotPattern = new StatementPattern(
-                new ComponentPattern.Subject().words("I", "we").build(),
-                new ComponentPattern.Verb().words(Common.THINK).negated(true).build(),
+                new SubjectPattern().words("I", "we").build(),
+                new VerbPattern().words(Common.THINK).negated(true).build(),
                 new StatementPattern()
         );
 
         Pattern thinkAndThinkNotPattern = new StatementPattern(
-                new ComponentPattern.Subject().words("I", "we").build(),
-                new ComponentPattern.Verb().words(Common.THINK).negated(null).build(),
+                new SubjectPattern().words("I", "we").build(),
+                new VerbPattern().words(Common.THINK).negated(null).build(),
                 new StatementPattern()
         );
 
         Pattern pluralPattern = new StatementPattern(
 //                new ComponentPattern.DirectObject().plural(true).person(2).build()
-                new ComponentPattern.Subject().person(2).build(),
-                new ComponentPattern.DirectObject().plural(true).build()
+                new SubjectPattern().person(2).build(),
+                new DirectObjectPattern().plural(true).build()
         );
 
         for (Statement statement : allStatements) {
