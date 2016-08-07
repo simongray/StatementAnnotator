@@ -14,6 +14,7 @@ public class ComponentPattern implements Pattern {
     private final Boolean specific;
     private final Boolean local;
     private final Boolean properNoun;
+    private final int[] person;
 
     private ComponentPattern(PatternBuilder builder) {
         this.type = builder.type;
@@ -23,6 +24,7 @@ public class ComponentPattern implements Pattern {
         this.specific = builder.specific;
         this.local = builder.local;
         this.properNoun = builder.properNoun;
+        this.person = builder.person;
     }
 
     /**
@@ -56,10 +58,37 @@ public class ComponentPattern implements Pattern {
             // local state (if applicable)
             if (properNoun != null && abstractComponent.isProperNoun() != properNoun) return false;
 
+            // matches against 1st, 2nd, and/or 3rd person
+            if (person != null && !matchesPerson(abstractComponent)) return false;
+
             // compound (if applicable)
             if (words != null && !matchesNormalCompound(abstractComponent.getNormalCompound())) return false;
 
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether the person (1st, 2nd, 3rd) of the component matches.
+     *
+     * @param abstractComponent the component to test
+     * @return true if one of the states matches
+     */
+    private boolean matchesPerson(AbstractComponent abstractComponent) {
+        int componentState;
+
+        if (abstractComponent.isFirstPerson()) {
+            componentState = 1;
+        } else if (abstractComponent.isSecondPerson()) {
+            componentState = 2;
+        } else {
+            componentState = 3;
+        }
+
+        for (int state : person) {
+            if (componentState == state) return true;
         }
 
         return false;
@@ -96,6 +125,7 @@ public class ComponentPattern implements Pattern {
         public Boolean specific = null;
         public Boolean local = null;
         public Boolean properNoun = null;
+        public int[] person = null;
 
         private PatternBuilder(Class type) {
             this.type = type;
@@ -106,6 +136,7 @@ public class ComponentPattern implements Pattern {
         }
 
         public PatternBuilder words(String... words) {
+            for (int i = 0; i < words.length; i++) words[i] = words[i].toLowerCase();
             this.words = words;
             return this;
         }
@@ -132,6 +163,11 @@ public class ComponentPattern implements Pattern {
 
         public PatternBuilder properNoun(Boolean state) {
             this.properNoun = state;
+            return this;
+        }
+
+        public PatternBuilder person(int... states) {
+            this.person = states;
             return this;
         }
     }

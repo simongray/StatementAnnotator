@@ -37,7 +37,7 @@ public class TestNewPatterns {
 
         Set<Statement> allStatements = new HashSet<>();
 
-//        int commentLimit = 200;
+//        int commentLimit = 50;
         int commentLimit = comments.size();
 
         // retrieve statements from first data set
@@ -66,7 +66,7 @@ public class TestNewPatterns {
 
         // testing the new pattern class
         Pattern thinkPattern = new StatementPattern(
-                new ComponentPattern.Subject().words("I", "we").build(),
+                new ComponentPattern.Subject().person(1).build(),
                 new ComponentPattern.Verb().words(Synonyms.THINK).build(),
                 new StatementPattern()
         );
@@ -84,7 +84,9 @@ public class TestNewPatterns {
         );
 
         Pattern pluralPattern = new StatementPattern(
-                new ComponentPattern.Subject().plural(true).build()
+//                new ComponentPattern.DirectObject().plural(true).person(2).build()
+                new ComponentPattern.Subject().person(2).build(),
+                new ComponentPattern.DirectObject().plural(true).build()
         );
 
         for (Statement statement : allStatements) {
@@ -94,9 +96,9 @@ public class TestNewPatterns {
             if (thinkNotPattern.matches(statement)) {
                 System.out.println("not: " + statement);
             }
-            if (thinkAndThinkNotPattern.matches(statement)) {
-                System.out.println("both: " + statement);
-            }
+//            if (thinkAndThinkNotPattern.matches(statement)) {
+//                System.out.println("both: " + statement);
+//            }
             if (pluralPattern.matches(statement)) {
                 System.out.println("plural: " + statement);
             }
