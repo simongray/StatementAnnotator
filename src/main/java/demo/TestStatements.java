@@ -25,7 +25,15 @@ public class TestStatements {
         props.setProperty("ssplit.newlineIsSentenceBreak", "always");  // IMPORTANT!!
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
-        String example = "";
+//        String example = "";
+
+
+
+        // TODO: the nmod for the direct object should not become part of the description, when the DO is a verb ("accepted")
+        String example = "Prostitution is a lot more accepted in Japanese corporate life than it is in Western countries.";
+
+
+
 
 
 
