@@ -5,7 +5,7 @@ import edu.mit.jwi.item.POS;
 
 import java.io.IOException;
 
-public class Synonyms {
+public class Common {
     public static WordnetDictionary dictionary;
 
     public static WordnetDictionary getDictionary() {

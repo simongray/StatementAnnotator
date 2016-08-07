@@ -1,6 +1,5 @@
 package statements.profile;
 
-import edu.mit.jwi.item.POS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import statements.core.*;
@@ -42,7 +41,7 @@ public class Profile {
 
         Pattern thinkPattern = new StatementPattern(
                 new ComponentPattern.Subject().words("I", "we").build(),
-                new ComponentPattern.Verb().words(Synonyms.THINK).build(),
+                new ComponentPattern.Verb().words(Common.THINK).build(),
                 new StatementPattern()
         );
 

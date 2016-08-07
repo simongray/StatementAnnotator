@@ -1,7 +1,6 @@
 package demo;
 
 
-import edu.mit.jwi.item.POS;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
@@ -67,19 +66,19 @@ public class TestNewPatterns {
         // testing the new pattern class
         Pattern thinkPattern = new StatementPattern(
                 new ComponentPattern.Subject().person(1).build(),
-                new ComponentPattern.Verb().words(Synonyms.THINK).build(),
+                new ComponentPattern.Verb().words(Common.THINK).build(),
                 new StatementPattern()
         );
 
         Pattern thinkNotPattern = new StatementPattern(
                 new ComponentPattern.Subject().words("I", "we").build(),
-                new ComponentPattern.Verb().words(Synonyms.THINK).negated(true).build(),
+                new ComponentPattern.Verb().words(Common.THINK).negated(true).build(),
                 new StatementPattern()
         );
 
         Pattern thinkAndThinkNotPattern = new StatementPattern(
                 new ComponentPattern.Subject().words("I", "we").build(),
-                new ComponentPattern.Verb().words(Synonyms.THINK).negated(null).build(),
+                new ComponentPattern.Verb().words(Common.THINK).negated(null).build(),
                 new StatementPattern()
         );
 
