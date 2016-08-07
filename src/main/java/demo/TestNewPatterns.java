@@ -73,14 +73,18 @@ public class TestNewPatterns {
 
         Pattern thinkNotPattern = new StatementPattern(
                 new ComponentPattern.Subject().words("I", "we").build(),
-                new ComponentPattern.Verb().words(Synonyms.THINK).negated().build(),
+                new ComponentPattern.Verb().words(Synonyms.THINK).negated(true).build(),
                 new StatementPattern()
         );
 
         Pattern thinkAndThinkNotPattern = new StatementPattern(
                 new ComponentPattern.Subject().words("I", "we").build(),
-                new ComponentPattern.Verb().words(Synonyms.THINK).ignoreNegation().build(),
+                new ComponentPattern.Verb().words(Synonyms.THINK).negated(null).build(),
                 new StatementPattern()
+        );
+
+        Pattern pluralPattern = new StatementPattern(
+                new ComponentPattern.Subject().plural(true).build()
         );
 
         for (Statement statement : allStatements) {
@@ -92,6 +96,9 @@ public class TestNewPatterns {
             }
             if (thinkAndThinkNotPattern.matches(statement)) {
                 System.out.println("both: " + statement);
+            }
+            if (pluralPattern.matches(statement)) {
+                System.out.println("plural: " + statement);
             }
         }
     }

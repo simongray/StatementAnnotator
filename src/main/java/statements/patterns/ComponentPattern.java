@@ -9,14 +9,14 @@ import statements.core.StatementComponent;
 public class ComponentPattern implements Pattern {
     private final Class type;
     private final String[] words;
-    private final boolean negated;
-    private final boolean ignoreNegation;
+    private final Boolean negated;
+    private final Boolean plural;
 
     private ComponentPattern(PatternBuilder builder) {
         this.type = builder.type;
         this.words = builder.words;
         this.negated = builder.negated;
-        this.ignoreNegation = builder.ignoreNegation;
+        this.plural = builder.plural;
     }
 
     /**
@@ -36,10 +36,13 @@ public class ComponentPattern implements Pattern {
             if (abstractComponent.getClass() != type) return false;
 
             // negation state (can be ignored if specified, otherwise defaults to matching non-negated)
-            if (!ignoreNegation && abstractComponent.isNegated() != negated) return false;
+            if (negated != null && abstractComponent.isNegated() != negated) return false;
+
+            // plural state (if applicable)
+            if (plural != null && abstractComponent.isPlural() != plural) return false;
 
             // compound (if applicable)
-            if (!matchesNormalCompound(abstractComponent.getNormalCompound())) return false;
+            if (words != null && !matchesNormalCompound(abstractComponent.getNormalCompound())) return false;
 
             return true;
         }
@@ -55,7 +58,7 @@ public class ComponentPattern implements Pattern {
      * @return true if one of the words matches
      */
     private boolean matchesNormalCompound(String normalCompound) {
-        if (words == null || words.length == 0) return true;
+        if (words.length == 0) return true;
 
         for (String word : words) {
             if (word.equals(normalCompound)) return true;
@@ -66,12 +69,15 @@ public class ComponentPattern implements Pattern {
 
     /**
      * This class must be instantiated using one of the derived classes.
+     *
+     * Note: the Boolean wrapper class is used instead of the primitive.
+     * This is necessary to be able to have unknown/null states.
      */
     public abstract static class PatternBuilder {
         public final Class type;
         public String[] words = null;
-        public boolean negated = false;
-        public boolean ignoreNegation = false;
+        public Boolean negated = false;
+        public Boolean plural = null;
 
         private PatternBuilder(Class type) {
             this.type = type;
@@ -82,20 +88,17 @@ public class ComponentPattern implements Pattern {
         }
 
         public PatternBuilder words(String... words) {
-            // all equality comparisons are made without looking at case
-            for (int i = 0; i < words.length; i++) words[i] = words[i].toLowerCase();
-
             this.words = words;
             return this;
         }
 
-        public PatternBuilder negated() {
-            this.negated = true;
+        public PatternBuilder negated(Boolean state) {
+            this.negated = state;
             return this;
         }
 
-        public PatternBuilder ignoreNegation() {
-            this.ignoreNegation = true;
+        public PatternBuilder plural(Boolean state) {
+            this.plural = state;
             return this;
         }
     }
