@@ -11,9 +11,7 @@ import reddit.RedditCommentProcessor;
 import statements.annotations.StatementsAnnotation;
 import statements.core.Statement;
 import statements.core.StatementUtils;
-import statements.patterns.Pattern;
-import statements.patterns.Proxy;
-import statements.patterns.WordnetDictionary;
+import statements.patterns.*;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -66,27 +64,36 @@ public class TestNewPatterns {
 
         WordnetDictionary dict = new WordnetDictionary();
 
-        Pattern bePattern = new Pattern(
-                Proxy.Subject("I", "we"),
-                Proxy.Verb(dict.getSynonyms(POS.VERB, "be", "become")),
-                Proxy.DirectObject()
+        // testing the new pattern class
+        Pattern testPattern = new StatementPattern(
+                new ComponentPattern.Subject().words("I").build(),
+                new ComponentPattern.Verb().words("think").build()
         );
-        Pattern locationPattern = new Pattern(
-                Proxy.Subject("I", "we"),
-                Proxy.Verb(dict.getSynonyms(POS.VERB, "be", "come", "go", "move", "live", "travel")),
-                Proxy.IndirectObject()
+
+        OldPattern bePattern = new OldPattern(
+                OldProxy.Subject("I", "we"),
+                OldProxy.Verb(dict.getSynonyms(POS.VERB, "be", "become")),
+                OldProxy.DirectObject()
         );
-        Pattern likeHatePattern = new Pattern(
-                Proxy.Subject("I", "we"),
-                Proxy.Verb(dict.getSynonyms(POS.VERB, "like", "love", "enjoy", "prefer", "want", "sure", "hate", "dislike"))
+        OldPattern locationPattern = new OldPattern(
+                OldProxy.Subject("I", "we"),
+                OldProxy.Verb(dict.getSynonyms(POS.VERB, "be", "come", "go", "move", "live", "travel")),
+                OldProxy.IndirectObject()
         );
-        Pattern thinkPattern = new Pattern(
-                Proxy.Subject("I", "we"),
-                Proxy.Verb(dict.getSynonyms(POS.VERB, "think", "reckon", "believe")),
-                Proxy.Statement()
+        OldPattern likeHatePattern = new OldPattern(
+                OldProxy.Subject("I", "we"),
+                OldProxy.Verb(dict.getSynonyms(POS.VERB, "like", "love", "enjoy", "prefer", "want", "sure", "hate", "dislike"))
+        );
+        OldPattern thinkPattern = new OldPattern(
+                OldProxy.Subject("I", "we"),
+                OldProxy.Verb(dict.getSynonyms(POS.VERB, "think", "reckon", "believe")),
+                OldProxy.Statement()
         );
 
         for (Statement statement : allStatements) {
+            if (testPattern.matches(statement)) {
+                System.out.println("NEW PATTERN: " + statement);
+            }
             if (bePattern.matches(statement)) {
                 System.out.println("be: " + statement);
             }

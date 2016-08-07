@@ -10,8 +10,8 @@ import org.json.JSONArray;
 import reddit.RedditCommentProcessor;
 import statements.annotations.StatementsAnnotation;
 import statements.core.*;
-import statements.patterns.Pattern;
-import statements.patterns.Proxy;
+import statements.patterns.OldPattern;
+import statements.patterns.OldProxy;
 import statements.patterns.WordnetDictionary;
 
 import java.io.IOException;
@@ -60,24 +60,24 @@ public class TestPatterns {
 
         WordnetDictionary dict = new WordnetDictionary();
 
-        Pattern bePattern = new Pattern(
-                Proxy.Subject("I", "we"),
-                Proxy.Verb(dict.getSynonyms(POS.VERB, "be", "become")),
-                Proxy.DirectObject()
+        OldPattern bePattern = new OldPattern(
+                OldProxy.Subject("I", "we"),
+                OldProxy.Verb(dict.getSynonyms(POS.VERB, "be", "become")),
+                OldProxy.DirectObject()
         );
-        Pattern locationPattern = new Pattern(
-                Proxy.Subject("I", "we"),
-                Proxy.Verb(dict.getSynonyms(POS.VERB, "be", "come", "go", "move", "live", "travel")),
-                Proxy.IndirectObject()
+        OldPattern locationPattern = new OldPattern(
+                OldProxy.Subject("I", "we"),
+                OldProxy.Verb(dict.getSynonyms(POS.VERB, "be", "come", "go", "move", "live", "travel")),
+                OldProxy.IndirectObject()
         );
-        Pattern likeHatePattern = new Pattern(
-                Proxy.Subject("I", "we"),
-                Proxy.Verb(dict.getSynonyms(POS.VERB, "like", "love", "enjoy", "prefer", "want", "sure", "hate", "dislike"))
+        OldPattern likeHatePattern = new OldPattern(
+                OldProxy.Subject("I", "we"),
+                OldProxy.Verb(dict.getSynonyms(POS.VERB, "like", "love", "enjoy", "prefer", "want", "sure", "hate", "dislike"))
         );
-        Pattern thinkPattern = new Pattern(
-                Proxy.Subject("I", "we"),
-                Proxy.Verb(dict.getSynonyms(POS.VERB, "think", "reckon", "believe")),
-                Proxy.Statement()
+        OldPattern thinkPattern = new OldPattern(
+                OldProxy.Subject("I", "we"),
+                OldProxy.Verb(dict.getSynonyms(POS.VERB, "think", "reckon", "believe")),
+                OldProxy.Statement()
         );
 
         for (Statement statement : allStatements) {

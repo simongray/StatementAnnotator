@@ -4,8 +4,8 @@ import edu.mit.jwi.item.POS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import statements.core.*;
-import statements.patterns.Pattern;
-import statements.patterns.Proxy;
+import statements.patterns.OldPattern;
+import statements.patterns.OldProxy;
 import statements.patterns.WordnetDictionary;
 
 import java.io.IOException;
@@ -42,10 +42,10 @@ public class Profile {
         Set<Statement> embeddingStatements = new HashSet<>();
         Set<Statement> embeddedStatements = new HashSet<>();
 
-        Pattern thinkPattern = new Pattern(
-                Proxy.Subject("I", "we"),
-                Proxy.Verb(dict.getSynonyms(POS.VERB, "think", "reckon", "believe")),
-                Proxy.Statement()
+        OldPattern thinkPattern = new OldPattern(
+                OldProxy.Subject("I", "we"),
+                OldProxy.Verb(dict.getSynonyms(POS.VERB, "think", "reckon", "believe")),
+                OldProxy.Statement()
         );
 
         for (Statement statement : statements) {

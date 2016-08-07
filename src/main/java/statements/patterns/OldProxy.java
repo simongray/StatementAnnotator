@@ -5,10 +5,10 @@ import statements.core.*;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Proxy {
+public class OldProxy {
     private final Class type;
     private final Set<String> words;
-    private final Pattern pattern;
+    private final OldPattern pattern;
 
     /**
      * Standard private proxy constructor.
@@ -17,7 +17,7 @@ public class Proxy {
      * @param type the type of component to emulate
      * @param words the words of the component
      */
-    private Proxy(Class type, String... words) {
+    private OldProxy(Class type, String... words) {
         this.type = type;
         this.pattern = null;
 
@@ -29,7 +29,7 @@ public class Proxy {
         }
     }
 
-    private Proxy(Class type, Set<String> words) {
+    private OldProxy(Class type, Set<String> words) {
         this.type = type;
         this.pattern = null;
         this.words = words;
@@ -41,47 +41,47 @@ public class Proxy {
      *
      * @param proxies the embedded statement components to emulate
      */
-    private Proxy(Proxy... proxies) {
+    private OldProxy(OldProxy... proxies) {
         this.type = Statement.class;
         this.words = null;
-        this.pattern = new Pattern(proxies);
+        this.pattern = new OldPattern(proxies);
     }
 
-    public static Proxy Subject(String... words) {
-        return new Proxy(Subject.class, words);
+    public static OldProxy Subject(String... words) {
+        return new OldProxy(Subject.class, words);
     }
 
-    public static Proxy Verb(String... words) {
-        return new Proxy(Verb.class, words);
+    public static OldProxy Verb(String... words) {
+        return new OldProxy(Verb.class, words);
     }
 
-    public static Proxy DirectObject(String... words) {
-        return new Proxy(DirectObject.class, words);
+    public static OldProxy DirectObject(String... words) {
+        return new OldProxy(DirectObject.class, words);
     }
 
-    public static Proxy IndirectObject(String... words) {
-        return new Proxy(IndirectObject.class, words);
+    public static OldProxy IndirectObject(String... words) {
+        return new OldProxy(IndirectObject.class, words);
     }
 
-    public static Proxy Subject(Set<String> words) {
-        return new Proxy(Subject.class, words);
+    public static OldProxy Subject(Set<String> words) {
+        return new OldProxy(Subject.class, words);
     }
 
-    public static Proxy Verb(Set<String> words) {
-        return new Proxy(Verb.class, words);
+    public static OldProxy Verb(Set<String> words) {
+        return new OldProxy(Verb.class, words);
     }
 
-    public static Proxy DirectObject(Set<String> words) {
-        return new Proxy(DirectObject.class, words);
+    public static OldProxy DirectObject(Set<String> words) {
+        return new OldProxy(DirectObject.class, words);
     }
 
-    public static Proxy IndirectObject(Set<String> words) {
-        return new Proxy(IndirectObject.class, words);
+    public static OldProxy IndirectObject(Set<String> words) {
+        return new OldProxy(IndirectObject.class, words);
     }
 
 
-    public static Proxy Statement(Proxy... proxies) {
-        return new Proxy(proxies);
+    public static OldProxy Statement(OldProxy... proxies) {
+        return new OldProxy(proxies);
     }
 
     /**
