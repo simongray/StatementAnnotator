@@ -1,7 +1,7 @@
 package demo;
 
 import edu.mit.jwi.item.POS;
-import statements.matching.WordnetDictionary;
+import statements.patterns.WordnetDictionary;
 
 import java.io.IOException;
 

@@ -10,9 +10,9 @@ import org.json.JSONArray;
 import reddit.RedditCommentProcessor;
 import statements.annotations.StatementsAnnotation;
 import statements.core.*;
-import statements.matching.Pattern;
-import statements.matching.Proxy;
-import statements.matching.WordnetDictionary;
+import statements.patterns.Pattern;
+import statements.patterns.Proxy;
+import statements.patterns.WordnetDictionary;
 
 import java.io.IOException;
 import java.nio.charset.Charset;

@@ -4,9 +4,9 @@ import edu.mit.jwi.item.POS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import statements.core.*;
-import statements.matching.Pattern;
-import statements.matching.Proxy;
-import statements.matching.WordnetDictionary;
+import statements.patterns.Pattern;
+import statements.patterns.Proxy;
+import statements.patterns.WordnetDictionary;
 
 import java.io.IOException;
 import java.util.*;

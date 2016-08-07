@@ -25,7 +25,7 @@ public class TestStatements {
         props.setProperty("ssplit.newlineIsSentenceBreak", "always");  // IMPORTANT!!
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
-//        String example = "";
+        String example = "";
 
 
 
@@ -138,8 +138,9 @@ public class TestStatements {
 
 
         // CANNOT BE FIXED, DUE TO BUGGY PARSING
+//        String example = "Makes sense, but requires the information is then available elsewhere.\n";
         // "needs" is misinterpreted as a noun, conj:but relation possibly can be used to fix
-        String example = "I don't know about HBO Go but the HBO Nordic steaming service needs you to go back from a page on a specific episode and then select another.\n";
+//        String example = "I don't know about HBO Go but the HBO Nordic steaming service needs you to go back from a page on a specific episode and then select another.\n";
 //        String example = " The ones that don't probably aren't worth talking to - they exist in all countries and cultures of course but in europe they are a minority.\n";
         // the "conj" problem where "and" is misinterpreted
 //        String example = "Employees are encouraged to get a semi public unemployment insurance and the government has unemployment benefits as well.";

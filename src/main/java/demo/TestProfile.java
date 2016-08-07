@@ -40,7 +40,8 @@ public class TestProfile {
         Set<Statement> firstStatements = new HashSet<>();
         Set<Statement> secondStatements = new HashSet<>();
 
-        int commentLimit = 50;
+//        int commentLimit = 100;
+        int commentLimit = firstComments.size();
 
         // retrieve statements from first data set
         for (int i = 0; i < commentLimit; i++) {
@@ -55,6 +56,9 @@ public class TestProfile {
                 if (sentenceStatements != null) firstStatements.addAll(sentenceStatements);
             }
         }
+
+//        commentLimit = 100;
+        commentLimit = secondComments.size();
 
         // retrieve statements from second data set
         for (int i = 0; i < commentLimit; i++) {

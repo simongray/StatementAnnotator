@@ -1,4 +1,4 @@
-package statements.matching;
+package statements.patterns;
 
 import statements.core.*;
 

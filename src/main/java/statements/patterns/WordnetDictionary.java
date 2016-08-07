@@ -1,4 +1,4 @@
-package statements.matching;
+package statements.patterns;
 
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
