@@ -37,8 +37,8 @@ public class TestNewPatterns {
 
         Set<Statement> allStatements = new HashSet<>();
 
-        int commentLimit = 50;
-//        int commentLimit = comments.size();
+//        int commentLimit = 200;
+        int commentLimit = comments.size();
 
         // retrieve statements from first data set
         for (int i = 0; i < commentLimit; i++) {
@@ -65,15 +65,33 @@ public class TestNewPatterns {
         WordnetDictionary dict = new WordnetDictionary();
 
         // testing the new pattern class
-        Pattern newThinkPattern = new StatementPattern(
+        Pattern thinkPattern = new StatementPattern(
                 new ComponentPattern.Subject().words("I", "we").build(),
                 new ComponentPattern.Verb().words(Synonyms.THINK).build(),
                 new StatementPattern()
         );
 
+        Pattern thinkNotPattern = new StatementPattern(
+                new ComponentPattern.Subject().words("I", "we").build(),
+                new ComponentPattern.Verb().words(Synonyms.THINK).negated().build(),
+                new StatementPattern()
+        );
+
+        Pattern thinkAndThinkNotPattern = new StatementPattern(
+                new ComponentPattern.Subject().words("I", "we").build(),
+                new ComponentPattern.Verb().words(Synonyms.THINK).ignoreNegation().build(),
+                new StatementPattern()
+        );
+
         for (Statement statement : allStatements) {
-            if (newThinkPattern.matches(statement)) {
-                System.out.println("NEW think: " + statement);
+            if (thinkPattern.matches(statement)) {
+                System.out.println("think: " + statement);
+            }
+            if (thinkNotPattern.matches(statement)) {
+                System.out.println("not: " + statement);
+            }
+            if (thinkAndThinkNotPattern.matches(statement)) {
+                System.out.println("both: " + statement);
             }
         }
     }

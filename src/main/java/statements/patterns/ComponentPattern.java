@@ -9,10 +9,14 @@ import statements.core.StatementComponent;
 public class ComponentPattern implements Pattern {
     private final Class type;
     private final String[] words;
+    private final boolean negated;
+    private final boolean ignoreNegation;
 
     private ComponentPattern(PatternBuilder builder) {
         this.type = builder.type;
         this.words = builder.words;
+        this.negated = builder.negated;
+        this.ignoreNegation = builder.ignoreNegation;
     }
 
     /**
@@ -31,7 +35,10 @@ public class ComponentPattern implements Pattern {
             // must ALWAYS match component type
             if (abstractComponent.getClass() != type) return false;
 
-            // must match component compound (if applicable)
+            // negation state (can be ignored if specified, otherwise defaults to matching non-negated)
+            if (!ignoreNegation && abstractComponent.isNegated() != negated) return false;
+
+            // compound (if applicable)
             if (!matchesNormalCompound(abstractComponent.getNormalCompound())) return false;
 
             return true;
@@ -63,6 +70,8 @@ public class ComponentPattern implements Pattern {
     public abstract static class PatternBuilder {
         public final Class type;
         public String[] words = null;
+        public boolean negated = false;
+        public boolean ignoreNegation = false;
 
         private PatternBuilder(Class type) {
             this.type = type;
@@ -77,6 +86,16 @@ public class ComponentPattern implements Pattern {
             for (int i = 0; i < words.length; i++) words[i] = words[i].toLowerCase();
 
             this.words = words;
+            return this;
+        }
+
+        public PatternBuilder negated() {
+            this.negated = true;
+            return this;
+        }
+
+        public PatternBuilder ignoreNegation() {
+            this.ignoreNegation = true;
             return this;
         }
     }

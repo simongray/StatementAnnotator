@@ -474,6 +474,7 @@ public abstract class AbstractComponent implements StatementComponent {
 //            ", gaps: " + gaps() +  // TODO: remove after done debugging
             (!getDescriptives().isEmpty()? ", description: \"" + StatementUtils.join(getDescriptives()) + "\"" : "") +
 //            ", local: \"" + (isLocal()? "yes" : "no") + "\"" +
+            ", negated: \"" + (isNegated()? "yes" : "no") + "\"" +
 //            (!getLabels().isEmpty()? ", labels: \"" + String.join(", ", getLabels()) + "\"" : "") +
 //            (!conjunctions.isEmpty()? ", conjunction: \"" + String.join(", ", conjunctions) + "\"" : "") +
         "}";
