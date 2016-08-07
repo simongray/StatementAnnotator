@@ -11,12 +11,16 @@ public class ComponentPattern implements Pattern {
     private final String[] words;
     private final Boolean negated;
     private final Boolean plural;
+    private final Boolean specific;
+    private final Boolean local;
 
     private ComponentPattern(PatternBuilder builder) {
         this.type = builder.type;
         this.words = builder.words;
         this.negated = builder.negated;
         this.plural = builder.plural;
+        this.specific = builder.specific;
+        this.local = builder.local;
     }
 
     /**
@@ -40,6 +44,12 @@ public class ComponentPattern implements Pattern {
 
             // plural state (if applicable)
             if (plural != null && abstractComponent.isPlural() != plural) return false;
+
+            // specific state (if applicable)
+            if (specific != null && abstractComponent.isSpecific() != specific) return false;
+
+            // local state (if applicable)
+            if (local != null && abstractComponent.isLocal() != local) return false;
 
             // compound (if applicable)
             if (words != null && !matchesNormalCompound(abstractComponent.getNormalCompound())) return false;
@@ -78,6 +88,8 @@ public class ComponentPattern implements Pattern {
         public String[] words = null;
         public Boolean negated = false;
         public Boolean plural = null;
+        public Boolean specific = null;
+        public Boolean local = null;
 
         private PatternBuilder(Class type) {
             this.type = type;
@@ -99,6 +111,16 @@ public class ComponentPattern implements Pattern {
 
         public PatternBuilder plural(Boolean state) {
             this.plural = state;
+            return this;
+        }
+
+        public PatternBuilder specific(Boolean state) {
+            this.specific = state;
+            return this;
+        }
+
+        public PatternBuilder local(Boolean state) {
+            this.local = state;
             return this;
         }
     }
