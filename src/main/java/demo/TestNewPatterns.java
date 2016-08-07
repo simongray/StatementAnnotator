@@ -65,25 +65,12 @@ public class TestNewPatterns {
         WordnetDictionary dict = new WordnetDictionary();
 
         // testing the new pattern class
-        Pattern testPattern = new StatementPattern(
-                new ComponentPattern.Subject().words("I").build(),
-                new ComponentPattern.Verb().words("think").build()
+        Pattern newThinkPattern = new StatementPattern(
+                new ComponentPattern.Subject().words("I", "we").build(),
+                new ComponentPattern.Verb().words(Synonyms.THINK).build(),
+                new StatementPattern()
         );
 
-        OldPattern bePattern = new OldPattern(
-                OldProxy.Subject("I", "we"),
-                OldProxy.Verb(dict.getSynonyms(POS.VERB, "be", "become")),
-                OldProxy.DirectObject()
-        );
-        OldPattern locationPattern = new OldPattern(
-                OldProxy.Subject("I", "we"),
-                OldProxy.Verb(dict.getSynonyms(POS.VERB, "be", "come", "go", "move", "live", "travel")),
-                OldProxy.IndirectObject()
-        );
-        OldPattern likeHatePattern = new OldPattern(
-                OldProxy.Subject("I", "we"),
-                OldProxy.Verb(dict.getSynonyms(POS.VERB, "like", "love", "enjoy", "prefer", "want", "sure", "hate", "dislike"))
-        );
         OldPattern thinkPattern = new OldPattern(
                 OldProxy.Subject("I", "we"),
                 OldProxy.Verb(dict.getSynonyms(POS.VERB, "think", "reckon", "believe")),
@@ -91,17 +78,9 @@ public class TestNewPatterns {
         );
 
         for (Statement statement : allStatements) {
-            if (testPattern.matches(statement)) {
-                System.out.println("NEW PATTERN: " + statement);
-            }
-            if (bePattern.matches(statement)) {
-                System.out.println("be: " + statement);
-            }
-            if (locationPattern.matches(statement)) {
-                System.out.println("come: " + statement);
-            }
-            if (likeHatePattern.matches(statement)) {
-                System.out.println("like: " + statement);
+
+            if (newThinkPattern.matches(statement)) {
+                System.out.println("NEW think: " + statement);
             }
             if (thinkPattern.matches(statement)) {
                 System.out.println("think: " + statement);
