@@ -29,7 +29,7 @@ public class Common {
      */
     public static final StatementPattern PERSONAL_LOCATION_PATTERN = new StatementPattern(
             new SubjectPattern().firstPerson(),
-            new VerbPattern().words("be", "come", "go"),
+            new VerbPattern().words("be", "come", "go", "live", "stay"),
             new ComponentPattern(DirectObject.class, IndirectObject.class).preposition()
     );
 }

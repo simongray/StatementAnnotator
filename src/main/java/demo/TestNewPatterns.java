@@ -75,7 +75,7 @@ public class TestNewPatterns {
 
         StatementPattern testPattern = new StatementPattern(
                 new SubjectPattern().firstPerson(),
-                new VerbPattern().words("be", "come", "go"),
+                new VerbPattern().words("be", "come", "go", "live", "stay"),
                 new ComponentPattern(DirectObject.class, IndirectObject.class).preposition().properNoun().capture()
         );
 
@@ -83,16 +83,16 @@ public class TestNewPatterns {
 //            if (thinkPattern.matches(statement)) {
 //                System.out.println("think: " + statement);
 //            }
-            if (thinkPattern.matches(statement)) {
-                System.out.println("think: " + thinkPattern.getCaptures());
-            }
+//            if (thinkPattern.matches(statement)) {
+//                System.out.println("think: " + thinkPattern.getCaptures());
+//            }
 //            if (thinkNotPattern.matches(statement)) {
 //                System.out.println("not: " + statement);
 //            }
-//            if (testPattern.matches(statement)) {
-////                System.out.println("test: " + statement + " --> " + statement.getComponents());
-//                System.out.println("test: " + testPattern.getCaptures());
-//            }
+            if (testPattern.matches(statement)) {
+//                System.out.println("test: " + statement + " --> " + statement.getComponents());
+                System.out.println("test: " + testPattern.getCaptures());
+            }
         }
     }
 }
