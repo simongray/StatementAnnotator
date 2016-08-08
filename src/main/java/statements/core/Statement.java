@@ -531,6 +531,7 @@ public class Statement implements StatementComponent {
     @Override
     public boolean isWellFormed() {
         if (getVerb() == null) return false;
+        if (duplicateCount() > 0) return false;
         if (getComponents().size() < 2) return false;
 
         return true;

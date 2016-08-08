@@ -370,6 +370,22 @@ public abstract class AbstractComponent implements StatementComponent {
         return getPrimary().tag().equals(PartsOfSpeech.PRP);
     }
 
+    public boolean isNoun() {
+        return PartsOfSpeech.NOUNS.contains(getPrimary().tag());
+    }
+
+    public boolean isVerb() {
+        return PartsOfSpeech.VERBS.contains(getPrimary().tag());
+    }
+
+    public boolean isAdjective() {
+        return PartsOfSpeech.ADJECTIVES.contains(getPrimary().tag());
+    }
+
+    public boolean isAdverb() {
+        return PartsOfSpeech.ADVERBS.contains(getPrimary().tag());
+    }
+
     public boolean isFirstPerson() {
         return isProperNoun() && Lexicon.FIRST_PERSON.contains(getPrimary().word().toLowerCase());
     }

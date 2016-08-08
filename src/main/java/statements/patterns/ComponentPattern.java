@@ -17,7 +17,8 @@ public class ComponentPattern implements Pattern {
     private Boolean specific;
     private Boolean local;
     private Boolean properNoun;
-    private int[] person;
+    private POS[] partsOfSpeech;
+    private Person[] pointsOfView;
 
     protected ComponentPattern(Class type) {
         this.type = type;
@@ -69,33 +70,59 @@ public class ComponentPattern implements Pattern {
         return this;
     }
 
-    public ComponentPattern properNoun(Boolean state) {
-        this.properNoun = state;
-        return this;
-    }
-
-    public ComponentPattern properNoun() {
-        this.properNoun = true;
-        return this;
-    }
-
-    public ComponentPattern person(int... states) {
-        this.person = states;
+    /*
+        Point-of-view section.
+     */
+    public ComponentPattern person(Person... states) {
+        this.pointsOfView = states;
         return this;
     }
 
     public ComponentPattern firstPerson() {
-        this.person = new int[] {1};
+        this.pointsOfView = new Person[] {Person.first};
         return this;
     }
 
     public ComponentPattern secondPerson() {
-        this.person = new int[] {2};
+        this.pointsOfView = new Person[] {Person.second};
         return this;
     }
 
     public ComponentPattern thirdPerson() {
-        this.person = new int[] {3};
+        this.pointsOfView = new Person[] {Person.third};
+        return this;
+    }
+
+    /*
+        Part-of-speech tag section.
+     */
+    public ComponentPattern pos(POS... state) {
+        this.partsOfSpeech = state;
+        return this;
+    }
+
+    public ComponentPattern properNoun() {
+        this.partsOfSpeech = new POS[]{ POS.properNoun };
+        return this;
+    }
+
+    public ComponentPattern noun() {
+        this.partsOfSpeech = new POS[]{ POS.noun };
+        return this;
+    }
+
+    public ComponentPattern verb() {
+        this.partsOfSpeech = new POS[]{ POS.verb };
+        return this;
+    }
+
+    public ComponentPattern adjective() {
+        this.partsOfSpeech = new POS[]{ POS.adjective };
+        return this;
+    }
+
+    public ComponentPattern adverb() {
+        this.partsOfSpeech = new POS[]{ POS.adverb };
         return this;
     }
 
@@ -128,13 +155,13 @@ public class ComponentPattern implements Pattern {
             if (local != null && abstractComponent.isLocal() != local) return false;
 
             // local state (if applicable)
-            if (properNoun != null && abstractComponent.isProperNoun() != properNoun) return false;
+            if (partsOfSpeech != null && !matchesPartOfSpeech(abstractComponent)) return false;
 
             // matches against 1st, 2nd, and/or 3rd person
-            if (person != null && !matchesPerson(abstractComponent)) return false;
+            if (pointsOfView != null && !matchesPointOfView(abstractComponent)) return false;
 
             // compound (if applicable)
-            if (words != null && !matchesNormalCompound(abstractComponent.getNormalCompound())) return false;
+            if (words != null && !matchesWords(abstractComponent.getNormalCompound())) return false;
 
             return true;
         }
@@ -148,18 +175,46 @@ public class ComponentPattern implements Pattern {
      * @param abstractComponent the component to test
      * @return true if one of the states matches
      */
-    private boolean matchesPerson(AbstractComponent abstractComponent) {
-        int componentState;
+    private boolean matchesPartOfSpeech(AbstractComponent abstractComponent) {
+        POS partOfSpeechState = null;
 
-        if (abstractComponent.isFirstPerson()) {
-            componentState = 1;
-        } else if (abstractComponent.isSecondPerson()) {
-            componentState = 2;
-        } else {
-            componentState = 3;
+        if (abstractComponent.isProperNoun()) {
+            partOfSpeechState = POS.properNoun;
+        } else if (abstractComponent.isNoun()) {
+            partOfSpeechState = POS.noun;
+        } else if (abstractComponent.isVerb()) {
+            partOfSpeechState = POS.verb;
+        } else if (abstractComponent.isAdjective()) {
+            partOfSpeechState = POS.adjective;
+        } else if (abstractComponent.isAdverb()) {
+            partOfSpeechState = POS.adverb;
         }
 
-        for (int state : person) {
+        for (POS state : partsOfSpeech) {
+            if (partOfSpeechState == state) return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether the person (1st, 2nd, 3rd) of the component matches.
+     *
+     * @param abstractComponent the component to test
+     * @return true if one of the states matches
+     */
+    private boolean matchesPointOfView(AbstractComponent abstractComponent) {
+        Person componentState;
+
+        if (abstractComponent.isFirstPerson()) {
+            componentState = Person.first;
+        } else if (abstractComponent.isSecondPerson()) {
+            componentState = Person.second;
+        } else {
+            componentState = Person.third;
+        }
+
+        for (Person state : pointsOfView) {
             if (componentState == state) return true;
         }
 
@@ -173,7 +228,7 @@ public class ComponentPattern implements Pattern {
      * @param normalCompound the normal compound to test
      * @return true if one of the words matches
      */
-    private boolean matchesNormalCompound(String normalCompound) {
+    private boolean matchesWords(String normalCompound) {
         if (words.length == 0) return true;
 
         for (String word : words) {
@@ -181,5 +236,19 @@ public class ComponentPattern implements Pattern {
         }
 
         return false;
+    }
+
+    public enum Person {
+        first,
+        second,
+        third
+    }
+
+    public enum POS {
+        properNoun,
+        noun,
+        verb,
+        adjective,
+        adverb
     }
 }

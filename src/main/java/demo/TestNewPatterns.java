@@ -36,8 +36,8 @@ public class TestNewPatterns {
 
         Set<Statement> allStatements = new HashSet<>();
 
-        int commentLimit = 50;
-//        int commentLimit = comments.size();
+//        int commentLimit = 50;
+        int commentLimit = comments.size();
 
         // retrieve statements from first data set
         for (int i = 0; i < commentLimit; i++) {
@@ -76,30 +76,21 @@ public class TestNewPatterns {
                 new StatementPattern()
         );
 
-        Pattern thinkAndThinkNotPattern = new StatementPattern(
+        Pattern testPattern = new StatementPattern(
                 new SubjectPattern().firstPerson(),
-                new VerbPattern().words(Common.THINK_SYNONYMS).negated(null),
-                new StatementPattern()
-        );
-
-        Pattern pluralPattern = new StatementPattern(
-//                new ComponentPattern.DirectObject().plural(true).person(2).build()
-                new SubjectPattern().secondPerson(),
-                new DirectObjectPattern().plural()
+                new VerbPattern().words("be"),
+                new DirectObjectPattern().specific(false).noun()
         );
 
         for (Statement statement : allStatements) {
-            if (thinkPattern.matches(statement)) {
-                System.out.println("think: " + statement);
-            }
-            if (thinkNotPattern.matches(statement)) {
-                System.out.println("not: " + statement);
-            }
-//            if (thinkAndThinkNotPattern.matches(statement)) {
-//                System.out.println("both: " + statement);
+//            if (thinkPattern.matches(statement)) {
+//                System.out.println("think: " + statement);
 //            }
-            if (pluralPattern.matches(statement)) {
-                System.out.println("plural: " + statement);
+//            if (thinkNotPattern.matches(statement)) {
+//                System.out.println("not: " + statement);
+//            }
+            if (testPattern.matches(statement)) {
+                System.out.println("test: " + statement);
             }
         }
     }
