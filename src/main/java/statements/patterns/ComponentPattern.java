@@ -62,7 +62,7 @@ public class ComponentPattern implements Pattern {
         return specific(true);
     }
 
-    public ComponentPattern unspecific() {
+    public ComponentPattern general() {
         return specific(false);
     }
 
