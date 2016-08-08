@@ -21,6 +21,8 @@ public class ComponentPattern implements Pattern {
     private Boolean local;
     private Boolean copula;
     private Boolean capitalised;
+    private Boolean interesting;
+    private Boolean wellFormed;
     private Tag[] partsOfSpeech;
     private Person[] pointsOfView;
     private String[] prepositions;
@@ -154,7 +156,6 @@ public class ComponentPattern implements Pattern {
         return partsOfSpeech(Tag.properNoun);
     }
 
-
     public ComponentPattern noun() {
         return partsOfSpeech(Tag.noun);
     }
@@ -169,6 +170,28 @@ public class ComponentPattern implements Pattern {
 
     public ComponentPattern adverb() {
         return partsOfSpeech(Tag.adverb);
+    }
+
+    /*
+        Analysis section.
+     */
+
+    public ComponentPattern interesting(Boolean state) {
+        this.interesting = state;
+        return this;
+    }
+
+    public ComponentPattern interesting() {
+        return interesting(true);
+    }
+
+    public ComponentPattern wellFormed(Boolean state) {
+        this.wellFormed = state;
+        return this;
+    }
+
+    public ComponentPattern wellFormed() {
+        return wellFormed(true);
     }
 
     /**
@@ -213,6 +236,10 @@ public class ComponentPattern implements Pattern {
             if (local != null && abstractComponent.isLocal() != local) return false;
 
             if (capitalised != null && abstractComponent.isCapitalised() != capitalised) return false;
+
+            if (interesting != null && abstractComponent.isInteresting() != interesting) return false;
+
+            if (wellFormed != null && abstractComponent.isWellFormed() != wellFormed) return false;
 
             if (partsOfSpeech != null && !matchesPartOfSpeech(abstractComponent)) return false;
 

@@ -32,11 +32,9 @@ public class TestNewPatterns {
         JSONArray firstUserJsonArray = new JSONArray(content);
 
 
-        Map<CoreMap, Set<Statement>> statements = new HashMap<>();
-
         List<String> comments = RedditCommentProcessor.getComments(firstUserJsonArray, RedditCommentProcessor.ENGLISH);
 
-        Set<Statement> allStatements = new HashSet<>();
+        Set<Statement> statements = new HashSet<>();
 
 //        int commentLimit = 50;
         int commentLimit = comments.size();
@@ -51,10 +49,9 @@ public class TestNewPatterns {
 
             for (CoreMap sentence : sentences) {
                 Set<Statement> sentenceStatements = sentence.get(StatementsAnnotation.class);
-                System.out.println(sentence);
-                StatementUtils.printStatements(sentenceStatements);
-                statements.put(sentence, sentenceStatements);
-                if (sentenceStatements != null) allStatements.addAll(sentenceStatements);
+//                System.out.println(sentence);
+//                StatementUtils.printStatements(sentenceStatements);
+                if (sentenceStatements != null) statements.addAll(sentenceStatements);
             }
         }
 
@@ -63,16 +60,14 @@ public class TestNewPatterns {
         System.out.println("MATCHING STATEMENTS");
         System.out.println("#######");
 
-        WordnetDictionary dict = new WordnetDictionary();
-
         // testing the new pattern class
-        Pattern thinkPattern = new StatementPattern(
+        StatementPattern thinkPattern = new StatementPattern(
                 new SubjectPattern().firstPerson(),
                 new VerbPattern().words(Common.THINK),
-                new StatementPattern()
+                new StatementPattern().interesting().wellFormed().capture()
         );
 
-        Pattern thinkNotPattern = new StatementPattern(
+        StatementPattern thinkNotPattern = new StatementPattern(
                 new SubjectPattern().firstPerson(),
                 new VerbPattern().words(Common.THINK).negated(),
                 new StatementPattern()
@@ -84,17 +79,20 @@ public class TestNewPatterns {
                 new ComponentPattern(DirectObject.class, IndirectObject.class).preposition().properNoun().capture()
         );
 
-        for (Statement statement : allStatements) {
+        for (Statement statement : statements) {
 //            if (thinkPattern.matches(statement)) {
 //                System.out.println("think: " + statement);
 //            }
+            if (thinkPattern.matches(statement)) {
+                System.out.println("think: " + thinkPattern.getCaptures());
+            }
 //            if (thinkNotPattern.matches(statement)) {
 //                System.out.println("not: " + statement);
 //            }
-            if (testPattern.matches(statement)) {
-//                System.out.println("test: " + statement + " --> " + statement.getComponents());
-                System.out.println("test: " + testPattern.getCaptures());
-            }
+//            if (testPattern.matches(statement)) {
+////                System.out.println("test: " + statement + " --> " + statement.getComponents());
+//                System.out.println("test: " + testPattern.getCaptures());
+//            }
         }
     }
 }
