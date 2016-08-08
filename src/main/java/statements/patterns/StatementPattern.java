@@ -46,8 +46,8 @@ public class StatementPattern implements Pattern {
      * Get everything captured by this the components of this pattern (when entire pattern matches).
      * Note: different from getCaptured(...) which is used to capture embedded statements.
      *
-     * @param componentTypes
-     * @return
+     * @param componentTypes the component types to get
+     * @return the captured components
      */
     public Set<StatementComponent> getCaptures(Class... componentTypes) {
         Set<StatementComponent> captures = new HashSet<>();
