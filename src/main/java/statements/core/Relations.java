@@ -38,6 +38,7 @@ public class Relations {
     public static final String DISCOURSE = "discourse";  // useless words like "yeah"
     public static final String DET = "det";  // determiners like "a", "the", "some", "very"
     public static final String AMOD = "amod";  // adjectives describing nouns, e.g. "racist person"
+    public static final String CASE = "case";  // prepositions such "to", "from", "above", etc.
 
     /**
      * Outgoing relations which are stored internally in any AbstractComponent, but not shown/used by default.

@@ -1,5 +1,6 @@
 package statements.patterns;
 
+import edu.stanford.nlp.ling.IndexedWord;
 import statements.core.AbstractComponent;
 import statements.core.StatementComponent;
 import statements.core.Verb;
@@ -11,7 +12,7 @@ import statements.core.Verb;
  * This is necessary to be able to have unknown/null states.
  */
 public class ComponentPattern implements Pattern {
-    private Class type;
+    private Class[] types;
     private String[] words;
     private Boolean negated;
     private Boolean plural;
@@ -20,9 +21,10 @@ public class ComponentPattern implements Pattern {
     private Boolean copula;
     private Tag[] partsOfSpeech;
     private Person[] pointsOfView;
+    private String[] prepositions;
 
-    protected ComponentPattern(Class type) {
-        this.type = type;
+    public ComponentPattern(Class... types) {
+        this.types = types;
     }
 
     public ComponentPattern words(String... words) {
@@ -82,6 +84,17 @@ public class ComponentPattern implements Pattern {
 
     public ComponentPattern copula() {
         return copula(true);
+    }
+
+    public ComponentPattern preposition(String... prepositions) {
+        for (int i = 0; i < prepositions.length; i++) prepositions[i] = prepositions[i].toLowerCase();
+        this.prepositions = prepositions;
+        return this;
+    }
+
+    public ComponentPattern preposition() {
+        preposition(new String[0]);  // empty array will match any preposition
+        return this;
     }
 
     /*
@@ -146,7 +159,7 @@ public class ComponentPattern implements Pattern {
             AbstractComponent abstractComponent = (AbstractComponent) statementComponent;
 
             // must ALWAYS match component type
-            if (abstractComponent.getClass() != type) return false;
+            if (!matchesTypes(abstractComponent)) return false;
 
             // negation state (can be ignored if specified, otherwise defaults to matching non-negated)
             if (negated != null && abstractComponent.isNegated() != negated) return false;
@@ -169,10 +182,51 @@ public class ComponentPattern implements Pattern {
             // matches copula (= "to be" verb)
             if (copula != null && abstractComponent instanceof Verb && !((Verb) abstractComponent).isCopula()) return false;
 
+            // matches copula (= "to be" verb)
+            if (prepositions != null && !matchesPrepositions(abstractComponent)) return false;
+
             // matches words to compound
             if (words != null && !matchesWords(abstractComponent.getNormalCompound())) return false;
 
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether the person (1st, 2nd, 3rd) of the component matches.
+     *
+     * @param abstractComponent the component to test
+     * @return true if one of the states matches
+     */
+    private boolean matchesTypes(AbstractComponent abstractComponent) {
+        Class componentType = abstractComponent.getClass();
+
+        // when no specific types have been given, will match any component
+        if (types.length == 0) return true;
+
+        for (Class type : types) {
+            if (type.equals(componentType)) return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether the person (1st, 2nd, 3rd) of the component matches.
+     *
+     * @param abstractComponent the component to test
+     * @return true if one of the states matches
+     */
+    private boolean matchesPrepositions(AbstractComponent abstractComponent) {
+        // when no specific prepositions have been given, will match any
+        if (prepositions.length == 0 && abstractComponent.hasPreposition()) return true;
+
+        for (String preposition : prepositions) {
+            for (IndexedWord componentPreposition : abstractComponent.getPrepositions()) {
+                if (componentPreposition.word().toLowerCase().equals(preposition)) return true;
+            }
         }
 
         return false;

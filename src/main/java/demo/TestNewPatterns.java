@@ -8,6 +8,8 @@ import edu.stanford.nlp.util.CoreMap;
 import org.json.JSONArray;
 import reddit.RedditCommentProcessor;
 import statements.annotations.StatementsAnnotation;
+import statements.core.DirectObject;
+import statements.core.IndirectObject;
 import statements.core.Statement;
 import statements.core.StatementUtils;
 import statements.patterns.*;
@@ -78,8 +80,8 @@ public class TestNewPatterns {
 
         Pattern testPattern = new StatementPattern(
                 new SubjectPattern().firstPerson().singular(),
-                new VerbPattern().copula(),
-                new DirectObjectPattern().partsOfSpeech(Tag.noun, Tag.adjective)
+                new VerbPattern().words("be", "come", "go"),
+                new ComponentPattern(DirectObject.class, IndirectObject.class).preposition()
         );
 
         for (Statement statement : allStatements) {

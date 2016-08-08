@@ -2,6 +2,8 @@ package statements.patterns;
 
 
 import edu.mit.jwi.item.POS;
+import statements.core.DirectObject;
+import statements.core.IndirectObject;
 
 import java.io.IOException;
 
@@ -21,4 +23,10 @@ public class Common {
     }
 
     public final static String[] THINK = getDictionary().getSynonyms(POS.VERB, "think", "reckon", "believe").stream().toArray(String[]::new);
+
+    public static final Pattern personalLocationPattern = new StatementPattern(
+            new SubjectPattern().firstPerson().singular(),
+            new VerbPattern().words("be", "come", "go"),
+            new ComponentPattern(DirectObject.class, IndirectObject.class).preposition()
+    );
 }

@@ -55,6 +55,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> markers;
     protected final Set<IndexedWord> cc;
     protected final Set<IndexedWord> determiners;
+    protected final Set<IndexedWord> prepositions;
 //    protected final Set<IndexedWord> adverbialClauses;  // TODO: trying out making this embedded instead
     protected final Set<IndexedWord> nounClauses;
     protected final Set<IndexedWord> basicCompound;
@@ -80,6 +81,9 @@ public abstract class AbstractComponent implements StatementComponent {
         // medium compound
         normalCompound = StatementUtils.findSpecificChildren(Relations.AMOD, primary, graph);
         normalCompound.addAll(basicCompound);
+
+        // relevant parts of component that are not separated out from the compound
+        prepositions = StatementUtils.findSpecificChildren(Relations.CASE, primary, graph);
 
         // relevant parts of the component that have been separated out from the compound
         negations = StatementUtils.findSpecificChildren(Relations.NEG, primary, graph);
@@ -228,6 +232,16 @@ public abstract class AbstractComponent implements StatementComponent {
      */
     public Set<IndexedWord> getMarkers() {
         return markers;
+    }
+
+
+    /**
+     * All prepositions.
+     *
+     * @return prepositions
+     */
+    public Set<IndexedWord> getPrepositions() {
+        return prepositions;
     }
 
     /**
@@ -392,6 +406,10 @@ public abstract class AbstractComponent implements StatementComponent {
 
     public boolean isSecondPerson() {
         return isPronoun() && Lexicon.SECOND_PERSON.contains(getPrimary().word().toLowerCase());
+    }
+
+    public boolean hasPreposition() {
+        return !getPrepositions().isEmpty();
     }
 
     /**
