@@ -17,7 +17,7 @@ public class ComponentPattern implements Pattern {
     private Boolean specific;
     private Boolean local;
     private Boolean properNoun;
-    private POS[] partsOfSpeech;
+    private Tag[] partsOfSpeech;
     private Person[] pointsOfView;
 
     protected ComponentPattern(Class type) {
@@ -96,33 +96,33 @@ public class ComponentPattern implements Pattern {
     /*
         Part-of-speech tag section.
      */
-    public ComponentPattern pos(POS... state) {
+    public ComponentPattern partsOfSpeech(Tag... state) {
         this.partsOfSpeech = state;
         return this;
     }
 
     public ComponentPattern properNoun() {
-        this.partsOfSpeech = new POS[]{ POS.properNoun };
+        this.partsOfSpeech = new Tag[]{ Tag.properNoun };
         return this;
     }
 
     public ComponentPattern noun() {
-        this.partsOfSpeech = new POS[]{ POS.noun };
+        this.partsOfSpeech = new Tag[]{ Tag.noun };
         return this;
     }
 
     public ComponentPattern verb() {
-        this.partsOfSpeech = new POS[]{ POS.verb };
+        this.partsOfSpeech = new Tag[]{ Tag.verb };
         return this;
     }
 
     public ComponentPattern adjective() {
-        this.partsOfSpeech = new POS[]{ POS.adjective };
+        this.partsOfSpeech = new Tag[]{ Tag.adjective };
         return this;
     }
 
     public ComponentPattern adverb() {
-        this.partsOfSpeech = new POS[]{ POS.adverb };
+        this.partsOfSpeech = new Tag[]{ Tag.adverb };
         return this;
     }
 
@@ -154,7 +154,7 @@ public class ComponentPattern implements Pattern {
             // local state (if applicable)
             if (local != null && abstractComponent.isLocal() != local) return false;
 
-            // local state (if applicable)
+            // part of speech (noun, verb, adjective, ...)
             if (partsOfSpeech != null && !matchesPartOfSpeech(abstractComponent)) return false;
 
             // matches against 1st, 2nd, and/or 3rd person
@@ -176,21 +176,21 @@ public class ComponentPattern implements Pattern {
      * @return true if one of the states matches
      */
     private boolean matchesPartOfSpeech(AbstractComponent abstractComponent) {
-        POS partOfSpeechState = null;
+        Tag partOfSpeechState = null;
 
         if (abstractComponent.isProperNoun()) {
-            partOfSpeechState = POS.properNoun;
+            partOfSpeechState = Tag.properNoun;
         } else if (abstractComponent.isNoun()) {
-            partOfSpeechState = POS.noun;
+            partOfSpeechState = Tag.noun;
         } else if (abstractComponent.isVerb()) {
-            partOfSpeechState = POS.verb;
+            partOfSpeechState = Tag.verb;
         } else if (abstractComponent.isAdjective()) {
-            partOfSpeechState = POS.adjective;
+            partOfSpeechState = Tag.adjective;
         } else if (abstractComponent.isAdverb()) {
-            partOfSpeechState = POS.adverb;
+            partOfSpeechState = Tag.adverb;
         }
 
-        for (POS state : partsOfSpeech) {
+        for (Tag state : partsOfSpeech) {
             if (partOfSpeechState == state) return true;
         }
 
@@ -236,19 +236,5 @@ public class ComponentPattern implements Pattern {
         }
 
         return false;
-    }
-
-    public enum Person {
-        first,
-        second,
-        third
-    }
-
-    public enum POS {
-        properNoun,
-        noun,
-        verb,
-        adjective,
-        adverb
     }
 }

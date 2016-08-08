@@ -41,7 +41,7 @@ public class Profile {
 
         Pattern thinkPattern = new StatementPattern(
                 new SubjectPattern().words("I", "we"),
-                new VerbPattern().words(Common.THINK_SYNONYMS),
+                new VerbPattern().words(Common.THINK),
                 new StatementPattern()
         );
 

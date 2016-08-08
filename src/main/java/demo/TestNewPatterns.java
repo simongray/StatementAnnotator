@@ -66,20 +66,20 @@ public class TestNewPatterns {
         // testing the new pattern class
         Pattern thinkPattern = new StatementPattern(
                 new SubjectPattern().firstPerson(),
-                new VerbPattern().words(Common.THINK_SYNONYMS),
+                new VerbPattern().words(Common.THINK),
                 new StatementPattern()
         );
 
         Pattern thinkNotPattern = new StatementPattern(
                 new SubjectPattern().firstPerson(),
-                new VerbPattern().words(Common.THINK_SYNONYMS).negated(),
+                new VerbPattern().words(Common.THINK).negated(),
                 new StatementPattern()
         );
 
         Pattern testPattern = new StatementPattern(
                 new SubjectPattern().firstPerson(),
                 new VerbPattern().words("be"),
-                new DirectObjectPattern().specific(false).noun()
+                new DirectObjectPattern().partsOfSpeech(Tag.noun, Tag.adjective)
         );
 
         for (Statement statement : allStatements) {
@@ -90,7 +90,7 @@ public class TestNewPatterns {
 //                System.out.println("not: " + statement);
 //            }
             if (testPattern.matches(statement)) {
-                System.out.println("test: " + statement);
+                System.out.println("test: " + statement + " --> " + statement.getComponents());
             }
         }
     }

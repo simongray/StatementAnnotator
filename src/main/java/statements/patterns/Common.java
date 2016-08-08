@@ -20,5 +20,5 @@ public class Common {
         return dictionary;
     }
 
-    public final static String[] THINK_SYNONYMS = getDictionary().getSynonyms(POS.VERB, "think", "reckon", "believe").stream().toArray(String[]::new);
+    public final static String[] THINK = getDictionary().getSynonyms(POS.VERB, "think", "reckon", "believe").stream().toArray(String[]::new);
 }
