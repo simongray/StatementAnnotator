@@ -37,8 +37,7 @@ public class ComponentPattern implements Pattern {
     }
 
     public ComponentPattern negated() {
-        this.negated = true;
-        return this;
+        return negated(false);
     }
 
     public ComponentPattern plural(Boolean state) {
@@ -47,13 +46,11 @@ public class ComponentPattern implements Pattern {
     }
 
     public ComponentPattern plural() {
-        this.plural = true;
-        return this;
+        return plural(true);
     }
 
     public ComponentPattern singular() {
-        this.plural = false;
-        return this;
+        return plural(false);
     }
 
     public ComponentPattern specific(Boolean state) {
@@ -62,13 +59,11 @@ public class ComponentPattern implements Pattern {
     }
 
     public ComponentPattern specific() {
-        this.specific = true;
-        return this;
+        return specific(true);
     }
 
     public ComponentPattern unspecific() {
-        this.specific = false;
-        return this;
+        return specific(false);
     }
 
     public ComponentPattern local(Boolean state) {
@@ -77,8 +72,7 @@ public class ComponentPattern implements Pattern {
     }
 
     public ComponentPattern local() {
-        this.local = true;
-        return this;
+        return local(true);
     }
 
     public ComponentPattern copula(Boolean state) {
@@ -99,18 +93,15 @@ public class ComponentPattern implements Pattern {
     }
 
     public ComponentPattern firstPerson() {
-        this.pointsOfView = new Person[] {Person.first};
-        return this;
+        return person(Person.first);
     }
 
     public ComponentPattern secondPerson() {
-        this.pointsOfView = new Person[] {Person.second};
-        return this;
+        return person(Person.second);
     }
 
     public ComponentPattern thirdPerson() {
-        this.pointsOfView = new Person[] {Person.third};
-        return this;
+        return person(Person.third);
     }
 
     /*
@@ -122,28 +113,23 @@ public class ComponentPattern implements Pattern {
     }
 
     public ComponentPattern properNoun() {
-        this.partsOfSpeech = new Tag[]{ Tag.properNoun };
-        return this;
+        return partsOfSpeech(Tag.properNoun);
     }
 
     public ComponentPattern noun() {
-        this.partsOfSpeech = new Tag[]{ Tag.noun };
-        return this;
+        return partsOfSpeech(Tag.noun);
     }
 
     public ComponentPattern verb() {
-        this.partsOfSpeech = new Tag[]{ Tag.verb };
-        return this;
+        return partsOfSpeech(Tag.verb);
     }
 
     public ComponentPattern adjective() {
-        this.partsOfSpeech = new Tag[]{ Tag.adjective };
-        return this;
+        return partsOfSpeech(Tag.adjective);
     }
 
     public ComponentPattern adverb() {
-        this.partsOfSpeech = new Tag[]{ Tag.adverb };
-        return this;
+        return partsOfSpeech(Tag.adverb);
     }
 
     /**
