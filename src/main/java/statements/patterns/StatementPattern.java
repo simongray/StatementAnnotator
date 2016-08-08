@@ -33,7 +33,9 @@ public class StatementPattern implements Pattern {
     }
 
     /**
-     * Get the component captured during the latest match.
+     * Get the Statement captured during the latest match.
+     * Note: used to capture embedded statements.
+     *
      * @return captured component
      */
     public Statement getCaptured() {
@@ -41,7 +43,8 @@ public class StatementPattern implements Pattern {
     }
 
     /**
-     * Get everything captured by this
+     * Get everything captured by this the components of this pattern (when entire pattern matches).
+     * Note: different from getCaptured(...) which is used to capture embedded statements.
      *
      * @param componentTypes
      * @return
