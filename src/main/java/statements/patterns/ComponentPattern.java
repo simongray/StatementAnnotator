@@ -19,6 +19,7 @@ public class ComponentPattern implements Pattern {
     private Boolean specific;
     private Boolean local;
     private Boolean copula;
+    private Boolean capitalised;
     private Tag[] partsOfSpeech;
     private Person[] pointsOfView;
     private String[] prepositions;
@@ -80,6 +81,15 @@ public class ComponentPattern implements Pattern {
     public ComponentPattern copula(Boolean state) {
         this.copula = state;
         return this;
+    }
+
+    public ComponentPattern capitalised(Boolean state) {
+        this.capitalised = state;
+        return this;
+    }
+
+    public ComponentPattern capitalised() {
+        return capitalised(true);
     }
 
     public ComponentPattern copula() {
@@ -161,28 +171,26 @@ public class ComponentPattern implements Pattern {
             // must ALWAYS match component type
             if (!matchesTypes(abstractComponent)) return false;
 
-            // negation state (can be ignored if specified, otherwise defaults to matching non-negated)
+            // can be ignored if specified, otherwise defaults to matching non-negated
             if (negated != null && abstractComponent.isNegated() != negated) return false;
 
-            // plural state (if applicable)
             if (plural != null && abstractComponent.isPlural() != plural) return false;
 
-            // specific state (if applicable)
             if (specific != null && abstractComponent.isSpecific() != specific) return false;
 
-            // local state (if applicable)
             if (local != null && abstractComponent.isLocal() != local) return false;
 
-            // part of speech (noun, verb, adjective, ...)
+            if (capitalised != null && abstractComponent.isCapitalised() != capitalised) return false;
+
             if (partsOfSpeech != null && !matchesPartOfSpeech(abstractComponent)) return false;
 
-            // matches 1st, 2nd, and/or 3rd person
+            // 1st, 2nd, and/or 3rd person
             if (pointsOfView != null && !matchesPointOfView(abstractComponent)) return false;
 
-            // matches copula (= "to be" verb)
+            // = "to be" verb
             if (copula != null && abstractComponent instanceof Verb && !((Verb) abstractComponent).isCopula()) return false;
 
-            // matches copula (= "to be" verb)
+            // such as "to", "from", "by", ...
             if (prepositions != null && !matchesPrepositions(abstractComponent)) return false;
 
             // matches words to compound
