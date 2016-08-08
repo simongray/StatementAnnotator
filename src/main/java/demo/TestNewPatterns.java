@@ -79,7 +79,7 @@ public class TestNewPatterns {
         );
 
         Pattern testPattern = new StatementPattern(
-                new SubjectPattern().firstPerson().singular(),
+                new SubjectPattern().firstPerson(),
                 new VerbPattern().words("be", "come", "go"),
                 new ComponentPattern(DirectObject.class, IndirectObject.class).preposition()
         );

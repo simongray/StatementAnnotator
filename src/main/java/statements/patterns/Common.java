@@ -24,8 +24,11 @@ public class Common {
 
     public final static String[] THINK = getDictionary().getSynonyms(POS.VERB, "think", "reckon", "believe").stream().toArray(String[]::new);
 
-    public static final Pattern personalLocationPattern = new StatementPattern(
-            new SubjectPattern().firstPerson().singular(),
+    /**
+     * Matches statements that indicate the personal location of the author.
+     */
+    public static final Pattern PERSONAL_LOCATION_PATTERN = new StatementPattern(
+            new SubjectPattern().firstPerson(),
             new VerbPattern().words("be", "come", "go"),
             new ComponentPattern(DirectObject.class, IndirectObject.class).preposition()
     );
