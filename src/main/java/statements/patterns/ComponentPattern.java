@@ -51,6 +51,11 @@ public class ComponentPattern implements Pattern {
         return this;
     }
 
+    public ComponentPattern singular() {
+        this.plural = false;
+        return this;
+    }
+
     public ComponentPattern specific(Boolean state) {
         this.specific = state;
         return this;
@@ -58,6 +63,11 @@ public class ComponentPattern implements Pattern {
 
     public ComponentPattern specific() {
         this.specific = true;
+        return this;
+    }
+
+    public ComponentPattern unspecific() {
+        this.specific = false;
         return this;
     }
 
