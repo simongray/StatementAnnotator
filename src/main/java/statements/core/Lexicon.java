@@ -79,6 +79,16 @@ public class Lexicon {
         SECOND_PERSON.add("yall");
     }
 
+    public static final Set<String> PLURAL_NON_NOUNS = new HashSet<>();
+    static {
+        PLURAL_NON_NOUNS.add("we");
+        PLURAL_NON_NOUNS.add("us");
+        PLURAL_NON_NOUNS.add("they");
+        PLURAL_NON_NOUNS.add("them");
+        PLURAL_NON_NOUNS.add("these");
+        PLURAL_NON_NOUNS.add("those");
+    }
+
     /**
      * This set of nouns comprises second and third person pronouns, but not first person.
      * It also adds other words that do not carry any information without context.

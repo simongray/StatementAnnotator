@@ -301,7 +301,7 @@ public abstract class AbstractComponent implements StatementComponent {
      * @return true if plural
      */
     public boolean isPlural() {
-        return PartsOfSpeech.PLURAL.contains(getPrimary().tag());
+        return PartsOfSpeech.PLURAL.contains(getPrimary().tag()) || Lexicon.PLURAL_NON_NOUNS.contains(getPrimary().word().toLowerCase());
     }
 
     /**
@@ -491,6 +491,7 @@ public abstract class AbstractComponent implements StatementComponent {
             (!getDescriptives().isEmpty()? ", description: \"" + StatementUtils.join(getDescriptives()) + "\"" : "") +
 //            ", local: \"" + (isLocal()? "yes" : "no") + "\"" +
 //            ", negated: \"" + (isNegated()? "yes" : "no") + "\"" +
+//            ", plural: \"" + (isPlural()? "yes" : "no") + "\"" +
 //            (!getLabels().isEmpty()? ", labels: \"" + String.join(", ", getLabels()) + "\"" : "") +
 //            (!conjunctions.isEmpty()? ", conjunction: \"" + String.join(", ", conjunctions) + "\"" : "") +
         "}";
