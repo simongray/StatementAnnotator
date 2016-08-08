@@ -112,8 +112,8 @@ public class ComponentPattern implements Pattern {
         return this;
     }
 
-    public ComponentPattern properNoun() {
-        return partsOfSpeech(Tag.properNoun);
+    public ComponentPattern pronoun() {
+        return partsOfSpeech(Tag.pronoun);
     }
 
     public ComponentPattern noun() {
@@ -187,8 +187,8 @@ public class ComponentPattern implements Pattern {
     private boolean matchesPartOfSpeech(AbstractComponent abstractComponent) {
         Tag partOfSpeechState = null;
 
-        if (abstractComponent.isProperNoun()) {
-            partOfSpeechState = Tag.properNoun;
+        if (abstractComponent.isPronoun()) {
+            partOfSpeechState = Tag.pronoun;
         } else if (abstractComponent.isNoun()) {
             partOfSpeechState = Tag.noun;
         } else if (abstractComponent.isVerb()) {

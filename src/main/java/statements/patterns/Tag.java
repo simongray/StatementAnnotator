@@ -1,7 +1,7 @@
 package statements.patterns;
 
 public enum Tag {
-    properNoun,
+    pronoun,
     noun,
     verb,
     adjective,

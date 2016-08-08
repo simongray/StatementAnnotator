@@ -365,7 +365,7 @@ public abstract class AbstractComponent implements StatementComponent {
     @Override
     public abstract boolean isWellFormed();
 
-    public boolean isProperNoun() {
+    public boolean isPronoun() {
         // TODO: what about possesives?
         return getPrimary().tag().equals(PartsOfSpeech.PRP);
     }
@@ -387,11 +387,11 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     public boolean isFirstPerson() {
-        return isProperNoun() && Lexicon.FIRST_PERSON.contains(getPrimary().word().toLowerCase());
+        return isPronoun() && Lexicon.FIRST_PERSON.contains(getPrimary().word().toLowerCase());
     }
 
     public boolean isSecondPerson() {
-        return isProperNoun() && Lexicon.SECOND_PERSON.contains(getPrimary().word().toLowerCase());
+        return isPronoun() && Lexicon.SECOND_PERSON.contains(getPrimary().word().toLowerCase());
     }
 
     /**
