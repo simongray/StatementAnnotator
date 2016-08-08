@@ -52,6 +52,17 @@ public class StatementFinder {
         // statements are produced by discovering connection between the components
         Set<Statement> statements = link(componentLevels);
 
+        // log and remove statements with duplicate component
+        Set<Statement> badStatements = new HashSet<>();
+        for (Statement statement : statements) {
+            if (statement.duplicateCount() > 0) {
+                logger.error("bad statement: " + statement);
+                badStatements.add(statement);
+            }
+        }
+
+        statements.removeAll(badStatements);
+
         // annotate with origin
         // TODO: better way to do this?
         for (Statement statement : statements) {
