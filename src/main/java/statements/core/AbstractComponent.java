@@ -83,9 +83,10 @@ public abstract class AbstractComponent implements StatementComponent {
         normalCompound.addAll(basicCompound);
 
         // relevant parts of component that are not separated out from the compound
-        prepositions = StatementUtils.findSpecificChildren(Relations.CASE, primary, graph);
+        // Note: none currently!
 
         // relevant parts of the component that have been separated out from the compound
+        prepositions = StatementUtils.findSpecificChildren(Relations.CASE, primary, graph);
         negations = StatementUtils.findSpecificChildren(Relations.NEG, primary, graph);
         punctuation = StatementUtils.findSpecificChildren(Relations.PUNCT, primary, graph);
         markers = StatementUtils.findSpecificChildren(Relations.MARK, primary, graph);
@@ -103,6 +104,7 @@ public abstract class AbstractComponent implements StatementComponent {
         // the stuff that doesn't go directly into the compound
         // used by containing statements to reproduce the statement text
         remaining = new HashSet<>();
+        remaining.addAll(prepositions);
         remaining.addAll(negations);
         remaining.addAll(markers);
 //        remaining.addAll(adverbialClauses) // TODO: trying out making this embedded instead
