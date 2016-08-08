@@ -146,8 +146,18 @@ public class ComponentPattern implements Pattern {
             return this;
         }
 
+        public PatternBuilder negated() {
+            this.negated = true;
+            return this;
+        }
+
         public PatternBuilder plural(Boolean state) {
             this.plural = state;
+            return this;
+        }
+
+        public PatternBuilder plural() {
+            this.plural = true;
             return this;
         }
 
@@ -156,8 +166,18 @@ public class ComponentPattern implements Pattern {
             return this;
         }
 
+        public PatternBuilder specific() {
+            this.specific = true;
+            return this;
+        }
+
         public PatternBuilder local(Boolean state) {
             this.local = state;
+            return this;
+        }
+
+        public PatternBuilder local() {
+            this.local = true;
             return this;
         }
 
@@ -166,8 +186,28 @@ public class ComponentPattern implements Pattern {
             return this;
         }
 
+        public PatternBuilder properNoun() {
+            this.properNoun = true;
+            return this;
+        }
+
         public PatternBuilder person(int... states) {
             this.person = states;
+            return this;
+        }
+
+        public PatternBuilder firstPerson() {
+            this.person = new int[] {1};
+            return this;
+        }
+
+        public PatternBuilder secondPerson() {
+            this.person = new int[] {2};
+            return this;
+        }
+
+        public PatternBuilder thirdPerson() {
+            this.person = new int[] {3};
             return this;
         }
     }
