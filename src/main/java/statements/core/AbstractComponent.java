@@ -489,6 +489,8 @@ public abstract class AbstractComponent implements StatementComponent {
             getClass().getSimpleName() + ": \"" + getString() + "\"" +
 //            ", gaps: " + gaps() +  // TODO: remove after done debugging
             (!getDescriptives().isEmpty()? ", description: \"" + StatementUtils.join(getDescriptives()) + "\"" : "") +
+            ", pos: \"" + getPrimary().tag() + "\"" +
+            ", primary: \"" + getPrimary() + "\"" +
 //            ", local: \"" + (isLocal()? "yes" : "no") + "\"" +
 //            ", negated: \"" + (isNegated()? "yes" : "no") + "\"" +
 //            ", plural: \"" + (isPlural()? "yes" : "no") + "\"" +
