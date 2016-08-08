@@ -78,10 +78,10 @@ public class TestNewPatterns {
                 new StatementPattern()
         );
 
-        Pattern testPattern = new StatementPattern(
+        StatementPattern testPattern = new StatementPattern(
                 new SubjectPattern().firstPerson(),
                 new VerbPattern().words("be", "come", "go"),
-                new ComponentPattern(DirectObject.class, IndirectObject.class).preposition().capitalised()
+                new ComponentPattern(DirectObject.class, IndirectObject.class).preposition().capitalised().capture()
         );
 
         for (Statement statement : allStatements) {
@@ -92,7 +92,8 @@ public class TestNewPatterns {
 //                System.out.println("not: " + statement);
 //            }
             if (testPattern.matches(statement)) {
-                System.out.println("test: " + statement + " --> " + statement.getComponents());
+//                System.out.println("test: " + statement + " --> " + statement.getComponents());
+                System.out.println("test: " + testPattern.getCaptures());
             }
         }
     }

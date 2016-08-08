@@ -3,13 +3,81 @@ package statements.patterns;
 import statements.core.Statement;
 import statements.core.StatementComponent;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class StatementPattern implements Pattern {
     private final Pattern[] patterns;
+    private final Class[] types = new Class[] { Statement.class };
+
+    /**
+     * Used to capture certain components (similar to how it works in regex).
+     */
+    private boolean capture;
+    private Statement captured;
 
     public StatementPattern(Pattern... patterns) {
         this.patterns = patterns;
+    }
+
+    public Class[] getTypes() {
+        return types;
+    }
+
+    /**
+     * Capture this statement for processing.
+     */
+    public StatementPattern capture() {
+        this.capture = true;
+        return this;
+    }
+
+    /**
+     * Get the component captured during the latest match.
+     * @return captured component
+     */
+    public Statement getCaptured() {
+        return captured;
+    }
+
+    /**
+     * Get everything captured by this
+     *
+     * @param componentTypes
+     * @return
+     */
+    public Set<StatementComponent> getCaptures(Class... componentTypes) {
+        Set<StatementComponent> captures = new HashSet<>();
+
+        for (Pattern pattern : patterns) {
+            if (pattern.getCaptured() != null) {
+                if (componentTypes.length == 0) {
+                    captures.add(pattern.getCaptured());
+                } else if (containsTypes(pattern, componentTypes)) {
+                    captures.add(pattern.getCaptured());
+                }
+            }
+        }
+
+        return captures;
+    }
+
+    /**
+     * Whether or not a pattern contains one of a number of types.
+     * Used to find captured components.
+     *
+     * @param pattern pattern to test
+     * @param componentTypes types to find
+     * @return true if one of the types was found
+     */
+    private boolean containsTypes(Pattern pattern, Class[] componentTypes) {
+        for (Class type : pattern.getTypes()) {
+            for (Class componentType : componentTypes) {
+                if (type.equals(componentType)) return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -31,6 +99,8 @@ public class StatementPattern implements Pattern {
             for (Pattern pattern : patterns) {
                 if (!matches(pattern, components)) return false;
             }
+
+            if (capture) captured = statement;
 
             return true;
         }

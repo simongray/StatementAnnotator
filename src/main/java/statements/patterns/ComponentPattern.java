@@ -5,6 +5,7 @@ import statements.core.AbstractComponent;
 import statements.core.StatementComponent;
 import statements.core.Verb;
 
+
 /**
  * This class must be instantiated using one of the derived classes.
  *
@@ -24,8 +25,18 @@ public class ComponentPattern implements Pattern {
     private Person[] pointsOfView;
     private String[] prepositions;
 
+    /**
+     * Used to capture certain components (similar to how it works in regex).
+     */
+    private boolean capture;
+    private AbstractComponent captured;
+
     public ComponentPattern(Class... types) {
         this.types = types;
+    }
+
+    public Class[] getTypes() {
+        return types;
     }
 
     public ComponentPattern words(String... words) {
@@ -156,6 +167,22 @@ public class ComponentPattern implements Pattern {
     }
 
     /**
+     * Capture this component for processing.
+     */
+    public ComponentPattern capture() {
+        this.capture = true;
+        return this;
+    }
+
+    /**
+     * Get the component captured during the latest match.
+     * @return captured component
+     */
+    public AbstractComponent getCaptured() {
+        return captured;
+    }
+
+    /**
      * Match this ComponentPattern against a component.
      *
      * @param statementComponent the component to test
@@ -195,6 +222,8 @@ public class ComponentPattern implements Pattern {
 
             // matches words to compound
             if (words != null && !matchesWords(abstractComponent.getNormalCompound())) return false;
+
+            if (capture) captured = abstractComponent;
 
             return true;
         }

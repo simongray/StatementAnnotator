@@ -27,7 +27,7 @@ public class Common {
     /**
      * Matches statements that indicate the personal location of the author.
      */
-    public static final Pattern PERSONAL_LOCATION_PATTERN = new StatementPattern(
+    public static final StatementPattern PERSONAL_LOCATION_PATTERN = new StatementPattern(
             new SubjectPattern().firstPerson(),
             new VerbPattern().words("be", "come", "go"),
             new ComponentPattern(DirectObject.class, IndirectObject.class).preposition()
