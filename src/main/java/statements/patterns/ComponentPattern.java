@@ -2,6 +2,7 @@ package statements.patterns;
 
 import statements.core.AbstractComponent;
 import statements.core.StatementComponent;
+import statements.core.Verb;
 
 /**
  * This class must be instantiated using one of the derived classes.
@@ -16,7 +17,7 @@ public class ComponentPattern implements Pattern {
     private Boolean plural;
     private Boolean specific;
     private Boolean local;
-    private Boolean properNoun;
+    private Boolean copula;
     private Tag[] partsOfSpeech;
     private Person[] pointsOfView;
 
@@ -68,6 +69,15 @@ public class ComponentPattern implements Pattern {
     public ComponentPattern local() {
         this.local = true;
         return this;
+    }
+
+    public ComponentPattern copula(Boolean state) {
+        this.copula = state;
+        return this;
+    }
+
+    public ComponentPattern copula() {
+        return copula(true);
     }
 
     /*
@@ -157,10 +167,13 @@ public class ComponentPattern implements Pattern {
             // part of speech (noun, verb, adjective, ...)
             if (partsOfSpeech != null && !matchesPartOfSpeech(abstractComponent)) return false;
 
-            // matches against 1st, 2nd, and/or 3rd person
+            // matches 1st, 2nd, and/or 3rd person
             if (pointsOfView != null && !matchesPointOfView(abstractComponent)) return false;
 
-            // compound (if applicable)
+            // matches copula (= "to be" verb)
+            if (copula != null && abstractComponent instanceof Verb && !((Verb) abstractComponent).isCopula()) return false;
+
+            // matches words to compound
             if (words != null && !matchesWords(abstractComponent.getNormalCompound())) return false;
 
             return true;

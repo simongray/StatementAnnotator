@@ -77,8 +77,8 @@ public class TestNewPatterns {
         );
 
         Pattern testPattern = new StatementPattern(
-                new SubjectPattern().firstPerson(),
-                new VerbPattern().words("be"),
+                new SubjectPattern().firstPerson().singular(),
+                new VerbPattern().copula(),
                 new DirectObjectPattern().partsOfSpeech(Tag.noun, Tag.adjective)
         );
 

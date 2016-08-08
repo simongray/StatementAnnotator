@@ -26,6 +26,15 @@ public class Verb extends AbstractComponent {
     }
 
     /**
+     * Whether or not this verb is a copula (= some form of "to be").
+     *
+     * @return true if verb is copula
+     */
+    public boolean isCopula() {
+        return labels.contains(Labels.COP_VERB);
+    }
+
+    /**
      * Allow components to define what makes them interesting.
      *
      * @return true if interesting
