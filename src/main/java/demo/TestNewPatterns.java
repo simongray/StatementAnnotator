@@ -36,8 +36,8 @@ public class TestNewPatterns {
 
         Set<Statement> allStatements = new HashSet<>();
 
-//        int commentLimit = 50;
-        int commentLimit = comments.size();
+        int commentLimit = 50;
+//        int commentLimit = comments.size();
 
         // retrieve statements from first data set
         for (int i = 0; i < commentLimit; i++) {
@@ -65,27 +65,27 @@ public class TestNewPatterns {
 
         // testing the new pattern class
         Pattern thinkPattern = new StatementPattern(
-                new SubjectPattern().person(1).build(),
-                new VerbPattern().words(Common.THINK).build(),
+                new SubjectPattern().firstPerson(),
+                new VerbPattern().words(Common.THINK_SYNONYMS),
                 new StatementPattern()
         );
 
         Pattern thinkNotPattern = new StatementPattern(
-                new SubjectPattern().words("I", "we").build(),
-                new VerbPattern().words(Common.THINK).negated(true).build(),
+                new SubjectPattern().firstPerson(),
+                new VerbPattern().words(Common.THINK_SYNONYMS).negated(),
                 new StatementPattern()
         );
 
         Pattern thinkAndThinkNotPattern = new StatementPattern(
-                new SubjectPattern().words("I", "we").build(),
-                new VerbPattern().words(Common.THINK).negated(null).build(),
+                new SubjectPattern().firstPerson(),
+                new VerbPattern().words(Common.THINK_SYNONYMS).negated(null),
                 new StatementPattern()
         );
 
         Pattern pluralPattern = new StatementPattern(
 //                new ComponentPattern.DirectObject().plural(true).person(2).build()
-                new SubjectPattern().person(2).build(),
-                new DirectObjectPattern().plural(true).build()
+                new SubjectPattern().secondPerson(),
+                new DirectObjectPattern().plural()
         );
 
         for (Statement statement : allStatements) {

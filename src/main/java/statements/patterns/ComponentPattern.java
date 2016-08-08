@@ -4,27 +4,99 @@ import statements.core.AbstractComponent;
 import statements.core.StatementComponent;
 
 /**
- * ComponentPatterns are instantiated using the builder classes.
+ * This class must be instantiated using one of the derived classes.
+ *
+ * Note: the Boolean wrapper class is used instead of the primitive.
+ * This is necessary to be able to have unknown/null states.
  */
 public class ComponentPattern implements Pattern {
-    private final Class type;
-    private final String[] words;
-    private final Boolean negated;
-    private final Boolean plural;
-    private final Boolean specific;
-    private final Boolean local;
-    private final Boolean properNoun;
-    private final int[] person;
+    private Class type;
+    private String[] words;
+    private Boolean negated;
+    private Boolean plural;
+    private Boolean specific;
+    private Boolean local;
+    private Boolean properNoun;
+    private int[] person;
 
-    private ComponentPattern(PatternBuilder builder) {
-        this.type = builder.type;
-        this.words = builder.words;
-        this.negated = builder.negated;
-        this.plural = builder.plural;
-        this.specific = builder.specific;
-        this.local = builder.local;
-        this.properNoun = builder.properNoun;
-        this.person = builder.person;
+    protected ComponentPattern(Class type) {
+        this.type = type;
+    }
+
+    public ComponentPattern words(String... words) {
+        for (int i = 0; i < words.length; i++) words[i] = words[i].toLowerCase();
+        this.words = words;
+        return this;
+    }
+
+    public ComponentPattern negated(Boolean state) {
+        this.negated = state;
+        return this;
+    }
+
+    public ComponentPattern negated() {
+        this.negated = true;
+        return this;
+    }
+
+    public ComponentPattern plural(Boolean state) {
+        this.plural = state;
+        return this;
+    }
+
+    public ComponentPattern plural() {
+        this.plural = true;
+        return this;
+    }
+
+    public ComponentPattern specific(Boolean state) {
+        this.specific = state;
+        return this;
+    }
+
+    public ComponentPattern specific() {
+        this.specific = true;
+        return this;
+    }
+
+    public ComponentPattern local(Boolean state) {
+        this.local = state;
+        return this;
+    }
+
+    public ComponentPattern local() {
+        this.local = true;
+        return this;
+    }
+
+    public ComponentPattern properNoun(Boolean state) {
+        this.properNoun = state;
+        return this;
+    }
+
+    public ComponentPattern properNoun() {
+        this.properNoun = true;
+        return this;
+    }
+
+    public ComponentPattern person(int... states) {
+        this.person = states;
+        return this;
+    }
+
+    public ComponentPattern firstPerson() {
+        this.person = new int[] {1};
+        return this;
+    }
+
+    public ComponentPattern secondPerson() {
+        this.person = new int[] {2};
+        return this;
+    }
+
+    public ComponentPattern thirdPerson() {
+        this.person = new int[] {3};
+        return this;
     }
 
     /**
@@ -109,106 +181,5 @@ public class ComponentPattern implements Pattern {
         }
 
         return false;
-    }
-
-    /**
-     * This class must be instantiated using one of the derived classes.
-     *
-     * Note: the Boolean wrapper class is used instead of the primitive.
-     * This is necessary to be able to have unknown/null states.
-     */
-    public abstract static class PatternBuilder {
-        public final Class type;
-        public String[] words = null;
-        public Boolean negated = false;  // note: defaults to false - not null - unlike other attributes
-        public Boolean plural = null;
-        public Boolean specific = null;
-        public Boolean local = null;
-        public Boolean properNoun = null;
-        public int[] person = null;
-
-        protected PatternBuilder(Class type) {
-            this.type = type;
-        }
-
-        public ComponentPattern build() {
-            return new ComponentPattern(this);
-        }
-
-        public PatternBuilder words(String... words) {
-            for (int i = 0; i < words.length; i++) words[i] = words[i].toLowerCase();
-            this.words = words;
-            return this;
-        }
-
-        public PatternBuilder negated(Boolean state) {
-            this.negated = state;
-            return this;
-        }
-
-        public PatternBuilder negated() {
-            this.negated = true;
-            return this;
-        }
-
-        public PatternBuilder plural(Boolean state) {
-            this.plural = state;
-            return this;
-        }
-
-        public PatternBuilder plural() {
-            this.plural = true;
-            return this;
-        }
-
-        public PatternBuilder specific(Boolean state) {
-            this.specific = state;
-            return this;
-        }
-
-        public PatternBuilder specific() {
-            this.specific = true;
-            return this;
-        }
-
-        public PatternBuilder local(Boolean state) {
-            this.local = state;
-            return this;
-        }
-
-        public PatternBuilder local() {
-            this.local = true;
-            return this;
-        }
-
-        public PatternBuilder properNoun(Boolean state) {
-            this.properNoun = state;
-            return this;
-        }
-
-        public PatternBuilder properNoun() {
-            this.properNoun = true;
-            return this;
-        }
-
-        public PatternBuilder person(int... states) {
-            this.person = states;
-            return this;
-        }
-
-        public PatternBuilder firstPerson() {
-            this.person = new int[] {1};
-            return this;
-        }
-
-        public PatternBuilder secondPerson() {
-            this.person = new int[] {2};
-            return this;
-        }
-
-        public PatternBuilder thirdPerson() {
-            this.person = new int[] {3};
-            return this;
-        }
     }
 }

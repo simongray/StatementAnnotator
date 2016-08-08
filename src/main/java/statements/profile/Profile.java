@@ -40,8 +40,8 @@ public class Profile {
         Set<Statement> embeddedStatements = new HashSet<>();
 
         Pattern thinkPattern = new StatementPattern(
-                new SubjectPattern().words("I", "we").build(),
-                new VerbPattern().words(Common.THINK).build(),
+                new SubjectPattern().words("I", "we"),
+                new VerbPattern().words(Common.THINK_SYNONYMS),
                 new StatementPattern()
         );
 
