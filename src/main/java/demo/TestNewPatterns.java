@@ -27,8 +27,8 @@ public class TestNewPatterns {
         props.setProperty("customAnnotatorClass.statement", "statements.StatementAnnotator");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
-        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/data.json", Charset.defaultCharset());
-//        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/mark_comment_history.json", Charset.defaultCharset());
+//        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/data.json", Charset.defaultCharset());
+        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/mark_comment_history.json", Charset.defaultCharset());
         JSONArray firstUserJsonArray = new JSONArray(content);
 
 
@@ -90,8 +90,9 @@ public class TestNewPatterns {
 //                System.out.println("not: " + statement);
 //            }
             if (testPattern.matches(statement)) {
-//                System.out.println("test: " + statement + " --> " + statement.getComponents());
-                System.out.println("test: " + testPattern.getCaptures());
+                System.out.println("test: " + statement + " --> " + statement.getComponents());
+                System.out.println("      " + testPattern.getCaptures());
+                System.out.println("      " + statement.getOrigin());
             }
         }
     }

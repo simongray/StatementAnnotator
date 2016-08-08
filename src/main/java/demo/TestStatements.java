@@ -29,8 +29,11 @@ public class TestStatements {
 
 
 
+        // TODO: similar to aux, neg relations should also be added to CopVerb (= been) and removed from Scotland
+        String example = "I've never been to Scotland";
+
         // TODO: the nmod for the direct object should not become part of the description, when the DO is a verb ("accepted")
-        String example = "Prostitution is a lot more accepted in Japanese corporate life than it is in Western countries.";
+//        String example = "Prostitution is a lot more accepted in Japanese corporate life than it is in Western countries.";
 
 
 
