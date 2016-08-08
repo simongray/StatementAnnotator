@@ -386,6 +386,10 @@ public abstract class AbstractComponent implements StatementComponent {
         return getPrimary().tag().equals(PartsOfSpeech.PRP);
     }
 
+    public boolean isProperNoun() {
+        return PartsOfSpeech.PROPER_NOUNS.contains(getPrimary().tag());
+    }
+
     public boolean isNoun() {
         return PartsOfSpeech.NOUNS.contains(getPrimary().tag());
     }

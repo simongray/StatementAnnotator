@@ -86,9 +86,14 @@ public class PartsOfSpeech {
     public static final Set<String> NOUNS = new HashSet<>();
     static {
         NOUNS.add(NN);
-        NOUNS.add(NNP);
         NOUNS.add(NNS);
-        NOUNS.add(NNPS);
+    }
+
+
+    public static final Set<String> PROPER_NOUNS = new HashSet<>();
+    static {
+        PROPER_NOUNS.add(NNP);
+        PROPER_NOUNS.add(NNPS);
     }
 
     public static final Set<String> ADJECTIVES = new HashSet<>();
