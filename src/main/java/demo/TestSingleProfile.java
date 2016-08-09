@@ -20,9 +20,6 @@ import java.util.Set;
 
 
 public class TestSingleProfile {
-    private final static String ENGLISH = "en";
-    private final static String DANISH = "da";
-
     public static void main(String[] args) throws IOException {
         // setting up the pipeline
         Properties props = new Properties();
@@ -31,38 +28,36 @@ public class TestSingleProfile {
         props.setProperty("ssplit.newlineIsSentenceBreak", "always");  // IMPORTANT!!
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
-        // load
-        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/data.json", Charset.defaultCharset());
-        String otherContent = RedditCommentProcessor.readFile("src/main/java/demo/data/mark_comment_history.json", Charset.defaultCharset());
-        JSONArray firstUserJsonArray = new JSONArray(content);
+        // load comments
+//        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/data.json", Charset.defaultCharset());
+        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/mark_comment_history.json", Charset.defaultCharset());
+        JSONArray jsonArray = new JSONArray(content);
+        List<String> comments = RedditCommentProcessor.getComments(jsonArray, RedditCommentProcessor.ENGLISH);
+        Set<Statement> statements = new HashSet<>();
 
-        List<String> firstComments = RedditCommentProcessor.getComments(firstUserJsonArray, RedditCommentProcessor.ENGLISH);
-
-        Set<Statement> firstStatements = new HashSet<>();
-
-        // retrieve statements from first data set
-        for (String comment : firstComments) {
+        // retrieve statements from comments
+        for (String comment : comments) {
             Annotation annotation = new Annotation(comment);
             pipeline.annotate(annotation);
-
             List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
 
             for (CoreMap sentence : sentences) {
                 Set<Statement> sentenceStatements = sentence.get(StatementsAnnotation.class);
-                if (sentenceStatements != null) firstStatements.addAll(sentenceStatements);
+                if (sentenceStatements != null) statements.addAll(sentenceStatements);
             }
         }
 
-        // create profiles based on statements from both data sets
-        Profile firstProfile = new Profile(firstStatements);
-        System.out.println(firstProfile.getStatements().size() + " statements in first profile");
-        System.out.println(firstProfile.getInterestingStatements().size() + " interesting statements in first profile");
-        List<Statement> statementsByLexicalDensity = firstProfile.getStatementsByLexicalDensity();
-        List<Statement> statementsByQuality = firstProfile.getStatementsByQuality();
-        for (int i = 0; i < statementsByLexicalDensity.size(); i++) {
-            System.out.println("quality: " + statementsByQuality.get(i));
-            System.out.println("density: " + statementsByLexicalDensity.get(i));
-            System.out.println();
-        }
+        // create profile based on statements
+        Profile profile = new Profile(statements);
+        System.out.println("statements: " + profile.getStatements().size());
+        System.out.println("interesting statements: " + profile.getInterestingStatements().size());
+        System.out.println("locations: " + profile.getLocations());
+//        List<Statement> statementsByLexicalDensity = firstProfile.getStatementsByLexicalDensity();
+//        List<Statement> statementsByQuality = firstProfile.getStatementsByQuality();
+//        for (int i = 0; i < statementsByLexicalDensity.size(); i++) {
+//            System.out.println("quality: " + statementsByQuality.get(i));
+//            System.out.println("density: " + statementsByLexicalDensity.get(i));
+//            System.out.println();
+//        }
     }
 }

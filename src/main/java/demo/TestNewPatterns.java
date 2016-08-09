@@ -8,8 +8,6 @@ import edu.stanford.nlp.util.CoreMap;
 import org.json.JSONArray;
 import reddit.RedditCommentProcessor;
 import statements.annotations.StatementsAnnotation;
-import statements.core.DirectObject;
-import statements.core.IndirectObject;
 import statements.core.Statement;
 import statements.patterns.*;
 
@@ -62,21 +60,27 @@ public class TestNewPatterns {
         // testing the new pattern class
         StatementPattern thinkPattern = new StatementPattern(
                 new SubjectPattern().firstPerson(),
-                new VerbPattern().words(Common.THINK),
+                new VerbPattern().words(Common.OPINION_VERB),
                 new StatementPattern().interesting().wellFormed().capture()
         );
 
         StatementPattern thinkNotPattern = new StatementPattern(
                 new SubjectPattern().firstPerson(),
-                new VerbPattern().words(Common.THINK).negated(),
+                new VerbPattern().words(Common.OPINION_VERB).negated(),
                 new StatementPattern()
         );
 
+//        StatementPattern testPattern = new StatementPattern(
+//                new SubjectPattern().firstPerson(),
+//                new VerbPattern().words("be", "come", "go", "live", "stay", "visit", "travel"),
+////                new ComponentPattern(DirectObject.class, IndirectObject.class).preposition("in", "from", "to", "by", "at", "around").capture()
+//                new ObjectPattern().preposition().capture()
+//        );
+
         StatementPattern testPattern = new StatementPattern(
                 new SubjectPattern().firstPerson(),
-                new VerbPattern().words("be", "come", "go", "live", "stay"),
-//                new ComponentPattern(DirectObject.class, IndirectObject.class).preposition("in", "from", "to", "by", "at", "around").capture()
-                new ObjectPattern().preposition().capture()
+                new VerbPattern().words(Common.LOCATION_VERB),
+                new ObjectPattern().preposition("in", "from", "to", "by", "at", "around", "on").noun().capture()
         );
 
         for (Statement statement : statements) {

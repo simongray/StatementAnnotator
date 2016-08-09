@@ -2,8 +2,6 @@ package statements.patterns;
 
 
 import edu.mit.jwi.item.POS;
-import statements.core.DirectObject;
-import statements.core.IndirectObject;
 
 import java.io.IOException;
 
@@ -22,15 +20,8 @@ public class Common {
         return dictionary;
     }
 
-    public final static String[] THINK = getDictionary().getSynonyms(POS.VERB, "think", "reckon", "believe", "know").stream().toArray(String[]::new);
-    public final static String[] LIVE = getDictionary().getSynonyms(POS.VERB, "live", "stay", "inhabit").stream().toArray(String[]::new);
+    public final static String[] OPINION_VERB = getDictionary().getSynonyms(POS.VERB, "think", "reckon", "believe", "know").stream().toArray(String[]::new);
+    public final static String[] LOCATION_VERB = getDictionary().getSynonyms(POS.VERB, "be", "come", "go", "live", "stay", "visit", "travel").stream().toArray(String[]::new);
 
-    /**
-     * Matches statements that indicate the personal location of the author.
-     */
-    public static final StatementPattern PERSONAL_LOCATION_PATTERN = new StatementPattern(
-            new SubjectPattern().firstPerson(),
-            new VerbPattern().words("be", "come", "go", "live", "stay"),
-            new ComponentPattern(DirectObject.class, IndirectObject.class).preposition()
-    );
+    public final static String[] LOCATION_PREPOSITION = new String[] { "in", "from", "to", "by", "at", "around", "on" };
 }

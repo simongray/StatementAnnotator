@@ -18,6 +18,25 @@ public class Profile {
     Set<String> directObjectWords = new HashSet<>();
     Set<String> indirectObjectWords = new HashSet<>();
     Set<String> topics = new HashSet<>();
+    Set<String> locations = new HashSet<>();
+
+    /**
+     * Captures objects that indicate the location of the author.
+     */
+    public final StatementPattern LOCATION_PATTERN_1 = new StatementPattern(
+            new SubjectPattern().firstPerson(),
+            new VerbPattern().words(Common.LOCATION_VERB),
+            new ObjectPattern().preposition(Common.LOCATION_PREPOSITION).partsOfSpeech(Tag.noun, Tag.properNoun).capture()
+    );
+
+    /**
+     * Matches statements that indicate the opinion of the author.
+     */
+    public final StatementPattern OPINION_PATTERN_1 = new StatementPattern(
+            new SubjectPattern().firstPerson(),
+            new VerbPattern().words(Common.OPINION_VERB),
+            new StatementPattern().interesting().wellFormed().capture()
+    );
 
     public Profile(Set<Statement> statements) throws IOException {
         this.dict = new WordnetDictionary();
@@ -26,6 +45,9 @@ public class Profile {
         // unpack embedded statements according to a pattern
         // the original statements are replaced with the embedded statements based on the pattern
         unpackEmbeddedStatements();
+
+        // find locations that the author has been to
+        registerLocations();
 
         // store the topic keywords of all interesting statements
         // used to rank statements in relation to other users
@@ -39,26 +61,39 @@ public class Profile {
         Set<Statement> embeddingStatements = new HashSet<>();
         Set<Statement> embeddedStatements = new HashSet<>();
 
-        Pattern thinkPattern = new StatementPattern(
-                new SubjectPattern().words("I", "we"),
-                new VerbPattern().words(Common.THINK),
-                new StatementPattern()
-        );
-
         for (Statement statement : statements) {
-            if (thinkPattern.matches(statement)) {
-                // TODO: unpacked statements do not carry over negation, e.g. "I think ..." and "I don't think ..."
-                Statement embeddedStatement = statement.getEmbeddedStatement();
-                embeddedStatement.setOrigin(statement.getOrigin());
-                embeddedStatements.add(embeddedStatement);
-                embeddingStatements.add(statement);
-                logger.info("unpacked " + embeddedStatement + " from " + statement);
+            // TODO: unpacked statements do not carry over negation, e.g. "I think ..." and "I don't think ..."
+            if (OPINION_PATTERN_1.matches(statement)) {
+                for (StatementComponent capture : OPINION_PATTERN_1.getCaptures()) {
+                    Statement embeddedStatement = (Statement) capture;
+                    embeddedStatement.setOrigin(statement.getOrigin());
+                    embeddedStatements.add(embeddedStatement);
+                    embeddingStatements.add(statement);
+                    logger.info("unpacked " + embeddedStatement + " from " + statement);
+                }
             }
         }
 
         statements.removeAll(embeddingStatements);
         statements.addAll(embeddedStatements);
         logger.info("total statements unpacked: " + embeddingStatements.size());
+    }
+
+    /**
+     * Unpack statements according to certain patterns to replace them with their embedded statements.
+     */
+    private void registerLocations() {
+        for (Statement statement : statements) {
+            if (LOCATION_PATTERN_1.matches(statement)) {
+                for (StatementComponent capture : LOCATION_PATTERN_1.getCaptures()) {
+                    AbstractComponent abstractComponent = (AbstractComponent) capture;
+                    locations.add(abstractComponent.getNormalCompound());
+                    logger.info("found location " + abstractComponent + " in " + statement);
+                }
+            }
+        }
+
+        logger.info("total locatios found: " + locations.size());
     }
 
     /**
@@ -153,6 +188,10 @@ public class Profile {
 
     public Set<String> getTopics() {
         return topics;
+    }
+
+    public Set<String> getLocations() {
+        return locations;
     }
 
     /**
