@@ -89,6 +89,32 @@ public class Lexicon {
         PLURAL_NON_NOUNS.add("those");
     }
 
+    public static final Set<String> FIRST_PERSON_POSSESSIVES = new HashSet<>();
+    public static final Set<String> FIRST_PERSON_POSSESSIVE_NOUNS = new HashSet<>();
+    static {
+        FIRST_PERSON_POSSESSIVES.add("my");
+        FIRST_PERSON_POSSESSIVES.add("our");
+
+        FIRST_PERSON_POSSESSIVE_NOUNS.add("mine");
+        FIRST_PERSON_POSSESSIVE_NOUNS.add("ours");
+    }
+
+    public static final Set<String> SECOND_PERSON_POSSESSIVES = new HashSet<>();
+    public static final Set<String> SECOND_PERSON_POSSESSIVE_NOUNS = new HashSet<>();
+    static {
+        SECOND_PERSON_POSSESSIVES.add("your");
+
+        SECOND_PERSON_POSSESSIVE_NOUNS.add("yours");
+    }
+
+    public static final Set<String> THIRD_PERSON_POSSESSIVES = new HashSet<>();
+    public static final Set<String> THIRD_PERSON_POSSESSIVE_NOUNS = new HashSet<>();
+    static {
+        THIRD_PERSON_POSSESSIVES.add("their");
+
+        THIRD_PERSON_POSSESSIVE_NOUNS.add("theirs");
+    }
+
     /**
      * This set of nouns comprises second and third person pronouns, but not first person.
      * It also adds other words that do not carry any information without context.

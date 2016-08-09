@@ -78,9 +78,7 @@ public class TestNewPatterns {
 //        );
 
         StatementPattern testPattern = new StatementPattern(
-                new SubjectPattern().firstPerson(),
-                new VerbPattern().words(Common.LOCATION_VERB),
-                new ObjectPattern().preposition("in", "from", "to", "by", "at", "around", "on").noun().capture()
+                new ObjectPattern().possessive(Person.third).capture()
         );
 
         for (Statement statement : statements) {

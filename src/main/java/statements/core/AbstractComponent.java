@@ -56,6 +56,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> cc;
     protected final Set<IndexedWord> determiners;
     protected final Set<IndexedWord> prepositions;
+    protected final Set<IndexedWord> possessives;
 //    protected final Set<IndexedWord> adverbialClauses;  // TODO: trying out making this embedded instead
     protected final Set<IndexedWord> nounClauses;
     protected final Set<IndexedWord> basicCompound;
@@ -91,7 +92,8 @@ public abstract class AbstractComponent implements StatementComponent {
         punctuation = StatementUtils.findSpecificChildren(Relations.PUNCT, primary, graph);
         markers = StatementUtils.findSpecificChildren(Relations.MARK, primary, graph);
         cc = StatementUtils.findSpecificChildren(Relations.CC, primary, graph);
-        determiners = StatementUtils.findSpecificChildren(Relations.DET, primary, graph);  // TODO: nmod:poss are also determiners!
+        determiners = StatementUtils.findSpecificChildren(Relations.DET, primary, graph);
+        possessives = StatementUtils.findSpecificDescendants(Relations.NMOD_POSS, primary, graph);
 //        adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, primary, graph);  // TODO: trying out making this embedded instead
         nounClauses = StatementUtils.findSpecificDescendants(Relations.ACL, primary, graph);
         nounClauses.addAll(StatementUtils.findSpecificDescendants(Relations.ACL_RELCL, primary, graph));
@@ -108,6 +110,7 @@ public abstract class AbstractComponent implements StatementComponent {
         remaining.addAll(negations);
         remaining.addAll(markers);
         remaining.addAll(determiners);
+        remaining.addAll(possessives);
 //        remaining.addAll(adverbialClauses) // TODO: trying out making this embedded instead
         remaining.addAll(nounClauses);
         remaining.addAll(otherDescriptives);
@@ -261,7 +264,6 @@ public abstract class AbstractComponent implements StatementComponent {
         return markers;
     }
 
-
     /**
      * All prepositions.
      *
@@ -269,6 +271,15 @@ public abstract class AbstractComponent implements StatementComponent {
      */
     public Set<IndexedWord> getPrepositions() {
         return prepositions;
+    }
+
+    /**
+     * All prepositions.
+     *
+     * @return prepositions
+     */
+    public Set<IndexedWord> getPossessives() {
+        return possessives;
     }
 
     /**
@@ -439,6 +450,34 @@ public abstract class AbstractComponent implements StatementComponent {
         return isPronoun() && Lexicon.SECOND_PERSON.contains(getPrimary().word().toLowerCase());
     }
 
+    public boolean hasPossessive() {
+        return !getPossessives().isEmpty();
+    }
+
+    public boolean hasFirstPersonPossessive() {
+        if (hasPossessive()) {
+            for (IndexedWord word : getPossessives()) {
+                if (Lexicon.FIRST_PERSON_POSSESSIVES.contains(word.word().toLowerCase())) return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasSecondPersonPossessive() {
+        if (hasPossessive()) {
+            for (IndexedWord word : getPossessives()) {
+                if (Lexicon.SECOND_PERSON_POSSESSIVES.contains(word.word().toLowerCase())) return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasThirdPersonPossessive() {
+        return hasPossessive() && !hasFirstPersonPossessive() && !hasSecondPersonPossessive();
+    }
+
     public boolean hasPreposition() {
         return !getPrepositions().isEmpty();
     }
@@ -539,6 +578,8 @@ public abstract class AbstractComponent implements StatementComponent {
 //            ", gaps: " + gaps() +  // TODO: remove after done debugging
             (!getDescriptives().isEmpty()? ", description: \"" + StatementUtils.join(getDescriptives()) + "\"" : "") +
             (!getPrepositions().isEmpty()? ", preposition: \"" + StatementUtils.join(getPrepositions()) + "\"" : "") +
+//            (!getPossessives().isEmpty()? ", possessive: \"" + StatementUtils.join(getPossessives()) + "\"" : "") +
+            (!getPossessives().isEmpty()? ", possessive: \"" + getPossessives() + "\"" : "") +
 //            ", pos: \"" + getPrimary().tag() + "\"" +
             ", primary: \"" + getPrimary() + "\"" +
 //            ", local: \"" + (isLocal()? "yes" : "no") + "\"" +

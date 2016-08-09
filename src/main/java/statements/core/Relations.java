@@ -21,6 +21,7 @@ public class Relations {
     public static final String COP= "cop";  // copula, ex: in "they're pretty" the "'re" would be copula
     public static final String XCOMP = "xcomp";  // e.g "she <verb>s to <verb>" or "she <verb>ed <verb>ing"
     public static final String NMOD = "nmod";  // indicates that a preposition is present
+    public static final String NMOD_POSS = "nmod:poss";  // indicates possessives, e.g. "my" or "their"
     public static final String CCOMP = "ccomp"; // "we have found <that ....>"
     public static final String CONJ = "conj"; // connections between words based on "and", "or", etc.
     public static final String CC = "cc";  // the "and", "or", etc. itself
@@ -55,6 +56,7 @@ public class Relations {
         HIDDEN_INTERNAL_RELATIONS.add(CC);
         HIDDEN_INTERNAL_RELATIONS.add(CASE);
         HIDDEN_INTERNAL_RELATIONS.add(DET);
+        HIDDEN_INTERNAL_RELATIONS.add(NMOD_POSS);
     }
 
     /**

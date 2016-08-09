@@ -25,6 +25,7 @@ public class ComponentPattern implements Pattern {
     private Boolean wellFormed;
     private Tag[] partsOfSpeech;
     private Person[] pointsOfView;
+    private Person[] possessivePointsOfView;
     private String[] prepositions;
 
     /**
@@ -140,6 +141,23 @@ public class ComponentPattern implements Pattern {
         return person(Person.third);
     }
 
+    public ComponentPattern possessive(Person... states) {
+        this.possessivePointsOfView = states;
+        return this;
+    }
+
+    public ComponentPattern firstPersonPossessive() {
+        return possessive(Person.first);
+    }
+
+    public ComponentPattern secondPersonPossessive() {
+        return possessive(Person.second);
+    }
+
+    public ComponentPattern thirdPersonPossessive() {
+        return possessive(Person.third);
+    }
+
     /*
         Part-of-speech tag section.
      */
@@ -246,6 +264,9 @@ public class ComponentPattern implements Pattern {
             // 1st, 2nd, and/or 3rd person
             if (pointsOfView != null && !matchesPointOfView(abstractComponent)) return false;
 
+            // 1st, 2nd, and/or 3rd person
+            if (possessivePointsOfView != null && !matchesPossessivePointOfView(abstractComponent)) return false;
+
             // = "to be" verb
             if (copula != null && abstractComponent instanceof Verb && !((Verb) abstractComponent).isCopula()) return false;
 
@@ -349,6 +370,30 @@ public class ComponentPattern implements Pattern {
         }
 
         for (Person state : pointsOfView) {
+            if (componentState == state) return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether the person (1st, 2nd, 3rd) of the component matches.
+     *
+     * @param abstractComponent the component to test
+     * @return true if one of the states matches
+     */
+    private boolean matchesPossessivePointOfView(AbstractComponent abstractComponent) {
+        Person componentState = null;
+
+        if (abstractComponent.hasFirstPersonPossessive()) {
+            componentState = Person.first;
+        } else if (abstractComponent.hasSecondPersonPossessive()) {
+            componentState = Person.second;
+        } else if (abstractComponent.hasThirdPersonPossessive()) {
+            componentState = Person.third;
+        }
+
+        for (Person state : possessivePointsOfView) {
             if (componentState == state) return true;
         }
 
