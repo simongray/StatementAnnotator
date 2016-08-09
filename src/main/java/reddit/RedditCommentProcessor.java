@@ -63,6 +63,18 @@ public class RedditCommentProcessor {
         // fix common mistakes
         comment = fixMistakes(comment);
 
+        // expand abbreviations
+        comment = expandAbbreviations(comment);
+
+        return comment;
+    }
+
+    private static String expandAbbreviations(String comment) {
+        comment = comment.replaceAll("IMO", "in my opinion");
+        comment = comment.replaceAll("AFAIK", "as far as I know");
+        comment = comment.replaceAll("TIL", "today I learned");
+        comment = comment.replaceAll("IANAL", "I am not a lawyer");
+
         return comment;
     }
 

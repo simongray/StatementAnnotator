@@ -33,17 +33,22 @@ public class Profile {
     /**
      * Captures objects that indicate the location of the author.
      */
-    public final StatementPattern POSSESSION_PATTERN = new StatementPattern(
+    private final StatementPattern POSSESSION_PATTERN = new StatementPattern(
             new ComponentPattern().noun().firstPersonPossessive().capture()
     );
 
     /**
      * Matches statements that indicate the opinion of the author.
      */
-    public final StatementPattern OPINION_PATTERN = new StatementPattern(
+    private final StatementPattern OPINION_PATTERN_1 = new StatementPattern(
             new SubjectPattern().firstPerson(),
             new VerbPattern().words(Common.OPINION_VERB),
             new StatementPattern().interesting().wellFormed().capture()
+    );
+
+    // Note: use the non-captures!
+    private final StatementPattern OPINION_PATTERN_2 = new StatementPattern(
+            new ObjectPattern().firstPersonPossessive().words(Common.OPINION_NOUN).preposition().capture()
     );
 
     public Profile(Set<Statement> statements) throws IOException {
@@ -74,14 +79,23 @@ public class Profile {
 
         for (Statement statement : statements) {
             // TODO: unpacked statements do not carry over negation, e.g. "I think ..." and "I don't think ..."
-            if (OPINION_PATTERN.matches(statement)) {
-                for (StatementComponent capture : OPINION_PATTERN.getCaptures()) {
+            if (OPINION_PATTERN_1.matches(statement)) {
+                for (StatementComponent capture : OPINION_PATTERN_1.getCaptures()) {
                     Statement embeddedStatement = (Statement) capture;
                     embeddedStatement.setOrigin(statement.getOrigin());
                     embeddedStatements.add(embeddedStatement);
                     embeddingStatements.add(statement);
                     logger.info("unpacked " + embeddedStatement + " from " + statement);
                 }
+            }
+
+            if (OPINION_PATTERN_2.matches(statement)) {
+                Set<StatementComponent> opinionComponents = OPINION_PATTERN_2.getNonCaptures(statement);
+                Statement embeddedStatement = new Statement(opinionComponents);
+                embeddedStatement.setOrigin(statement.getOrigin());
+                embeddedStatements.add(embeddedStatement);
+                embeddingStatements.add(statement);
+                logger.info("unpacked " + embeddedStatement + " from " + statement);
             }
         }
 

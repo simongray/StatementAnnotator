@@ -86,6 +86,19 @@ public class StatementPattern implements Pattern {
     }
 
     /**
+     * The inverse of the getCaptures(...) method.
+     *
+     * @param statement the statement that the captures are from
+     * @param componentTypes the component types that limit the captures
+     * @return the non-captured components
+     */
+    public Set<StatementComponent> getNonCaptures(Statement statement, Class... componentTypes) {
+        Set<StatementComponent> components = statement.getComponents();
+        components.removeAll(getCaptures(componentTypes));
+        return components;
+    }
+
+    /**
      * Whether or not a pattern contains one of a number of types.
      * Used to find captured components.
      *
@@ -123,8 +136,10 @@ public class StatementPattern implements Pattern {
                 if (!matches(pattern, components)) return false;
             }
 
+            // TODO: is this a good idea?
             if (interesting != null && statement.isInteresting() != interesting) return false;
 
+            // TODO: is this a good idea?
             if (wellFormed != null && statement.isWellFormed() != wellFormed) return false;
 
             // note: must always be final step before returning true!
