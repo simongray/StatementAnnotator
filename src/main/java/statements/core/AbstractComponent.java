@@ -107,6 +107,7 @@ public abstract class AbstractComponent implements StatementComponent {
         remaining.addAll(prepositions);
         remaining.addAll(negations);
         remaining.addAll(markers);
+        remaining.addAll(determiners);
 //        remaining.addAll(adverbialClauses) // TODO: trying out making this embedded instead
         remaining.addAll(nounClauses);
         remaining.addAll(otherDescriptives);

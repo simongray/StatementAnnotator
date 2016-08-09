@@ -11,7 +11,6 @@ import statements.annotations.StatementsAnnotation;
 import statements.core.DirectObject;
 import statements.core.IndirectObject;
 import statements.core.Statement;
-import statements.core.StatementUtils;
 import statements.patterns.*;
 
 import java.io.IOException;
@@ -76,7 +75,7 @@ public class TestNewPatterns {
         StatementPattern testPattern = new StatementPattern(
                 new SubjectPattern().firstPerson(),
                 new VerbPattern().words("be", "come", "go", "live", "stay"),
-                new ComponentPattern(DirectObject.class, IndirectObject.class).preposition().properNoun().capture()
+                new ComponentPattern(DirectObject.class, IndirectObject.class).preposition("in", "from", "to", "by", "at", "around").capture()
         );
 
         for (Statement statement : statements) {

@@ -54,6 +54,7 @@ public class Relations {
         HIDDEN_INTERNAL_RELATIONS.add(NEG);
         HIDDEN_INTERNAL_RELATIONS.add(CC);
         HIDDEN_INTERNAL_RELATIONS.add(CASE);
+        HIDDEN_INTERNAL_RELATIONS.add(DET);
     }
 
     /**

@@ -22,7 +22,8 @@ public class Common {
         return dictionary;
     }
 
-    public final static String[] THINK = getDictionary().getSynonyms(POS.VERB, "think", "reckon", "believe").stream().toArray(String[]::new);
+    public final static String[] THINK = getDictionary().getSynonyms(POS.VERB, "think", "reckon", "believe", "know").stream().toArray(String[]::new);
+    public final static String[] LIVE = getDictionary().getSynonyms(POS.VERB, "live", "stay", "inhabit").stream().toArray(String[]::new);
 
     /**
      * Matches statements that indicate the personal location of the author.
