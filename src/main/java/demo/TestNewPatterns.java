@@ -75,7 +75,8 @@ public class TestNewPatterns {
         StatementPattern testPattern = new StatementPattern(
                 new SubjectPattern().firstPerson(),
                 new VerbPattern().words("be", "come", "go", "live", "stay"),
-                new ComponentPattern(DirectObject.class, IndirectObject.class).preposition("in", "from", "to", "by", "at", "around").capture()
+//                new ComponentPattern(DirectObject.class, IndirectObject.class).preposition("in", "from", "to", "by", "at", "around").capture()
+                new ObjectPattern().preposition().capture()
         );
 
         for (Statement statement : statements) {
