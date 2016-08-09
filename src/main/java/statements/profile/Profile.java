@@ -19,20 +19,28 @@ public class Profile {
     Set<String> indirectObjectWords = new HashSet<>();
     Set<String> topics = new HashSet<>();
     Set<String> locations = new HashSet<>();
+    Set<String> possessions = new HashSet<>();
 
     /**
      * Captures objects that indicate the location of the author.
      */
-    public final StatementPattern LOCATION_PATTERN_1 = new StatementPattern(
+    public final StatementPattern LOCATION_PATTERN = new StatementPattern(
             new SubjectPattern().firstPerson(),
             new VerbPattern().words(Common.LOCATION_VERB),
             new ObjectPattern().preposition(Common.LOCATION_PREPOSITION).partsOfSpeech(Tag.noun, Tag.properNoun).capture()
     );
 
     /**
+     * Captures objects that indicate the location of the author.
+     */
+    public final StatementPattern POSSESSION_PATTERN = new StatementPattern(
+            new ComponentPattern().noun().firstPersonPossessive().capture()
+    );
+
+    /**
      * Matches statements that indicate the opinion of the author.
      */
-    public final StatementPattern OPINION_PATTERN_1 = new StatementPattern(
+    public final StatementPattern OPINION_PATTERN = new StatementPattern(
             new SubjectPattern().firstPerson(),
             new VerbPattern().words(Common.OPINION_VERB),
             new StatementPattern().interesting().wellFormed().capture()
@@ -49,6 +57,9 @@ public class Profile {
         // find locations that the author has been to
         registerLocations();
 
+        // find possessions of the author
+        registerPossessions();
+
         // store the topic keywords of all interesting statements
         // used to rank statements in relation to other users
         registerTopics();
@@ -63,8 +74,8 @@ public class Profile {
 
         for (Statement statement : statements) {
             // TODO: unpacked statements do not carry over negation, e.g. "I think ..." and "I don't think ..."
-            if (OPINION_PATTERN_1.matches(statement)) {
-                for (StatementComponent capture : OPINION_PATTERN_1.getCaptures()) {
+            if (OPINION_PATTERN.matches(statement)) {
+                for (StatementComponent capture : OPINION_PATTERN.getCaptures()) {
                     Statement embeddedStatement = (Statement) capture;
                     embeddedStatement.setOrigin(statement.getOrigin());
                     embeddedStatements.add(embeddedStatement);
@@ -84,8 +95,8 @@ public class Profile {
      */
     private void registerLocations() {
         for (Statement statement : statements) {
-            if (LOCATION_PATTERN_1.matches(statement)) {
-                for (StatementComponent capture : LOCATION_PATTERN_1.getCaptures()) {
+            if (LOCATION_PATTERN.matches(statement)) {
+                for (StatementComponent capture : LOCATION_PATTERN.getCaptures()) {
                     AbstractComponent abstractComponent = (AbstractComponent) capture;
                     locations.add(abstractComponent.getNormalCompound());
                     logger.info("found location " + abstractComponent + " in " + statement);
@@ -93,7 +104,24 @@ public class Profile {
             }
         }
 
-        logger.info("total locatios found: " + locations.size());
+        logger.info("total locations found: " + locations.size());
+    }
+
+    /**
+     * Unpack statements according to certain patterns to replace them with their embedded statements.
+     */
+    private void registerPossessions() {
+        for (Statement statement : statements) {
+            if (POSSESSION_PATTERN.matches(statement)) {
+                for (StatementComponent capture : POSSESSION_PATTERN.getCaptures()) {
+                    AbstractComponent abstractComponent = (AbstractComponent) capture;
+                    possessions.add(abstractComponent.getNormalCompound());
+                    logger.info("found possession " + abstractComponent + " in " + statement);
+                }
+            }
+        }
+
+        logger.info("total possessions found: " + possessions.size());
     }
 
     /**
@@ -192,6 +220,9 @@ public class Profile {
 
     public Set<String> getLocations() {
         return locations;
+    }
+    public Set<String> getPossessions() {
+        return possessions;
     }
 
     /**

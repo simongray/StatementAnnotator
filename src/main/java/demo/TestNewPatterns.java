@@ -78,7 +78,7 @@ public class TestNewPatterns {
 //        );
 
         StatementPattern testPattern = new StatementPattern(
-                new ObjectPattern().possessive(Person.third).capture()
+                new ComponentPattern().noun().firstPersonPossessive().capture()
         );
 
         for (Statement statement : statements) {
@@ -92,7 +92,7 @@ public class TestNewPatterns {
 //                System.out.println("not: " + statement);
 //            }
             if (testPattern.matches(statement)) {
-                System.out.println("test: " + statement + " --> " + statement.getComponents());
+                System.out.println(statement + " --> " + statement.getComponents());
                 System.out.println("      " + testPattern.getCaptures());
                 System.out.println("      " + statement.getOrigin());
             }
