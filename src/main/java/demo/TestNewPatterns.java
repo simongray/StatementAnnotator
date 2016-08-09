@@ -78,7 +78,7 @@ public class TestNewPatterns {
 //        );
 
         StatementPattern testPattern = new StatementPattern(
-                new ObjectPattern().firstPersonPossessive().words(Common.OPINION_NOUN).preposition().capture()
+                new ComponentPattern().firstPersonPossessive().words(Common.OPINION_NOUN).capture()
         );
 
         for (Statement statement : statements) {
