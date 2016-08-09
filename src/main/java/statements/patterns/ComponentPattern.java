@@ -274,7 +274,7 @@ public class ComponentPattern implements Pattern {
             if (prepositions != null && !matchesPrepositions(abstractComponent)) return false;
 
             // matches words to compound
-            if (words != null && !matchesWords(abstractComponent.getNormalCompound())) return false;
+            if (words != null && !matchesWords(abstractComponent)) return false;
 
             if (capture) captured = abstractComponent;
 
@@ -404,10 +404,12 @@ public class ComponentPattern implements Pattern {
      * Whether the normal compound of a component matches with one of the words of this pattern.
      * If the pattern contains no words, then this method will always return true;
      *
-     * @param normalCompound the normal compound to test
+     * @param abstractComponent the component to test
      * @return true if one of the words matches
      */
-    private boolean matchesWords(String normalCompound) {
+    private boolean matchesWords(AbstractComponent abstractComponent) {
+        String normalCompound = abstractComponent.getNormalCompound();
+
         if (words.length == 0) return true;
 
         for (String word : words) {
