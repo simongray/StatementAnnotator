@@ -28,7 +28,6 @@ public class Verb extends AbstractComponent {
                 negations.addAll(StatementUtils.findSpecificChildren(Relations.NEG, copGovernor, graph));
                 remaining.addAll(negations);
                 all.addAll(negations);
-
             }
         }
 
