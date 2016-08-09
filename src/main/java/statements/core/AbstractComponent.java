@@ -114,7 +114,31 @@ public abstract class AbstractComponent implements StatementComponent {
         all = new HashSet<>(compound);
         all.addAll(remaining);
 
+        // when there are prepositions in a component (e.g. "in" or "from") which are hidden elements
+        // everything that goes before the prepositions should be moved to $remaining to retain order
+        if (hasPreposition()) {
+            int firstDeterminerIndex = -1;
+            for (IndexedWord word : prepositions) {
+                if (firstDeterminerIndex == -1) {
+                    firstDeterminerIndex = word.index();
+                } else if (word.index() < firstDeterminerIndex) {
+                    firstDeterminerIndex = word.index();
+                }
+            }
+            if (firstDeterminerIndex > 1) {
+                Set<IndexedWord> predeterminerWords = new HashSet<>();
+                for (IndexedWord word : compound) {
+                    if (word.index() < firstDeterminerIndex) {
+                        predeterminerWords.add(word);
+                    }
+                }
+                remaining.addAll(predeterminerWords);
+                compound.removeAll(predeterminerWords);
+            }
+        }
+
         // determine the size of the array used to count gaps
+        // TODO: do we really need this? (and gaps() in StatementComponent)
         int highestIndex = -1;
         int lowestIndex = -1;
         for (IndexedWord word : all) {
@@ -514,7 +538,8 @@ public abstract class AbstractComponent implements StatementComponent {
             getClass().getSimpleName() + ": \"" + getString() + "\"" +
 //            ", gaps: " + gaps() +  // TODO: remove after done debugging
             (!getDescriptives().isEmpty()? ", description: \"" + StatementUtils.join(getDescriptives()) + "\"" : "") +
-            ", pos: \"" + getPrimary().tag() + "\"" +
+            (!getPrepositions().isEmpty()? ", preposition: \"" + StatementUtils.join(getPrepositions()) + "\"" : "") +
+//            ", pos: \"" + getPrimary().tag() + "\"" +
             ", primary: \"" + getPrimary() + "\"" +
 //            ", local: \"" + (isLocal()? "yes" : "no") + "\"" +
 //            ", negated: \"" + (isNegated()? "yes" : "no") + "\"" +
