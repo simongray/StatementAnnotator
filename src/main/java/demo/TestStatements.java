@@ -28,10 +28,6 @@ public class TestStatements {
 //        String example = "";
 
 
-
-        // TODO: similar to aux, neg relations should also be added to CopVerb (= been) and removed from Scotland
-        String example = "I've never been to Scotland";
-
         // TODO: the nmod for the direct object should not become part of the description, when the DO is a verb ("accepted")
 //        String example = "Prostitution is a lot more accepted in Japanese corporate life than it is in Western countries.";
 
@@ -284,6 +280,7 @@ public class TestStatements {
 //        String example = "Policy outside collective bargaining is often also created in a deliberative democratic process including hearing affected parties.";
 //        String example = "I went to Copenhagen Business School myself and it's quite comforting to know that the place is also funding research into inequality.";  // used to fix issue #57
 //        String example = "I do take melatonin when I need to sleep, but don't feel sleepy.";
+        String example = "Last time I was in London is 10 years ago and I've never been to Scotland, Wales or south of London.\n";
 
         Annotation annotation = new Annotation(RedditCommentProcessor.clean(example));
         pipeline.annotate(annotation);

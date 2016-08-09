@@ -17,12 +17,23 @@ public class Verb extends AbstractComponent {
 
         // AUX can be both directly connected to be verbs and to governing words in COP relation
         aux = StatementUtils.findSpecificChildren(Relations.AUX, primary, graph);
-        Set<IndexedWord> copGovernors = StatementUtils.findSpecificParents(Relations.COP, primary, graph);
-        for (IndexedWord copGovernor : copGovernors) {
-            aux.addAll(StatementUtils.findSpecificChildren(Relations.AUX, copGovernor, graph));
+
+        if (isCopula()) {
+            Set<IndexedWord> copGovernors = StatementUtils.findSpecificParents(Relations.COP, primary, graph);
+            for (IndexedWord copGovernor : copGovernors) {
+                aux.addAll(StatementUtils.findSpecificChildren(Relations.AUX, copGovernor, graph));
+
+                // negations are also wrongly applied in case of COP verbs so they need to be added
+                // (conversely, negations are removed from the DirectObject made from the COP relation)
+                negations.addAll(StatementUtils.findSpecificChildren(Relations.NEG, copGovernor, graph));
+                remaining.addAll(negations);
+                all.addAll(negations);
+
+            }
         }
 
         compound.addAll(aux);
+        all.addAll(aux);
     }
 
     /**

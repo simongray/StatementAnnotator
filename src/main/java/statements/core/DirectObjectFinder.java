@@ -72,12 +72,17 @@ public class DirectObjectFinder extends AbstractFinder<DirectObject> {
 
         Set<IndexedWord> entries = new HashSet<>();
         entries.addAll(dobjMapping.keySet());
-        entries.addAll(copObjects);
         entries.addAll(xcompObjects);
 
         // build complete objects
         for (IndexedWord entry : entries) {
             directObjects.add(new DirectObject(entry, graph));
+        }
+
+        // COP objects need to be treated differently
+        // certain relations (e.g. NEG) are used for COP verbs even though they are related to the object
+        for (IndexedWord entry : copObjects) {
+            directObjects.add(new DirectObject(entry, graph, true));
         }
 
         return directObjects;
