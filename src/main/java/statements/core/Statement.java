@@ -27,6 +27,7 @@ public class Statement implements StatementComponent {
     private Set<IndexedWord> embeddingGovernors;
     private static DecimalFormat df = new DecimalFormat("#.##");
     private CoreMap origin;
+    private double quality;
 
     @Override
     public boolean equals(Object object) {
@@ -357,7 +358,7 @@ public class Statement implements StatementComponent {
             (getLabels().isEmpty()? "" : String.join("/", getLabels()) + "/") +
             getSummary() +
             ": \"" + getSentence() + "\"" +
-            ", density: " + df.format(getLexicalDensity()) +  // TODO: remove after done debugging
+//            ", density: " + df.format(getLexicalDensity()) +  // TODO: remove after done debugging
         "}";
     }
 
@@ -633,66 +634,5 @@ public class Statement implements StatementComponent {
             }
             return lexicalWords / (double) words.size();
         }
-    }
-
-    /**
-     * A subjective score used to rank statements.
-     * The baseline used is lexical density, which is then adjusted based on certain heuristics.
-     *
-     * @return quality score
-     */
-    public double getQuality() {
-        double quality = getLexicalDensity();  // baseline
-
-        quality = adjustForWellformedness(quality);
-        quality = adjustForSize(quality);
-
-        return quality;
-    }
-
-    /**
-     * Adjusts the baseline quality score based on the wellformedness of the statement.
-     *
-     * @param quality the score to adjust
-     * @return the adjusted score
-     */
-    private double adjustForWellformedness(double quality) {
-        if (isWellFormed()) {
-            quality += getUpwardsAdjustment(quality);
-        } else {
-            quality -= getDownwardsAdjustment(quality);
-        }
-
-        return quality;
-    }
-
-    /**
-     * Adjusts the baseline quality score based on length of the statement.
-     *
-     * @param quality the score to adjust
-     * @return the adjusted score
-     */
-    private double adjustForSize(double quality) {
-        if (isGoodSize()) {
-            quality += getUpwardsAdjustment(quality);
-        } else {
-            quality -= getDownwardsAdjustment(quality);
-        }
-
-        return quality;
-    }
-
-    private double getAdjustmentMultiplier() {
-        return 0.20;   // TODO: this is an arbitrary value!
-    }
-
-    public double getUpwardsAdjustment(double quality) {
-        double remainder = 1.0 - quality;
-        double adjustment = remainder * getAdjustmentMultiplier();
-        return adjustment;
-    }
-
-    public double getDownwardsAdjustment(double quality) {
-        return quality * getAdjustmentMultiplier();
     }
 }

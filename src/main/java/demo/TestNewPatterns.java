@@ -77,8 +77,9 @@ public class TestNewPatterns {
 //                new ObjectPattern().preposition().capture()
 //        );
 
-        StatementPattern testPattern = new StatementPattern(
-                new ComponentPattern().firstPersonPossessive().words(Common.OPINION_NOUN).capture()
+        MultiPattern testPattern = new MultiPattern(
+                new NonVerbPattern().firstPerson(),
+                new NonVerbPattern().noun().firstPersonPossessive()
         );
 
         for (Statement statement : statements) {
@@ -93,7 +94,7 @@ public class TestNewPatterns {
 //            }
             if (testPattern.matches(statement)) {
                 System.out.println(statement + " --> " + statement.getComponents());
-                System.out.println("      " + testPattern.getNonCaptures(statement));
+//                System.out.println("      " + testPattern.getNonCaptures(statement));
                 System.out.println("      " + statement.getOrigin());
             }
         }

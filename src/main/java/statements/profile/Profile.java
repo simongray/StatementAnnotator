@@ -6,6 +6,7 @@ import statements.core.*;
 import statements.patterns.*;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class Profile {
@@ -20,11 +21,21 @@ public class Profile {
     Set<String> topics = new HashSet<>();
     Set<String> locations = new HashSet<>();
     Set<String> possessions = new HashSet<>();
+    Map<Statement, Double> qualityMap = new HashMap<>();
+    private static DecimalFormat df = new DecimalFormat("#.##");
+
+    /**
+     * Captures anything that is personal in nature, i.e. referring to first person or first person possessions.
+     */
+    private final MultiPattern PERSONAL_PATTERN = new MultiPattern(
+            new NonVerbPattern().firstPerson(),
+            new NonVerbPattern().noun().firstPersonPossessive()
+    );
 
     /**
      * Captures objects that indicate the location of the author.
      */
-    public final StatementPattern LOCATION_PATTERN = new StatementPattern(
+    private final StatementPattern LOCATION_PATTERN = new StatementPattern(
             new SubjectPattern().firstPerson(),
             new VerbPattern().words(Common.LOCATION_VERB),
             new ObjectPattern().preposition(Common.LOCATION_PREPOSITION).partsOfSpeech(Tag.noun, Tag.properNoun).capture()
@@ -34,7 +45,7 @@ public class Profile {
      * Captures objects that indicate the location of the author.
      */
     private final StatementPattern POSSESSION_PATTERN = new StatementPattern(
-            new ComponentPattern().noun().firstPersonPossessive().capture()
+            new NonVerbPattern().noun().firstPersonPossessive().capture()
     );
 
     /**
@@ -240,37 +251,6 @@ public class Profile {
     }
 
     /**
-     * Returns a quality score relative to the contents of this profile.
-     * It is meant to be used on statements from other profiles.
-     *
-     * @param statement the statement to get the relative quality for
-     * @return the relative quality
-     */
-    public double getRelevance(Statement statement) {
-        double quality = statement.getQuality();
-
-        quality = adjustForSharedTopics(statement, quality);
-
-        return quality;
-    }
-
-    /**
-     * Adjusts the baseline quality score based on it being a shared topic.
-     *
-     * @param quality the score to adjust
-     * @return the adjusted score
-     */
-    private double adjustForSharedTopics(Statement statement, double quality) {
-        if (containsTopics(statement)) {
-            quality += statement.getUpwardsAdjustment(quality);
-        } else {
-            quality -= statement.getDownwardsAdjustment(quality);
-        }
-
-        return quality;
-    }
-
-    /**
      * Whether or not the statement contains one of the topics of the profile.
      *
      * @param statement the statement to check
@@ -286,6 +266,33 @@ public class Profile {
         }
 
         return false;
+    }
+
+    /**
+     * Calculates the quality for a statement.
+     * Used for rankings statements.
+     *
+     * @param statement statement to assess
+     * @return quality of statement
+     */
+    private double getStamenentQuality(Statement statement) {
+        if (!qualityMap.containsKey(statement)) {
+            // retrieve the baseline value, in this case lexical density
+            double quality = statement.getLexicalDensity();
+            double step = quality * 0.2;
+
+            // adjust for personal information
+            if (PERSONAL_PATTERN.matches(statement)) {
+                quality += step;
+            }
+
+            // save to map for later lazy-loading
+            qualityMap.put(statement, quality);
+
+            return quality;
+        } else {
+            return qualityMap.get(statement);
+        }
     }
 
     /**
@@ -309,15 +316,14 @@ public class Profile {
         }
     }
 
-
     /**
      * Used to sort Statements by quality.
      */
     public class QualityComparator implements Comparator<Statement> {
         @Override
         public int compare(Statement x, Statement y) {
-            double xn = x.getQuality();
-            double yn = y.getQuality();
+            double xn = getStamenentQuality(x);
+            double yn = getStamenentQuality(y);
 
             if (xn == yn) {
                 return 0;
@@ -343,8 +349,11 @@ public class Profile {
 
         @Override
         public int compare(Statement x, Statement y) {
-            double xn = otherProfile.getRelevance(x);
-            double yn = otherProfile.getRelevance(y);
+            // retrieve the baseline values, in this case lexical density
+            double xn = x.getLexicalDensity();
+            double yn = y.getLexicalDensity();
+
+            // TODO: the rest
 
             if (xn == yn) {
                 return 0;
@@ -356,5 +365,15 @@ public class Profile {
                 }
             }
         }
+    }
+
+    public String getStatementInfo(Statement statement) {
+        return "{" +
+                statement.getSummary() +
+                ": \"" + statement.getSentence() + "\"" +
+                ", density: " + df.format(statement.getLexicalDensity()) +
+                ", quality: " + df.format(qualityMap.get(statement)) +
+//                ", relevance: " + df.format(relevanceMap.get(statement)) +
+                "}";
     }
 }

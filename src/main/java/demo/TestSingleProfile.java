@@ -53,12 +53,12 @@ public class TestSingleProfile {
         System.out.println("interesting statements: " + profile.getInterestingStatements().size());
         System.out.println("locations: " + profile.getLocations());
         System.out.println("possessions: " + profile.getPossessions());
-//        List<Statement> statementsByLexicalDensity = firstProfile.getStatementsByLexicalDensity();
-//        List<Statement> statementsByQuality = firstProfile.getStatementsByQuality();
-//        for (int i = 0; i < statementsByLexicalDensity.size(); i++) {
-//            System.out.println("quality: " + statementsByQuality.get(i));
-//            System.out.println("density: " + statementsByLexicalDensity.get(i));
-//            System.out.println();
-//        }
+        List<Statement> statementsByLexicalDensity = profile.getStatementsByLexicalDensity();
+        List<Statement> statementsByQuality = profile.getStatementsByQuality();
+        for (int i = 0; i < statementsByLexicalDensity.size(); i++) {
+            System.out.println("quality: " + profile.getStatementInfo(statementsByQuality.get(i)));
+            System.out.println("density: " + profile.getStatementInfo(statementsByLexicalDensity.get(i)));
+            System.out.println();
+        }
     }
 }
