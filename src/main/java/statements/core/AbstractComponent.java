@@ -401,22 +401,6 @@ public abstract class AbstractComponent implements StatementComponent {
         return false;
     }
 
-    /**
-     * Allow components to define what makes them interesting.
-     *
-     * @return true if interesting
-     */
-    @Override
-    public abstract boolean isInteresting();
-
-    /**
-     * Allow components to define what makes them well formed.
-     *
-     * @return true if well formed
-     */
-    @Override
-    public abstract boolean isWellFormed();
-
     public boolean isPronoun() {
         // TODO: what about possesives?
         return getPrimary().tag().equals(PartsOfSpeech.PRP);

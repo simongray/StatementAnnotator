@@ -43,24 +43,4 @@ public class Verb extends AbstractComponent {
     public boolean isCopula() {
         return labels.contains(Labels.COP_VERB);
     }
-
-    /**
-     * Allow components to define what makes them interesting.
-     *
-     * @return true if interesting
-     */
-    @Override
-    public boolean isInteresting() {
-        return true;
-    }
-
-    /**
-     * Allow components to define what makes them well formed.
-     *
-     * @return true if well formed
-     */
-    @Override
-    public boolean isWellFormed() {
-        return gaps() == 0;
-    }
 }

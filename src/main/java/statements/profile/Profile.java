@@ -24,14 +24,49 @@ public class Profile {
     Map<Statement, Double> qualityMap = new HashMap<>();
     private static DecimalFormat df = new DecimalFormat("#.##");
 
+
+    /**
+     * This set of nouns comprises second and third person pronouns, but not first person.
+     * It also adds other words that do not carry any information without context.
+     */
+    private static final Set<String> UNINTERESTING_NOUNS = new HashSet<>();
+    static {
+        UNINTERESTING_NOUNS.add("yours");
+        UNINTERESTING_NOUNS.add("he");
+        UNINTERESTING_NOUNS.add("she");
+        UNINTERESTING_NOUNS.add("it");
+        UNINTERESTING_NOUNS.add("they");
+        UNINTERESTING_NOUNS.add("him");
+        UNINTERESTING_NOUNS.add("his");
+        UNINTERESTING_NOUNS.add("her");
+        UNINTERESTING_NOUNS.add("them");
+        UNINTERESTING_NOUNS.add("this");
+        UNINTERESTING_NOUNS.add("that");
+        UNINTERESTING_NOUNS.add("these");
+        UNINTERESTING_NOUNS.add("those");
+        UNINTERESTING_NOUNS.add("their");
+        UNINTERESTING_NOUNS.add("theirs");
+        UNINTERESTING_NOUNS.add("here");
+        UNINTERESTING_NOUNS.add("there");
+        UNINTERESTING_NOUNS.add("who");
+        UNINTERESTING_NOUNS.add("what");
+        UNINTERESTING_NOUNS.add("which");
+        UNINTERESTING_NOUNS.add("all");
+        UNINTERESTING_NOUNS.add("thing");
+        UNINTERESTING_NOUNS.add("one");
+        UNINTERESTING_NOUNS.add("some");
+        UNINTERESTING_NOUNS.add("someone");
+    }
+
     /**
      * Matches statements that are deemed interesting.
      * Used to limit statements for futher processing based on a couple of heuristics.
      */
     private final StatementPattern INTERESTING_PATTERN = new StatementPattern(
-            new SubjectPattern().person(Person.first, Person.third).local(false),
+            new SubjectPattern(),
             new VerbPattern(),
-            new ObjectPattern().local(false)
+            new ObjectPattern(),
+            new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS)
     );
 
     /**
@@ -64,7 +99,7 @@ public class Profile {
     private final StatementPattern OPINION_PATTERN_1 = new StatementPattern(
             new SubjectPattern().firstPerson(),
             new VerbPattern().words(Common.OPINION_VERB),
-            new StatementPattern().interesting().wellFormed().capture()
+            new StatementPattern().capture()
     );
 
     // Note: use the non-captures!
@@ -285,7 +320,7 @@ public class Profile {
      * @param statement statement to assess
      * @return quality of statement
      */
-    private double getStamenentQuality(Statement statement) {
+    private double getStatementQuality(Statement statement) {
         if (!qualityMap.containsKey(statement)) {
             // retrieve the baseline value, in this case lexical density
             double quality = statement.getLexicalDensity();
@@ -332,8 +367,8 @@ public class Profile {
     public class QualityComparator implements Comparator<Statement> {
         @Override
         public int compare(Statement x, Statement y) {
-            double xn = getStamenentQuality(x);
-            double yn = getStamenentQuality(y);
+            double xn = getStatementQuality(x);
+            double yn = getStatementQuality(y);
 
             if (xn == yn) {
                 return 0;

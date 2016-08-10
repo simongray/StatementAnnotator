@@ -114,34 +114,4 @@ public class Lexicon {
 
         THIRD_PERSON_POSSESSIVE_NOUNS.add("theirs");
     }
-
-    /**
-     * This set of nouns comprises second and third person pronouns, but not first person.
-     * It also adds other words that do not carry any information without context.
-     */
-    public static Set<String> uninterestingNouns = new HashSet<>();
-    static {
-        uninterestingNouns.add("you");
-        uninterestingNouns.add("he");
-        uninterestingNouns.add("she");
-        uninterestingNouns.add("it");
-        uninterestingNouns.add("they");
-        uninterestingNouns.add("him");
-        uninterestingNouns.add("her");
-        uninterestingNouns.add("them");
-        uninterestingNouns.add("this");
-        uninterestingNouns.add("that");
-        uninterestingNouns.add("these");
-        uninterestingNouns.add("those");
-        uninterestingNouns.add("here");
-        uninterestingNouns.add("there");
-        uninterestingNouns.add("who");
-        uninterestingNouns.add("what");
-        uninterestingNouns.add("which");
-        uninterestingNouns.add("all");
-        uninterestingNouns.add("thing");
-        uninterestingNouns.add("one");
-        uninterestingNouns.add("some");
-        uninterestingNouns.add("someone");
-    }
 }

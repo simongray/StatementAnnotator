@@ -5,6 +5,10 @@ import statements.core.AbstractComponent;
 import statements.core.StatementComponent;
 import statements.core.Verb;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * This class must be instantiated using one of the derived classes.
@@ -14,15 +18,14 @@ import statements.core.Verb;
  */
 public class ComponentPattern implements Pattern {
     private Class[] types;
-    private String[] words;
+    private Set<String> words;
+    private Set<String> notWords;
     private Boolean negated;
     private Boolean plural;
     private Boolean specific;
     private Boolean local;
     private Boolean copula;
     private Boolean capitalised;
-    private Boolean interesting;
-    private Boolean wellFormed;
     private Tag[] partsOfSpeech;
     private Person[] pointsOfView;
     private Person[] possessivePointsOfView;
@@ -42,9 +45,29 @@ public class ComponentPattern implements Pattern {
         return types;
     }
 
-    public ComponentPattern words(String... words) {
-        for (int i = 0; i < words.length; i++) words[i] = words[i].toLowerCase();
+    public ComponentPattern words(Set<String> words) {
+        if (this.words == null) this.words = new HashSet<>();
         this.words = words;
+        return this;
+    }
+
+    public ComponentPattern words(String... words) {
+        if (this.words == null) this.words = new HashSet<>();
+        for (int i = 0; i < words.length; i++) words[i] = words[i].toLowerCase();
+        Collections.addAll(this.words, words);
+        return this;
+    }
+
+    public ComponentPattern notWords(String... words) {
+        if (this.notWords() == null) this.notWords = new HashSet<>();
+        for (int i = 0; i < words.length; i++) words[i] = words[i].toLowerCase();
+        Collections.addAll(this.notWords, words);
+        return this;
+    }
+
+    public ComponentPattern notWords(Set<String> words) {
+        if (this.notWords == null) this.notWords = new HashSet<>();
+        this.notWords = words;
         return this;
     }
 
@@ -190,28 +213,6 @@ public class ComponentPattern implements Pattern {
         return partsOfSpeech(Tag.adverb);
     }
 
-    /*
-        Analysis section.
-     */
-
-    public ComponentPattern interesting(Boolean state) {
-        this.interesting = state;
-        return this;
-    }
-
-    public ComponentPattern interesting() {
-        return interesting(true);
-    }
-
-    public ComponentPattern wellFormed(Boolean state) {
-        this.wellFormed = state;
-        return this;
-    }
-
-    public ComponentPattern wellFormed() {
-        return wellFormed(true);
-    }
-
     /**
      * Capture this component for processing.
      */
@@ -255,10 +256,6 @@ public class ComponentPattern implements Pattern {
 
             if (capitalised != null && abstractComponent.isCapitalised() != capitalised) return false;
 
-            if (interesting != null && abstractComponent.isInteresting() != interesting) return false;
-
-            if (wellFormed != null && abstractComponent.isWellFormed() != wellFormed) return false;
-
             if (partsOfSpeech != null && !matchesPartOfSpeech(abstractComponent)) return false;
 
             // 1st, 2nd, and/or 3rd person
@@ -274,7 +271,8 @@ public class ComponentPattern implements Pattern {
             if (prepositions != null && !matchesPrepositions(abstractComponent)) return false;
 
             // matches words to compound
-            if (words != null && !matchesWords(abstractComponent)) return false;
+            if (words != null && !matchesWords(abstractComponent, words)) return false;
+            if (notWords != null && matchesWords(abstractComponent, notWords)) return false;
 
             if (capture) captured = abstractComponent;
 
@@ -407,14 +405,11 @@ public class ComponentPattern implements Pattern {
      * @param abstractComponent the component to test
      * @return true if one of the words matches
      */
-    private boolean matchesWords(AbstractComponent abstractComponent) {
+    private boolean matchesWords(AbstractComponent abstractComponent, Set<String> wordsToMatch) {
+        if (wordsToMatch.isEmpty()) return true;
+
         String normalCompound = abstractComponent.getNormalCompound();
-
-        if (words.length == 0) return true;
-
-        for (String word : words) {
-            if (word.equals(normalCompound)) return true;
-        }
+        if (wordsToMatch.contains(normalCompound)) return true;
 
         return false;
     }

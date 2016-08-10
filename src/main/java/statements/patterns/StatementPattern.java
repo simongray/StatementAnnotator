@@ -9,8 +9,6 @@ import java.util.Set;
 public class StatementPattern implements Pattern {
     private final Pattern[] patterns;
     private final Class[] types = new Class[] { Statement.class };
-    private Boolean interesting;
-    private Boolean wellFormed;
 
     /**
      * Used to capture certain components (similar to how it works in regex).
@@ -42,24 +40,6 @@ public class StatementPattern implements Pattern {
      */
     public Statement getCaptured() {
         return captured;
-    }
-
-    public StatementPattern interesting(Boolean state) {
-        this.interesting = state;
-        return this;
-    }
-
-    public StatementPattern interesting() {
-        return interesting(true);
-    }
-
-    public StatementPattern wellFormed(Boolean state) {
-        this.wellFormed = state;
-        return this;
-    }
-
-    public StatementPattern wellFormed() {
-        return wellFormed(true);
     }
 
     /**
@@ -135,12 +115,6 @@ public class StatementPattern implements Pattern {
             for (Pattern pattern : patterns) {
                 if (!matches(pattern, components)) return false;
             }
-
-            // TODO: is this a good idea?
-            if (interesting != null && statement.isInteresting() != interesting) return false;
-
-            // TODO: is this a good idea?
-            if (wellFormed != null && statement.isWellFormed() != wellFormed) return false;
 
             // note: must always be final step before returning true!
             if (capture) captured = statement;

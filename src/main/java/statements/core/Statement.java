@@ -520,24 +520,7 @@ public class Statement implements StatementComponent {
         return false;
     }
 
-    @Override
-    public boolean isInteresting() {
-        for (StatementComponent component : getComponents()) {
-            if (!component.isInteresting()) return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean isWellFormed() {
-        if (getVerb() == null) return false;
-//        if (duplicateCount() > 0) return false;  // already excluded by statement finding algorithm
-        if (getComponents().size() < 2) return false;
-
-        return true;
-    }
-
+    // TODO: figure out if something like this should be used
     public boolean isGoodSize() {
         // Using as guide the number 12 found here: http://www.aje.com/en/arc/editing-tip-sentence-length/
         int preferredSize = 12;

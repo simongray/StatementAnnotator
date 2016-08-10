@@ -61,7 +61,7 @@ public class TestNewPatterns {
         StatementPattern thinkPattern = new StatementPattern(
                 new SubjectPattern().firstPerson(),
                 new VerbPattern().words(Common.OPINION_VERB),
-                new StatementPattern().interesting().wellFormed().capture()
+                new StatementPattern().capture()
         );
 
         StatementPattern thinkNotPattern = new StatementPattern(
