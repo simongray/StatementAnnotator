@@ -28,7 +28,7 @@ public class TestStatements {
 //        String example = "";
 
 
-        // TODO: creates both IndirectObject for "in my opinion" as well as assigning "in my opinion" to "better"
+        // TODO: missing "than ever"
         String example = "I've been coming here since the very beginning and in my opinion it's better than ever.";
 
 

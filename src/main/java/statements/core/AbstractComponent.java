@@ -578,15 +578,15 @@ public abstract class AbstractComponent implements StatementComponent {
 //            ", gaps: " + gaps() +  // TODO: remove after done debugging
             (!getDescriptives().isEmpty()? ", description: \"" + StatementUtils.join(getDescriptives()) + "\"" : "") +
             (!getPrepositions().isEmpty()? ", preposition: \"" + StatementUtils.join(getPrepositions()) + "\"" : "") +
-//            (!getPossessives().isEmpty()? ", possessive: \"" + StatementUtils.join(getPossessives()) + "\"" : "") +
-            (!getPossessives().isEmpty()? ", possessive: \"" + getPossessives() + "\"" : "") +
+            (!getPossessives().isEmpty()? ", possessive: \"" + StatementUtils.join(getPossessives()) + "\"" : "") +
+//            (!getPossessives().isEmpty()? ", possessive: \"" + getPossessives() + "\"" : "") +
 //            ", pos: \"" + getPrimary().tag() + "\"" +
             ", primary: \"" + getPrimary() + "\"" +
 //            ", local: \"" + (isLocal()? "yes" : "no") + "\"" +
 //            ", negated: \"" + (isNegated()? "yes" : "no") + "\"" +
 //            ", plural: \"" + (isPlural()? "yes" : "no") + "\"" +
 //            (!getLabels().isEmpty()? ", labels: \"" + String.join(", ", getLabels()) + "\"" : "") +
-//            (!conjunctions.isEmpty()? ", conjunction: \"" + String.join(", ", conjunctions) + "\"" : "") +
+            (!conjunctions.isEmpty()? ", conjunction: \"" + String.join(", ", conjunctions) + "\"" : "") +
         "}";
     }
 

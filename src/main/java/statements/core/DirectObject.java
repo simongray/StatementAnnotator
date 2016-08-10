@@ -28,8 +28,10 @@ public class DirectObject extends AbstractComponent {
         }
 
         // nmod relations from nouns are typically descriptive in nature
-        otherDescriptives.addAll(StatementUtils.findSpecificDescendants(Relations.NMOD, primary, graph));
-        remaining.addAll(otherDescriptives);
+        if (isNoun()) {
+            otherDescriptives.addAll(StatementUtils.findSpecificDescendants(Relations.NMOD, primary, graph));
+            remaining.addAll(otherDescriptives);
+        }
     }
 
     /**
