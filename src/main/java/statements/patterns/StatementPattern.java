@@ -17,6 +17,8 @@ public class StatementPattern implements Pattern {
     private boolean capture;
     private Statement captured;
     private boolean optional;
+    private Integer minSize;
+    private Integer maxSize;
 
     public StatementPattern(Pattern... patterns) {
         this.patterns = patterns;
@@ -49,6 +51,22 @@ public class StatementPattern implements Pattern {
      */
     public StatementPattern optional() {
         this.optional = true;
+        return this;
+    }
+
+    public StatementPattern minSize(Integer amount) {
+        this.minSize = amount;
+        return this;
+    }
+
+    public StatementPattern maxSize(Integer amount) {
+        this.maxSize = amount;
+        return this;
+    }
+
+    public StatementPattern size(Integer amount) {
+        this.minSize = amount;
+        this.maxSize = amount;
         return this;
     }
 
@@ -107,6 +125,10 @@ public class StatementPattern implements Pattern {
             for (Pattern pattern : patterns) {
                 if (!matches(pattern, components)) return false;
             }
+
+            // it is possible to also state a preferred size
+            if (minSize != null && components.size() < minSize) return false;
+            if (maxSize != null && components.size() > maxSize) return false;
 
             // note: must always be final step before returning true!
             if (capture) captured = statement;

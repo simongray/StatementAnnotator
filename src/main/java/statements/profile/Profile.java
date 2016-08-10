@@ -75,6 +75,11 @@ public class Profile {
             EMBEDDED_INTERESTING_PATTERN.optional()  // for embedded statements
     );
 
+    private final StatementPattern INTERESTING_ANTIPATTERN_1 = new StatementPattern(
+            new VerbPattern().copula()
+    ).size(2);
+
+
     /**
      * Matches anything that is personal in nature, i.e. referring to first person or first person possessions.
      */
@@ -231,8 +236,7 @@ public class Profile {
     public Set<Statement> getInterestingStatements() {
         if (interestingStatements.isEmpty()) {
             for (Statement statement : getStatements()) {
-//                if (statement.isInteresting() && statement.isWellFormed()) interestingStatements.add(statement);
-                if (INTERESTING_PATTERN.matches(statement)) interestingStatements.add(statement);
+                if (INTERESTING_PATTERN.matches(statement) && !INTERESTING_ANTIPATTERN_1.matches(statement)) interestingStatements.add(statement);
             }
         }
 
