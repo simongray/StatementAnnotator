@@ -26,10 +26,15 @@ public class TestStatements {
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
 //        String example = "";
+        String example = "Really most of our companies are so small that they just about all fit in the SME definition (something like 80% are smaller than 250 employees).";
+
+
+        // TODO: implicit subjects makes the entire sentence spit out crappy statements
+//        String example = "Makes sense, but requires the information is then available elsewhere.";
 
 
         // TODO: missing "than ever"
-        String example = "I've been coming here since the very beginning and in my opinion it's better than ever.";
+//        String example = "I've been coming here since the very beginning and in my opinion it's better than ever.";
 
 
         // TODO: the nmod for the direct object should not become part of the description, when the DO is a verb ("accepted")

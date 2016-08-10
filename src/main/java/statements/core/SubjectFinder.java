@@ -31,13 +31,13 @@ public class SubjectFinder extends AbstractFinder<Subject> {
     @Override
     protected Set<Subject> get() {
         // remove duplicates (this happens sometimes, e.g. "It's once a week,  3 hours and is run by two psychologists.")
-        nsubjSubjects.removeAll(nsubjpassSubjects);
+        nsubjSubjects.addAll(nsubjpassSubjects);
 
         for (IndexedWord nsubjSubject : nsubjSubjects) {
-            subjects.add(new Subject(nsubjSubject, graph));
-        }
-        for (IndexedWord nsubjpassSubject : nsubjpassSubjects) {
-            subjects.add(new Subject(nsubjpassSubject, graph));
+            // in some cases, the subject relation erroneously points to a verb!
+            // this can happen sometimes when the subject is left out of a sentence
+            // example: "Makes sense, but requires the information is then available elsewhere."
+            if (!PartsOfSpeech.VERBS.contains(nsubjSubject.tag())) subjects.add(new Subject(nsubjSubject, graph));
         }
 
         return subjects;
