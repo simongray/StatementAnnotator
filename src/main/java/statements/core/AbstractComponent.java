@@ -490,64 +490,9 @@ public abstract class AbstractComponent implements StatementComponent {
         return labels;
     }
 
-    /**
-     * Attach a label to this component.  // TODO: is this needed?
-     */
-    public void addLabel(String label) {
-        labels.add(label);
-    }
-
     @Override
     public boolean contains(StatementComponent otherComponent) {
         return false;
-    }
-
-    public int getLowestIndex() {
-        return lowestIndex;
-    }
-
-    public int getHighestIndex() {
-        return highestIndex;
-    }
-
-    /**
-     * A basic method of comparison against other components.
-     * This method uses the most basic representation of each component for matching,
-     * ignoring clauses and other more complex parts of the component.
-     *
-     * @param otherComponent the component to be matched against
-     * @return true if matching
-     */
-    @Override
-    public boolean matches(StatementComponent otherComponent) {
-        if (otherComponent instanceof AbstractComponent && getClass().equals(otherComponent.getClass())) {
-            AbstractComponent abstractOtherComponent = (AbstractComponent) otherComponent;
-            if (matchesBasicCompound(abstractOtherComponent) && matchesNegation(abstractOtherComponent)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Compares the basic compound of two components.
-     *
-     * @param abstractOtherComponent
-     * @return
-     */
-    private boolean matchesBasicCompound(AbstractComponent abstractOtherComponent) {
-        return getBasicCompound().equals(abstractOtherComponent.getBasicCompound());
-    }
-
-    /**
-     * Compares the negation of two components.
-     *
-     * @param abstractOtherComponent
-     * @return
-     */
-    private boolean matchesNegation(AbstractComponent abstractOtherComponent) {
-        return isNegated() && abstractOtherComponent.isNegated();
     }
 
     @Override

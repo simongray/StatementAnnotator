@@ -10,8 +10,6 @@ import java.util.Set;
  * The complete direct object of a natural language statement.
  */
 public class DirectObject extends AbstractComponent {
-    Set<IndexedWord> nmod = new HashSet<>();
-
     public DirectObject(IndexedWord primary, SemanticGraph graph) {
         this(primary, graph, false);
     }

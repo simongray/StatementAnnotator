@@ -11,8 +11,6 @@ import java.util.Set;
  * The complete subject of a natural language statement.
  */
 public class Subject extends AbstractComponent {
-    Set<IndexedWord> nmod = new HashSet<>();
-
     public Subject(IndexedWord primary, SemanticGraph graph) {
         super(primary, graph);
 

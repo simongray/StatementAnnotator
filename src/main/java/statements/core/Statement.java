@@ -27,7 +27,6 @@ public class Statement implements StatementComponent {
     private Set<IndexedWord> embeddingGovernors;
     private static DecimalFormat df = new DecimalFormat("#.##");
     private CoreMap origin;
-    private double quality;
 
     @Override
     public boolean equals(Object object) {
@@ -273,7 +272,6 @@ public class Statement implements StatementComponent {
         return getCompound().size();
     }
 
-
     /**
      * The number of components in the statement.
      *
@@ -351,17 +349,6 @@ public class Statement implements StatementComponent {
         return String.join("+", summary);
     }
 
-
-    @Override
-    public String toString() {
-        return "{" +
-            (getLabels().isEmpty()? "" : String.join("/", getLabels()) + "/") +
-            getSummary() +
-            ": \"" + getSentence() + "\"" +
-//            ", density: " + df.format(getLexicalDensity()) +  // TODO: remove after done debugging
-        "}";
-    }
-
     /**
      * Whether this statement includes a specific component.
      *
@@ -434,7 +421,6 @@ public class Statement implements StatementComponent {
         return new Statement(pureComponents, childStatement);
     }
 
-
     /**
      * The labels of a statement.
      * In most cases, statements don't have a label, but in some cases they can be useful.
@@ -474,52 +460,6 @@ public class Statement implements StatementComponent {
         return all;
     }
 
-    public int getLowestIndex() {
-        int lowestIndex = -1;
-
-        for (StatementComponent component : getComponents()) {
-            if (lowestIndex == -1) {
-                lowestIndex = component.getLowestIndex();
-            } else if (component.getLowestIndex() < lowestIndex) {
-                lowestIndex = component.getLowestIndex();
-            }
-        }
-
-        return lowestIndex;
-    }
-
-    public int getHighestIndex() {
-        int highestIndex = 0;
-
-        for (StatementComponent component : getComponents()) {
-            if (component.getHighestIndex() > highestIndex) {
-                highestIndex = component.getHighestIndex();
-            }
-        }
-
-        return highestIndex;
-    }
-
-    /**
-     * A basic way of comparing two statements.
-     * In most cases, this will return false since it requires ALL components of the statement
-     * to be matched in the other statement in their basic form.
-     *
-     * @param otherComponent
-     * @return
-     */
-    @Override
-    public boolean matches(StatementComponent otherComponent) {
-        Set<StatementComponent> matchingComponents = new HashSet<>();
-
-        if (otherComponent instanceof Statement) {
-            Statement otherStatement = (Statement) otherComponent;
-            return matchesPureComponents(otherStatement) && matchesEmbeddedStatement(otherStatement);
-        }
-
-        return false;
-    }
-
     // TODO: figure out if something like this should be used
     public boolean isGoodSize() {
         // Using as guide the number 12 found here: http://www.aje.com/en/arc/editing-tip-sentence-length/
@@ -528,75 +468,6 @@ public class Statement implements StatementComponent {
         int lowerLimit = preferredSize - preferredSize/4;
 
         return size() < upperLimit && size() > lowerLimit;
-    }
-
-    /**
-     * A slightly more advanced way of comparing two statements.
-     * This method of comparison tries to find statements with the same topic,
-     * defined as: (S or DI matches) && (at least one other component matches)
-     *
-     * @param otherStatement
-     * @return
-     */
-    public boolean matchesTopic(Statement otherStatement) {
-        if (getSubject() != null && getSubject().matches(otherStatement.getSubject())
-                || getDirectObject() != null && getDirectObject().matches(otherStatement.getDirectObject())) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Compares the pure components of two statements.
-     *
-     * @param otherStatement
-     * @return
-     */
-    private boolean matchesPureComponents(Statement otherStatement) {
-        return getMatchingPureComponents(otherStatement).size() > getPureComponents().size();
-    }
-
-    /**
-     * Compares the embedded statements of two statements.
-     *
-     * @param otherStatement
-     * @return
-     */
-    private boolean matchesEmbeddedStatement(Statement otherStatement) {
-        if (getEmbeddedStatement() == null && otherStatement.getEmbeddedStatement() == null) return true;
-        if (getEmbeddedStatement() != null && otherStatement.getEmbeddedStatement() == null) return false;
-        return getEmbeddedStatement().matches(otherStatement.getEmbeddedStatement());
-    }
-
-    /**
-     * Returns the matching pure components of the other statement.
-     *
-     * @param otherStatement
-     * @return
-     */
-    public Set<StatementComponent> getMatchingPureComponents(Statement otherStatement) {
-        Set<StatementComponent> matchingComponents = new HashSet<>();
-
-        for (AbstractComponent component : getPureComponents()) {
-            for (AbstractComponent otherComponent : otherStatement.getPureComponents()) {
-                if (component.matches(otherComponent)) matchingComponents.add(otherComponent);
-            }
-        }
-
-        return matchingComponents;
-    }
-
-    /**
-     * Returns the matching components (AbstractComponent and Statement) of the other statement.
-     *
-     * @param otherStatement
-     * @return
-     */
-    public Set<StatementComponent> getMatchingComponents(Statement otherStatement) {
-        Set<StatementComponent> matchingComponents = getMatchingPureComponents(otherStatement);
-        if (matchesEmbeddedStatement(otherStatement) && otherStatement.getEmbeddedStatement() != null) matchingComponents.add(otherStatement.getEmbeddedStatement());
-        return matchingComponents;
     }
 
     /**
@@ -617,5 +488,15 @@ public class Statement implements StatementComponent {
             }
             return lexicalWords / (double) words.size();
         }
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                (getLabels().isEmpty()? "" : String.join("/", getLabels()) + "/") +
+                getSummary() +
+                ": \"" + getSentence() + "\"" +
+//            ", density: " + df.format(getLexicalDensity()) +  // TODO: remove after done debugging
+                "}";
     }
 }
