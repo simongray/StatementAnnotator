@@ -63,10 +63,8 @@ public class Profile {
      * Used to limit statements for futher processing based on a couple of heuristics.
      */
     private final StatementPattern INTERESTING_PATTERN = new StatementPattern(
-            new SubjectPattern(),
-            new VerbPattern(),
-            new ObjectPattern(),
-            new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS)
+            new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all(),
+            new VerbPattern()
     );
 
     /**

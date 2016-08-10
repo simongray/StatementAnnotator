@@ -1,5 +1,6 @@
 package statements.patterns;
 
+import statements.core.AbstractComponent;
 import statements.core.Statement;
 import statements.core.StatementComponent;
 
@@ -133,10 +134,30 @@ public class StatementPattern implements Pattern {
      * @return true if one of the components matches
      */
     private boolean matches(Pattern pattern, Set<StatementComponent> components) {
+        // additional step taken if this pattern must match all of its specified type
+        // all components of the relevant types are checked and if one doesn't match, the entire match fails
+        if (pattern.mustMatchAll() && pattern instanceof ComponentPattern) {
+            ComponentPattern componentPattern = (ComponentPattern) pattern;
+
+            for (StatementComponent component : components) {
+                if (component != null && component instanceof AbstractComponent) {
+                    if (componentPattern.matchesTypes((AbstractComponent) component) && !pattern.matches(component)) return false;
+                }
+            }
+        }
+
+        // regular matching
+        // only one match is needed
         for (StatementComponent component : components) {
             if (pattern.matches(component)) return true;
         }
 
         return false;
+    }
+
+
+    @Override
+    public Boolean mustMatchAll() {
+        return false;  // doesn't matter since a Statement can only contain a single directly embedded statement anyway
     }
 }

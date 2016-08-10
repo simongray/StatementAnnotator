@@ -6,4 +6,5 @@ public interface Pattern {
     boolean matches(StatementComponent statementComponent);
     StatementComponent getCaptured();
     Class[] getTypes();
+    Boolean mustMatchAll();
 }

@@ -37,6 +37,11 @@ public class ComponentPattern implements Pattern {
     private boolean capture;
     private AbstractComponent captured;
 
+    /**
+     * Does the pattern need to match all components of that type?
+     */
+    private boolean mustMatchAll;
+
     public ComponentPattern(Class... types) {
         this.types = types;
     }
@@ -213,12 +218,29 @@ public class ComponentPattern implements Pattern {
         return partsOfSpeech(Tag.adverb);
     }
 
+    /*
+        Meta section.
+     */
+    public ComponentPattern all(boolean state) {
+        this.mustMatchAll = state;
+        return this;
+    }
+
+    public ComponentPattern all() {
+        return all(true);
+    }
+
     /**
      * Capture this component for processing.
      */
     public ComponentPattern capture() {
         this.capture = true;
         return this;
+    }
+
+    @Override
+    public Boolean mustMatchAll() {
+        return mustMatchAll;
     }
 
     /**
@@ -288,7 +310,7 @@ public class ComponentPattern implements Pattern {
      * @param abstractComponent the component to test
      * @return true if one of the states matches
      */
-    private boolean matchesTypes(AbstractComponent abstractComponent) {
+    public boolean matchesTypes(AbstractComponent abstractComponent) {
         Class componentType = abstractComponent.getClass();
 
         // when no specific types have been given, will match any component
