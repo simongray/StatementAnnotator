@@ -24,7 +24,6 @@ public class Profile {
     Map<Statement, Double> qualityMap = new HashMap<>();
     private static DecimalFormat df = new DecimalFormat("#.##");
 
-
     /**
      * This set of nouns comprises second and third person pronouns, but not first person.
      * It also adds other words that do not carry any information without context.
@@ -62,9 +61,15 @@ public class Profile {
      * Matches statements that are deemed interesting.
      * Used to limit statements for futher processing based on a couple of heuristics.
      */
-    private final StatementPattern INTERESTING_PATTERN = new StatementPattern(
+    private final StatementPattern BASIC_INTERESTING_PATTERN = new StatementPattern(
             new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all(),
             new VerbPattern()
+    );
+
+    private final StatementPattern INTERESTING_PATTERN = new StatementPattern(
+            new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all(),
+            new VerbPattern(),
+            BASIC_INTERESTING_PATTERN.optional()  // for embedded statements
     );
 
     /**

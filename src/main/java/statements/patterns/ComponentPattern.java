@@ -36,6 +36,7 @@ public class ComponentPattern implements Pattern {
      */
     private boolean capture;
     private AbstractComponent captured;
+    private boolean optional;
 
     /**
      * Does the pattern need to match all components of that type?
@@ -221,13 +222,14 @@ public class ComponentPattern implements Pattern {
     /*
         Meta section.
      */
-    public ComponentPattern all(boolean state) {
-        this.mustMatchAll = state;
+    public ComponentPattern all() {
+        this.mustMatchAll = true;
         return this;
     }
 
-    public ComponentPattern all() {
-        return all(true);
+    public ComponentPattern optional() {
+        this.optional = true;
+        return this;
     }
 
     /**
@@ -239,8 +241,13 @@ public class ComponentPattern implements Pattern {
     }
 
     @Override
-    public Boolean mustMatchAll() {
+    public boolean mustMatchAll() {
         return mustMatchAll;
+    }
+
+    @Override
+    public boolean isOptional() {
+        return optional;
     }
 
     /**

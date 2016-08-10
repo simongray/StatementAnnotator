@@ -16,6 +16,7 @@ public class StatementPattern implements Pattern {
      */
     private boolean capture;
     private Statement captured;
+    private boolean optional;
 
     public StatementPattern(Pattern... patterns) {
         this.patterns = patterns;
@@ -44,6 +45,14 @@ public class StatementPattern implements Pattern {
     }
 
     /**
+     * Mark this statement as optional.
+     */
+    public StatementPattern optional() {
+        this.optional = true;
+        return this;
+    }
+
+    /**
      * Get everything captured by this the components of this pattern (when entire pattern matches).
      * Note: different from getCaptured(...) which is used to capture embedded statements.
      *
@@ -57,7 +66,7 @@ public class StatementPattern implements Pattern {
             if (pattern.getCaptured() != null) {
                 if (componentTypes.length == 0) {
                     captures.add(pattern.getCaptured());
-                } else if (containsTypes(pattern, componentTypes)) {
+                } else if (containsTypes(componentTypes)) {
                     captures.add(pattern.getCaptured());
                 }
             }
@@ -77,24 +86,6 @@ public class StatementPattern implements Pattern {
         Set<StatementComponent> components = statement.getComponents();
         components.removeAll(getCaptures(componentTypes));
         return components;
-    }
-
-    /**
-     * Whether or not a pattern contains one of a number of types.
-     * Used to find captured components.
-     *
-     * @param pattern pattern to test
-     * @param componentTypes types to find
-     * @return true if one of the types was found
-     */
-    private boolean containsTypes(Pattern pattern, Class[] componentTypes) {
-        for (Class type : pattern.getTypes()) {
-            for (Class componentType : componentTypes) {
-                if (type.equals(componentType)) return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -146,6 +137,10 @@ public class StatementPattern implements Pattern {
             }
         }
 
+        // optional patterns are only matched if their types exist among the components tested
+        // very useful for ensuring components have a specific form (if they ever appear)
+        if (pattern.isOptional() && !pattern.containsTypes(components)) return true;
+
         // regular matching
         // only one match is needed
         for (StatementComponent component : components) {
@@ -155,9 +150,13 @@ public class StatementPattern implements Pattern {
         return false;
     }
 
+    @Override
+    public boolean mustMatchAll() {
+        return false;  // doesn't matter since a Statement can only contain a single directly embedded statement anyway
+    }
 
     @Override
-    public Boolean mustMatchAll() {
-        return false;  // doesn't matter since a Statement can only contain a single directly embedded statement anyway
+    public boolean isOptional() {
+        return optional;
     }
 }
