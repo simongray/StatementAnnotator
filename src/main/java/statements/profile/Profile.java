@@ -55,21 +55,24 @@ public class Profile {
         UNINTERESTING_NOUNS.add("one");
         UNINTERESTING_NOUNS.add("some");
         UNINTERESTING_NOUNS.add("someone");
+        UNINTERESTING_NOUNS.add("here");
+        UNINTERESTING_NOUNS.add("there");
     }
 
     /**
      * Matches statements that are deemed interesting.
-     * Used to limit statements for futher processing based on a couple of heuristics.
+     * Used to limit statements for further processing based on a couple of heuristics.
      */
-    private final StatementPattern BASIC_INTERESTING_PATTERN = new StatementPattern(
-            new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all(),
-            new VerbPattern()
+    private final StatementPattern EMBEDDED_INTERESTING_PATTERN = new StatementPattern(
+            new VerbPattern(),
+            new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all()
     );
 
     private final StatementPattern INTERESTING_PATTERN = new StatementPattern(
-            new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all(),
+            new SubjectPattern(),
             new VerbPattern(),
-            BASIC_INTERESTING_PATTERN.optional()  // for embedded statements
+            new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all(),
+            EMBEDDED_INTERESTING_PATTERN.optional()  // for embedded statements
     );
 
     /**
@@ -422,6 +425,6 @@ public class Profile {
                 ", density: " + df.format(statement.getLexicalDensity()) +
                 ", quality: " + df.format(qualityMap.get(statement)) +
 //                ", relevance: " + df.format(relevanceMap.get(statement)) +
-                "}";
+                "}" + " " + statement.getOrigin();
     }
 }
