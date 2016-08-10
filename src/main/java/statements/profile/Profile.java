@@ -13,7 +13,7 @@ public class Profile {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     Set<Statement> statements;
-    WordnetDictionary dict;
+    Set<Statement> interestingStatements = new HashSet<>();
     Set<String> subjectWords = new HashSet<>();
     Set<String> verbWords = new HashSet<>();
     Set<String> directObjectWords = new HashSet<>();
@@ -25,7 +25,17 @@ public class Profile {
     private static DecimalFormat df = new DecimalFormat("#.##");
 
     /**
-     * Captures anything that is personal in nature, i.e. referring to first person or first person possessions.
+     * Matches statements that are deemed interesting.
+     * Used to limit statements for futher processing based on a couple of heuristics.
+     */
+    private final StatementPattern INTERESTING_PATTERN = new StatementPattern(
+            new SubjectPattern().person(Person.first, Person.third).local(false),
+            new VerbPattern(),
+            new ObjectPattern().local(false)
+    );
+
+    /**
+     * Matches anything that is personal in nature, i.e. referring to first person or first person possessions.
      */
     private final MultiPattern PERSONAL_PATTERN = new MultiPattern(
             new NonVerbPattern().firstPerson(),
@@ -63,7 +73,6 @@ public class Profile {
     );
 
     public Profile(Set<Statement> statements) throws IOException {
-        this.dict = new WordnetDictionary();
         this.statements = statements;
 
         // unpack embedded statements according to a pattern
@@ -179,10 +188,11 @@ public class Profile {
      * @return interesting statements
      */
     public Set<Statement> getInterestingStatements() {
-        Set<Statement> interestingStatements = new HashSet<>();
-
-        for (Statement statement : getStatements()) {
-            if (statement.isInteresting() && statement.isWellFormed()) interestingStatements.add(statement);
+        if (interestingStatements.isEmpty()) {
+            for (Statement statement : getStatements()) {
+//                if (statement.isInteresting() && statement.isWellFormed()) interestingStatements.add(statement);
+                if (INTERESTING_PATTERN.matches(statement)) interestingStatements.add(statement);
+            }
         }
 
         return interestingStatements;
