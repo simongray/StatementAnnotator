@@ -26,8 +26,14 @@ public class TestStatements {
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
 //        String example = "";
+
+
+
         String example = "Really most of our companies are so small that they just about all fit in the SME definition (something like 80% are smaller than 250 employees).";
 
+
+        // TODO: don't split conjunctions when they are part of a compound
+//        String example = "The food and beer scene is quite good right now.";
 
         // TODO: implicit subjects makes the entire sentence spit out crappy statements
 //        String example = "Makes sense, but requires the information is then available elsewhere.";
