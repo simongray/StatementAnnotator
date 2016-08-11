@@ -88,6 +88,12 @@ public class RedditCommentProcessor {
         // replace short dash with long dash
         comment = comment.replaceAll(" - ", " – ");
 
+        // remove some common emoticons
+        comment = comment.replaceAll("(;|:|=)?(-)(\\)|\\||\\[|\\]|\\(|/)+", ". ");
+
+        // remove parentheses and their content since they screw up sentence parsing most of the time
+        comment = comment.replaceAll(" \\([^\\)]+\\)", "");
+
         return comment;
     }
 }
