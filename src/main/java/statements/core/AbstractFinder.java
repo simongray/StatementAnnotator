@@ -9,14 +9,14 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 
-public abstract class AbstractFinder<T extends AbstractComponent> {
+public abstract class AbstractFinder {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected SemanticGraph graph;
     protected Collection<TypedDependency> dependencies;
     protected Map<IndexedWord, IndexedWord> conjunctions = new HashMap<>();  // dep-to-gov
     protected Set<IndexedWord> ignoredWords;
-    protected Set<T> components;
+    protected Set<? extends AbstractComponent> components;
 
     /**
      * Find statement components based on the dependency graph of a sentence.
@@ -25,14 +25,12 @@ public abstract class AbstractFinder<T extends AbstractComponent> {
      * @param graph the dependency graph of a sentence
      * @return statement components
      */
-    public final Set<T> find(SemanticGraph graph) {
+    public final Set<? extends AbstractComponent> find(SemanticGraph graph) {
         // initialise the fields to a neutral state
         this.graph = graph;
         ignoredWords = getIgnoredWords(graph);
         dependencies = graph.typedDependencies();
         init();
-
-//        logger.info("ignoring: " + ignoredWords);
 
         // find relevant connections
         for (TypedDependency dependency : dependencies) {
@@ -40,10 +38,16 @@ public abstract class AbstractFinder<T extends AbstractComponent> {
             check(dependency);
         }
 
-//        logger.info("conjunctions: " + conjunctions);
-
         // produce components based on the connections
         components = get();
+
+        // remove components with empty compounds
+        // this happens when a component only contains hidden state and is usually a result of a parsing error
+        Set<AbstractComponent> emptyComponents = new HashSet<>();
+        for (AbstractComponent component : components) {
+            if (component.getCompound().isEmpty()) emptyComponents.add(component);
+        }
+        components.removeAll(emptyComponents);
 
         logger.info("found: " + components);
 
@@ -70,7 +74,7 @@ public abstract class AbstractFinder<T extends AbstractComponent> {
      *
      * @return
      */
-    protected abstract Set<T> get();
+    protected abstract Set<? extends AbstractComponent> get();
 
     /**
      * Generalised way to get labels for a new component.

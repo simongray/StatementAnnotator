@@ -60,7 +60,7 @@ public class Profile {
     }
 
     /**
-     * Matches statements that are deemed interesting.
+     * Matches statements that are deemed interesting (or uninteresting for the anti-patterns).
      * Used to limit statements for further processing based on a couple of heuristics.
      */
     private final StatementPattern EMBEDDED_INTERESTING_PATTERN = new StatementPattern(
@@ -73,12 +73,16 @@ public class Profile {
             new VerbPattern(),
             new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all(),
             EMBEDDED_INTERESTING_PATTERN.optional()  // for embedded statements
-    );
+    ).question(false);
 
     private final StatementPattern INTERESTING_ANTIPATTERN_1 = new StatementPattern(
             new VerbPattern().copula()
     ).size(2);
 
+    /**
+     * Matches statements that came from a question.
+     */
+    private final StatementPattern CITATION_PATTERN = new StatementPattern().citation();
 
     /**
      * Matches anything that is personal in nature, i.e. referring to first person or first person possessions.
@@ -120,6 +124,11 @@ public class Profile {
 
     public Profile(Set<Statement> statements) throws IOException {
         this.statements = statements;
+
+        // citations do not represent the user's own opinions
+        int statementCount = statements.size();
+        statements.removeIf(CITATION_PATTERN::matches);
+        logger.info("removed citations: " + (statementCount - statements.size()));
 
         // unpack embedded statements according to a pattern
         // the original statements are replaced with the embedded statements based on the pattern

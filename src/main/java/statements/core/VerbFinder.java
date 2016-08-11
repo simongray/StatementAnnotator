@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * Finds verbs in sentences.
  */
-public class VerbFinder extends AbstractFinder<Verb> {
+public class VerbFinder extends AbstractFinder {
     private final Set<String> OUTGOING_RELATIONS;
 
     private Set<IndexedWord> dobjVerbs;

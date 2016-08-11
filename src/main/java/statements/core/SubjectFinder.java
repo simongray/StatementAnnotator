@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Finds subjects in sentences.
  */
-public class SubjectFinder extends AbstractFinder<Subject> {
+public class SubjectFinder extends AbstractFinder {
     private Set<IndexedWord> nsubjSubjects;
     private Set<IndexedWord> nsubjpassSubjects;
     private Set<Subject> subjects;

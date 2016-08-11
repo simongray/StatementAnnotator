@@ -8,7 +8,7 @@ import java.util.*;
 /**
  * Finds indirect objects in sentences.
  */
-public class IndirectObjectFinder extends AbstractFinder<IndirectObject> {
+public class IndirectObjectFinder extends AbstractFinder {
     private Map<IndexedWord, IndexedWord> nmodMapping;
     private Set<IndirectObject> indirectObjects;
     private Set<IndexedWord> iobjObjects;

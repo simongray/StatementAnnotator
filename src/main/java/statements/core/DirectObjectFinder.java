@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Finds direct objects in sentences.
  */
-public class DirectObjectFinder extends AbstractFinder<DirectObject> {
+public class DirectObjectFinder extends AbstractFinder {
     private Map<IndexedWord, IndexedWord> dobjMapping ;
     private Set<IndexedWord> csubjVerbs;// for verbs that act as subjects
     private Set<IndexedWord> copObjects;
