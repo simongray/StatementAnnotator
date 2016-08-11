@@ -19,6 +19,8 @@ public class StatementPattern implements Pattern {
     private boolean optional;
     private Integer minSize;
     private Integer maxSize;
+    private Boolean question;
+    private Boolean citation;
 
     public StatementPattern(Pattern... patterns) {
         this.patterns = patterns;
@@ -34,6 +36,24 @@ public class StatementPattern implements Pattern {
     public StatementPattern capture() {
         this.capture = true;
         return this;
+    }
+
+    public StatementPattern question(Boolean state) {
+        this.question = state;
+        return this;
+    }
+
+    public StatementPattern question() {
+        return question(true);
+    }
+
+    public StatementPattern citation(Boolean state) {
+        this.citation = state;
+        return this;
+    }
+
+    public StatementPattern citation() {
+        return citation(true);
     }
 
     /**
@@ -121,14 +141,18 @@ public class StatementPattern implements Pattern {
             Set<StatementComponent> components = statement.getComponents();
             if (components == null) return false;
 
-            // for the entire statement to match, every contained pattern must match
-            for (Pattern pattern : patterns) {
-                if (!matches(pattern, components)) return false;
-            }
+            // check statement booleans first
+            if (question != null && statement.isQuestion() != question) return false;
+            if (citation != null && statement.isCitation() != citation) return false;
 
             // it is possible to also state a preferred size
             if (minSize != null && components.size() < minSize) return false;
             if (maxSize != null && components.size() > maxSize) return false;
+
+            // for the entire statement to match, every contained pattern must match
+            for (Pattern pattern : patterns) {
+                if (!matches(pattern, components)) return false;
+            }
 
             // note: must always be final step before returning true!
             if (capture) captured = statement;

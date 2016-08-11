@@ -25,8 +25,8 @@ public class Statement implements StatementComponent {
     private Set<AbstractComponent> pureComponents;
     private Set<IndexedWord> governors;
     private Set<IndexedWord> embeddingGovernors;
-    private static DecimalFormat df = new DecimalFormat("#.##");
     private CoreMap origin;
+    private Set<String> labels = new HashSet<>();
 
     @Override
     public boolean equals(Object object) {
@@ -47,6 +47,10 @@ public class Statement implements StatementComponent {
 
     public void setOrigin(CoreMap origin) {
         this.origin = origin;
+    }
+
+    public void addLabel(String label) {
+        this.labels.add(label);
     }
 
     public Statement getEmbeddedStatement() {
@@ -429,7 +433,7 @@ public class Statement implements StatementComponent {
      * @return label
      */
     public Set<String> getLabels() {
-        Set<String> labels = new HashSet<>();
+        Set<String> allLabels = new HashSet<>(labels);
 
         for (StatementComponent component : getComponents()) {
             Set<String> componentLabels = component.getLabels();
@@ -437,18 +441,14 @@ public class Statement implements StatementComponent {
             // find component label combinations that trigger relevant statement labels
             if (componentLabels != null) {
                 if (componentLabels.contains(Labels.CSUBJ_VERB)) {
-                    labels.add(Labels.SUBJECT);
+                    allLabels.add(Labels.SUBJECT);
                 } else if (componentLabels.contains(Labels.XCOMP_VERB)) {
-                    labels.add(Labels.DIRECT_OBJECT);
+                    allLabels.add(Labels.DIRECT_OBJECT);
                 }
             }
         }
 
-        // TODO: make less hacky
-        // check for question marks
-        if (StatementUtils.join(getWords()).endsWith("?")) labels.add(Labels.QUESTION);
-
-        return labels;
+        return allLabels;
     }
 
     public Set<IndexedWord> getAll() {
@@ -468,6 +468,14 @@ public class Statement implements StatementComponent {
         int lowerLimit = preferredSize - preferredSize/4;
 
         return size() < upperLimit && size() > lowerLimit;
+    }
+
+    public boolean isQuestion() {
+        return labels.contains(Labels.QUESTION);
+    }
+
+    public boolean isCitation() {
+        return labels.contains(Labels.CITATION);
     }
 
     /**

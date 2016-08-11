@@ -77,10 +77,8 @@ public class TestNewPatterns {
 //                new ObjectPattern().preposition().capture()
 //        );
 
-        MultiPattern testPattern = new MultiPattern(
-                new NonVerbPattern().firstPerson(),
-                new NonVerbPattern().noun().firstPersonPossessive()
-        );
+        StatementPattern questionPattern = new StatementPattern().question();
+        StatementPattern citationPattern = new StatementPattern().citation();
 
         for (Statement statement : statements) {
 //            if (thinkPattern.matches(statement)) {
@@ -92,9 +90,12 @@ public class TestNewPatterns {
 //            if (thinkNotPattern.matches(statement)) {
 //                System.out.println("not: " + statement);
 //            }
-            if (testPattern.matches(statement)) {
-                System.out.println(statement + " --> " + statement.getComponents());
-//                System.out.println("      " + testPattern.getNonCaptures(statement));
+            if (questionPattern.matches(statement)) {
+                System.out.println("question: " + statement + " --> " + statement.getComponents());
+                System.out.println("      " + statement.getOrigin());
+            }
+            if (citationPattern.matches(statement)) {
+                System.out.println("citation: " + statement + " --> " + statement.getComponents());
                 System.out.println("      " + statement.getOrigin());
             }
         }

@@ -63,10 +63,17 @@ public class StatementFinder {
 
         statements.removeAll(badStatements);
 
-        // annotate with origin
-        // TODO: better way to do this?
+        // annotate with origin and certain labels
         for (Statement statement : statements) {
+            // TODO: better way to do this?
             statement.setOrigin(sentence);
+            String sentenceString = sentence.toString();
+
+            // perhaps a little simple, but works ok
+            if (sentenceString.endsWith("?")) statement.addLabel(Labels.QUESTION);
+
+            // TODO: this only works when using the Reddit-preprocessor to convert reddit markdown!
+            if (sentenceString.startsWith("\"") && sentenceString.endsWith("\"")) statement.addLabel(Labels.CITATION);
         }
 
         return statements;
