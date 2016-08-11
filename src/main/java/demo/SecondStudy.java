@@ -74,6 +74,8 @@ public class SecondStudy {
             System.out.println();
         }
         System.out.println("sentences: " + sentenceDataset.size());
-        System.out.println(sentenceDataset);
+        for (String sentence : sentenceDataset) {
+            System.out.println(sentence);
+        }
     }
 }
