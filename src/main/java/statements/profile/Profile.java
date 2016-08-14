@@ -24,7 +24,7 @@ public class Profile {
     Set<String> properNouns = new HashSet<>();
     Set<String> likes = new HashSet<>();
     Set<String> wants = new HashSet<>();
-    Set<String> activities = new HashSet<>();
+    Map<String, Set<String>> activities = new HashMap<>();
 
     Map<Statement, Integer> pointsMap = new HashMap<>();
     Map<Statement, Double> qualityMap = new HashMap<>();
@@ -280,15 +280,20 @@ public class Profile {
                             likes.add(abstractComponent.getNormalCompound());
                             logger.info("found like " + abstractComponent + " in " + statement);
                         } else {
-                            activities.add(abstractComponent.getNormalCompound());
+                            String activityVerb = abstractComponent.getNormalCompound();
+                            Set<String> objects = activities.getOrDefault(activityVerb, new HashSet<>());
+                            objects.add("");
+                            activities.put(activityVerb, objects);
                             logger.info("found liked activity " + abstractComponent + " in " + statement);
                         }
                     } else  if (capture instanceof Statement) {
                         Statement embeddedStatement = (Statement) capture;
-                        activities.add(
-                                embeddedStatement.getVerb().getNormalCompound()
-                                + (embeddedStatement.getDirectObject() != null? " " + embeddedStatement.getDirectObject().getNormalCompound() : "")
-                        );
+                        String activityVerb = embeddedStatement.getVerb().getNormalCompound();
+                        String activityObject = embeddedStatement.getDirectObject() != null? " " + embeddedStatement.getDirectObject().getNormalCompound() : "";
+                        Set<String> objects = activities.getOrDefault(activityVerb, new HashSet<>());
+                        objects.add(activityObject);
+
+                        activities.put(activityVerb, objects);
                         logger.info("found liked activity " + embeddedStatement + " in " + statement);
                     }
                 }
@@ -304,15 +309,20 @@ public class Profile {
                             wants.add(abstractComponent.getNormalCompound());
                             logger.info("found want " + abstractComponent + " in " + statement);
                         } else {
-                            activities.add(abstractComponent.getNormalCompound());
+                            String activityVerb = abstractComponent.getNormalCompound();
+                            Set<String> objects = activities.getOrDefault(activityVerb, new HashSet<>());
+                            objects.add("");
+                            activities.put(activityVerb, objects);
                             logger.info("found wanted activity " + abstractComponent + " in " + statement);
                         }
                     } else  if (capture instanceof Statement) {
                         Statement embeddedStatement = (Statement) capture;
-                        activities.add(
-                                embeddedStatement.getVerb().getNormalCompound()
-                                        + (embeddedStatement.getDirectObject() != null? " " + embeddedStatement.getDirectObject().getNormalCompound() : "")
-                        );
+                        String activityVerb = embeddedStatement.getVerb().getNormalCompound();
+                        String activityObject = embeddedStatement.getDirectObject() != null? " " + embeddedStatement.getDirectObject().getNormalCompound() : "";
+                        Set<String> objects = activities.getOrDefault(activityVerb, new HashSet<>());
+                        objects.add(activityObject);
+
+                        activities.put(activityVerb, objects);
                         logger.info("found wanted activity " + embeddedStatement + " in " + statement);
                     }
                 }
@@ -518,7 +528,7 @@ public class Profile {
         return wants;
     }
 
-    public Set<String> getActitivies() {
+    public Map<String, Set<String>> getActitivies() {
         return activities;
     }
 
