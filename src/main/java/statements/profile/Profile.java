@@ -533,7 +533,7 @@ public class Profile {
         if (!qualityMap.containsKey(statement)) {
             // retrieve the baseline value, in this case lexical density
             double baseline = statement.getLexicalDensity();
-            double multiplier = baseline * 0.2;
+            double multiplier = baseline * 0.25;
             double adjustment = pointsMap.getOrDefault(statement, 0) * multiplier;
             double quality = baseline + adjustment;
 
