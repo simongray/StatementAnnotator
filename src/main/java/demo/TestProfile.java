@@ -80,7 +80,6 @@ public class TestProfile {
         Profile secondProfile = new Profile(secondStatements);
         System.out.println(firstProfile.getStatements().size() + " statements in first profile");
         System.out.println(secondProfile.getStatements().size() + " statements in second profile");
-        System.out.println("shared: " + firstProfile.findSharedTopics(secondProfile));
         int limit = 20;
 
         // the results presented to Mark

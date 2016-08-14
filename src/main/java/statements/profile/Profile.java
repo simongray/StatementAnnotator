@@ -14,11 +14,8 @@ public class Profile {
 
     Set<Statement> statements;
     Set<Statement> interestingStatements = new HashSet<>();
-    Set<String> subjectWords = new HashSet<>();
-    Set<String> verbWords = new HashSet<>();
-    Set<String> directObjectWords = new HashSet<>();
-    Set<String> indirectObjectWords = new HashSet<>();
-    Set<String> topics = new HashSet<>();
+
+    // entities found in statements using pattern matching
     Set<String> locations = new HashSet<>();
     Set<String> possessions = new HashSet<>();
     Set<String> studies = new HashSet<>();
@@ -28,7 +25,10 @@ public class Profile {
     Set<String> likes = new HashSet<>();
     Set<String> wants = new HashSet<>();
     Set<String> activities = new HashSet<>();
+
+    Map<Statement, Integer> pointsMap = new HashMap<>();
     Map<Statement, Double> qualityMap = new HashMap<>();
+
     private static DecimalFormat df = new DecimalFormat("#.##");
 
     /**
@@ -71,25 +71,25 @@ public class Profile {
      * Used to limit statements for further processing based on a couple of heuristics.
      */
     private final StatementPattern EMBEDDED_INTERESTING_PATTERN = new StatementPattern(
-            new VerbPattern(),
+            new VerbPattern().negated(null),
             new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all()
-    ).optional();
+    ).optional().minSize(2);
 
     private final StatementPattern INTERESTING_PATTERN = new StatementPattern(
             new SubjectPattern(),
-            new VerbPattern(),
+            new VerbPattern().negated(null),
             new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all(),
             EMBEDDED_INTERESTING_PATTERN  // for embedded statements
-    ).question(false);
+    ).question(false).minSize(3);
 
     private final StatementPattern INTERESTING_ANTIPATTERN_1 = new StatementPattern(
-            new VerbPattern().copula()
+            new VerbPattern().copula().negated(null)
     ).size(2);
 
     /**
      * Matches statements that came from a question.
      */
-    private final StatementPattern CITATION_PATTERN = new StatementPattern().citation();
+    private final StatementPattern CITATION_ANTIPATTERN = new StatementPattern().citation();
 
     /**
      * Matches anything that is personal in nature, i.e. referring to first person or first person possessions.
@@ -147,7 +147,7 @@ public class Profile {
     private final StatementPattern IDENTITY_PATTERN = new StatementPattern(
             new SubjectPattern().firstPerson(),
             new VerbPattern().copula(),
-            new DirectObjectPattern().capture().optional().notWords(UNINTERESTING_NOUNS)
+            new DirectObjectPattern().partsOfSpeech(Tag.noun, Tag.properNoun).capture().optional().notWords(UNINTERESTING_NOUNS)
     );
 
     /**
@@ -191,12 +191,19 @@ public class Profile {
 
         // citations do not represent the user's own opinions
         int statementCount = statements.size();
-        statements.removeIf(CITATION_PATTERN::matches);
+        statements.removeIf(CITATION_ANTIPATTERN::matches);
         logger.info("removed citations: " + (statementCount - statements.size()));
 
         // unpack embedded statements according to a pattern
         // the original statements are replaced with the embedded statements based on the pattern
         unpackEmbeddedStatements();
+
+        // adjust for personal information
+        for (Statement statement : getInterestingStatements()) {
+            if (PERSONAL_PATTERN.matches(statement)) {
+                addQualityPoint(statement);
+            }
+        }
 
         // find locations that the author has been to
         registerLocations();
@@ -215,6 +222,16 @@ public class Profile {
     }
 
     /**
+     * Adds one quality point to this statement.
+     * Quality points are used to rank statements together with the Lexical Density.
+     *
+     * @param statement the statement to add a quality point to
+     */
+    private void addQualityPoint(Statement statement) {
+        pointsMap.put(statement, pointsMap.getOrDefault(statement, 0) + 1);
+    }
+
+    /**
      * Unpack statements according to certain patterns to replace them with their embedded statements.
      */
     private void unpackEmbeddedStatements() {
@@ -229,6 +246,7 @@ public class Profile {
                     embeddedStatement.setOrigin(statement.getOrigin());
                     embeddedStatements.add(embeddedStatement);
                     embeddingStatements.add(statement);
+                    pointsMap.put(embeddedStatement, pointsMap.getOrDefault(statement, 0) + 1);
                     logger.info("unpacked " + embeddedStatement + " from " + statement);
                 }
             }
@@ -239,6 +257,7 @@ public class Profile {
                 embeddedStatement.setOrigin(statement.getOrigin());
                 embeddedStatements.add(embeddedStatement);
                 embeddingStatements.add(statement);
+                pointsMap.put(embeddedStatement, pointsMap.getOrDefault(statement, 0) + 1);
                 logger.info("unpacked " + embeddedStatement + " from " + statement);
             }
         }
@@ -257,10 +276,11 @@ public class Profile {
                 for (StatementComponent capture : LIKE_PATTERN.getCaptures()) {
                     if (capture instanceof  AbstractComponent) {
                         AbstractComponent abstractComponent = (AbstractComponent) capture;
-                        likes.add(abstractComponent.getNormalCompound());
                         if (!abstractComponent.isVerb()) {
+                            likes.add(abstractComponent.getNormalCompound());
                             logger.info("found like " + abstractComponent + " in " + statement);
                         } else {
+                            activities.add(abstractComponent.getNormalCompound());
                             logger.info("found liked activity " + abstractComponent + " in " + statement);
                         }
                     } else  if (capture instanceof Statement) {
@@ -272,15 +292,19 @@ public class Profile {
                         logger.info("found liked activity " + embeddedStatement + " in " + statement);
                     }
                 }
+
+                addQualityPoint(statement);
             }
+
             if (WANT_PATTERN.matches(statement)) {
                 for (StatementComponent capture : WANT_PATTERN.getCaptures()) {
                     if (capture instanceof  AbstractComponent) {
                         AbstractComponent abstractComponent = (AbstractComponent) capture;
-                        wants.add(abstractComponent.getNormalCompound());
                         if (!abstractComponent.isVerb()) {
+                            wants.add(abstractComponent.getNormalCompound());
                             logger.info("found want " + abstractComponent + " in " + statement);
                         } else {
+                            activities.add(abstractComponent.getNormalCompound());
                             logger.info("found wanted activity " + abstractComponent + " in " + statement);
                         }
                     } else  if (capture instanceof Statement) {
@@ -292,6 +316,8 @@ public class Profile {
                         logger.info("found wanted activity " + embeddedStatement + " in " + statement);
                     }
                 }
+
+                addQualityPoint(statement);
             }
         }
 
@@ -311,6 +337,8 @@ public class Profile {
                     properNouns.add(abstractComponent.getNormalCompound());
                     logger.info("found proper noun " + abstractComponent + " in " + statement);
                 }
+
+                addQualityPoint(statement);
             }
         }
 
@@ -328,20 +356,28 @@ public class Profile {
                     studies.add(abstractComponent.getNormalCompound());
                     logger.info("found study " + abstractComponent + " in " + statement);
                 }
+
+                addQualityPoint(statement);
             }
+
             if (WORK_PATTERN.matches(statement)) {
                 for (StatementComponent capture : WORK_PATTERN.getCaptures()) {
                     AbstractComponent abstractComponent = (AbstractComponent) capture;
                     work.add(abstractComponent.getNormalCompound());
                     logger.info("found work " + abstractComponent + " in " + statement);
                 }
+
+                addQualityPoint(statement);
             }
+
             if (IDENTITY_PATTERN.matches(statement)) {
                 for (StatementComponent capture : IDENTITY_PATTERN.getCaptures()) {
                     AbstractComponent abstractComponent = (AbstractComponent) capture;
                     identities.add(abstractComponent.getNormalCompound());
                     logger.info("found identity " + abstractComponent + " in " + statement);
                 }
+
+                addQualityPoint(statement);
             }
         }
 
@@ -361,6 +397,8 @@ public class Profile {
                     locations.add(abstractComponent.getNormalCompound());
                     logger.info("found location " + abstractComponent + " in " + statement);
                 }
+
+                addQualityPoint(statement);
             }
         }
 
@@ -378,6 +416,8 @@ public class Profile {
                     possessions.add(abstractComponent.getNormalCompound());
                     logger.info("found possession " + abstractComponent + " in " + statement + " using POSSESSION_PATTERN_1");
                 }
+
+                addQualityPoint(statement);
             }
             if (POSSESSION_PATTERN_2.matches(statement)) {
                 for (StatementComponent capture : POSSESSION_PATTERN_2.getCaptures()) {
@@ -385,34 +425,12 @@ public class Profile {
                     possessions.add(abstractComponent.getNormalCompound());
                     logger.info("found possession " + abstractComponent + " in " + statement + " using POSSESSION_PATTERN_2");
                 }
+
+                addQualityPoint(statement);
             }
         }
 
         logger.info("total possessions found: " + possessions.size());
-    }
-
-    /**
-     * Store the topic keywords of all of the interesting statements.
-     */
-    private void registerTopics() {
-        // register all of the words of the statements
-        for (Statement statement : statements) {
-            for (StatementComponent component : statement.getComponents()) {
-                if (component instanceof AbstractComponent) {
-                    AbstractComponent abstractComponent = (AbstractComponent) component;
-                    if (component instanceof Subject) subjectWords.add(abstractComponent.getBasicCompound());
-                    // TODO: use verbs (excluding most common ones)?
-//                    if (component instanceof Verb) verbWords.add(abstractComponent.getBasicCompound());
-                    if (component instanceof DirectObject) directObjectWords.add(abstractComponent.getBasicCompound());
-                    if (component instanceof IndirectObject) indirectObjectWords.add(abstractComponent.getBasicCompound());
-                }
-            }
-        }
-
-        topics.addAll(subjectWords);
-        topics.addAll(verbWords);
-        topics.addAll(directObjectWords);
-        topics.addAll(indirectObjectWords);
     }
 
     /**
@@ -428,19 +446,6 @@ public class Profile {
         }
 
         return interestingStatements;
-    }
-
-    /**
-     * Returns the topics that are shared between two profiles.
-     * Useful for adjusting the ranking of statements.
-     *
-     * @param otherProfile the other profile to compare topics with
-     * @return the topics found in both profiles
-     */
-    public Set<String> findSharedTopics(Profile otherProfile) {
-        Set<String> sharedTopics = new HashSet<>(getTopics());
-        sharedTopics.retainAll(otherProfile.getTopics());
-        return sharedTopics;
     }
 
     /**
@@ -479,10 +484,6 @@ public class Profile {
 
     public Set<Statement> getStatements() {
         return statements;
-    }
-
-    public Set<String> getTopics() {
-        return topics;
     }
 
     public Set<String> getLocations() {
@@ -531,13 +532,10 @@ public class Profile {
     private double getStatementQuality(Statement statement) {
         if (!qualityMap.containsKey(statement)) {
             // retrieve the baseline value, in this case lexical density
-            double quality = statement.getLexicalDensity();
-            double step = quality * 0.2;
-
-            // adjust for personal information
-            if (PERSONAL_PATTERN.matches(statement)) {
-                quality += step;
-            }
+            double baseline = statement.getLexicalDensity();
+            double multiplier = baseline * 0.2;
+            double adjustment = pointsMap.getOrDefault(statement, 0) * multiplier;
+            double quality = baseline + adjustment;
 
             // save to map for later lazy-loading
             qualityMap.put(statement, quality);
