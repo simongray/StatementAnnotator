@@ -5,6 +5,6 @@ package statements.patterns;
  */
 public class NonVerbPattern extends ComponentPattern {
     public NonVerbPattern() {
-        super(statements.core.Subject.class,statements.core.DirectObject.class, statements.core.IndirectObject.class);
+        super(statements.core.Subject.class, statements.core.DirectObject.class, statements.core.IndirectObject.class);
     }
 }
