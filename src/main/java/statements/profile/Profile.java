@@ -23,7 +23,11 @@ public class Profile {
     Set<String> possessions = new HashSet<>();
     Set<String> studies = new HashSet<>();
     Set<String> work = new HashSet<>();
+    Set<String> identities = new HashSet<>();
     Set<String> properNouns = new HashSet<>();
+    Set<String> likes = new HashSet<>();
+    Set<String> wants = new HashSet<>();
+    Set<String> activities = new HashSet<>();
     Map<Statement, Double> qualityMap = new HashMap<>();
     private static DecimalFormat df = new DecimalFormat("#.##");
 
@@ -69,13 +73,13 @@ public class Profile {
     private final StatementPattern EMBEDDED_INTERESTING_PATTERN = new StatementPattern(
             new VerbPattern(),
             new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all()
-    );
+    ).optional();
 
     private final StatementPattern INTERESTING_PATTERN = new StatementPattern(
             new SubjectPattern(),
             new VerbPattern(),
             new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all(),
-            EMBEDDED_INTERESTING_PATTERN.optional()  // for embedded statements
+            EMBEDDED_INTERESTING_PATTERN  // for embedded statements
     ).question(false);
 
     private final StatementPattern INTERESTING_ANTIPATTERN_1 = new StatementPattern(
@@ -93,6 +97,29 @@ public class Profile {
     private final MultiPattern PERSONAL_PATTERN = new MultiPattern(
             new NonVerbPattern().firstPerson(),
             new NonVerbPattern().noun().firstPersonPossessive()
+    );
+
+    /**
+     * Captures likes/loves (and wants in the second case).
+     */
+    private final StatementPattern EMBEDDED_ACTIVITY_PATTERN = new StatementPattern(
+            new VerbPattern(),
+            new DirectObjectPattern(),
+            new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all()
+    ).capture().optional();
+
+    private final StatementPattern LIKE_PATTERN = new StatementPattern(
+            new SubjectPattern().firstPerson(),
+            new VerbPattern().words("like", "love", "prefer"),
+            new ObjectPattern().notWords(UNINTERESTING_NOUNS).capture().optional(),
+            EMBEDDED_ACTIVITY_PATTERN
+    );
+
+    private final StatementPattern WANT_PATTERN = new StatementPattern(
+            new SubjectPattern().firstPerson(),
+            new VerbPattern().words("want"),
+            new ObjectPattern().notWords(UNINTERESTING_NOUNS).capture().optional(),
+            EMBEDDED_ACTIVITY_PATTERN
     );
 
     /**
@@ -115,6 +142,12 @@ public class Profile {
             new SubjectPattern().firstPerson(),
             new VerbPattern().words("work"),
             new IndirectObjectPattern().capture().optional().notWords(UNINTERESTING_NOUNS)
+    );
+
+    private final StatementPattern IDENTITY_PATTERN = new StatementPattern(
+            new SubjectPattern().firstPerson(),
+            new VerbPattern().copula(),
+            new DirectObjectPattern().capture().optional().notWords(UNINTERESTING_NOUNS)
     );
 
     /**
@@ -177,9 +210,8 @@ public class Profile {
         // find pronouns mentioned by the author
         registerProperNouns();
 
-        // store the topic keywords of all interesting statements
-        // used to rank statements in relation to other users
-        registerTopics();
+        // find likes of the author
+        registerLikesAndWants();
     }
 
     /**
@@ -219,6 +251,58 @@ public class Profile {
     /**
      * Unpack statements according to certain patterns to replace them with their embedded statements.
      */
+    private void registerLikesAndWants() {
+        for (Statement statement : statements) {
+            if (LIKE_PATTERN.matches(statement)) {
+                for (StatementComponent capture : LIKE_PATTERN.getCaptures()) {
+                    if (capture instanceof  AbstractComponent) {
+                        AbstractComponent abstractComponent = (AbstractComponent) capture;
+                        likes.add(abstractComponent.getNormalCompound());
+                        if (!abstractComponent.isVerb()) {
+                            logger.info("found like " + abstractComponent + " in " + statement);
+                        } else {
+                            logger.info("found liked activity " + abstractComponent + " in " + statement);
+                        }
+                    } else  if (capture instanceof Statement) {
+                        Statement embeddedStatement = (Statement) capture;
+                        activities.add(
+                                embeddedStatement.getVerb().getNormalCompound()
+                                + (embeddedStatement.getDirectObject() != null? " " + embeddedStatement.getDirectObject().getNormalCompound() : "")
+                        );
+                        logger.info("found liked activity " + embeddedStatement + " in " + statement);
+                    }
+                }
+            }
+            if (WANT_PATTERN.matches(statement)) {
+                for (StatementComponent capture : WANT_PATTERN.getCaptures()) {
+                    if (capture instanceof  AbstractComponent) {
+                        AbstractComponent abstractComponent = (AbstractComponent) capture;
+                        wants.add(abstractComponent.getNormalCompound());
+                        if (!abstractComponent.isVerb()) {
+                            logger.info("found want " + abstractComponent + " in " + statement);
+                        } else {
+                            logger.info("found wanted activity " + abstractComponent + " in " + statement);
+                        }
+                    } else  if (capture instanceof Statement) {
+                        Statement embeddedStatement = (Statement) capture;
+                        activities.add(
+                                embeddedStatement.getVerb().getNormalCompound()
+                                        + (embeddedStatement.getDirectObject() != null? " " + embeddedStatement.getDirectObject().getNormalCompound() : "")
+                        );
+                        logger.info("found wanted activity " + embeddedStatement + " in " + statement);
+                    }
+                }
+            }
+        }
+
+        logger.info("total likes found: " + likes.size());
+        logger.info("total wants found: " + wants.size());
+        logger.info("total activities found: " + activities.size());
+    }
+
+    /**
+     * Unpack statements according to certain patterns to replace them with their embedded statements.
+     */
     private void registerProperNouns() {
         for (Statement statement : statements) {
             if (PROPER_NOUN_PATTERN.matches(statement)) {
@@ -252,10 +336,18 @@ public class Profile {
                     logger.info("found work " + abstractComponent + " in " + statement);
                 }
             }
+            if (IDENTITY_PATTERN.matches(statement)) {
+                for (StatementComponent capture : IDENTITY_PATTERN.getCaptures()) {
+                    AbstractComponent abstractComponent = (AbstractComponent) capture;
+                    identities.add(abstractComponent.getNormalCompound());
+                    logger.info("found identity " + abstractComponent + " in " + statement);
+                }
+            }
         }
 
         logger.info("total studies found: " + studies.size());
         logger.info("total work found: " + work.size());
+        logger.info("total identities found: " + identities.size());
     }
 
     /**
@@ -409,26 +501,24 @@ public class Profile {
         return work;
     }
 
+    public Set<String> getIdentities() {
+        return identities;
+    }
+
     public Set<String> getProperNouns() {
         return properNouns;
     }
 
-    /**
-     * Whether or not the statement contains one of the topics of the profile.
-     *
-     * @param statement the statement to check
-     * @return true if the statement contains a topic
-     */
-    private boolean containsTopics(Statement statement) {
-        for (StatementComponent component : statement.getComponents()) {
-            if (component instanceof AbstractComponent) {
-                AbstractComponent abstractComponent = (AbstractComponent) component;
-                String basicCompound = abstractComponent.getBasicCompound();
-                if (getTopics().contains(basicCompound)) return true;
-            }
-        }
+    public Set<String> getLikes() {
+        return likes;
+    }
 
-        return false;
+    public Set<String> getWants() {
+        return wants;
+    }
+
+    public Set<String> getActitivies() {
+        return activities;
     }
 
     /**
