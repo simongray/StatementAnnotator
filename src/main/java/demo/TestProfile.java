@@ -83,30 +83,40 @@ public class TestProfile {
         System.out.println("common entities:" + firstProfile.getCommonEntities(secondProfile));
         System.out.println("common activities:" + firstProfile.getCommonActivities(secondProfile));
 
-//        int limit = 20;
+        int limit = 10;
+        Profile.RelevanceComparator relevanceComparator;
+        List<Statement> statementsByLexicalDensity;
+        List<Statement> statementsByQuality;
+        List<Statement> statementsByRelevance;
 
         // the results presented to Mark
-//        System.out.println(firstProfile.getInterestingStatements().size() + " interesting statements in first profile");
-//        List<Statement> statementsByLexicalDensity = firstProfile.getStatementsByLexicalDensity();
-//        List<Statement> statementsByQuality = firstProfile.getStatementsByQuality();
-//        List<Statement> statementsByRelevance = firstProfile.getStatementsByRelevance(secondProfile);
-//        for (int i = 0; i < statementsByLexicalDensity.size() && i < limit; i++) {
-//            System.out.println("relevn.: " + statementsByRelevance.get(i) + " --> " + statementsByRelevance.get(i).getOrigin());
-//            System.out.println("quality: " + statementsByQuality.get(i) + " --> " + statementsByQuality.get(i).getOrigin());
-//            System.out.println("density: " + statementsByLexicalDensity.get(i) + " --> " + statementsByLexicalDensity.get(i).getOrigin());
-//            System.out.println();
-//        }
-//
-//        // the results presented to me
-//        System.out.println(secondProfile.getInterestingStatements().size() + " interesting statements in second profile");
-//        statementsByLexicalDensity = secondProfile.getStatementsByLexicalDensity();
-//        statementsByQuality = secondProfile.getStatementsByQuality();
-//        statementsByRelevance = secondProfile.getStatementsByRelevance(firstProfile);
-//        for (int i = 0; i < statementsByLexicalDensity.size() && i < limit; i++) {
-//            System.out.println("relevn.: " + statementsByRelevance.get(i) + " --> " + statementsByRelevance.get(i).getOrigin());
-//            System.out.println("quality: " + statementsByQuality.get(i) + " --> " + statementsByQuality.get(i).getOrigin());
-//            System.out.println("density: " + statementsByLexicalDensity.get(i) + " --> " + statementsByLexicalDensity.get(i).getOrigin());
-//            System.out.println();
-//        }
+        System.out.println(firstProfile.getInterestingStatements().size() + " interesting statements in first profile");
+        statementsByLexicalDensity = firstProfile.getStatementsByLexicalDensity();
+        statementsByQuality = firstProfile.getStatementsByQuality();
+
+        relevanceComparator = new Profile.RelevanceComparator(secondProfile, firstProfile);
+        statementsByRelevance = firstProfile.getStatementsByRelevance(relevanceComparator);
+
+        for (int i = 0; i < statementsByLexicalDensity.size() && i < limit; i++) {
+            System.out.println("relevn.: " + firstProfile.getStatementInfo(statementsByRelevance.get(i), relevanceComparator));
+            System.out.println("quality: " + firstProfile.getStatementInfo(statementsByQuality.get(i)));
+            System.out.println("density: " + firstProfile.getStatementInfo(statementsByLexicalDensity.get(i)));
+            System.out.println();
+        }
+
+        // the results presented to me
+        System.out.println(secondProfile.getInterestingStatements().size() + " interesting statements in second profile");
+        statementsByLexicalDensity = secondProfile.getStatementsByLexicalDensity();
+        statementsByQuality = secondProfile.getStatementsByQuality();
+
+        relevanceComparator = new Profile.RelevanceComparator(firstProfile, secondProfile);
+        statementsByRelevance = secondProfile.getStatementsByRelevance(relevanceComparator);
+
+        for (int i = 0; i < statementsByLexicalDensity.size() && i < limit; i++) {
+            System.out.println("relevn.: " + secondProfile.getStatementInfo(statementsByRelevance.get(i), relevanceComparator));
+            System.out.println("quality: " + secondProfile.getStatementInfo(statementsByQuality.get(i)));
+            System.out.println("density: " + secondProfile.getStatementInfo(statementsByLexicalDensity.get(i)));
+            System.out.println();
+        }
     }
 }

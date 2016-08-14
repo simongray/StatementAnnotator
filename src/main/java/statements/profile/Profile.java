@@ -12,22 +12,22 @@ import java.util.*;
 public class Profile {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    Set<Statement> statements;
-    Set<Statement> interestingStatements = new HashSet<>();
+    private Set<Statement> statements;
+    private Set<Statement> interestingStatements = new HashSet<>();
 
     // entities found in statements using pattern matching
-    Set<String> locations = new HashSet<>();
-    Set<String> possessions = new HashSet<>();
-    Set<String> studies = new HashSet<>();
-    Set<String> work = new HashSet<>();
-    Set<String> identities = new HashSet<>();
-    Set<String> properNouns = new HashSet<>();
-    Set<String> likes = new HashSet<>();
-    Set<String> wants = new HashSet<>();
-    Map<String, Set<String>> activities = new HashMap<>();
+    private Set<String> locations = new HashSet<>();
+    private Set<String> possessions = new HashSet<>();
+    private Set<String> studies = new HashSet<>();
+    private Set<String> work = new HashSet<>();
+    private Set<String> identities = new HashSet<>();
+    private Set<String> properNouns = new HashSet<>();
+    private Set<String> likes = new HashSet<>();
+    private Set<String> wants = new HashSet<>();
+    private Map<String, Set<String>> activities = new HashMap<>();
 
-    Map<Statement, Integer> pointsMap = new HashMap<>();
-    Map<Statement, Double> qualityMap = new HashMap<>();
+    private Map<Statement, Integer> qualityPointsMap = new HashMap<>();
+    private Map<Statement, Double> qualityMap = new HashMap<>();
 
     private static DecimalFormat df = new DecimalFormat("#.##");
 
@@ -111,14 +111,14 @@ public class Profile {
     private final StatementPattern LIKE_PATTERN = new StatementPattern(
             new SubjectPattern().firstPerson(),
             new VerbPattern().words("like", "love", "prefer"),
-            new ObjectPattern().notWords(UNINTERESTING_NOUNS).capture().optional(),
+            new DirectObjectPattern().notWords(UNINTERESTING_NOUNS).capture().optional(),
             EMBEDDED_ACTIVITY_PATTERN
     );
 
     private final StatementPattern WANT_PATTERN = new StatementPattern(
             new SubjectPattern().firstPerson(),
             new VerbPattern().words("want"),
-            new ObjectPattern().notWords(UNINTERESTING_NOUNS).capture().optional(),
+            new DirectObjectPattern().notWords(UNINTERESTING_NOUNS).capture().optional(),
             EMBEDDED_ACTIVITY_PATTERN
     );
 
@@ -298,7 +298,7 @@ public class Profile {
      * @param statement the statement to add a quality point to
      */
     private void addQualityPoint(Statement statement) {
-        pointsMap.put(statement, pointsMap.getOrDefault(statement, 0) + 1);
+        qualityPointsMap.put(statement, qualityPointsMap.getOrDefault(statement, 0) + 1);
     }
 
     /**
@@ -316,7 +316,7 @@ public class Profile {
                     embeddedStatement.setOrigin(statement.getOrigin());
                     embeddedStatements.add(embeddedStatement);
                     embeddingStatements.add(statement);
-                    pointsMap.put(embeddedStatement, pointsMap.getOrDefault(statement, 0) + 1);
+                    qualityPointsMap.put(embeddedStatement, qualityPointsMap.getOrDefault(statement, 0) + 1);
                     logger.info("unpacked " + embeddedStatement + " from " + statement);
                 }
             }
@@ -327,7 +327,7 @@ public class Profile {
                 embeddedStatement.setOrigin(statement.getOrigin());
                 embeddedStatements.add(embeddedStatement);
                 embeddingStatements.add(statement);
-                pointsMap.put(embeddedStatement, pointsMap.getOrDefault(statement, 0) + 1);
+                qualityPointsMap.put(embeddedStatement, qualityPointsMap.getOrDefault(statement, 0) + 1);
                 logger.info("unpacked " + embeddedStatement + " from " + statement);
             }
         }
@@ -554,12 +554,12 @@ public class Profile {
     /**
      * Returns statements in order of diminishing relevance from the perspective of another profile.
      *
-     * @param otherProfile the profile to measure relevance against
+     * @param relevanceComparator the comparator used to rank the statements by relevance
      * @return relevant statements
      */
-    public List<Statement> getStatementsByRelevance(Profile otherProfile) {
+    public List<Statement> getStatementsByRelevance(RelevanceComparator relevanceComparator) {
         List<Statement> rankedStatements = new ArrayList<>(getInterestingStatements());
-        rankedStatements.sort(new RelevanceComparator(otherProfile));
+        rankedStatements.sort(relevanceComparator);
         return rankedStatements;
     }
 
@@ -615,7 +615,7 @@ public class Profile {
             // retrieve the baseline value, in this case lexical density
             double baseline = statement.getLexicalDensity();
             double multiplier = baseline * 0.25;
-            double adjustment = pointsMap.getOrDefault(statement, 0) * multiplier;
+            double adjustment = qualityPointsMap.getOrDefault(statement, 0) * multiplier;
             double quality = baseline + adjustment;
 
             // save to map for later lazy-loading
@@ -672,20 +672,105 @@ public class Profile {
     /**
      * Used to sort Statements by quality relative to other profiles.
      */
-    public class RelevanceComparator implements Comparator<Statement> {
-        private final Profile otherProfile;
+    public static class RelevanceComparator implements Comparator<Statement> {
+        protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-        public RelevanceComparator(Profile otherProfile) {
-            this.otherProfile = otherProfile;
+        private final Profile statementProfile;
+        private final Set<StatementPattern> relevancePatterns;
+        private final Map<Statement, Integer> relevancePointsMap = new HashMap<>();
+        private final Map<Statement, Double> relevanceMap = new HashMap<>();
+
+        /**
+         *
+         *
+         * @param testProfile the profile to check for commonalities
+         * @param statementProfile the profile to get ranked statements from
+         */
+        public RelevanceComparator(Profile testProfile, Profile statementProfile) {
+            this.statementProfile = statementProfile;
+            this.relevancePatterns = new HashSet<>();
+
+            // for discovering relevant entities
+            Set<String> commonEntities = testProfile.getCommonEntities(statementProfile);
+            for (String entity : commonEntities) {
+                this.relevancePatterns.add(
+                        new StatementPattern(
+                                new NonVerbPattern().words(entity)
+                        )
+                );
+            }
+
+            // for discovering relevant activities
+            Map<String, Set<String>> commonActivities = testProfile.getCommonActivities(statementProfile);
+            for (String activityVerb : commonActivities.keySet()) {
+                this.relevancePatterns.add(
+                        new StatementPattern(
+                                new VerbPattern().words(activityVerb),
+                                new NonVerbPattern().words(commonActivities.get(activityVerb))
+                        )
+                );
+            }
+
+            // assign relevance points based on the different patterns
+            for (Statement statement : statementProfile.getInterestingStatements()) {
+                for (StatementPattern pattern : relevancePatterns) {
+                    if (pattern.matches(statement)) {
+                        logger.info("adding point for: " + statement);
+                        addRelevancePoint(statement);
+                    }
+                }
+            }
+
+            logger.info("commonEntities: " + commonEntities);
+            logger.info("commonActivities: " + commonActivities);
+            logger.info("relevancePatterns: " + relevancePatterns);
+            logger.info("relevancePointsMap: " + relevancePointsMap);
+        }
+
+        public Map<Statement, Double> getRelevanceMap() {
+            return relevanceMap;
+        }
+
+        /**
+         * Adds one relevance point to this statement.
+         *
+         * @param statement the statement to add a quality point to
+         */
+        private void addRelevancePoint(Statement statement) {
+            relevancePointsMap.put(statement, relevancePointsMap.getOrDefault(statement, 0) + 1);
+        }
+
+        /**
+         * Calculates the quality for a statement.
+         * Used for rankings statements.
+         *
+         * @param statement statement to assess
+         * @return quality of statement
+         */
+        private double getStatementRelevance(Statement statement) {
+            if (!relevanceMap.containsKey(statement)) {
+                // retrieve the baseline value, in this case quality
+                double baseline = statementProfile.getStatementQuality(statement);
+                double multiplier = baseline * 0.25;
+                double adjustment = relevancePointsMap.getOrDefault(statement, 0) * multiplier;
+                double relevance = baseline + adjustment;
+
+                // save to map for later lazy-loading
+                relevanceMap.put(statement, relevance);
+                if (relevance > baseline) {
+                    logger.info("assigned relevance score (" + baseline + " -> " + relevance + "): " + statement);
+                }
+
+                return relevance;
+            } else {
+                return relevanceMap.get(statement);
+            }
         }
 
         @Override
         public int compare(Statement x, Statement y) {
-            // retrieve the baseline values, in this case lexical density
-            double xn = x.getLexicalDensity();
-            double yn = y.getLexicalDensity();
-
-            // TODO: the rest
+            double xn = getStatementRelevance(x);
+            double yn = getStatementRelevance(y);
 
             if (xn == yn) {
                 return 0;
@@ -705,7 +790,17 @@ public class Profile {
                 ": \"" + statement.getSentence() + "\"" +
                 ", density: " + df.format(statement.getLexicalDensity()) +
                 ", quality: " + df.format(qualityMap.get(statement)) +
-//                ", relevance: " + df.format(relevanceMap.get(statement)) +
+                "}" + " " + statement.getOrigin();
+    }
+
+
+    public String getStatementInfo(Statement statement, RelevanceComparator comparator) {
+        return "{" +
+                statement.getSummary() +
+                ": \"" + statement.getSentence() + "\"" +
+                ", density: " + df.format(statement.getLexicalDensity()) +
+                ", quality: " + df.format(qualityMap.get(statement)) +
+                ", relevance: " + df.format(comparator.getRelevanceMap().get(statement)) +
                 "}" + " " + statement.getOrigin();
     }
 }
