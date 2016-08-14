@@ -5,7 +5,6 @@ import edu.stanford.nlp.util.CoreMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -479,20 +478,72 @@ public class Statement implements StatementComponent {
     }
 
     /**
+     * Recursively retrieves the basic components of a statement and its embedded statements.
+     * This is a helper method for getAllBasicComponents().
+     *
+     * @param statement the statement to retrieve all basic components from
+     * @return basic components
+     */
+    private Set<AbstractComponent> getAllBasicComponents(Statement statement) {
+        Set<AbstractComponent> basicComponents = new HashSet<>();
+
+        for (StatementComponent component : statement.getComponents()) {
+            if (component instanceof AbstractComponent) {
+                basicComponents.add((AbstractComponent) component);
+            } else if (component instanceof Statement) {
+                basicComponents.addAll(getAllBasicComponents((Statement) component));
+            }
+        }
+
+        return basicComponents;
+    }
+
+    /**
+     * Recursively retrieves the basic components of this statement and its embedded statements.
+     *
+     * @return basic components
+     */
+    private Set<AbstractComponent> getAllBasicComponents() {
+        return getAllBasicComponents(this);
+    }
+
+    /**
+     * Returns the auxiliary verbs of this statement.
+     * Useful for calculating lexical density.
+     *
+     * @return auxiliary verbs
+     */
+    private Set<IndexedWord> getAuxiliaryVerbs() {
+        Set<AbstractComponent> basicComponents = getAllBasicComponents();
+        Set<IndexedWord> auxiliaryVerbs = new HashSet<>();
+
+        for (AbstractComponent component : basicComponents) {
+            if (component instanceof Verb) {
+                auxiliaryVerbs.addAll(((Verb) component).getAuxiliaryVerbs());
+            }
+        }
+
+        return auxiliaryVerbs;
+    }
+
+    /**
      * Computes the lexical density of the words in the statement.
-     * Based on the definitions found on: http://www.sltinfo.com/lexical-density/
+     * Based on the definition found on: http://www.sltinfo.com/lexical-density/
      * @return the lexical density of the statement
      */
     public double getLexicalDensity() {
         double lexicalWords = 0.0;
         Set<IndexedWord> words = getWords();
+        Set<IndexedWord> auxiliaryVerbs = getAuxiliaryVerbs();
 
         if (words.size() == 0) {
             logger.error("no words in statement from sentence: " + getOrigin() + ")");
             return 0.0;
         } else {
             for (IndexedWord word : words) {
-                if (PartsOfSpeech.LEXICAL_WORDS.contains(word.tag())) lexicalWords += 1.0;
+                if (PartsOfSpeech.LEXICAL_WORDS.contains(word.tag()) && !auxiliaryVerbs.contains(word)) {
+                    lexicalWords += 1.0;
+                }
             }
             return lexicalWords / (double) words.size();
         }

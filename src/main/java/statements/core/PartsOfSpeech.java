@@ -134,6 +134,7 @@ public class PartsOfSpeech {
     static {
         LEXICAL_WORDS.addAll(VERBS);
         LEXICAL_WORDS.addAll(NOUNS);
+        LEXICAL_WORDS.addAll(PROPER_NOUNS);
         LEXICAL_WORDS.addAll(ADJECTIVES);
         LEXICAL_WORDS.addAll(ADVERBS);
     }

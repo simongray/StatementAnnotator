@@ -35,6 +35,10 @@ public class Verb extends AbstractComponent {
         all.addAll(aux);
     }
 
+    public Set<IndexedWord> getAuxiliaryVerbs() {
+        return aux;
+    }
+
     /**
      * Whether or not this verb is a copula (= some form of "to be").
      *
