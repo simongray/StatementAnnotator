@@ -53,6 +53,9 @@ public class TestSingleProfile {
         System.out.println("interesting statements: " + profile.getInterestingStatements().size());
         System.out.println("locations: " + profile.getLocations());
         System.out.println("possessions: " + profile.getPossessions());
+        System.out.println("studies: " + profile.getStudies());
+        System.out.println("work: " + profile.getWork());
+        System.out.println("proper nouns: " + profile.getProperNouns());
         List<Statement> statementsByLexicalDensity = profile.getStatementsByLexicalDensity();
         List<Statement> statementsByQuality = profile.getStatementsByQuality();
         for (int i = 0; i < statementsByLexicalDensity.size(); i++) {

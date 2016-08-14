@@ -79,6 +79,9 @@ public class TestNewPatterns {
 
         StatementPattern questionPattern = new StatementPattern().question();
         StatementPattern citationPattern = new StatementPattern().citation();
+        StatementPattern trivialPattrn = new StatementPattern(
+
+        );
 
         for (Statement statement : statements) {
 //            if (thinkPattern.matches(statement)) {

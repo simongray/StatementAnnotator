@@ -21,6 +21,9 @@ public class Profile {
     Set<String> topics = new HashSet<>();
     Set<String> locations = new HashSet<>();
     Set<String> possessions = new HashSet<>();
+    Set<String> studies = new HashSet<>();
+    Set<String> work = new HashSet<>();
+    Set<String> properNouns = new HashSet<>();
     Map<Statement, Double> qualityMap = new HashMap<>();
     private static DecimalFormat df = new DecimalFormat("#.##");
 
@@ -93,6 +96,28 @@ public class Profile {
     );
 
     /**
+     * Captures proper nouns.
+     */
+    private final StatementPattern PROPER_NOUN_PATTERN = new StatementPattern(
+            new NonVerbPattern().properNoun().notWords(UNINTERESTING_NOUNS).capture()
+    );
+
+    /**
+     * Captures objects that indicate the occupation of the author
+     */
+    private final StatementPattern STUDY_PATTERN = new StatementPattern(
+            new SubjectPattern().firstPerson(),
+            new VerbPattern().words("study"),
+            new ObjectPattern().capture().optional().notWords(UNINTERESTING_NOUNS)
+    );
+
+    private final StatementPattern WORK_PATTERN = new StatementPattern(
+            new SubjectPattern().firstPerson(),
+            new VerbPattern().words("work"),
+            new IndirectObjectPattern().capture().optional().notWords(UNINTERESTING_NOUNS)
+    );
+
+    /**
      * Captures objects that indicate the location of the author.
      */
     private final StatementPattern LOCATION_PATTERN = new StatementPattern(
@@ -102,10 +127,16 @@ public class Profile {
     );
 
     /**
-     * Captures objects that indicate the location of the author.
+     * Captures objects that indicate the possessions of the author.
      */
-    private final StatementPattern POSSESSION_PATTERN = new StatementPattern(
+    private final StatementPattern POSSESSION_PATTERN_1 = new StatementPattern(
             new NonVerbPattern().noun().firstPersonPossessive().capture()
+    );
+
+    private final StatementPattern POSSESSION_PATTERN_2 = new StatementPattern(
+            new SubjectPattern().firstPerson(),
+            new VerbPattern().words("have", "own", "possess"),
+            new DirectObjectPattern().noun().capture().notWords(UNINTERESTING_NOUNS)
     );
 
     /**
@@ -139,6 +170,12 @@ public class Profile {
 
         // find possessions of the author
         registerPossessions();
+
+        // find occupations of the author
+        registerOccupations();
+
+        // find pronouns mentioned by the author
+        registerProperNouns();
 
         // store the topic keywords of all interesting statements
         // used to rank statements in relation to other users
@@ -182,6 +219,48 @@ public class Profile {
     /**
      * Unpack statements according to certain patterns to replace them with their embedded statements.
      */
+    private void registerProperNouns() {
+        for (Statement statement : statements) {
+            if (PROPER_NOUN_PATTERN.matches(statement)) {
+                for (StatementComponent capture : PROPER_NOUN_PATTERN.getCaptures()) {
+                    AbstractComponent abstractComponent = (AbstractComponent) capture;
+                    properNouns.add(abstractComponent.getNormalCompound());
+                    logger.info("found proper noun " + abstractComponent + " in " + statement);
+                }
+            }
+        }
+
+        logger.info("total proper nouns found: " + properNouns.size());
+    }
+
+    /**
+     * Unpack statements according to certain patterns to replace them with their embedded statements.
+     */
+    private void registerOccupations() {
+        for (Statement statement : statements) {
+            if (STUDY_PATTERN.matches(statement)) {
+                for (StatementComponent capture : STUDY_PATTERN.getCaptures()) {
+                    AbstractComponent abstractComponent = (AbstractComponent) capture;
+                    studies.add(abstractComponent.getNormalCompound());
+                    logger.info("found study " + abstractComponent + " in " + statement);
+                }
+            }
+            if (WORK_PATTERN.matches(statement)) {
+                for (StatementComponent capture : WORK_PATTERN.getCaptures()) {
+                    AbstractComponent abstractComponent = (AbstractComponent) capture;
+                    work.add(abstractComponent.getNormalCompound());
+                    logger.info("found work " + abstractComponent + " in " + statement);
+                }
+            }
+        }
+
+        logger.info("total studies found: " + studies.size());
+        logger.info("total work found: " + work.size());
+    }
+
+    /**
+     * Unpack statements according to certain patterns to replace them with their embedded statements.
+     */
     private void registerLocations() {
         for (Statement statement : statements) {
             if (LOCATION_PATTERN.matches(statement)) {
@@ -201,11 +280,18 @@ public class Profile {
      */
     private void registerPossessions() {
         for (Statement statement : statements) {
-            if (POSSESSION_PATTERN.matches(statement)) {
-                for (StatementComponent capture : POSSESSION_PATTERN.getCaptures()) {
+            if (POSSESSION_PATTERN_1.matches(statement)) {
+                for (StatementComponent capture : POSSESSION_PATTERN_1.getCaptures()) {
                     AbstractComponent abstractComponent = (AbstractComponent) capture;
                     possessions.add(abstractComponent.getNormalCompound());
-                    logger.info("found possession " + abstractComponent + " in " + statement);
+                    logger.info("found possession " + abstractComponent + " in " + statement + " using POSSESSION_PATTERN_1");
+                }
+            }
+            if (POSSESSION_PATTERN_2.matches(statement)) {
+                for (StatementComponent capture : POSSESSION_PATTERN_2.getCaptures()) {
+                    AbstractComponent abstractComponent = (AbstractComponent) capture;
+                    possessions.add(abstractComponent.getNormalCompound());
+                    logger.info("found possession " + abstractComponent + " in " + statement + " using POSSESSION_PATTERN_2");
                 }
             }
         }
@@ -310,8 +396,21 @@ public class Profile {
     public Set<String> getLocations() {
         return locations;
     }
+
     public Set<String> getPossessions() {
         return possessions;
+    }
+
+    public Set<String> getStudies() {
+        return studies;
+    }
+
+    public Set<String> getWork() {
+        return work;
+    }
+
+    public Set<String> getProperNouns() {
+        return properNouns;
     }
 
     /**
