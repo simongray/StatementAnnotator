@@ -222,6 +222,76 @@ public class Profile {
     }
 
     /**
+     * Find entities that have something in common between this profile and another one.
+     * Entities are identified by their common relationship to the author.
+     *
+     * @param otherProfile the other profile to search in
+     * @return the commonalities
+     */
+    public Set<String> getCommonEntities(Profile otherProfile) {
+        Set<String> commonLocations = new HashSet<>(otherProfile.getLocations());
+        commonLocations.retainAll(getLocations());
+
+        Set<String> commonPossessions = new HashSet<>(otherProfile.getPossessions());
+        commonPossessions.retainAll(getPossessions());
+
+        Set<String> commonStudies = new HashSet<>(otherProfile.getStudies());
+        commonStudies.retainAll(getStudies());
+
+        Set<String> commonWork = new HashSet<>(otherProfile.getWork());
+        commonWork.retainAll(getWork());
+
+        Set<String> commonIdentities = new HashSet<>(otherProfile.getIdentities());
+        commonIdentities.retainAll(getIdentities());
+
+        Set<String> commonProperNouns = new HashSet<>(otherProfile.getProperNouns());
+        commonProperNouns.retainAll(getProperNouns());
+
+        Set<String> commonLikes = new HashSet<>(otherProfile.getLikes());
+        commonLikes.retainAll(getLikes());
+
+        Set<String> commonWants = new HashSet<>(otherProfile.getWants());
+        commonWants.retainAll(getWants());
+
+        // add all together as commonalities
+        Set<String> commonEntities = new HashSet<>();
+        commonEntities.addAll(commonLocations);
+        commonEntities.addAll(commonPossessions);
+        commonEntities.addAll(commonStudies);
+        commonEntities.addAll(commonWork);
+        commonEntities.addAll(commonIdentities);
+        commonEntities.addAll(commonProperNouns);
+        commonEntities.addAll(commonLikes);
+        commonEntities.addAll(commonWants);
+
+        return  commonEntities;
+    }
+
+    /**
+     * Find activities in common between this prifle and another one.
+     *
+     * @param otherProfile the other profile to search in
+     * @return the common activities
+     */
+    public Map<String, Set<String>> getCommonActivities(Profile otherProfile) {
+        Map<String, Set<String>> commonActivities = new HashMap<>();
+        Map<String, Set<String>> otherActivities = otherProfile.getActitivies();
+
+        for (String activityVerb : activities.keySet()) {
+            if (otherActivities.containsKey(activityVerb)) {
+                Set<String> objects = activities.get(activityVerb);
+                Set<String> otherObjects = new HashSet<>(otherActivities.get(activityVerb));
+                otherObjects.retainAll(objects);
+                Set<String> commonObjects = commonActivities.getOrDefault(activityVerb, new HashSet<>());
+                commonObjects.addAll(otherObjects);
+                commonActivities.put(activityVerb, commonObjects);
+            }
+        }
+
+        return commonActivities;
+    }
+
+    /**
      * Adds one quality point to this statement.
      * Quality points are used to rank statements together with the Lexical Density.
      *
@@ -429,6 +499,7 @@ public class Profile {
 
                 addQualityPoint(statement);
             }
+
             if (POSSESSION_PATTERN_2.matches(statement)) {
                 for (StatementComponent capture : POSSESSION_PATTERN_2.getCaptures()) {
                     AbstractComponent abstractComponent = (AbstractComponent) capture;
