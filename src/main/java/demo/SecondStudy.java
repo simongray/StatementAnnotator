@@ -28,7 +28,7 @@ public class SecondStudy {
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
         // load comments
-        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/kaspar42_comment_history.json", Charset.defaultCharset());
+        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/MagFreakingNeto_comment_history.json", Charset.defaultCharset());
         JSONArray jsonArray = new JSONArray(content);
         List<String> comments = RedditCommentProcessor.getComments(jsonArray, RedditCommentProcessor.ENGLISH);
         Set<Statement> statements = new HashSet<>();
@@ -84,8 +84,10 @@ public class SecondStudy {
         System.out.println("identities: " + profile.getIdentities());
         System.out.println("proper nouns: " + profile.getProperNouns());
         System.out.println("likes: " + profile.getLikes());
+        System.out.println("dislikes: " + profile.getDislikes());
         System.out.println("wants: " + profile.getWants());
-        System.out.println("activities: " + profile.getActitivies());
+        System.out.println("activities: " + profile.getActivities());
+        System.out.println("feelings: " + profile.getFeelings());
         List<Statement> statementsByLexicalDensity = profile.getStatementsByLexicalDensity();
         List<Statement> statementsByQuality = profile.getStatementsByQuality();
         for (int i = 0; i < statementsByLexicalDensity.size(); i++) {

@@ -25,7 +25,7 @@ public class TestNewPatterns {
         props.setProperty("customAnnotatorClass.statement", "statements.StatementAnnotator");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
-        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/SimonGray_comment_history.json", Charset.defaultCharset());
+        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/MagFreakingNeto_comment_history.json", Charset.defaultCharset());
 //        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/mark_comment_history.json", Charset.defaultCharset());
         JSONArray firstUserJsonArray = new JSONArray(content);
 
@@ -80,11 +80,17 @@ public class TestNewPatterns {
 
         StatementPattern questionPattern = new StatementPattern().question();
         StatementPattern citationPattern = new StatementPattern().citation();
-        StatementPattern testPattern = new StatementPattern(
+        StatementPattern testPattern1 = new StatementPattern(
                 new SubjectPattern().firstPerson(),
-                new VerbPattern().copula(false).notWords(Common.POSSESS_VERB).capture(),
-                new DirectObjectPattern().negated(false).specific(false).description(false).partsOfSpeech(Tag.noun, Tag.properNoun).notWords(Profile.UNINTERESTING_NOUNS).capture()
-        ).size(3);
+//                new VerbPattern().words("hate", "dislike")
+                new VerbPattern().words("love", "like").negated(true)
+        );
+
+        StatementPattern testPattern2 = new StatementPattern(
+                new SubjectPattern().firstPerson(),
+//                new VerbPattern().words("hate", "dislike")
+                new VerbPattern().words("hate", "detest")
+        );
 
         for (Statement statement : statements) {
 //            if (thinkPattern.matches(statement)) {
@@ -104,10 +110,15 @@ public class TestNewPatterns {
 //                System.out.println("citation: " + statement + " --> " + statement.getComponents());
 //                System.out.println("      " + statement.getOrigin());
 //            }
-            if (testPattern.matches(statement)) {
-                System.out.println("test: " + statement + " --> " + statement.getComponents());
+            if (testPattern1.matches(statement)) {
+                System.out.println("test1: " + statement + " --> " + statement.getComponents());
                 System.out.println("      " + statement.getOrigin());
-                System.out.println("      " + testPattern.getCaptures());
+                System.out.println("      " + testPattern1.getCaptures());
+            }
+            if (testPattern2.matches(statement)) {
+                System.out.println("test2: " + statement + " --> " + statement.getComponents());
+                System.out.println("      " + statement.getOrigin());
+                System.out.println("      " + testPattern2.getCaptures());
             }
         }
     }

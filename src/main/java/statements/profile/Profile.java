@@ -23,6 +23,7 @@ public class Profile {
     private Set<String> identities = new HashSet<>();
     private Set<String> properNouns = new HashSet<>();
     private Set<String> likes = new HashSet<>();
+    private Set<String> dislikes = new HashSet<>();
     private Set<String> wants = new HashSet<>();
     private Set<String> feelings = new HashSet<>();
     private Map<String, Set<String>> activities = new HashMap<>();
@@ -116,7 +117,7 @@ public class Profile {
 
     private final StatementPattern LIKE_PATTERN_1 = new StatementPattern(
             new SubjectPattern().firstPerson(),
-            new VerbPattern().words("like", "love", "prefer"),
+            new VerbPattern().words(Common.LIKE_VERB),
             new DirectObjectPattern().notWords(UNINTERESTING_NOUNS).capture().optional(),
             EMBEDDED_ACTIVITY_PATTERN
     );
@@ -124,12 +125,24 @@ public class Profile {
     private final StatementPattern LIKE_PATTERN_2 = new StatementPattern(
             new SubjectPattern().thirdPerson().notWords(UNINTERESTING_NOUNS).capture(),
             new VerbPattern().copula(),
-            new DirectObjectPattern().adjective().words(Common.POSITIVE_ADJECTIVE).description(false)
+            new DirectObjectPattern().adjective().words(Common.POSITIVE_ADJECTIVE)
+    );
+
+    private final StatementPattern DISLIKE_PATTERN_1 = new StatementPattern(
+            new SubjectPattern().firstPerson(),
+            new VerbPattern().words(Common.DISLIKE_VERB),
+            new DirectObjectPattern().notWords(UNINTERESTING_NOUNS).capture()
+    );
+
+    private final StatementPattern DISLIKE_PATTERN_2 = new StatementPattern(
+            new SubjectPattern().thirdPerson().notWords(UNINTERESTING_NOUNS).capture(),
+            new VerbPattern().copula(),
+            new DirectObjectPattern().adjective().words(Common.NEGATIVE_ADJECTIVE)
     );
 
     private final StatementPattern WANT_PATTERN = new StatementPattern(
             new SubjectPattern().firstPerson(),
-            new VerbPattern().words("want"),
+            new VerbPattern().words(Common.WANT_VERB),
             new DirectObjectPattern().notWords(UNINTERESTING_NOUNS).capture().optional(),
             EMBEDDED_ACTIVITY_PATTERN
     );
@@ -286,6 +299,9 @@ public class Profile {
         Set<String> commonLikes = new HashSet<>(otherProfile.getLikes());
         commonLikes.retainAll(getLikes());
 
+        Set<String> commonDislikes = new HashSet<>(otherProfile.getDislikes());
+        commonDislikes.retainAll(getDislikes());
+
         Set<String> commonWants = new HashSet<>(otherProfile.getWants());
         commonWants.retainAll(getWants());
 
@@ -301,6 +317,7 @@ public class Profile {
         commonEntities.addAll(commonIdentities);
         commonEntities.addAll(commonProperNouns);
         commonEntities.addAll(commonLikes);
+        commonEntities.addAll(commonDislikes);
         commonEntities.addAll(commonWants);
         commonEntities.addAll(commonFeelings);
 
@@ -315,7 +332,7 @@ public class Profile {
      */
     public Map<String, Set<String>> getCommonActivities(Profile otherProfile) {
         Map<String, Set<String>> commonActivities = new HashMap<>();
-        Map<String, Set<String>> otherActivities = otherProfile.getActitivies();
+        Map<String, Set<String>> otherActivities = otherProfile.getActivities();
 
         for (String activityVerb : activities.keySet()) {
             if (otherActivities.containsKey(activityVerb)) {
@@ -416,6 +433,26 @@ public class Profile {
                     AbstractComponent abstractComponent = (AbstractComponent) capture;
                     likes.add(abstractComponent.getNormalCompound());
                     logger.info("found like " + abstractComponent + " in " + statement);
+                }
+
+                addQualityPoint(statement);
+            }
+
+            if (DISLIKE_PATTERN_1.matches(statement)) {
+                for (StatementComponent capture : DISLIKE_PATTERN_1.getCaptures()) {
+                    AbstractComponent abstractComponent = (AbstractComponent) capture;
+                    dislikes.add(abstractComponent.getNormalCompound());
+                    logger.info("found dislike " + abstractComponent + " in " + statement);
+                }
+
+                addQualityPoint(statement);
+            }
+
+            if (DISLIKE_PATTERN_2.matches(statement)) {
+                for (StatementComponent capture : DISLIKE_PATTERN_2.getCaptures()) {
+                    AbstractComponent abstractComponent = (AbstractComponent) capture;
+                    dislikes.add(abstractComponent.getNormalCompound());
+                    logger.info("found dislike " + abstractComponent + " in " + statement);
                 }
 
                 addQualityPoint(statement);
@@ -685,11 +722,15 @@ public class Profile {
         return likes;
     }
 
+    public Set<String> getDislikes() {
+        return dislikes;
+    }
+
     public Set<String> getWants() {
         return wants;
     }
 
-    public Map<String, Set<String>> getActitivies() {
+    public Map<String, Set<String>> getActivities() {
         return activities;
     }
 
