@@ -14,95 +14,142 @@ import statements.core.Statement;
 import statements.profile.Profile;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 
 public class SecondStudy {
-    public static void main(String[] args) throws IOException {
-        // setting up the pipeline
-        Properties props = new Properties();
-        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, depparse, statement");  // short pipeline
-        props.setProperty("customAnnotatorClass.statement", "statements.StatementAnnotator");
-        props.setProperty("ssplit.newlineIsSentenceBreak", "always");  // IMPORTANT!!
-        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+    static StanfordCoreNLP pipeline;
 
-        // load comments
-        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/MagFreakingNeto_comment_history.json", Charset.defaultCharset());
+    public static Profile createProfile(String username, boolean limited, PrintWriter writer) throws IOException {
+        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/"+username+"_comment_history.json", Charset.defaultCharset());
         JSONArray jsonArray = new JSONArray(content);
         List<String> comments = RedditCommentProcessor.getComments(jsonArray, RedditCommentProcessor.ENGLISH);
         Set<Statement> statements = new HashSet<>();
 
         List<CoreMap> sentenceDataset = new ArrayList<>();
 
-        int sentenceCountdown = 50;
+        if (limited) {
+            int sentenceCountdown = 50;
 
-        // retrieve statements from comments
-        for (String comment : comments) {
-            Annotation annotation = new Annotation(comment);
-            pipeline.annotate(annotation);
-            List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
+            // retrieve statements from comments
+            for (String comment : comments) {
+                Annotation annotation = new Annotation(comment);
+                pipeline.annotate(annotation);
+                List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
 
-            for (int i = 0; i < sentences.size(); i++) {
-                if (i == 0 || i == sentences.size()) {
-                    if (sentenceCountdown > 0) {
-                        String sentenceString = sentences.get(i).toString();
+                for (int i = 0; i < sentences.size(); i++) {
+                    if (i == 0 || i == sentences.size()) {
+                        if (sentenceCountdown > 0) {
+                            String sentenceString = sentences.get(i).toString();
 
-                        // don't include very short sentences
-                        if (sentenceString.length() > 30) {
+                            // don't include very short sentences
+                            if (sentenceString.length() > 30) {
 
-                            // do not include questions and citations in data set
-                            if (!sentenceString.endsWith("?") && !(sentenceString.startsWith("\"") && sentenceString.endsWith("\""))) {
-                                Set<Statement> sentenceStatements = sentences.get(i).get(StatementsAnnotation.class);
+                                // do not include questions and citations in data set
+                                if (!sentenceString.endsWith("?") && !(sentenceString.startsWith("\"") && sentenceString.endsWith("\""))) {
+                                    Set<Statement> sentenceStatements = sentences.get(i).get(StatementsAnnotation.class);
 
-                                // only include if the sentence spawned any sentences
-                                if (sentenceStatements != null) {
-                                    sentenceCountdown--;
-                                    sentenceDataset.add(sentences.get(i));
-                                    statements.addAll(sentenceStatements);
+                                    // only include if the sentence spawned any sentences
+                                    if (sentenceStatements != null) {
+                                        sentenceCountdown--;
+                                        sentenceDataset.add(sentences.get(i));
+                                        statements.addAll(sentenceStatements);
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            if (sentenceCountdown == 0) {
-                System.out.println("reached 50 sentences!");
-                break;
+                if (sentenceCountdown == 0) {
+                    break;
+                }
+            }
+        } else {
+            // retrieve statements from comments
+            for (String comment : comments) {
+                Annotation annotation = new Annotation(comment);
+                pipeline.annotate(annotation);
+                List<CoreMap> sentences = annotation.get(SentencesAnnotation.class);
+
+                for (CoreMap sentence : sentences) {
+                    Set<Statement> sentenceStatements = sentence.get(StatementsAnnotation.class);
+                    if (sentenceStatements != null) statements.addAll(sentenceStatements);
+                }
             }
         }
 
         // create profile based on statements
         Profile profile = new Profile(statements);
-        System.out.println("statements: " + profile.getStatements().size());
-        System.out.println("interesting statements: " + profile.getInterestingStatements().size());
-        System.out.println("locations: " + profile.getLocations());
-        System.out.println("possessions: " + profile.getPossessions());
-        System.out.println("studies: " + profile.getStudies());
-        System.out.println("work: " + profile.getWork());
-        System.out.println("identities: " + profile.getIdentities());
-        System.out.println("proper nouns: " + profile.getProperNouns());
-        System.out.println("likes: " + profile.getLikes());
-        System.out.println("dislikes: " + profile.getDislikes());
-        System.out.println("wants: " + profile.getWants());
-        System.out.println("activities: " + profile.getActivities());
-        System.out.println("feelings: " + profile.getFeelings());
-        List<Statement> statementsByLexicalDensity = profile.getStatementsByLexicalDensity();
-        List<Statement> statementsByQuality = profile.getStatementsByQuality();
-        for (int i = 0; i < statementsByLexicalDensity.size(); i++) {
-            System.out.println("quality: " + profile.getStatementInfo(statementsByQuality.get(i)));
-            System.out.println();
+        writer.println("Profile for: " + username);
+        writer.println("statements: " + profile.getStatements().size());
+        writer.println("interesting statements: " + profile.getInterestingStatements().size());
+        writer.println("locations: " + profile.getLocations());
+        writer.println("possessions: " + profile.getPossessions());
+        writer.println("studies: " + profile.getStudies());
+        writer.println("work: " + profile.getWork());
+        writer.println("identities: " + profile.getIdentities());
+        writer.println("proper nouns: " + profile.getProperNouns());
+        writer.println("likes: " + profile.getLikes());
+        writer.println("dislikes: " + profile.getDislikes());
+        writer.println("wants: " + profile.getWants());
+        writer.println("activities: " + profile.getActivities());
+        writer.println("feelings: " + profile.getFeelings());
+
+        if (limited) {
+            writer.println();
+            writer.println("sentences: " + sentenceDataset.size());
+            for (int i = 0; i < 50; i++) {
+                writer.println(sentenceDataset.get(i));
+            }
         }
 
-        System.out.println();
-        System.out.println("sentences: " + sentenceDataset.size());
-        for (CoreMap sentence : sentenceDataset) {
-            System.out.print(sentence + "  -->  ");
-            for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
-                System.out.print(token.word() + "-" + token.tag() + " ");
-            }
-            System.out.println();
+        return profile;
+    }
+
+    public static void main(String[] args) throws IOException {
+        // setting up the pipeline
+        Properties props = new Properties();
+        props.setProperty("annotators", "tokenize, ssplit, pos, lemma, depparse, statement");  // short pipeline
+        props.setProperty("customAnnotatorClass.statement", "statements.StatementAnnotator");
+        props.setProperty("ssplit.newlineIsSentenceBreak", "always");  // IMPORTANT!!
+        pipeline = new StanfordCoreNLP(props);
+
+        String participant = "sklopnicht";
+        String[] users = new String[] {"MagFreakingNeto", "kaspar42", "GryphonGuitar"};
+        PrintWriter writer = new PrintWriter(participant + "_result.txt", "UTF-8");
+        Profile participantProfile = createProfile("sklopnicht", false, writer);
+        writer.println();
+
+        int limit = 50;
+        List<Statement> statementsByQuality = participantProfile.getStatementsByQuality();
+        writer.println("Top " + limit + " statements from "+ participant + " by quality");
+
+        for (int i = 0; i < statementsByQuality.size() && i < limit; i++) {
+            writer.println(statementsByQuality.get(i).getOrigin());
         }
+
+        for (String user : users) {
+            writer.println();
+            Profile userProfile = createProfile(user, true, writer);
+
+            Profile.RelevanceComparator relevanceComparator = new Profile.RelevanceComparator(participantProfile, userProfile);
+            List<Statement> statementsByRelevance = userProfile.getStatementsByRelevance(relevanceComparator);
+
+            writer.println();
+            writer.println("common entities:" + participantProfile.getCommonEntities(userProfile));
+            writer.println("common activities:" + participantProfile.getCommonActivities(userProfile));
+            writer.println("Statements from "+ user + " by relevance to " + participant);
+
+            for (int i = 0; i < statementsByRelevance.size(); i++) {
+                writer.println(statementsByRelevance.get(i).getOrigin());
+            }
+        }
+
+        writer.close();
     }
 }

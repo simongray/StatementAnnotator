@@ -24,7 +24,7 @@ public class MarkdownStripper {
         patterns.put("prefix strike-through", "~~([^~])");
         patterns.put("postfix strike-through", "([^~])~~");
         patterns.put("link", "\\[([^\\[]+)\\]\\([^)]+\\)" );
-        patterns.put("quote", ">+(\\s*[^>\\n]+)");
+        patterns.put("quote", ">+\\s*([^>\\n]+)");
         // TODO: add more patterns
     }
 
@@ -35,7 +35,9 @@ public class MarkdownStripper {
      */
     private Map<String, String> replacements = new HashMap<>();
     {
-        replacements.put("quote", "\"$1\"");
+//        replacements.put("quote", "\"$1\"");
+        // TODO: fix this!!!
+        replacements.put("quote", "");  // replacing with nothing for now, as multi-line citations are not getting registered properly
     }
 
     public MarkdownStripper() {}
