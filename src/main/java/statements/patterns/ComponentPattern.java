@@ -27,6 +27,7 @@ public class ComponentPattern implements Pattern {
     private Boolean local;
     private Boolean copula;
     private Boolean capitalised;
+    private Boolean description;
     private Tag[] partsOfSpeech;
     private Tag[] compoundTags;
     private Set<Set<String>> tagGroups;
@@ -68,7 +69,7 @@ public class ComponentPattern implements Pattern {
     }
 
     public ComponentPattern notWords(String... words) {
-        if (this.notWords() == null) this.notWords = new HashSet<>();
+        if (this.notWords == null) this.notWords = new HashSet<>();
         for (int i = 0; i < words.length; i++) words[i] = words[i].toLowerCase();
         Collections.addAll(this.notWords, words);
         return this;
@@ -151,6 +152,15 @@ public class ComponentPattern implements Pattern {
     public ComponentPattern preposition() {
         preposition(new String[0]);  // empty array will match any preposition
         return this;
+    }
+
+    public ComponentPattern description(Boolean state) {
+        this.description = state;
+        return this;
+    }
+
+    public ComponentPattern description() {
+        return description(true);
     }
 
     /*
@@ -311,6 +321,8 @@ public class ComponentPattern implements Pattern {
             if (local != null && abstractComponent.isLocal() != local) return false;
 
             if (capitalised != null && abstractComponent.isCapitalised() != capitalised) return false;
+
+            if (description != null && abstractComponent.hasDescription() != description) return false;
 
             if (partsOfSpeech != null && !matchesPartOfSpeech(abstractComponent)) return false;
 
@@ -482,6 +494,7 @@ public class ComponentPattern implements Pattern {
 
         String normalCompound = abstractComponent.getNormalCompound();
         if (wordsToMatch.contains(normalCompound)) return true;
+        if (wordsToMatch.contains(abstractComponent.getPrimary().lemma().toLowerCase())) return true;
 
         return false;
     }

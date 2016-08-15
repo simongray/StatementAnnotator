@@ -484,6 +484,10 @@ public abstract class AbstractComponent implements StatementComponent {
         return hasPosTags(tags.toArray(new String[tags.size()]));
     }
 
+    public boolean hasDescription() {
+        return !getDescriptives().isEmpty();
+    }
+
     /**
      * The compound as a string.
      *

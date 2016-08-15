@@ -10,6 +10,7 @@ import reddit.RedditCommentProcessor;
 import statements.annotations.StatementsAnnotation;
 import statements.core.Statement;
 import statements.patterns.*;
+import statements.profile.Profile;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -80,11 +81,10 @@ public class TestNewPatterns {
         StatementPattern questionPattern = new StatementPattern().question();
         StatementPattern citationPattern = new StatementPattern().citation();
         StatementPattern testPattern = new StatementPattern(
-                    new SubjectPattern().firstPerson(),
-                    new VerbPattern().words("feel"),
-                    new DirectObjectPattern().capture()
+                new SubjectPattern().thirdPerson().notWords(Profile.UNINTERESTING_NOUNS).description(false).capture(),
+                new VerbPattern().copula(),
+                new DirectObjectPattern().adjective().words(Common.POSITIVE_ADJECTIVE)
         );
-
 
         for (Statement statement : statements) {
 //            if (thinkPattern.matches(statement)) {
@@ -107,6 +107,7 @@ public class TestNewPatterns {
             if (testPattern.matches(statement)) {
                 System.out.println("test: " + statement + " --> " + statement.getComponents());
                 System.out.println("      " + statement.getOrigin());
+                System.out.println("      " + testPattern.getCaptures());
             }
         }
     }

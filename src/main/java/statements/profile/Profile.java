@@ -36,7 +36,7 @@ public class Profile {
      * This set of nouns comprises second and third person pronouns, but not first person.
      * It also adds other words that do not carry any information without context.
      */
-    private static final Set<String> UNINTERESTING_NOUNS = new HashSet<>();
+    public static final Set<String> UNINTERESTING_NOUNS = new HashSet<>();
     static {
         UNINTERESTING_NOUNS.add("yours");
         UNINTERESTING_NOUNS.add("he");
@@ -114,11 +114,17 @@ public class Profile {
             new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all()
     ).capture().optional();
 
-    private final StatementPattern LIKE_PATTERN = new StatementPattern(
+    private final StatementPattern LIKE_PATTERN_1 = new StatementPattern(
             new SubjectPattern().firstPerson(),
             new VerbPattern().words("like", "love", "prefer"),
             new DirectObjectPattern().notWords(UNINTERESTING_NOUNS).capture().optional(),
             EMBEDDED_ACTIVITY_PATTERN
+    );
+
+    private final StatementPattern LIKE_PATTERN_2 = new StatementPattern(
+            new SubjectPattern().thirdPerson().notWords(UNINTERESTING_NOUNS).capture(),
+            new VerbPattern().copula(),
+            new DirectObjectPattern().adjective().words(Common.POSITIVE_ADJECTIVE).description(false)
     );
 
     private final StatementPattern WANT_PATTERN = new StatementPattern(
@@ -370,8 +376,8 @@ public class Profile {
      */
     private void registerEmotionalContent() {
         for (Statement statement : statements) {
-            if (LIKE_PATTERN.matches(statement)) {
-                for (StatementComponent capture : LIKE_PATTERN.getCaptures()) {
+            if (LIKE_PATTERN_1.matches(statement)) {
+                for (StatementComponent capture : LIKE_PATTERN_1.getCaptures()) {
                     if (capture instanceof  AbstractComponent) {
                         AbstractComponent abstractComponent = (AbstractComponent) capture;
                         if (!abstractComponent.isVerb()) {
@@ -394,6 +400,16 @@ public class Profile {
                         activities.put(activityVerb, objects);
                         logger.info("found liked activity " + embeddedStatement + " in " + statement);
                     }
+                }
+
+                addQualityPoint(statement);
+            }
+
+            if (LIKE_PATTERN_2.matches(statement)) {
+                for (StatementComponent capture : LIKE_PATTERN_2.getCaptures()) {
+                    AbstractComponent abstractComponent = (AbstractComponent) capture;
+                    likes.add(abstractComponent.getNormalCompound());
+                    logger.info("found like " + abstractComponent + " in " + statement);
                 }
 
                 addQualityPoint(statement);
