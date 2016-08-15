@@ -24,6 +24,7 @@ public class VerbFinder extends AbstractFinder {
         OUTGOING_RELATIONS.add(Relations.NSUBJ);
         OUTGOING_RELATIONS.add(Relations.NSUBJPASS);
         OUTGOING_RELATIONS.add(Relations.DOBJ);
+        OUTGOING_RELATIONS.add(Relations.NMOD);  // note: will only use the ones that have verb POS tags!
     }
 
     @Override
@@ -72,7 +73,9 @@ public class VerbFinder extends AbstractFinder {
         dobjVerbs.removeAll(aclVerbs);  // TODO: is this needed anymore?
 
         for (IndexedWord dobjVerb : dobjVerbs) {
-            verbs.add(new Verb(dobjVerb, graph, getLabels(dobjVerb)));
+            if (PartsOfSpeech.VERBS.contains(dobjVerb.tag())) {
+                verbs.add(new Verb(dobjVerb, graph, getLabels(dobjVerb)));
+            }
         }
         for (IndexedWord copVerb : copVerbs) {
             verbs.add(new Verb(copVerb, graph, getLabels(copVerb, Labels.COP_VERB)));
