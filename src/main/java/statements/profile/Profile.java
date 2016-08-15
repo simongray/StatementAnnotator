@@ -77,7 +77,7 @@ public class Profile {
             new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all()
     ).optional().minSize(2);
 
-    private final StatementPattern INTERESTING_PATTERN = new StatementPattern(
+    public final StatementPattern INTERESTING_PATTERN = new StatementPattern(
             new SubjectPattern(),
             new VerbPattern().negated(null),
             new NonVerbPattern().person(Person.first, Person.third).local(false).notWords(UNINTERESTING_NOUNS).all(),
@@ -749,7 +749,7 @@ public class Profile {
         if (!qualityMap.containsKey(statement)) {
             // retrieve the baseline value, in this case lexical density
             double baseline = statement.getLexicalDensity();
-            double multiplier = baseline * 0.25;
+            double multiplier = 0.2;
             double adjustment = qualityPointsMap.getOrDefault(statement, 0) * multiplier;
             double quality = baseline + adjustment;
 
@@ -850,7 +850,6 @@ public class Profile {
             for (Statement statement : statementProfile.getInterestingStatements()) {
                 for (StatementPattern pattern : relevancePatterns) {
                     if (pattern.matches(statement)) {
-                        logger.info("adding point for: " + statement);
                         addRelevancePoint(statement);
                     }
                 }
@@ -886,15 +885,12 @@ public class Profile {
             if (!relevanceMap.containsKey(statement)) {
                 // retrieve the baseline value, in this case quality
                 double baseline = statementProfile.getStatementQuality(statement);
-                double multiplier = baseline * 0.25;
+                double multiplier = 0.3;
                 double adjustment = relevancePointsMap.getOrDefault(statement, 0) * multiplier;
                 double relevance = baseline + adjustment;
 
                 // save to map for later lazy-loading
                 relevanceMap.put(statement, relevance);
-                if (relevance > baseline) {
-                    logger.info("assigned relevance score (" + baseline + " -> " + relevance + "): " + statement);
-                }
 
                 return relevance;
             } else {
