@@ -149,10 +149,16 @@ public class Profile {
             new IndirectObjectPattern().capture().optional().notWords(UNINTERESTING_NOUNS)
     );
 
-    private final StatementPattern IDENTITY_PATTERN = new StatementPattern(
+    private final StatementPattern IDENTITY_PATTERN_1 = new StatementPattern(
             new SubjectPattern().firstPerson(),
             new VerbPattern().copula(),
             new DirectObjectPattern().partsOfSpeech(Tag.noun, Tag.properNoun).capture().optional().notWords(UNINTERESTING_NOUNS)
+    );
+
+    private final StatementPattern IDENTITY_PATTERN_2 = new StatementPattern(
+            new StatementPattern(
+                    new IndirectObjectPattern().preposition("as").capture()
+            )
     );
 
     /**
@@ -458,8 +464,18 @@ public class Profile {
                 addQualityPoint(statement);
             }
 
-            if (IDENTITY_PATTERN.matches(statement)) {
-                for (StatementComponent capture : IDENTITY_PATTERN.getCaptures()) {
+            if (IDENTITY_PATTERN_1.matches(statement)) {
+                for (StatementComponent capture : IDENTITY_PATTERN_1.getCaptures()) {
+                    AbstractComponent abstractComponent = (AbstractComponent) capture;
+                    identities.add(abstractComponent.getNormalCompound());
+                    logger.info("found identity " + abstractComponent + " in " + statement);
+                }
+
+                addQualityPoint(statement);
+            }
+
+            if (IDENTITY_PATTERN_2.matches(statement)) {
+                for (StatementComponent capture : IDENTITY_PATTERN_2.getCaptures()) {
                     AbstractComponent abstractComponent = (AbstractComponent) capture;
                     identities.add(abstractComponent.getNormalCompound());
                     logger.info("found identity " + abstractComponent + " in " + statement);

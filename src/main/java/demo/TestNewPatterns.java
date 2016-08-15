@@ -80,7 +80,9 @@ public class TestNewPatterns {
         StatementPattern questionPattern = new StatementPattern().question();
         StatementPattern citationPattern = new StatementPattern().citation();
         StatementPattern testPattern = new StatementPattern(
-                new NonVerbPattern().compoundTags(Tag.adverb, Tag.adjective)
+                new StatementPattern(
+                        new IndirectObjectPattern().preposition("as")
+                ).capture()
         );
 
 
@@ -105,6 +107,7 @@ public class TestNewPatterns {
             if (testPattern.matches(statement)) {
                 System.out.println("test: " + statement + " --> " + statement.getComponents());
                 System.out.println("      " + statement.getOrigin());
+                System.out.println("      " + testPattern.getNonCaptures(statement));
             }
         }
     }
