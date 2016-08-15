@@ -24,7 +24,7 @@ public class MarkdownStripper {
         patterns.put("prefix strike-through", "~~([^~])");
         patterns.put("postfix strike-through", "([^~])~~");
         patterns.put("link", "\\[([^\\[]+)\\]\\([^)]+\\)" );
-        patterns.put("quote", ">+\\s*([^>\\n]+)");
+        patterns.put("quote", ">+(\\s*[^>\\n]+)");
         // TODO: add more patterns
     }
 
