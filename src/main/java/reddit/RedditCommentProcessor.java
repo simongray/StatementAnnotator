@@ -89,7 +89,7 @@ public class RedditCommentProcessor {
         comment = comment.replaceAll(" - ", " – ");
 
         // remove some common emoticons
-        comment = comment.replaceAll("(;|:|=)?(-)(\\)|\\||\\[|\\]|\\(|/)+", ". ");
+        comment = comment.replaceAll("(;|:|=)?(-)(\\)|\\||\\[|\\]|\\(|/|D|S|$|\\{|\\}|O|o|P|p|3)+", ". ");
 
         // remove parentheses and their content since they screw up sentence parsing most of the time
         comment = comment.replaceAll(" \\([^\\)]+\\)", "");
