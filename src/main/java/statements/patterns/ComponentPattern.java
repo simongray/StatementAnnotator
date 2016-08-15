@@ -335,7 +335,7 @@ public class ComponentPattern implements Pattern {
             if (possessivePointsOfView != null && !matchesPossessivePointOfView(abstractComponent)) return false;
 
             // = "to be" verb
-            if (copula != null && abstractComponent instanceof Verb && !((Verb) abstractComponent).isCopula()) return false;
+            if (copula != null && abstractComponent instanceof Verb && !(((Verb) abstractComponent).isCopula() == copula)) return false;
 
             // such as "to", "from", "by", ...
             if (prepositions != null && !matchesPrepositions(abstractComponent)) return false;
