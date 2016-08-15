@@ -81,10 +81,10 @@ public class TestNewPatterns {
         StatementPattern questionPattern = new StatementPattern().question();
         StatementPattern citationPattern = new StatementPattern().citation();
         StatementPattern testPattern = new StatementPattern(
-                new SubjectPattern().thirdPerson().notWords(Profile.UNINTERESTING_NOUNS).description(false).capture(),
-                new VerbPattern().copula(),
-                new DirectObjectPattern().adjective().words(Common.POSITIVE_ADJECTIVE)
-        );
+                new SubjectPattern().firstPerson(),
+                new VerbPattern().copula(false).notWords(Common.POSSESS_VERB).capture(),
+                new DirectObjectPattern().negated(false).specific(false).description(false).partsOfSpeech(Tag.noun, Tag.properNoun).notWords(Profile.UNINTERESTING_NOUNS).capture()
+        ).size(3);
 
         for (Statement statement : statements) {
 //            if (thinkPattern.matches(statement)) {

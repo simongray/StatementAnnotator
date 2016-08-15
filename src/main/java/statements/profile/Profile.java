@@ -177,6 +177,12 @@ public class Profile {
             )
     );
 
+    private final StatementPattern ACTIVITY_PATTERN = new StatementPattern(
+            new SubjectPattern().firstPerson(),
+            new VerbPattern().copula(false).notWords(Common.POSSESS_VERB).capture(),
+            new DirectObjectPattern().negated(false).specific(false).description(false).partsOfSpeech(Tag.noun, Tag.properNoun).notWords(UNINTERESTING_NOUNS).capture()
+    ).size(3);
+
     /**
      * Captures objects that indicate the location of the author.
      */
@@ -195,7 +201,7 @@ public class Profile {
 
     private final StatementPattern POSSESSION_PATTERN_2 = new StatementPattern(
             new SubjectPattern().firstPerson(),
-            new VerbPattern().words("have", "own", "possess"),
+            new VerbPattern().words(Common.POSSESS_VERB),
             new DirectObjectPattern().noun().capture().notWords(UNINTERESTING_NOUNS)
     );
 
@@ -522,6 +528,23 @@ public class Profile {
                     logger.info("found identity " + abstractComponent + " in " + statement);
                 }
 
+                addQualityPoint(statement);
+            }
+
+            if (ACTIVITY_PATTERN.matches(statement)) {
+                String activityVerb = null:
+                String activityObject = null:
+
+                for (StatementComponent capture : ACTIVITY_PATTERN.getCaptures()) {
+                    AbstractComponent abstractComponent = (AbstractComponent) capture;
+                    if (capture instanceof Verb) activityVerb = abstractComponent.getNormalCompound();
+                    if (capture instanceof DirectObject) activityObject = abstractComponent.getNormalCompound();
+                }
+
+                Set<String> existingActivities = activities.getOrDefault(activityVerb, new HashSet<>());
+                existingActivities.add(activityObject);
+                activities.put(activityVerb, existingActivities);
+                logger.info("found activity " + activityVerb + " " + activityObject + " in " + statement);
                 addQualityPoint(statement);
             }
         }
