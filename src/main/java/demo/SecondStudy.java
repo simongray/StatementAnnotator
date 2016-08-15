@@ -1,7 +1,9 @@
 package demo;
 
 
+import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
+import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
@@ -26,13 +28,12 @@ public class SecondStudy {
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
         // load comments
-        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/data.json", Charset.defaultCharset());
-//        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/mark_comment_history.json", Charset.defaultCharset());
+        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/GryphonGuitar_comment_history.json", Charset.defaultCharset());
         JSONArray jsonArray = new JSONArray(content);
         List<String> comments = RedditCommentProcessor.getComments(jsonArray, RedditCommentProcessor.ENGLISH);
         Set<Statement> statements = new HashSet<>();
 
-        List<String> sentenceDataset = new ArrayList<>();
+        List<CoreMap> sentenceDataset = new ArrayList<>();
 
         int sentenceCountdown = 50;
 
@@ -45,11 +46,23 @@ public class SecondStudy {
             for (int i = 0; i < sentences.size(); i++) {
                 if (i == 0 || i == sentences.size()) {
                     if (sentenceCountdown > 0) {
-                        sentenceCountdown--;
                         String sentenceString = sentences.get(i).toString();
-                        sentenceDataset.add(sentenceString);
-                        Set<Statement> sentenceStatements = sentences.get(i).get(StatementsAnnotation.class);
-                        if (sentenceStatements != null) statements.addAll(sentenceStatements);
+
+                        // don't include very short sentences
+                        if (sentenceString.length() > 20) {
+
+                            // do not include questions and citations in data set
+                            if (!sentenceString.endsWith("?") && !(sentenceString.startsWith("\"") && sentenceString.endsWith("\""))) {
+                                Set<Statement> sentenceStatements = sentences.get(i).get(StatementsAnnotation.class);
+
+                                // only include if the sentence spawned any sentences
+                                if (sentenceStatements != null) {
+                                    sentenceCountdown--;
+                                    sentenceDataset.add(sentences.get(i));
+                                    statements.addAll(sentenceStatements);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -66,16 +79,28 @@ public class SecondStudy {
         System.out.println("interesting statements: " + profile.getInterestingStatements().size());
         System.out.println("locations: " + profile.getLocations());
         System.out.println("possessions: " + profile.getPossessions());
+        System.out.println("studies: " + profile.getStudies());
+        System.out.println("work: " + profile.getWork());
+        System.out.println("identities: " + profile.getIdentities());
+        System.out.println("proper nouns: " + profile.getProperNouns());
+        System.out.println("likes: " + profile.getLikes());
+        System.out.println("wants: " + profile.getWants());
+        System.out.println("activities: " + profile.getActitivies());
         List<Statement> statementsByLexicalDensity = profile.getStatementsByLexicalDensity();
         List<Statement> statementsByQuality = profile.getStatementsByQuality();
         for (int i = 0; i < statementsByLexicalDensity.size(); i++) {
             System.out.println("quality: " + profile.getStatementInfo(statementsByQuality.get(i)));
-            System.out.println("density: " + profile.getStatementInfo(statementsByLexicalDensity.get(i)));
             System.out.println();
         }
+
+        System.out.println();
         System.out.println("sentences: " + sentenceDataset.size());
-        for (String sentence : sentenceDataset) {
-            System.out.println(sentence);
+        for (CoreMap sentence : sentenceDataset) {
+            System.out.print(sentence + "  -->  ");
+            for (CoreLabel token : sentence.get(CoreAnnotations.TokensAnnotation.class)) {
+                System.out.print(token.word() + "-" + token.tag() + " ");
+            }
+            System.out.println();
         }
     }
 }
