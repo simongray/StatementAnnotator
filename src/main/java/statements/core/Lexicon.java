@@ -34,7 +34,7 @@ public class Lexicon {
      * while "the x" can both refer to a specific instance or something more general.
      */
     public static final Set<String> LOCAL_DETERMINERS = new HashSet<>();
-    {
+    static {
         // possessives
         LOCAL_DETERMINERS.addAll(POSSESSIVES);
 
