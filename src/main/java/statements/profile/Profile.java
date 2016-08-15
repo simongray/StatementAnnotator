@@ -532,8 +532,8 @@ public class Profile {
             }
 
             if (ACTIVITY_PATTERN.matches(statement)) {
-                String activityVerb = null:
-                String activityObject = null:
+                String activityVerb = null;
+                String activityObject = null;
 
                 for (StatementComponent capture : ACTIVITY_PATTERN.getCaptures()) {
                     AbstractComponent abstractComponent = (AbstractComponent) capture;
@@ -541,11 +541,13 @@ public class Profile {
                     if (capture instanceof DirectObject) activityObject = abstractComponent.getNormalCompound();
                 }
 
-                Set<String> existingActivities = activities.getOrDefault(activityVerb, new HashSet<>());
-                existingActivities.add(activityObject);
-                activities.put(activityVerb, existingActivities);
-                logger.info("found activity " + activityVerb + " " + activityObject + " in " + statement);
-                addQualityPoint(statement);
+                if (activityVerb != null && activityObject != null) {
+                    Set<String> existingActivities = activities.getOrDefault(activityVerb, new HashSet<>());
+                    existingActivities.add(activityObject);
+                    activities.put(activityVerb, existingActivities);
+                    logger.info("found activity " + activityVerb + " " + activityObject + " in " + statement);
+                    addQualityPoint(statement);
+                }
             }
         }
 
