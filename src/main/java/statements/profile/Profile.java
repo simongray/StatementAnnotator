@@ -24,6 +24,7 @@ public class Profile {
     private Set<String> properNouns = new HashSet<>();
     private Set<String> likes = new HashSet<>();
     private Set<String> wants = new HashSet<>();
+    private Set<String> feelings = new HashSet<>();
     private Map<String, Set<String>> activities = new HashMap<>();
 
     private Map<Statement, Integer> qualityPointsMap = new HashMap<>();
@@ -125,6 +126,15 @@ public class Profile {
             new VerbPattern().words("want"),
             new DirectObjectPattern().notWords(UNINTERESTING_NOUNS).capture().optional(),
             EMBEDDED_ACTIVITY_PATTERN
+    );
+
+    /**
+     * Captures feelings.
+     */
+    private final StatementPattern FEEL_PATTERN = new StatementPattern(
+            new SubjectPattern().firstPerson(),
+            new VerbPattern().words("feel"),
+            new DirectObjectPattern().capture()
     );
 
     /**
@@ -231,8 +241,8 @@ public class Profile {
         // find pronouns mentioned by the author
         registerProperNouns();
 
-        // find likes of the author
-        registerLikesAndWants();
+        // find emotional content by the author
+        registerEmotionalContent();
     }
 
     /**
@@ -267,6 +277,9 @@ public class Profile {
         Set<String> commonWants = new HashSet<>(otherProfile.getWants());
         commonWants.retainAll(getWants());
 
+        Set<String> commonFeelings = new HashSet<>(otherProfile.getFeelings());
+        commonWants.retainAll(getFeelings());
+
         // add all together as commonalities
         Set<String> commonEntities = new HashSet<>();
         commonEntities.addAll(commonLocations);
@@ -277,6 +290,7 @@ public class Profile {
         commonEntities.addAll(commonProperNouns);
         commonEntities.addAll(commonLikes);
         commonEntities.addAll(commonWants);
+        commonEntities.addAll(commonFeelings);
 
         return  commonEntities;
     }
@@ -354,7 +368,7 @@ public class Profile {
     /**
      * Unpack statements according to certain patterns to replace them with their embedded statements.
      */
-    private void registerLikesAndWants() {
+    private void registerEmotionalContent() {
         for (Statement statement : statements) {
             if (LIKE_PATTERN.matches(statement)) {
                 for (StatementComponent capture : LIKE_PATTERN.getCaptures()) {
@@ -413,11 +427,22 @@ public class Profile {
 
                 addQualityPoint(statement);
             }
+
+            if (FEEL_PATTERN.matches(statement)) {
+                for (StatementComponent capture : FEEL_PATTERN.getCaptures()) {
+                    AbstractComponent abstractComponent = (AbstractComponent) capture;
+                    feelings.add(abstractComponent.getNormalCompound());
+                    logger.info("found feeling " + abstractComponent + " in " + statement);
+                }
+
+                addQualityPoint(statement);
+            }
         }
 
         logger.info("total likes found: " + likes.size());
         logger.info("total wants found: " + wants.size());
         logger.info("total activities found: " + activities.size());
+        logger.info("total feelings found: " + feelings.size());
     }
 
     /**
@@ -625,6 +650,10 @@ public class Profile {
 
     public Map<String, Set<String>> getActitivies() {
         return activities;
+    }
+
+    public Set<String> getFeelings() {
+        return feelings;
     }
 
     /**
