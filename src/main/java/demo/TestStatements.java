@@ -29,8 +29,8 @@ public class TestStatements {
 
 
 
-        String example = "Really most of our companies are so small that they just about all fit in the SME definition (something like 80% are smaller than 250 employees).";
-
+//        String example = "Really most of our companies are so small that they just about all fit in the SME definition (something like 80% are smaller than 250 employees).";
+        String example = "Speaking as someone who have calculated stuff using computers for a living for several years, you still need to be able to do simple arithmetic in your head.";
 
         // TODO: don't split conjunctions when they are part of a compound
 //        String example = "The food and beer scene is quite good right now.";

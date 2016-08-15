@@ -99,6 +99,11 @@ public class Profile {
             new NonVerbPattern().noun().firstPersonPossessive()
     );
 
+    // inspired by paper
+    private final StatementPattern ADVERB_ADJECTIVE_PATTERN = new StatementPattern(
+            new NonVerbPattern().compoundTags(Tag.adverb, Tag.adjective)
+    );
+
     /**
      * Captures likes/loves (and wants in the second case).
      */
@@ -198,9 +203,12 @@ public class Profile {
         // the original statements are replaced with the embedded statements based on the pattern
         unpackEmbeddedStatements();
 
-        // adjust for personal information
+        // various quality adjustments that do not capture entities
         for (Statement statement : getInterestingStatements()) {
             if (PERSONAL_PATTERN.matches(statement)) {
+                addQualityPoint(statement);
+            }
+            if (ADVERB_ADJECTIVE_PATTERN.matches(statement)) {
                 addQualityPoint(statement);
             }
         }

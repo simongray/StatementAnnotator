@@ -2,6 +2,7 @@ package statements.patterns;
 
 import edu.stanford.nlp.ling.IndexedWord;
 import statements.core.AbstractComponent;
+import statements.core.PartsOfSpeech;
 import statements.core.StatementComponent;
 import statements.core.Verb;
 
@@ -27,6 +28,8 @@ public class ComponentPattern implements Pattern {
     private Boolean copula;
     private Boolean capitalised;
     private Tag[] partsOfSpeech;
+    private Tag[] compoundTags;
+    private Set<Set<String>> tagGroups;
     private Person[] pointsOfView;
     private Person[] possessivePointsOfView;
     private String[] prepositions;
@@ -219,6 +222,30 @@ public class ComponentPattern implements Pattern {
         return partsOfSpeech(Tag.adverb);
     }
 
+    // for the entire compound, not just the primary word!
+    public ComponentPattern compoundTags(Tag... tags) {
+        this.compoundTags = tags;
+        this.tagGroups = new HashSet<>();
+
+        for (Tag tag : tags) {
+            if (tag.equals(Tag.adjective)) {
+                this.tagGroups.add(PartsOfSpeech.ADJECTIVES);
+            } else if (tag.equals(Tag.adverb)) {
+                this.tagGroups.add(PartsOfSpeech.ADVERBS);
+            } else if (tag.equals(Tag.noun)) {
+                this.tagGroups.add(PartsOfSpeech.NOUNS);
+            } else if (tag.equals(Tag.pronoun)) {
+                this.tagGroups.add(PartsOfSpeech.PRONOUNS);
+            } else if (tag.equals(Tag.properNoun)) {
+                this.tagGroups.add(PartsOfSpeech.PROPER_NOUNS);
+            } else if (tag.equals(Tag.verb)) {
+                this.tagGroups.add(PartsOfSpeech.VERBS);
+            }
+        }
+
+        return this;
+    }
+
     /*
         Meta section.
      */
@@ -286,6 +313,8 @@ public class ComponentPattern implements Pattern {
             if (capitalised != null && abstractComponent.isCapitalised() != capitalised) return false;
 
             if (partsOfSpeech != null && !matchesPartOfSpeech(abstractComponent)) return false;
+
+            if (compoundTags != null && !matchesCompoundTags(abstractComponent)) return false;
 
             // 1st, 2nd, and/or 3rd person
             if (pointsOfView != null && !matchesPointOfView(abstractComponent)) return false;
@@ -377,6 +406,20 @@ public class ComponentPattern implements Pattern {
         }
 
         return false;
+    }
+
+    /**
+     * Whether the person (1st, 2nd, 3rd) of the component matches.
+     *
+     * @param abstractComponent the component to test
+     * @return true if one of the states matches
+     */
+    private boolean matchesCompoundTags(AbstractComponent abstractComponent) {
+        for (Set<String> posTagGroup : tagGroups) {
+            if (!abstractComponent.hasPosTags(posTagGroup)) return false;
+        }
+
+        return true;
     }
 
     /**

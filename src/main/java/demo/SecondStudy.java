@@ -28,7 +28,7 @@ public class SecondStudy {
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
         // load comments
-        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/GryphonGuitar_comment_history.json", Charset.defaultCharset());
+        String content = RedditCommentProcessor.readFile("src/main/java/demo/data/kaspar42_comment_history.json", Charset.defaultCharset());
         JSONArray jsonArray = new JSONArray(content);
         List<String> comments = RedditCommentProcessor.getComments(jsonArray, RedditCommentProcessor.ENGLISH);
         Set<Statement> statements = new HashSet<>();
@@ -49,7 +49,7 @@ public class SecondStudy {
                         String sentenceString = sentences.get(i).toString();
 
                         // don't include very short sentences
-                        if (sentenceString.length() > 20) {
+                        if (sentenceString.length() > 30) {
 
                             // do not include questions and citations in data set
                             if (!sentenceString.endsWith("?") && !(sentenceString.startsWith("\"") && sentenceString.endsWith("\""))) {

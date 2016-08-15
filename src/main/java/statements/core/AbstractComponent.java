@@ -466,6 +466,24 @@ public abstract class AbstractComponent implements StatementComponent {
         return !getPrepositions().isEmpty();
     }
 
+    private Set<String> getPosTags() {
+        Set<String> partsOfSpeech = new HashSet<>();
+        for (IndexedWord word : getCompound()) {
+            partsOfSpeech.add(word.tag());
+        }
+        return partsOfSpeech;
+    }
+
+    public boolean hasPosTags(String... tags) {
+        Set<String> partsOfSpeech = getPosTags();
+        for (String tag : tags) if (partsOfSpeech.contains(tag)) return true;
+        return false;
+    }
+
+    public boolean hasPosTags(Set<String> tags) {
+        return hasPosTags(tags.toArray(new String[tags.size()]));
+    }
+
     /**
      * The compound as a string.
      *

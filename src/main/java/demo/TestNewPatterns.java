@@ -33,8 +33,8 @@ public class TestNewPatterns {
 
         Set<Statement> statements = new HashSet<>();
 
-//        int commentLimit = 50;
-        int commentLimit = comments.size();
+        int commentLimit = 50;
+//        int commentLimit = comments.size();
 
         // retrieve statements from first data set
         for (int i = 0; i < commentLimit; i++) {
@@ -79,9 +79,10 @@ public class TestNewPatterns {
 
         StatementPattern questionPattern = new StatementPattern().question();
         StatementPattern citationPattern = new StatementPattern().citation();
-        StatementPattern trivialPattrn = new StatementPattern(
-
+        StatementPattern testPattern = new StatementPattern(
+                new NonVerbPattern().compoundTags(Tag.adverb, Tag.adjective)
         );
+
 
         for (Statement statement : statements) {
 //            if (thinkPattern.matches(statement)) {
@@ -93,12 +94,16 @@ public class TestNewPatterns {
 //            if (thinkNotPattern.matches(statement)) {
 //                System.out.println("not: " + statement);
 //            }
-            if (questionPattern.matches(statement)) {
-                System.out.println("question: " + statement + " --> " + statement.getComponents());
-                System.out.println("      " + statement.getOrigin());
-            }
-            if (citationPattern.matches(statement)) {
-                System.out.println("citation: " + statement + " --> " + statement.getComponents());
+//            if (questionPattern.matches(statement)) {
+//                System.out.println("question: " + statement + " --> " + statement.getComponents());
+//                System.out.println("      " + statement.getOrigin());
+//            }
+//            if (citationPattern.matches(statement)) {
+//                System.out.println("citation: " + statement + " --> " + statement.getComponents());
+//                System.out.println("      " + statement.getOrigin());
+//            }
+            if (testPattern.matches(statement)) {
+                System.out.println("test: " + statement + " --> " + statement.getComponents());
                 System.out.println("      " + statement.getOrigin());
             }
         }
