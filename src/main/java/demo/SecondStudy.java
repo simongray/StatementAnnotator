@@ -119,10 +119,10 @@ public class SecondStudy {
         props.setProperty("ssplit.newlineIsSentenceBreak", "always");  // IMPORTANT!!
         pipeline = new StanfordCoreNLP(props);
 
-        String participant = "sklopnicht";
+        String participant = "Skulder";
         String[] users = new String[] {"MagFreakingNeto", "kaspar42", "GryphonGuitar"};
         PrintWriter writer = new PrintWriter(participant + "_result.txt", "UTF-8");
-        Profile participantProfile = createProfile("sklopnicht", false, writer);
+        Profile participantProfile = createProfile(participant, false, writer);
         writer.println();
 
         int limit = 50;
