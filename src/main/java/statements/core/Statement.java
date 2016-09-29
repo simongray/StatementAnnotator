@@ -552,7 +552,7 @@ public class Statement implements StatementComponent {
     @Override
     public String toString() {
         return "{" +
-                (getLabels().isEmpty()? "" : String.join("/", getLabels()) + "/") +
+//                (getLabels().isEmpty()? "" : String.join("/", getLabels()) + "/") +
                 getSummary() +
                 ": \"" + getSentence() + "\"" +
 //            ", density: " + df.format(getLexicalDensity()) +  // TODO: remove after done debugging
