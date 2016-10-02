@@ -59,7 +59,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> possessives;
 //    protected final Set<IndexedWord> adverbialClauses;  // TODO: trying out making this embedded instead
     protected final Set<IndexedWord> nounClauses;
-    protected final Set<IndexedWord> basicCompound;
+    protected final Set<IndexedWord> headCompound;
     protected final Set<IndexedWord> normalCompound;
     protected final Set<IndexedWord> otherDescriptives;  // used to store descriptive/clausal type content not fitting other categories
 
@@ -75,13 +75,13 @@ public abstract class AbstractComponent implements StatementComponent {
         // sometimes interjections are not found in the relations!
         compound.removeAll(PartsOfSpeech.reduceToAllowedTags(compound, PartsOfSpeech.INTERJECTIONS));
 
-        // smallest compound
-        basicCompound = StatementUtils.findSpecificChildren(Relations.COMPOUND, head, graph);
-        basicCompound.add(head);
+        // compound representing the head word + any words in a compound relation
+        headCompound = StatementUtils.findSpecificChildren(Relations.COMPOUND, head, graph);
+        headCompound.add(head);
 
-        // medium compound
+        // TODO: do away with this concept entirely
         normalCompound = StatementUtils.findSpecificChildren(Relations.AMOD, head, graph);
-        normalCompound.addAll(basicCompound);
+        normalCompound.addAll(headCompound);
 
         // relevant parts of component that are not separated out from the compound
         // Note: none currently!
@@ -184,8 +184,8 @@ public abstract class AbstractComponent implements StatementComponent {
         return Relations.IGNORED_OUTGOING_RELATIONS;
     }
 
-    public String getBasicCompound() {
-        return StatementUtils.join(basicCompound, true, true);
+    public String getHeadCompound() {
+        return StatementUtils.join(headCompound, true, true);
     }
 
     public String getNormalCompound() {
