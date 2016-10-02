@@ -30,8 +30,6 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> compound;
     protected final Set<IndexedWord> remaining;
     protected final Set<IndexedWord> all;
-    protected final int lowestIndex;
-    protected final int highestIndex;
 
     /**
      * The incoming connections of the head word, i.e. its governors.
@@ -139,25 +137,6 @@ public abstract class AbstractComponent implements StatementComponent {
                 compound.removeAll(predeterminerWords);
             }
         }
-
-        // determine the size of the array used to count gaps
-        // TODO: do we really need this? (and gaps() in StatementComponent)
-        int highestIndex = -1;
-        int lowestIndex = -1;
-        for (IndexedWord word : all) {
-            if (word.index() > highestIndex) {
-                highestIndex = word.index();
-            }
-
-            // assigns the first index as the lowest by default
-            if (lowestIndex == -1) {
-                lowestIndex = word.index();
-            } else if (word.index() < lowestIndex) {
-                lowestIndex = word.index();
-            }
-        }
-        this.highestIndex = highestIndex;
-        this.lowestIndex = lowestIndex;
 
         // the governors/parents of the component
         // some relations are ignored, e.g. the conj relation which is not treated as governor since it defines siblings
