@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/SentimentTargets.iml" filepath="$PROJECT_DIR$/SentimentTargets.iml" />
+      <module fileurl="file://$PROJECT_DIR$/StatementAnnotator.iml" filepath="$PROJECT_DIR$/StatementAnnotator.iml" />
     </modules>
   </component>
 </project>
