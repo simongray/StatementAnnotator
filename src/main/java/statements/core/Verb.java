@@ -6,7 +6,7 @@ import edu.stanford.nlp.semgraph.SemanticGraph;
 import java.util.Set;
 
 /**
- * The complete primary of a natural language statement.
+ * The complete verb of a natural language statement.
  */
 public class Verb extends AbstractComponent {
 

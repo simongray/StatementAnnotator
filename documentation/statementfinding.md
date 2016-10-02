@@ -22,8 +22,8 @@ Finding algorithm
 A CoreNLP dependency graph of a sentence is used as input.
 
 1. all pure components are extracted separately from the dependency graph
-	- using simple knowledge of basic dependencies to find primary component words
-	- following descendant relations of the primary words to find the complete components
+	- using simple knowledge of basic dependencies to find head component words
+	- following descendant relations of the head words to find the complete components
 	- ignoring interdependencies to other pure components
 2. pure components are linked based on their interdependencies
 	- conjunction relations between components cause splits of the component sets into multiple sets

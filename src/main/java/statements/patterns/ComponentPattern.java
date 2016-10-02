@@ -232,7 +232,7 @@ public class ComponentPattern implements Pattern {
         return partsOfSpeech(Tag.adverb);
     }
 
-    // for the entire compound, not just the primary word!
+    // for the entire compound, not just the head word!
     public ComponentPattern compoundTags(Tag... tags) {
         this.compoundTags = tags;
         this.tagGroups = new HashSet<>();
@@ -494,7 +494,7 @@ public class ComponentPattern implements Pattern {
 
         String normalCompound = abstractComponent.getNormalCompound();
         if (wordsToMatch.contains(normalCompound)) return true;
-        if (wordsToMatch.contains(abstractComponent.getPrimary().lemma().toLowerCase())) return true;
+        if (wordsToMatch.contains(abstractComponent.getHead().lemma().toLowerCase())) return true;
 
         return false;
     }

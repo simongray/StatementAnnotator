@@ -201,9 +201,9 @@ public class StatementFinder {
         for (Set<IndexedWord> level : levels) {
             Set<AbstractComponent> componentLevel = new HashSet<>();
 
-            // components are partitioned into levels based on where their primary word appears
+            // components are partitioned into levels based on where their head word appears
             for (AbstractComponent component : components) {
-                if (level.contains(component.getPrimary())) componentLevel.add(component);
+                if (level.contains(component.getHead())) componentLevel.add(component);
             }
 
             componentLevels.add(componentLevel);

@@ -17,13 +17,13 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
-     * The primary word of the component.
+     * The head word of the component.
      * Used as the entry point for the rest of the compound.
      */
-    protected final IndexedWord primary;
+    protected final IndexedWord head;
 
     /**
-     * The main compound derived from the outgoing connections of the primary word.
+     * The main compound derived from the outgoing connections of the head word.
      * Represents the entire component, although it does not include specific parts
      * - such as negations - that are found separately.
      */
@@ -34,7 +34,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final int highestIndex;
 
     /**
-     * The incoming connections of the primary word, i.e. its governors.
+     * The incoming connections of the head word, i.e. its governors.
      * Used to find connections between different components.
      */
     protected final Set<IndexedWord> governors;
@@ -63,45 +63,45 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> normalCompound;
     protected final Set<IndexedWord> otherDescriptives;  // used to store descriptive/clausal type content not fitting other categories
 
-    public AbstractComponent(IndexedWord primary, SemanticGraph graph) {
-       this(primary, graph, new HashSet<>());
+    public AbstractComponent(IndexedWord head, SemanticGraph graph) {
+       this(head, graph, new HashSet<>());
     }
 
-    public AbstractComponent(IndexedWord primary, SemanticGraph graph, Set<String> labels) {
-        this.primary = primary;
-        compound = StatementUtils.findCompound(primary, graph, getIgnoredRelations(), null);
+    public AbstractComponent(IndexedWord head, SemanticGraph graph, Set<String> labels) {
+        this.head = head;
+        compound = StatementUtils.findCompound(head, graph, getIgnoredRelations(), null);
 
         // remove interjections based on POS tags
         // sometimes interjections are not found in the relations!
         compound.removeAll(PartsOfSpeech.reduceToAllowedTags(compound, PartsOfSpeech.INTERJECTIONS));
 
         // smallest compound
-        basicCompound = StatementUtils.findSpecificChildren(Relations.COMPOUND, primary, graph);
-        basicCompound.add(primary);
+        basicCompound = StatementUtils.findSpecificChildren(Relations.COMPOUND, head, graph);
+        basicCompound.add(head);
 
         // medium compound
-        normalCompound = StatementUtils.findSpecificChildren(Relations.AMOD, primary, graph);
+        normalCompound = StatementUtils.findSpecificChildren(Relations.AMOD, head, graph);
         normalCompound.addAll(basicCompound);
 
         // relevant parts of component that are not separated out from the compound
         // Note: none currently!
 
         // relevant parts of the component that have been separated out from the compound
-        prepositions = StatementUtils.findSpecificChildren(Relations.CASE, primary, graph);
-        negations = StatementUtils.findSpecificChildren(Relations.NEG, primary, graph);
-        punctuation = StatementUtils.findSpecificChildren(Relations.PUNCT, primary, graph);
-        markers = StatementUtils.findSpecificChildren(Relations.MARK, primary, graph);
-        cc = StatementUtils.findSpecificChildren(Relations.CC, primary, graph);
-        determiners = StatementUtils.findSpecificChildren(Relations.DET, primary, graph);
-        possessives = StatementUtils.findSpecificDescendants(Relations.NMOD_POSS, primary, graph);
-//        adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, primary, graph);  // TODO: trying out making this embedded instead
-        nounClauses = StatementUtils.findSpecificDescendants(Relations.ACL, primary, graph);
-        nounClauses.addAll(StatementUtils.findSpecificDescendants(Relations.ACL_RELCL, primary, graph));
-        otherDescriptives = StatementUtils.findSpecificDescendants(Relations.DESCRIPTIVE_NMOD, primary, graph);
+        prepositions = StatementUtils.findSpecificChildren(Relations.CASE, head, graph);
+        negations = StatementUtils.findSpecificChildren(Relations.NEG, head, graph);
+        punctuation = StatementUtils.findSpecificChildren(Relations.PUNCT, head, graph);
+        markers = StatementUtils.findSpecificChildren(Relations.MARK, head, graph);
+        cc = StatementUtils.findSpecificChildren(Relations.CC, head, graph);
+        determiners = StatementUtils.findSpecificChildren(Relations.DET, head, graph);
+        possessives = StatementUtils.findSpecificDescendants(Relations.NMOD_POSS, head, graph);
+//        adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, head, graph);  // TODO: trying out making this embedded instead
+        nounClauses = StatementUtils.findSpecificDescendants(Relations.ACL, head, graph);
+        nounClauses.addAll(StatementUtils.findSpecificDescendants(Relations.ACL_RELCL, head, graph));
+        otherDescriptives = StatementUtils.findSpecificDescendants(Relations.DESCRIPTIVE_NMOD, head, graph);
 
         // conjunction are used to loosely "link" separate statements
-        conjunction = StatementUtils.findSpecificChildren(Relations.CONJ, primary, graph);
-        conjunction.addAll(StatementUtils.findSpecificParents(Relations.CONJ, primary, graph));
+        conjunction = StatementUtils.findSpecificChildren(Relations.CONJ, head, graph);
+        conjunction.addAll(StatementUtils.findSpecificParents(Relations.CONJ, head, graph));
 
         // the stuff that doesn't go directly into the compound
         // used by containing statements to reproduce the statement text
@@ -163,7 +163,7 @@ public abstract class AbstractComponent implements StatementComponent {
         // some relations are ignored, e.g. the conj relation which is not treated as governor since it defines siblings
         governors = new HashSet<>();
         embeddingGovernors = new HashSet<>();
-        for (SemanticGraphEdge edge : graph.incomingEdgeList(primary)) {
+        for (SemanticGraphEdge edge : graph.incomingEdgeList(head)) {
             // it is important to leave out certain governor relations
             // (e.g. the conj relation, since multiple of the same component type should not be connecting)
             if (!Relations.IGNORED_CONNECTING_RELATIONS.contains(edge.getRelation().getShortName())) {
@@ -193,12 +193,12 @@ public abstract class AbstractComponent implements StatementComponent {
     }
 
     /**
-     * The primary word contained within the compound component.
+     * The head word contained within the compound component.
      *
-     * @return primary word
+     * @return head word
      */
-    public IndexedWord getPrimary() {
-        return primary;
+    public IndexedWord getHead() {
+        return head;
     }
 
     /**
@@ -353,7 +353,7 @@ public abstract class AbstractComponent implements StatementComponent {
      * @return true if plural
      */
     public boolean isPlural() {
-        return PartsOfSpeech.PLURAL.contains(getPrimary().tag()) || Lexicon.PLURAL_NON_NOUNS.contains(getPrimary().word().toLowerCase());
+        return PartsOfSpeech.PLURAL.contains(getHead().tag()) || Lexicon.PLURAL_NON_NOUNS.contains(getHead().word().toLowerCase());
     }
 
     /**
@@ -403,35 +403,35 @@ public abstract class AbstractComponent implements StatementComponent {
 
     public boolean isPronoun() {
         // TODO: what about possesives?
-        return getPrimary().tag().equals(PartsOfSpeech.PRP);
+        return getHead().tag().equals(PartsOfSpeech.PRP);
     }
 
     public boolean isProperNoun() {
-        return PartsOfSpeech.PROPER_NOUNS.contains(getPrimary().tag());
+        return PartsOfSpeech.PROPER_NOUNS.contains(getHead().tag());
     }
 
     public boolean isNoun() {
-        return PartsOfSpeech.NOUNS.contains(getPrimary().tag());
+        return PartsOfSpeech.NOUNS.contains(getHead().tag());
     }
 
     public boolean isVerb() {
-        return PartsOfSpeech.VERBS.contains(getPrimary().tag());
+        return PartsOfSpeech.VERBS.contains(getHead().tag());
     }
 
     public boolean isAdjective() {
-        return PartsOfSpeech.ADJECTIVES.contains(getPrimary().tag());
+        return PartsOfSpeech.ADJECTIVES.contains(getHead().tag());
     }
 
     public boolean isAdverb() {
-        return PartsOfSpeech.ADVERBS.contains(getPrimary().tag());
+        return PartsOfSpeech.ADVERBS.contains(getHead().tag());
     }
 
     public boolean isFirstPerson() {
-        return isPronoun() && Lexicon.FIRST_PERSON.contains(getPrimary().word().toLowerCase());
+        return isPronoun() && Lexicon.FIRST_PERSON.contains(getHead().word().toLowerCase());
     }
 
     public boolean isSecondPerson() {
-        return isPronoun() && Lexicon.SECOND_PERSON.contains(getPrimary().word().toLowerCase());
+        return isPronoun() && Lexicon.SECOND_PERSON.contains(getHead().word().toLowerCase());
     }
 
     public boolean hasPossessive() {
@@ -531,8 +531,8 @@ public abstract class AbstractComponent implements StatementComponent {
             (!getPrepositions().isEmpty()? ", preposition: \"" + StatementUtils.join(getPrepositions()) + "\"" : "") +
             (!getPossessives().isEmpty()? ", possessive: \"" + StatementUtils.join(getPossessives()) + "\"" : "") +
 //            (!getPossessives().isEmpty()? ", possessive: \"" + getPossessives() + "\"" : "") +
-//            ", pos: \"" + getPrimary().tag() + "\"" +
-//            ", primary: \"" + getPrimary() + "\"" +
+//            ", pos: \"" + getHead().tag() + "\"" +
+//            ", head: \"" + getHead() + "\"" +
 //            ", local: \"" + (isLocal()? "yes" : "no") + "\"" +
 //            ", negated: \"" + (isNegated()? "yes" : "no") + "\"" +
 //            ", plural: \"" + (isPlural()? "yes" : "no") + "\"" +
