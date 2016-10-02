@@ -30,27 +30,9 @@
     <orderEntry type="library" name="Gradle: edu.stanford.nlp:stanford-corenlp:3.6.0:models" level="project" />
     <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.21" level="project" />
     <orderEntry type="library" name="Gradle: org.slf4j:slf4j-simple:1.7.21" level="project" />
-    <orderEntry type="module-library">
-      <library name="Gradle: stanford-srparser-2014-10-23-models">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/stanford-srparser-2014-10-23-models.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" scope="TEST" name="Gradle: org.hamcrest:hamcrest-core:1.3" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.tika:tika-core:1.12" level="project" />
     <orderEntry type="library" name="Gradle: org.json:json:20160212" level="project" />
-    <orderEntry type="module-library">
-      <library name="Gradle: adw.feb2015">
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/adw.v1.0/adw.feb2015.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module-library">
       <library name="Gradle: edu.mit.jwi_2.4.0">
         <CLASSES>

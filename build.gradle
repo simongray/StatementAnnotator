@@ -16,8 +16,6 @@ dependencies {
     compile 'edu.stanford.nlp:stanford-corenlp:3.6.0:models'
     compile 'org.slf4j:slf4j-api:1.7.21'
     compile 'org.slf4j:slf4j-simple:1.7.21'
-    compile files('stanford-srparser-2014-10-23-models.jar')  // not available in repo, must be included locally
-    compile files('adw.v1.0/adw.feb2015.jar')  // not available in repo, must be included locally
     compile files('wordnet/edu.mit.jwi_2.4.0.jar')  // not available in repo, must be included locally
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
