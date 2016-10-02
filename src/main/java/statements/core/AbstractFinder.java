@@ -79,17 +79,17 @@ public abstract class AbstractFinder {
     /**
      * Generalised way to get labels for a new component.
      *
-     * @param primary
+     * @param head
      * @param optionalLabels
      * @return labels
      */
-    protected final Set<String> getLabels(IndexedWord primary, String... optionalLabels) {
+    protected final Set<String> getLabels(IndexedWord head, String... optionalLabels) {
         Set<String> labels = new HashSet<>();
 
         // assign conjunction label if applicable
-        if (conjunctions.keySet().contains(primary)) {
+        if (conjunctions.keySet().contains(head)) {
             labels.add(Labels.CONJ_CHILD_VERB);
-        } else if (conjunctions.values().contains(primary)) {
+        } else if (conjunctions.values().contains(head)) {
             labels.add(Labels.CONJ_PARENT_VERB);
         }
 

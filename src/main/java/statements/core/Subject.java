@@ -11,11 +11,11 @@ import java.util.Set;
  * The complete subject of a natural language statement.
  */
 public class Subject extends AbstractComponent {
-    public Subject(IndexedWord primary, SemanticGraph graph) {
-        super(primary, graph);
+    public Subject(IndexedWord head, SemanticGraph graph) {
+        super(head, graph);
 
         // nmod relations from nouns are typically descriptive in nature
-        otherDescriptives.addAll(StatementUtils.findSpecificDescendants(Relations.NMOD, primary, graph));
+        otherDescriptives.addAll(StatementUtils.findSpecificDescendants(Relations.NMOD, head, graph));
         remaining.addAll(otherDescriptives);
     }
 }

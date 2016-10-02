@@ -10,12 +10,12 @@ import java.util.Set;
  * The complete direct object of a natural language statement.
  */
 public class DirectObject extends AbstractComponent {
-    public DirectObject(IndexedWord primary, SemanticGraph graph) {
-        this(primary, graph, false);
+    public DirectObject(IndexedWord head, SemanticGraph graph) {
+        this(head, graph, false);
     }
 
-    public DirectObject(IndexedWord primary, SemanticGraph graph, boolean copObject) {
-        super(primary, graph);
+    public DirectObject(IndexedWord head, SemanticGraph graph, boolean copObject) {
+        super(head, graph);
 
         // in case this object was constructed from a COP relation, it needs to ignore certain relations
         // Note: important to also remove negations from $remaining and $all, otherwise components will overlap!
@@ -26,7 +26,7 @@ public class DirectObject extends AbstractComponent {
         }
 
         // nmod relations from nouns are typically descriptive in nature
-        otherDescriptives.addAll(StatementUtils.findSpecificDescendants(Relations.NMOD, primary, graph));
+        otherDescriptives.addAll(StatementUtils.findSpecificDescendants(Relations.NMOD, head, graph));
         remaining.addAll(otherDescriptives);
     }
 }

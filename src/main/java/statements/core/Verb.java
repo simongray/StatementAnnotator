@@ -12,14 +12,14 @@ public class Verb extends AbstractComponent {
 
     protected final Set<IndexedWord> aux;
 
-    public Verb(IndexedWord primary, SemanticGraph graph, Set<String> labels) {
-        super(primary, graph, labels);
+    public Verb(IndexedWord head, SemanticGraph graph, Set<String> labels) {
+        super(head, graph, labels);
 
         // AUX can be both directly connected to be verbs and to governing words in COP relation
-        aux = StatementUtils.findSpecificChildren(Relations.AUX, primary, graph);
+        aux = StatementUtils.findSpecificChildren(Relations.AUX, head, graph);
 
         if (isCopula()) {
-            Set<IndexedWord> copGovernors = StatementUtils.findSpecificParents(Relations.COP, primary, graph);
+            Set<IndexedWord> copGovernors = StatementUtils.findSpecificParents(Relations.COP, head, graph);
             for (IndexedWord copGovernor : copGovernors) {
                 aux.addAll(StatementUtils.findSpecificChildren(Relations.AUX, copGovernor, graph));
 
