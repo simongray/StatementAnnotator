@@ -53,7 +53,7 @@ public abstract class AbstractComponent implements StatementComponent {
     protected final Set<IndexedWord> negations;
     protected final Set<IndexedWord> punctuation;
     protected final Set<IndexedWord> markers;
-    protected final Set<IndexedWord> cc;
+    protected final Set<IndexedWord> coordinatingConjunctions;
     protected final Set<IndexedWord> determiners;
     protected final Set<IndexedWord> prepositions;
     protected final Set<IndexedWord> possessives;
@@ -91,7 +91,7 @@ public abstract class AbstractComponent implements StatementComponent {
         negations = StatementUtils.findSpecificChildren(Relations.NEG, head, graph);
         punctuation = StatementUtils.findSpecificChildren(Relations.PUNCT, head, graph);
         markers = StatementUtils.findSpecificChildren(Relations.MARK, head, graph);
-        cc = StatementUtils.findSpecificChildren(Relations.CC, head, graph);
+        coordinatingConjunctions = StatementUtils.findSpecificChildren(Relations.CC, head, graph);
         determiners = StatementUtils.findSpecificChildren(Relations.DET, head, graph);
         possessives = StatementUtils.findSpecificDescendants(Relations.NMOD_POSS, head, graph);
 //        adverbialClauses = StatementUtils.findSpecificDescendants(Relations.ADVCL, head, graph);  // TODO: trying out making this embedded instead
@@ -251,8 +251,8 @@ public abstract class AbstractComponent implements StatementComponent {
      *
      * @return markers
      */
-    public Set<IndexedWord> getCc() {
-        return cc;
+    public Set<IndexedWord> getCoordinatingConjunctions() {
+        return coordinatingConjunctions;
     }
 
     /**
