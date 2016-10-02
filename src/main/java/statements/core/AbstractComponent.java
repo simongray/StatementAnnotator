@@ -48,6 +48,7 @@ public abstract class AbstractComponent implements StatementComponent {
      */
     protected final Set<String> labels;
 
+    protected final Set<IndexedWord> adjectivalModifiers;
     protected final Set<IndexedWord> negations;
     protected final Set<IndexedWord> punctuation;
     protected final Set<IndexedWord> markers;
@@ -77,14 +78,10 @@ public abstract class AbstractComponent implements StatementComponent {
         headCompound = StatementUtils.findSpecificChildren(Relations.COMPOUND, head, graph);
         headCompound.add(head);
 
-        // TODO: do away with this concept entirely
-        normalCompound = StatementUtils.findSpecificChildren(Relations.AMOD, head, graph);
-        normalCompound.addAll(headCompound);
+        // not separated out from compound
+        adjectivalModifiers = StatementUtils.findSpecificChildren(Relations.AMOD, head, graph);
 
-        // relevant parts of component that are not separated out from the compound
-        // Note: none currently!
-
-        // relevant parts of the component that have been separated out from the compound
+        // separated out from the compound
         prepositions = StatementUtils.findSpecificChildren(Relations.CASE, head, graph);
         negations = StatementUtils.findSpecificChildren(Relations.NEG, head, graph);
         punctuation = StatementUtils.findSpecificChildren(Relations.PUNCT, head, graph);
@@ -96,6 +93,11 @@ public abstract class AbstractComponent implements StatementComponent {
         nounClauses = StatementUtils.findSpecificDescendants(Relations.ACL, head, graph);
         nounClauses.addAll(StatementUtils.findSpecificDescendants(Relations.ACL_RELCL, head, graph));
         otherDescriptives = StatementUtils.findSpecificDescendants(Relations.DESCRIPTIVE_NMOD, head, graph);
+
+        // TODO: do away with this concept entirely
+        normalCompound = new HashSet<>();
+        normalCompound.addAll(headCompound);
+        normalCompound.addAll(adjectivalModifiers);
 
         // conjunction are used to loosely "link" separate statements
         conjunction = StatementUtils.findSpecificChildren(Relations.CONJ, head, graph);
@@ -223,6 +225,24 @@ public abstract class AbstractComponent implements StatementComponent {
      */
     public Set<IndexedWord> getPunctuation() {
         return punctuation;
+    }
+
+    /**
+     * All adjectival modifiers.
+     *
+     * @return markers
+     */
+    public Set<IndexedWord> getAdjectivalModifiers() {
+        return adjectivalModifiers;
+    }
+
+    /**
+     * All modifiers.
+     *
+     * @return markers
+     */
+    public Set<IndexedWord> getModifiers() {
+        return adjectivalModifiers;
     }
 
     /**
