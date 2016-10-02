@@ -127,15 +127,6 @@ public class Relations {
         IGNORED_CONNECTING_RELATIONS.addAll(EMBEDDED_STATEMENT_SCOPES);  // TODO: added as part of solution to #57, re-examine
     }
 
-    // TODO: rework everything below this point
-    /**
-     * The smallest scope for compounds.
-     */
-    public static final Set<String> SMALL_COMPOUND_SCOPE = new HashSet<>();
-    static {
-        SMALL_COMPOUND_SCOPE.add(COMPOUND);
-        SMALL_COMPOUND_SCOPE.add(ADVMOD);  // TODO: consider whether it should be part of larger compound scope
-    }
     public static final String INCLUDING = "including";
     public static final ComplexRelation INDIRECT_OBJECT_NMOD = ComplexRelation.getRelationExcludingSpecifics(NMOD, INCLUDING);
     public static final ComplexRelation DESCRIPTIVE_NMOD = ComplexRelation.getRelationIncludingSpecifics(NMOD, INCLUDING);
