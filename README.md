@@ -24,9 +24,27 @@ StatementFinder can be used independently to output statements found in a Semant
 however, it is recommended to use the CoreNLP pipeline.
 
 ```java
-props.setProperty("annotators", "tokenize, ssplit, pos, lemma, depparse, statements");
-props.setProperty("customAnnotatorClass.statements", "statements.StatementAnnotator");
+// setting up the required CoreNLP pipeline
+Properties properties = new Properties();
+properties.setProperty("annotators", "tokenize, ssplit, pos, lemma, depparse, statements");
+properties.setProperty("customAnnotatorClass.statements", "statements.StatementAnnotator");
+StanfordCoreNLP pipeline = new StanfordCoreNLP(properties);
 ```
 
 The only requirement is the standard CoreNLP neural network dependency parser and its requirements,
 as well as the lemma annotator.
+
+Example usage
+-------------
+
+```java
+String example = "This is an example sentence";
+
+Annotation annotation = new Annotation(example);
+pipeline.annotate(annotation);
+
+for (CoreMap sentence : annotation.get(SentencesAnnotation.class)) {
+    Set<Statement> statements = sentence.get(StatementsAnnotation.class);
+    StatementUtils.printStatements(statements);
+}
+```
