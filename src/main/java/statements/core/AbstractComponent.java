@@ -79,7 +79,7 @@ public abstract class AbstractComponent implements StatementComponent {
         headCompound.add(head);
 
         // not separated out from compound
-        adjectivalModifiers = StatementUtils.findSpecificChildren(Relations.AMOD, head, graph);
+        adjectivalModifiers = StatementUtils.findSpecificDescendants(Relations.AMOD, head, graph);
 
         // separated out from the compound
         prepositions = StatementUtils.findSpecificChildren(Relations.CASE, head, graph);
